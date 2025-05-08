@@ -1,0 +1,57 @@
+[
+    {
+        "session": "1",
+        "startTime": "08:00",
+        "endTime": "08:45"
+    },
+    {
+        "session": "2",
+        "startTime": "08:55",
+        "endTime": "09:40"
+    },
+    {
+        "session": "3",
+        "startTime": "10:10",
+        "endTime": "10:55"
+    },
+    {
+        "session": "4",
+        "startTime": "11:05",
+        "endTime": "11:50"
+    },
+    {
+        "session": "5",
+        "startTime": "14:30",
+        "endTime": "15:15"
+    },
+    {
+        "session": "6",
+        "startTime": "15:25",
+        "endTime": "16:10"
+    },
+    {
+        "session": "7",
+        "startTime": "16:40",
+        "endTime": "17:25"
+    },
+    {
+        "session": "8",
+        "startTime": "17:35",
+        "endTime": "16:20"
+    },
+    {
+        "session": "9",
+        "startTime": "19:30",
+        "endTime": "20:15"
+    },
+    {
+        "session": "10",
+        "startTime": "20:25",
+        "endTime": "21:10"
+    },
+    {
+        "session": "11",
+        "startTime": "21:20",
+        "endTime": "22:05"
+    }
+]

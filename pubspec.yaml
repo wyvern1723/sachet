@@ -1,0 +1,96 @@
+name: sachet
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 0.1.0+1
+
+homepage: https://github.com/wyvern1723/sachet
+repository: https://github.com/wyvern1723/sachet
+
+environment:
+  sdk: '>=3.2.2 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.1 # (调起浏览器)打开链接
+
+  # 文件
+  shared_preferences: ^2.3.5 # 存储不重要的数据(设置等)
+  path_provider: ^2.1.5 # 获取文件系统路径(Android/data、下载路径……)
+  file_picker: ^8.1.7 # 调起系统文件选择器
+  flutter_secure_storage: ^9.2.4 # 安全储存用户敏感信息
+  path: ^1.9.0 # 关于文件路径的操作，目前用于从文件路径提取文件名
+
+  # 状态管理
+  provider: ^6.1.2 
+
+  # 网络
+  http: ^1.2.2 # Flutter 官方的 http 包
+  html: ^0.15.5
+  dio: ^5.7.0 # Dio，flutter 中常用的网络包
+  flutter_inappwebview: ^6.1.5 # 应用内显示 webview, 用于手动登录
+
+  flutter_gbk2utf8: ^1.0.1 # 解码 GBK
+
+  # 颜色选择器
+  flutter_colorpicker: ^1.1.0 # 颜色选择器
+
+  # 辅助生成项目文件的 package，应用代码中没有依赖它们(生成后删除以下两行无影响)
+  flutter_native_splash: ^2.4.4 # 生成 splash screen (应用启动时的界面)
+  flutter_launcher_icons: ^0.14.2 # 生成应用图标
+
+  package_info_plus: ^8.1.2 # 用于获取应用当前版本信息
+  flutter_markdown: ^0.7.7 # 用于渲染更新内容的 Markdown
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+# app icon (应用图标)
+# 生成有关应用图标的文件
+# dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_foreground: "assets/icon/icon-fg.png"
+  adaptive_icon_background: "assets/icon/icon-bg.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  windows:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    icon_size: 256 # min:48, max:256, default: 48
+
+# splash screen (应用启动页面)
+# 生成有关 splash screen 的文件
+# dart run flutter_native_splash:create
+flutter_native_splash:
+  image: assets/icon/icon-fg-1152x1152-without-shadow.png
+  color: "#a5d6a7"
+  color_dark: "#000000"
+  fullscreen: true # 需要设为 true，否则会显示系统的状态栏
+  android_12:
+    color: "#a5d6a7"
+    color_dark: "#000000"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/icon/
+    - assets/json/
+    - assets/json/ClassSessionSummerRoutine.json
+    - assets/json/ClassSessionWinterRoutine.json

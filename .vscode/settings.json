@@ -1,0 +1,4 @@
+{
+  "cmake.configureOnOpen": true,
+  "dart.flutterSdkPath": ".fvm/versions/3.24.5"
+}

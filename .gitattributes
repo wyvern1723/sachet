@@ -1,0 +1,5 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+# 因为 Windows 默认使用 CRLF 换行，类 Unix(Linux、Mac 等) 使用 LF 换行，
+# 所以如果不设置 EOL(End Of Lines) 的格式，在不同系统上编辑项目，每次 commit 都会包含换行格式的改变（即每个文件的状态都是 Modified)，会造成多余提交。
+# 设置为 auto 让系统不改变原来文件的 EOL 格式。 
+* text=auto eol=lf
