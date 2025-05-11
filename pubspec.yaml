@@ -52,6 +52,10 @@ dependencies:
   package_info_plus: ^8.1.2 # 用于获取应用当前版本信息
   flutter_markdown: ^0.7.7 # 用于渲染更新内容的 Markdown
 
+  # 验证码图片自动识别(TensorFlow)
+  tflite_flutter: ^0.11.0  # TensorFlow Lite(TFlite、LiteRT) 库
+  image: ^4.1.0            # 对验证码图片进行预先处理（灰度化、二值化）
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -92,5 +96,6 @@ flutter:
     - assets/
     - assets/icon/
     - assets/json/
-    - assets/json/ClassSessionSummerRoutine.json
-    - assets/json/ClassSessionWinterRoutine.json
+    - assets/json/ClassSessionSummerRoutine.json  # 夏令时上课时间
+    - assets/json/ClassSessionWinterRoutine.json  # 冬令时上课时间
+    - assets/models/captcha_model.tflite          # 自动识别图片验证码的 tflite 模型(使用 TensorFlow v2.15.0 训练生成)

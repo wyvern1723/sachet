@@ -20,6 +20,7 @@ class LoginModel {
   // ***********************************
   // 001 set-cookie —— 第一次访问网址，得到服务器为我们分配的 'set-cookie'
   // ***********************************
+  /// 获取初始 cookie
   Future<String> getCookie() async {
     try {
       var getCookieResponse = await Dio().get(
@@ -46,22 +47,22 @@ class LoginModel {
             .split(';')[0];
         // print(getCookieResponse.headers);
       } else {
-        cookie = 'get cookie null';
+        throw Exception('statusCode = ${getCookieResponse.statusCode}');
       }
       return cookie;
     } on DioException catch (e) {
       if (kDebugMode) {
-        String data = gbk.decode(e.response?.data);
-        print("error : $data");
+        print(e);
       }
-      return 'get cookie failed';
+      rethrow;
     }
   }
 
   // ****************************************
   // 002 获取验证码图片 —— 带着前一步得到的 cookie 获取验证码图片
   // ****************************************
-  Future<ImageProvider?> downloadVerifyCodeImg(String cookie) async {
+  /// 获取验证码图片
+  Future<Uint8List> getVerifyCodeImg(String cookie) async {
     try {
       var verifycodeResponse = await Dio().get(
         'https://jwxt.xtu.edu.cn/jsxsd/verifycode.servlet',
@@ -82,18 +83,16 @@ class LoginModel {
         ),
       );
       if (verifycodeResponse.data != null) {
-        var verifyCodeImg = Image.memory(verifycodeResponse.data).image;
-        return verifyCodeImg;
+        return verifycodeResponse.data;
+      } else {
+        throw Exception('response data is null');
       }
     } on DioException catch (e) {
       if (kDebugMode) {
-        print("error : ${e.response?.data}");
+        print(e);
       }
-      // TODO: add the image
-      // return Image.asset('error').image;
-      return null;
+      rethrow;
     }
-    return null;
   }
 
   // ****************************************

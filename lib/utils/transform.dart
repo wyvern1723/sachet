@@ -1,6 +1,8 @@
-// 变换
+// 变换、映射关系
 
 import 'dart:convert';
+
+import 'package:dio/dio.dart';
 
 /// 【0,1,2...】 => 【星期一、星期二、星期三……】
 Map<int, String> weekDayToXingQiJi = {
@@ -46,4 +48,15 @@ String formatJsonEncode(dynamic json) {
 Map fileNameToMeaning = {
   'cultivate_plan.json': '培养方案',
   'exam_time.json': '考试时间',
+};
+
+Map<DioExceptionType, String> dioExceptionTypeToText = {
+  DioExceptionType.connectionTimeout: "连接超时",
+  DioExceptionType.sendTimeout: "发送超时",
+  DioExceptionType.receiveTimeout: "接收超时",
+  DioExceptionType.badCertificate: "证书错误",
+  DioExceptionType.badResponse: "错误响应",
+  DioExceptionType.cancel: "请求取消",
+  DioExceptionType.connectionError: "连接错误",
+  DioExceptionType.unknown: "未知错误",
 };

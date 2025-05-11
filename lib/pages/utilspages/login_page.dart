@@ -1,10 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/model/captcha_recognizer.dart';
 import 'package:sachet/provider/user_provider.dart';
 import 'package:sachet/pages/utilspages/manual_login_page.dart';
 import 'package:sachet/model/login.dart';
+import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/load_captcha_img_error_widget.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/logging_in_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/login_successful_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/password_form_field.dart';
@@ -28,7 +32,9 @@ class _LoginPageState extends State<LoginPage> {
   final verifycodeTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
-  Future<ImageProvider?>? cookieFuture;
+  CaptchaRecognizer? _captchaRecognizer;
+
+  Future<Uint8List>? getVerifyCodeImgFuture;
   String? showErrorText;
   String? _cookie;
 
@@ -52,19 +58,14 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<ImageProvider?> getVerifyCodeImg() async {
-    final String cookie = await LoginModel().getCookie();
-
-    if (cookie != 'get cookie failed') {
-      setState(() {
-        _cookie = cookie;
-      });
-
-      return LoginModel().downloadVerifyCodeImg(cookie);
-    } else {
-      // TODO return Image.asset(" error ").image;
-      return null;
+  Future<Uint8List> getVerifyCodeImg() async {
+    String cookie = await LoginModel().getCookie();
+    _cookie = cookie;
+    if (kDebugMode) {
+      setState(() {});
     }
+    Uint8List verifyCodeImgBytes = await LoginModel().getVerifyCodeImg(cookie);
+    return verifyCodeImgBytes;
   }
 
   void onChangedIsRememberPassword(bool? value) {
@@ -131,8 +132,9 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
             // 不仅是验证码错误、用户名或密码错误也需要刷新验证码图片
+            verifycodeTextController.clear();
             setState(() {
-              cookieFuture = getVerifyCodeImg();
+              getVerifyCodeImgFuture = getVerifyCodeImg();
             });
           }
         case LoginResponseStatus.success:
@@ -250,11 +252,35 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future recognizeCaptchaImage(Uint8List imgBytes) async {
+    try {
+      String recognizedResult =
+          await _captchaRecognizer!.recognizeCharsInImage(imgBytes);
+      verifycodeTextController.text = recognizedResult;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   @override
   void initState() {
-    cookieFuture = getVerifyCodeImg();
+    getVerifyCodeImgFuture = getVerifyCodeImg();
     super.initState();
     loadDataFromSecureStorage();
+    _captchaRecognizer = CaptchaRecognizer();
+  }
+
+  @override
+  void dispose() {
+    if (_captchaRecognizer != null) {
+      _captchaRecognizer!.dispose();
+    }
+    usernameTextController.dispose();
+    passwordTextController.dispose();
+    verifycodeTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -312,63 +338,60 @@ class _LoginPageState extends State<LoginPage> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            cookieFuture = getVerifyCodeImg();
+                            getVerifyCodeImgFuture = getVerifyCodeImg();
                           });
                         },
-                        child: FutureBuilder<ImageProvider?>(
-                          future: cookieFuture,
+                        child: FutureBuilder<Uint8List>(
+                          future: getVerifyCodeImgFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            if (snapshot.hasError) {
-                              print(snapshot.error);
-                              switch (snapshot.error.toString()) {
-                                case "type 'Null' is not a subtype of type 'List<int>'":
+                                ConnectionState.done) {
+                              if (snapshot.hasError) {
+                                if (kDebugMode) {
+                                  print(snapshot.error);
+                                }
+                                final error = snapshot.error;
+                                if (error is DioException) {
+                                  String? errorTypeText =
+                                      dioExceptionTypeToText[error.type];
                                   return Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          // flex: 1,
-                                          child: Icon(
-                                            Icons.error_outline_outlined,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .error,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            '验证码图片加载失败，可能是无互联网连接',
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                              fontSize: 12,
-                                            ),
-                                            // maxLines: 4,
-                                          ),
-                                        ),
-                                      ],
+                                    child: LoadCaptchaImgErrorWidget(
+                                      errorInfo:
+                                          '验证码图片加载失败，${errorTypeText ?? ''}',
                                     ),
                                   );
-                                default:
+                                } else {
                                   return Center(
-                                    child: Text('Error: ${snapshot.error}'),
+                                    child: LoadCaptchaImgErrorWidget(
+                                      errorInfo: '验证码图片加载失败，$error',
+                                    ),
                                   );
+                                }
+                              } else if (snapshot.hasData) {
+                                final Uint8List verifyCodeImgBytes =
+                                    snapshot.data!;
+
+                                // 加载 TFLite 模型，如果成功，开始识别；如果失败，无事发生……
+                                _captchaRecognizer!.loadModel().then((_) {
+                                  recognizeCaptchaImage(verifyCodeImgBytes);
+                                }, onError: (_) {});
+
+                                return Center(
+                                  child: Image(
+                                    image: MemoryImage(verifyCodeImgBytes),
+                                    // image: Image.memory(verifyCodeImgBytes).image,
+                                  ),
+                                );
+                              } else {
+                                return Center(
+                                  child: LoadCaptchaImgErrorWidget(
+                                    errorInfo: '验证码图片加载失败，无数据',
+                                  ),
+                                );
                               }
                             }
-                            if (snapshot.hasData) {
-                              final verifyCodeImg = snapshot.data!;
-                              return Center(child: Image(image: verifyCodeImg));
-                            }
                             return const Center(
-                              child: Text('No data available'),
+                              child: CircularProgressIndicator(),
                             );
                           },
                         ),
