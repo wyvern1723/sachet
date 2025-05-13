@@ -26,6 +26,8 @@ class SettingsProvider extends ChangeNotifier {
   String get curveType => _appSettings.curveType ?? 'Easing.standard';
   bool get isEnableDevMode => _appSettings.isEnableDevMode ?? false;
   bool get hasReadDisclaimer => _appSettings.hasReadDisclaimer ?? false;
+  static bool get isEnableCaptchaRecognizer =>
+      _appSettings.isEnableCaptchaRecognizer ?? true;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -133,6 +135,14 @@ class SettingsProvider extends ChangeNotifier {
     _appSettings.hasReadDisclaimer = true;
     AppGlobal.saveAppSettings();
     notifyListeners();
+  }
+
+  void setIsEnableCaptchaRecognizer(bool value) {
+    if (value != isEnableCaptchaRecognizer) {
+      _appSettings.isEnableCaptchaRecognizer = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
   }
 
   /// 加载夏季作息的课程时间数据

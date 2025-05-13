@@ -93,7 +93,8 @@ const defaultAppSettingsConfig = {
   "curveDuration ": 1500, // 课表翻页动画时长
   "curveType": "Easing.standard", // 课表翻页动画类型
   "isEnableDevMode": false, // 是否启用开发者模式
-  "hasReadDisclaimer": false // 是否阅读过声明
+  "hasReadDisclaimer": false, // 是否阅读过声明
+  "isEnableCaptchaRecognizer": true // 是否启用图片验证码自动识别
 };
 
 class AppSettings {
@@ -112,6 +113,7 @@ class AppSettings {
   String? curveType;
   bool? isEnableDevMode;
   bool? hasReadDisclaimer;
+  bool? isEnableCaptchaRecognizer;
 
   AppSettings(
       {this.isMD3,
@@ -128,7 +130,8 @@ class AppSettings {
       this.curveDuration,
       this.curveType,
       this.isEnableDevMode,
-      this.hasReadDisclaimer});
+      this.hasReadDisclaimer,
+      this.isEnableCaptchaRecognizer});
 
   AppSettings.fromJson(Map<String, dynamic> json) {
     isMD3 = json['isMD3'];
@@ -146,6 +149,7 @@ class AppSettings {
     curveType = json['curveType'];
     isEnableDevMode = json['isEnableDevMode'];
     hasReadDisclaimer = json['hasReadDisclaimer'];
+    isEnableCaptchaRecognizer = json['isEnableCaptchaRecognizer'];
   }
 
   Map<String, dynamic> toJson() {
@@ -165,6 +169,7 @@ class AppSettings {
     data['curveType'] = this.curveType;
     data['isEnableDevMode'] = this.isEnableDevMode;
     data['hasReadDisclaimer'] = this.hasReadDisclaimer;
+    data['isEnableCaptchaRecognizer'] = this.isEnableCaptchaRecognizer;
     return data;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/model/captcha_recognizer.dart';
+import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/provider/user_provider.dart';
 import 'package:sachet/pages/utilspages/manual_login_page.dart';
 import 'package:sachet/model/login.dart';
@@ -372,9 +373,12 @@ class _LoginPageState extends State<LoginPage> {
                                     snapshot.data!;
 
                                 // 加载 TFLite 模型，如果成功，开始识别；如果失败，无事发生……
-                                _captchaRecognizer!.loadModel().then((_) {
-                                  recognizeCaptchaImage(verifyCodeImgBytes);
-                                }, onError: (_) {});
+                                if (SettingsProvider
+                                    .isEnableCaptchaRecognizer) {
+                                  _captchaRecognizer!.loadModel().then((_) {
+                                    recognizeCaptchaImage(verifyCodeImgBytes);
+                                  }, onError: (_) {});
+                                }
 
                                 return Center(
                                   child: Image(
