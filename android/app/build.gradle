@@ -77,6 +77,25 @@ android {
                 // 不存在，使用 debug 签名
                 signingConfig = signingConfigs.debug
             }
+            // 在 android/gradle.properties 添加一行 e.g., "targetAbisForBuild=arm64-v8a,"、"targetAbisForBuild=arm64-v8a,armeabi-v7a"，来设定 abiFilters
+            if (project.hasProperty('targetAbisForBuild')) {
+                String abis = project.targetAbisForBuild
+                if (abis != null && !abis.trim().isEmpty()) {
+                    ndk {
+                        abiFilters.clear()
+                        abiFilters.addAll(abis.split(',').collect { it.trim() })
+                    }
+                    println "NDK abiFilters set from gradle.properties: ${abis}"
+                } else {
+                    println "targetAbisForBuild is empty or not defined correctly in gradle.properties"
+                }
+            } else {
+                println "targetAbisForBuild property not found in gradle.properties. Using default NDK settings."
+                // 可以设置默认的 ndk.abiFilters 如果属性未找到
+                // ndk {
+                //     abiFilters 'arm64-v8a', 'armeabi-v7a'
+                // }
+            }
         }
     }
 }

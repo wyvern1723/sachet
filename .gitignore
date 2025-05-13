@@ -49,4 +49,3 @@ app.*.map.json
 # User Defines
 /COMMIT_NOTES.txt
 generate_signed_apk.sh
-generate_debug_apk.sh
