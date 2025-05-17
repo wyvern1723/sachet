@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sachet/provider/free_class_page_provider.dart';
 import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/model/get_web_data/process_data/get_free_class.dart';
@@ -33,6 +34,9 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
   late Future<List> futureRoomToday;
   late Future<List> futureRoomTomorrow;
   final PageStorageKey _pageStorageKey = PageStorageKey('key');
+  late final ScrollController _scrollController1 = ScrollController();
+  late final ScrollController _scrollController2 = ScrollController();
+  bool _showFab = true;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
@@ -56,11 +60,49 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
     return freeClassRoomData;
   }
 
+  // 更新 FloatingActionButton 的显示状态
+  void _updateFABVisibility(bool show) {
+    if (_showFab != show) {
+      setState(() {
+        _showFab = show;
+      });
+    }
+  }
+
   @override
   void initState() {
     futureRoomToday = getRoomData(Day.today);
     futureRoomTomorrow = getRoomData(Day.tomorrow);
     super.initState();
+    _scrollController1.addListener(() {
+      if (_scrollController1.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        // 向下滑动, 隐藏 FAB
+        _updateFABVisibility(false);
+      } else if (_scrollController1.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        // 向上（向前）滑动，显示 FAB
+        _updateFABVisibility(true);
+      }
+    });
+    _scrollController2.addListener(() {
+      if (_scrollController2.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        // 向下滑动, 隐藏 FAB
+        _updateFABVisibility(false);
+      } else if (_scrollController2.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        // 向上（向前）滑动，显示 FAB
+        _updateFABVisibility(true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController1.dispose();
+    _scrollController2.dispose();
+    super.dispose();
   }
 
   @override
@@ -113,6 +155,7 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                     return FreeRoomsColumn(
                       listViewKey: _pageStorageKey,
                       day: Day.today,
+                      scrollController: _scrollController1,
                     );
                   }
                 }
@@ -142,6 +185,7 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                     return FreeRoomsColumn(
                       listViewKey: _pageStorageKey,
                       day: Day.tomorrow,
+                      scrollController: _scrollController2,
                     );
                   }
                 }
@@ -151,7 +195,12 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
             ),
           ],
         ),
-        floatingActionButton: FilterFAB(),
+        floatingActionButton: AnimatedSlide(
+          offset: _showFab ? Offset(0, 0) : Offset(0, 2),
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: FilterFAB(),
+        ),
       ),
     );
   }
@@ -162,9 +211,11 @@ class FreeRoomsColumn extends StatelessWidget {
     super.key,
     required this.listViewKey,
     required this.day,
+    required this.scrollController,
   });
   final Key listViewKey;
   final Day day;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +226,7 @@ class FreeRoomsColumn extends StatelessWidget {
           child: _Body(
             listViewKey: listViewKey,
             day: day,
+            scrollController: scrollController,
           ),
         ),
       ],
@@ -226,9 +278,15 @@ class _Head extends StatelessWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({super.key, required this.listViewKey, required this.day});
+  const _Body({
+    super.key,
+    required this.listViewKey,
+    required this.day,
+    required this.scrollController,
+  });
   final Key listViewKey;
   final Day day;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -302,6 +360,7 @@ class _Body extends StatelessWidget {
     }
 
     return ListView(
+      controller: scrollController,
       key: listViewKey,
       children: buildRows(freeClassroomsData),
     );
