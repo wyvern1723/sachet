@@ -72,6 +72,7 @@ flutter_launcher_icons:
   image_path: "assets/icon/icon.png"
   adaptive_icon_foreground: "assets/icon/icon-fg.png"
   adaptive_icon_background: "assets/icon/icon-bg.png"
+  adaptive_icon_monochrome: "assets/icon/icon-monochrome.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   windows:
     generate: true
@@ -82,7 +83,7 @@ flutter_launcher_icons:
 # 生成有关 splash screen 的文件
 # dart run flutter_native_splash:create
 flutter_native_splash:
-  image: assets/icon/icon-fg-1152x1152-without-shadow.png
+  image: assets/icon/icon-fg_1152x1152.png
   color: "#a5d6a7"
   color_dark: "#000000"
   fullscreen: true # 需要设为 true，否则会显示系统的状态栏
