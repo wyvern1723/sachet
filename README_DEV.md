@@ -6,7 +6,7 @@
 - JDK 17
 - Adroid SDK 35
 
-## 运行该软件
+## 构建该软件
 
 ### 配置 Flutter 开发环境
 
@@ -22,7 +22,158 @@
 > - 使用 [FVM](https://fvm.app) 管理 Flutter 版本。（配置可能较复杂，但 fvm 是长期开发 flutter 软件中非常实用的工具）
 > - 将 Flutter 降级至项目使用的版本。
 
-构建此项目时的 `flutter doctor -v` 输出：
+### Windows
+
+#### Windows 上的环境参考
+
+`flutter doctor -v` 输出：
+
+```txt
+[√] Flutter (Channel stable, 3.24.5, on Microsoft Windows [版本 10.0.19044.5487], locale zh-CN)
+    • Flutter version 3.24.5 on channel stable at C:\Users\You\fvm\versions\3.24.5
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision dec2ee5c1f (7 months ago), 2024-11-13 11:13:06 -0800
+    • Engine revision a18df97ca5
+    • Dart version 3.5.4
+    • DevTools version 2.37.3
+
+[√] Windows Version (Installed version of Windows is version 10 or higher)
+
+[√] Android toolchain - develop for Android devices (Android SDK version 35.0.1)
+    • Android SDK at C:\Users\You\AppData\Local\Android\sdk
+    • Platform android-35, build-tools 35.0.1
+    • Java binary at: C:\Program Files\Android\Android Studio\jbr\bin\java
+    • Java version OpenJDK Runtime Environment (build 21.0.5+-12932927-b750.29)
+    • All Android licenses accepted.
+
+[√] Chrome - develop for the web
+    • Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[√] Visual Studio - develop Windows apps (Visual Studio Community 2022 17.14.3)
+    • Visual Studio at C:\VS2022\Community
+    • Visual Studio Community 2022 version 17.14.36127.28
+    • Windows 10 SDK version 10.0.20348.0
+
+[√] Android Studio (version 2024.2)
+    • Android Studio at C:\Program Files\Android\Android Studio
+    • Flutter plugin can be installed from:
+       https://plugins.jetbrains.com/plugin/9212-flutter
+    • Dart plugin can be installed from:
+       https://plugins.jetbrains.com/plugin/6351-dart
+    • Java version OpenJDK Runtime Environment (build 21.0.5+-12932927-b750.29)
+
+[√] VS Code (version 1.101.0)
+    • VS Code at C:\Users\You\AppData\Local\Programs\Microsoft VS Code
+    • Flutter extension can be installed from:
+       https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
+
+[√] Connected device (3 available)
+    • Windows (desktop) • windows • windows-x64    • Microsoft Windows [版本 10.0.19044.5487]
+    • Chrome (web)      • chrome  • web-javascript • Google Chrome 137.0.7151.104
+    • Edge (web)        • edge    • web-javascript • Microsoft Edge 137.0.3296.68
+
+[√] Network resources
+    • All expected network resources are available.
+
+• No issues found!
+```
+
+#### Build Android APK on Windows
+
+1. 克隆项目：
+
+    `git clone https://github.com/wyvern1723/sachet.git`
+
+2. 进入项目文件夹：
+
+    `cd sachet`
+
+3. 下载使用的 packages：
+
+    `flutter pub get`
+
+4. 编译 apk：
+
+    `flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
+
+#### Build Windows on Windows
+
+1. Packages 的依赖
+
+    - flutter_inappwebview
+
+        下载 [nuget](https://learn.microsoft.com/en-us/nuget/install-nuget-client-tools?tabs=windows#nugetexe-cli)
+
+        并将 `nuget.exe` 所在的位置添加到环境变量的 `Path` 中。
+
+        更多：[Getting Started | InAppWebView](https://inappwebview.dev/docs/intro#setup-windows)
+
+    - [flutter\_secure\_storage](https://pub.dev/packages/flutter_secure_storage)
+
+        安装 Visual Studio Build Tools 时 安装 C++ ATL libraries:
+
+        - vs_buildtools.exe --locale en-US: `Desktop development with C++` 的 `Options` 中勾选 `C++ ATL for latest v143 build tools (x86 & x64)`
+
+            ![Visual Studio Installer 安装详细信息截图_英文界面](./docs/images/Visual_Studio_Installer_install_details_en.webp)
+
+        - vs_buildtools.exe --locale zh-CN: `使用 C++ 的桌面开发` 的 `可选` 中勾选 `适用于最新 v143 生成工具的 C++ ATL (x64 和 x86)`
+
+            ![Visual Studio Installer 安装详细信息截图_中文界面](./docs/images/Visual_Studio_Installer_install_details_zh.webp)
+
+        更多：[flutter\_secure\_storage/README.md](https://github.com/juliansteenbakker/flutter_secure_storage/blob/develop/README.md)
+
+2. 克隆项目：
+
+    `git clone https://github.com/wyvern1723/sachet.git`
+
+3. 进入项目文件夹：
+
+    `cd sachet`
+
+4. 下载使用的 packages：
+
+    `flutter pub get`
+
+5. 编译 Windows 版本：
+
+    `flutter build windows`
+
+    > 可能会有以下报错
+    >
+    > ```txt
+    > D:\Dev\sachet>flutter build windows
+    >
+    > CMake Warning (dev) at flutter/ephemeral/.plugin_symlinks/flutter_inappwebview_windows/windows/CMakeLists.txt:31 (add_custom_command):
+    > The following keywords are not supported when using
+    > add_custom_command(TARGET): DEPENDS.
+    >
+    > Policy CMP0175 is not set: add_custom_command() rejects invalid arguments.
+    > Run "cmake --help-policy CMP0175" for policy details.  Use the cmake_policy
+    > command to set the policy and suppress this warning.
+    > This warning is for project developers.  Use -Wno-dev to suppress it.
+    >
+    > D:\Dev\sachet\windows\flutter\ephemeral\.plugin_symlinks\flutter_inappwebview_windows\windows\utils\base64.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > D:\Dev\sachet\windows\flutter\ephemeral\.plugin_symlinks\flutter_inappwebview_windows\windows\types\web_resource_response.cpp(54,28): warning C4244: 'argument': conversion from '__int64' to 'int', possible loss of data [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > D:\Dev\sachet\build\windows\x64\packages\Microsoft.Web.WebView2\build\native\include\WebView2EnvironmentOptions.h(194,3): warning C4458: declaration of 'value' hides class member [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > D:\Dev\sachet\build\windows\x64\packages\Microsoft.Web.WebView2\build\native\include\WebView2EnvironmentOptions.h(193,3): warning C4458: declaration of 'value' hides class member [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > D:\Dev\sachet\build\windows\x64\packages\Microsoft.Web.WebView2\build\native\include\WebView2EnvironmentOptions.h(194,3): warning C4458: declaration of 'value' hides class member [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > D:\Dev\sachet\build\windows\x64\packages\Microsoft.Web.WebView2\build\native\include\WebView2EnvironmentOptions.h(193,3): warning C4458: declaration of 'value' hides class member [D:\Dev\sachet\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_plugin.vcxproj]
+    > Building Windows application...                                   207.2s
+    > √ Built build\windows\x64\runner\Release\sachet.exe
+    > ```
+    >
+    > 不用管它，成功 `√ Built build\windows\x64\runner\Release\sachet.exe` 就行。
+    >
+    > > It’s just a warning coming from the official Windows WebView2 library.
+    > > You can ignore that.
+    > >
+    > > [Latest flutter version 3.27.1 throws warning: warning C4458: declaration of 'value' hides class member when building for windows · Issue #2473 · pichillilorenzo/flutter\_inappwebview](https://github.com/pichillilorenzo/flutter_inappwebview/issues/2473)
+
+### Linux
+
+#### Linux 上的环境参考
+
+`flutter doctor -v` 输出：
 
 ```bash
 $ flutter doctor -v
@@ -66,41 +217,64 @@ $ flutter doctor -v
     • All expected network resources are available.
 ```
 
-### Build Android APK on Windows
+#### Build Android APK on Linux
 
-克隆项目：
+1. 克隆项目：
 
-`git clone https://github.com/wyvern1723/sachet.git`
+    `git clone https://github.com/wyvern1723/sachet.git`
 
-进入项目文件夹：
+2. 进入项目文件夹：
 
-`cd sachet`
+    `cd sachet`
 
-下载使用的 packages：
+3. 下载使用的 packages：
 
-`flutter pub get`
+    `flutter pub get`
 
-编译 apk：
+4. 编译 apk：
 
-`flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
+    `flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
 
-### Build Android APK on Linux
+#### Build Linux on Linux
 
-克隆项目：
+1. Packages 的依赖
 
-`git clone https://github.com/wyvern1723/sachet.git`
+    - [flutter\_secure\_storage](https://pub.dev/packages/flutter_secure_storage)
 
-进入项目文件夹：
+        - keyring servie
 
-`cd sachet`
+            依赖 keyring service，例如 `gnome-keyring` (GNOME) 或 `ksecretsservice` (KDE). 如果使用非完整桌面环境，需要自行安装一个 keyring service。
 
-下载使用的 packages：
+            例如 `gnome-keyring`，
 
-`flutter pub get`
+            - 下载：
+                - Debian/Ubuntu: `sudo apt install gnome-keyring`
+                - Arch: `sudo pacman -S gnome-keyring`
+                - Fedora: `sudo dnf install gnome-keyring`
 
-编译 apk：
+            - 启动服务：`gnome-keyring-daemon --start`
 
-`flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
+        - libseret-1-dev, libjsoncpp-dev
+
+            - Debian/Ubuntu: `sudo apt install libsecret-1-dev libjsoncpp-dev`
+
+        更多信息：[flutter\_secure\_storage/README.md](https://github.com/juliansteenbakker/flutter_secure_storage/blob/develop/README.md)
+
+2. 克隆项目：
+
+    `git clone https://github.com/wyvern1723/sachet.git`
+
+3. 进入项目文件夹：
+
+    `cd sachet`
+
+4. 下载使用的 packages：
+
+    `flutter pub get`
+
+5. 编译 Linux 版本：
+
+    `flutter build linux`
 
 ## TreeView 文件树
 
