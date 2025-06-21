@@ -34,6 +34,30 @@ String libraryLookUpUrl =
 /// 体测云网址（体测预约、选体育课）
 const String ticeyunUrl = 'http://xtu.ticeyun.com:90/weixin';
 
+/* 
+2025年6月12日，学校将校园邮箱从腾讯企业邮箱迁移至网易企业邮箱。
+
+- 原访问地址：
+
+  - 学生： https://mail.smail.xtu.edu.cn
+  - 教师： https://mail.xtu.edu.cn
+
+  在 mail.xtu.edu.cn 不能选择以学生账号登录，需要访问 mail.smail.xtu.edu.cn 才能登录学生邮箱。
+
+- 新访问地址：
+
+  - https://mail.xtu.edu.cn
+
+  在 mail.xtu.edu.cn 可以选择以学生/教师账号登录。
+  虽然通知上只说明了 https://mail.xtu.edu.cn 这一访问地址，其实旧的 mail.smail.xtu.edu.cn 依旧可以使用。
+  且访问 mail.smail.xtu.edu.cn 默认选择以学生账号登录，而访问 mail.xtu.edu.cn 默认选择以教师账号登录。
+  所以还将继续使用 https://mail.smail.xtu.edu.cn/ 这个地址。
+
+官方通知：
+[关于湘潭大学邮箱迁移的通知-湘潭大学网络与信息中心](https://nic.xtu.edu.cn/info/1014/2134.htm)
+[关于湘潭大学邮箱数据备份和平台切换的通知-湘潭大学](https://www.xtu.edu.cn/info/1373/22830.htm)
+[新邮箱登录操作说明-湘潭大学网络与信息中心](https://nic.xtu.edu.cn/info/1023/1186.htm)
+*/
 /// 湘大学生邮箱网址
 const String xtuMailUrl = 'https://mail.smail.xtu.edu.cn/';
 
