@@ -57,14 +57,12 @@ class NewVersionAvailableDialog extends StatelessWidget {
                 children: [
                   MarkdownBody(
                     data: latestReleaseNote ?? '',
-                    // style: Theme.of(context).textTheme.bodyMedium,
                     onTapLink: (text, href, title) {
                       if (href != null) {
                         launchUrl(Uri.parse(href));
                       }
                     },
                   ),
-                  // const SizedBox(height: 16.0),
                   TextButton(
                     onPressed: () async {
                       Navigator.pop(context);
@@ -88,25 +86,6 @@ class NewVersionAvailableDialog extends StatelessWidget {
           },
           child: const Text('下次再说'),
         ),
-        // TextButton(
-        //   onPressed: () async {
-        //     Navigator.pop(context, 'Cancel');
-        //   },
-        //   child: const Text('明天再提醒我'),
-        // ),
-        // TextButton(
-        //   onPressed: () async {
-        //     // TODO: set isAutoCheckUpdate = false;
-        //     // 关闭自动检查更新可能会错过重要更新，您确定吗？
-        //     // 软件还不完善，每次更新都会尽力修复存在的问题和增加实用的功能。
-        //     // 做到比上一个版本更好，不会反向升级。
-        //     // 确有需要才会推送更新（小更新可以放在 beta 频道）
-        //     // 我们推荐您使用最新版。
-        //     Navigator.pop(context, 'Cancel');
-        //   },
-        //   child: const Text('永远不要提醒我'),
-        // ),
-
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
