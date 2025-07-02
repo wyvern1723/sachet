@@ -73,7 +73,9 @@ class HomePage extends StatelessWidget {
         if (didPop) {
           return;
         }
-        Navigator.of(context).pushReplacementNamed(AppGlobal.startupPage);
+        if (SettingsProvider.navigationType == NavType.navigationDrawer.type) {
+          Navigator.of(context).pushReplacementNamed(AppGlobal.startupPage);
+        }
         context.read<ScreenNavProvider>().setCurrentPageToStartupPage();
       },
       child: Scaffold(

@@ -12,6 +12,8 @@ class NavDrawerMD3 extends StatefulWidget {
 }
 
 class _NavDrawerMD3State extends State<NavDrawerMD3> {
+  final List _routeNames = ['/class', '/home', '/settings', '/about'];
+
   Future _handleScreenChanged(String routeName) async {
     if (ScreenNavProvider.currentPage == routeName) {
       Navigator.pop(context);
@@ -34,9 +36,9 @@ class _NavDrawerMD3State extends State<NavDrawerMD3> {
   Widget build(BuildContext context) {
     return MyNavigationDrawer(
       onDestinationSelected: (index) {
-        _handleScreenChanged(routeNames[index]);
+        _handleScreenChanged(_routeNames[index]);
       },
-      selectedIndex: routeNames.indexOf(ScreenNavProvider.currentPage),
+      selectedIndex: _routeNames.indexOf(ScreenNavProvider.currentPage),
       children: <Widget>[
         MyUserAccountDrawerHeader(),
         ...destinations.map(

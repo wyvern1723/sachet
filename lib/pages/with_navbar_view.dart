@@ -1,58 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/profile_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/provider/app_global.dart';
+import 'package:sachet/provider/screen_nav_provider.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 
 const List _routeNames = ['/class', '/home', '/profile'];
 
-class WithNavigationBarView extends StatefulWidget {
+const List<NavDestination> _destinations = <NavDestination>[
+  NavDestination(
+      label: '课程表',
+      icon: Icon(Icons.calendar_month_outlined),
+      selectedIcon: Icon(Icons.calendar_month),
+      page: ClassPage(),
+      routeName: '/class'),
+  NavDestination(
+      label: 'Home',
+      // icon: Icon(Icons.category_outlined),
+      // selectedIcon: Icon(Icons.category),
+      icon: Icon(Icons.apps_outlined),
+      selectedIcon: Icon(Icons.apps_outlined),
+      page: HomePage(),
+      routeName: '/home'),
+  NavDestination(
+      label: '我',
+      icon: Icon(Icons.person_outlined),
+      selectedIcon: Icon(Icons.person),
+      page: SettingsPage(),
+      routeName: '/profile'),
+];
+
+class WithNavigationBarView extends StatelessWidget {
   /// 使用 NavigationBar 时的 View, 几个一级页面作为 body, 底部 bottomNavigationBar 用于导航
   const WithNavigationBarView({super.key});
 
   @override
-  State<WithNavigationBarView> createState() => _WithNavigationBarViewState();
-}
-
-class _WithNavigationBarViewState extends State<WithNavigationBarView> {
-  int currentPageIndex = _routeNames.indexOf(AppGlobal.appSettings.startupPage);
-
-  final List<NavDestination> _destinations = <NavDestination>[
-    NavDestination(
-        label: '课程表',
-        icon: Icon(Icons.calendar_month_outlined),
-        selectedIcon: Icon(Icons.calendar_month),
-        page: ClassPage(),
-        routeName: '/class'),
-    NavDestination(
-        label: 'Home',
-        // icon: Icon(Icons.category_outlined),
-        // selectedIcon: Icon(Icons.category),
-        icon: Icon(Icons.apps_outlined),
-        selectedIcon: Icon(Icons.apps_outlined),
-        page: HomePage(),
-        routeName: '/home'),
-    NavDestination(
-        label: '我',
-        icon: Icon(Icons.person_outlined),
-        selectedIcon: Icon(Icons.person),
-        page: SettingsPage(),
-        routeName: '/profile'),
-  ];
-
-  @override
   Widget build(BuildContext context) {
+    int currentPageIndex = _routeNames.indexOf(
+        context.select<ScreenNavProvider, String>(
+            (screenNavProvider) => ScreenNavProvider.currentPage));
     return Scaffold(
       body: [ClassPage(), HomePage(), ProfilePage()][currentPageIndex],
       bottomNavigationBar: Theme.of(context).useMaterial3
           ? NavigationBar(
               onDestinationSelected: (int index) {
                 if (index != currentPageIndex) {
-                  setState(() {
-                    currentPageIndex = index;
-                  });
+                  context
+                      .read<ScreenNavProvider>()
+                      .setCurrentPage(_routeNames[index]);
                 }
               },
               selectedIndex: currentPageIndex,
@@ -84,9 +81,9 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
               type: BottomNavigationBarType.fixed,
               onTap: (int index) {
                 if (index != currentPageIndex) {
-                  setState(() {
-                    currentPageIndex = index;
-                  });
+                  context
+                      .read<ScreenNavProvider>()
+                      .setCurrentPage(_routeNames[index]);
                 }
               },
             ),

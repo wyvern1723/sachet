@@ -4,8 +4,8 @@ import 'package:sachet/provider/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 class NavTypeDropdownmenu extends StatelessWidget {
-  const NavTypeDropdownmenu({super.key});
-
+  const NavTypeDropdownmenu({super.key, required this.onChangeNavType});
+  final Function onChangeNavType;
   @override
   Widget build(BuildContext context) {
     String navigationType = context.select<SettingsProvider, String>(
@@ -22,6 +22,7 @@ class NavTypeDropdownmenu extends StatelessWidget {
       onSelected: (String? type) {
         if (type != null) {
           context.read<SettingsProvider>().setNavigationType(type);
+          onChangeNavType(type);
         }
       },
       dropdownMenuEntries:

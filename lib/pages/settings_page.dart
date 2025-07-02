@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/provider/app_global.dart';
+import 'package:sachet/provider/screen_nav_provider.dart';
 import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/provider/user_provider.dart';
 import 'package:sachet/pages/settings_child_pages/dev_settings_page.dart';
@@ -39,24 +40,33 @@ class _SettingsPageState extends State<SettingsPage> {
 
   final _navType = SettingsProvider.navigationType;
 
+  /// NavType 是否与进入页面时不一样了
+  bool isNavTypeChanged = false;
+
+  void changeNavType(String type) {
+    setState(() {
+      isNavTypeChanged = (_navType != type);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: !isNavTypeChanged,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) {
           return;
         } else {
-          if (_navType != SettingsProvider.navigationType) {
-            SettingsProvider.navigationType == NavType.navigationDrawer.type
-                ? Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppGlobal.appSettings.startupPage ?? '/class',
-                    (Route route) => false)
-                : Navigator.pushNamedAndRemoveUntil(
-                    context, '/navBarView', (Route route) => false);
+          if (SettingsProvider.navigationType ==
+              NavType.navigationDrawer.type) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppGlobal.startupPage, (Route route) => false);
+            context
+                .read<ScreenNavProvider>()
+                .setCurrentPage(AppGlobal.startupPage);
           } else {
-            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/navBarView', (Route route) => false);
           }
         }
       },
@@ -66,14 +76,17 @@ class _SettingsPageState extends State<SettingsPage> {
           leading: IconButton(
               onPressed: () {
                 if (_navType != SettingsProvider.navigationType) {
-                  SettingsProvider.navigationType ==
-                          NavType.navigationDrawer.type
-                      ? Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          AppGlobal.appSettings.startupPage ?? '/class',
-                          (Route route) => false)
-                      : Navigator.pushNamedAndRemoveUntil(
-                          context, '/navBarView', (Route route) => false);
+                  if (SettingsProvider.navigationType ==
+                      NavType.navigationDrawer.type) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, AppGlobal.startupPage, (Route route) => false);
+                    context
+                        .read<ScreenNavProvider>()
+                        .setCurrentPage(AppGlobal.startupPage);
+                  } else {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/navBarView', (Route route) => false);
+                  }
                 } else {
                   Navigator.pop(context);
                 }
@@ -210,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
 
             // 应用导航方式设置
-            const ListTile(
+            ListTile(
               leading: Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
@@ -218,7 +231,11 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               title: Text('导航方式'),
               subtitle: Text('设置应用导航方式'),
-              trailing: NavTypeDropdownmenu(),
+              trailing: NavTypeDropdownmenu(
+                onChangeNavType: (type) {
+                  changeNavType(type);
+                },
+              ),
             ),
 
             // 高级设置
