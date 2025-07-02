@@ -28,6 +28,8 @@ class SettingsProvider extends ChangeNotifier {
   bool get hasReadDisclaimer => _appSettings.hasReadDisclaimer ?? false;
   static bool get isEnableCaptchaRecognizer =>
       _appSettings.isEnableCaptchaRecognizer ?? true;
+  static String get navigationType =>
+      _appSettings.navigationType ?? NavType.navigationDrawer.type;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -140,6 +142,14 @@ class SettingsProvider extends ChangeNotifier {
   void setIsEnableCaptchaRecognizer(bool value) {
     if (value != isEnableCaptchaRecognizer) {
       _appSettings.isEnableCaptchaRecognizer = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setNavigationType(String value) {
+    if (value != navigationType) {
+      _appSettings.navigationType = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

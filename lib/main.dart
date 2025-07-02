@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sachet/pages/profile_page.dart';
+import 'package:sachet/pages/with_navbar_view.dart';
 import 'package:sachet/provider/app_global.dart';
 import 'package:sachet/provider/course_card_settings_provider.dart';
 import 'package:sachet/provider/screen_nav_provider.dart';
@@ -81,13 +83,18 @@ class MyApp extends StatelessWidget {
                 },
               ),
             ),
-            initialRoute: AppGlobal.appSettings.startupPage ?? '/class',
+            initialRoute:
+                SettingsProvider.navigationType == NavType.navigationDrawer.type
+                    ? AppGlobal.appSettings.startupPage ?? '/class'
+                    : '/navBarView',
             routes: {
               '/class': (context) => ClassPage(),
               '/home': (context) => HomePage(),
               '/settings': (context) => SettingsPage(),
               '/about': (context) => AboutPage(),
               '/login': (context) => LoginPage(),
+              '/profile': (context) => ProfilePage(),
+              '/navBarView': (context) => WithNavigationBarView(),
             },
           );
         },

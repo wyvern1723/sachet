@@ -128,7 +128,9 @@ class _ClassPageViewState extends State<ClassPageView> {
         context.read<ScreenNavProvider>().setCurrentPageToStartupPage();
       },
       child: Scaffold(
-        drawer: myNavDrawer,
+        drawer: SettingsProvider.navigationType == NavType.navigationDrawer.type
+            ? myNavDrawer
+            : null,
         appBar: AppBar(
           // title: Text(
           //   "第$_currentWeekCount周",
@@ -207,7 +209,7 @@ class _ClassPageViewState extends State<ClassPageView> {
                 // 课表设置
                 PopupMenuItem(
                   onTap: () async {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    Navigator.of(context).push(MaterialPageRoute(
                       maintainState: false,
                       builder: (BuildContext context) {
                         return const CourseSettingsPage();

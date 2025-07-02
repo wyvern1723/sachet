@@ -7,6 +7,7 @@ import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
 import 'package:sachet/pages/home_child_pages/free_class_page.dart';
 import 'package:sachet/pages/home_child_pages/grade_page.dart';
+import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
@@ -76,7 +77,9 @@ class HomePage extends StatelessWidget {
         context.read<ScreenNavProvider>().setCurrentPageToStartupPage();
       },
       child: Scaffold(
-        drawer: myNavDrawer,
+        drawer: SettingsProvider.navigationType == NavType.navigationDrawer.type
+            ? myNavDrawer
+            : null,
         appBar: AppBar(
           title: const Text('Home'),
         ),

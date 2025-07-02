@@ -94,7 +94,14 @@ const defaultAppSettingsConfig = {
   "curveType": "Easing.standard", // 课表翻页动画类型
   "isEnableDevMode": false, // 是否启用开发者模式
   "hasReadDisclaimer": false, // 是否阅读过声明
-  "isEnableCaptchaRecognizer": true // 是否启用图片验证码自动识别
+  "isEnableCaptchaRecognizer": true, // 是否启用图片验证码自动识别
+  /*
+  navigationType 可用的值：
+  1. navigationDrawer
+  2. bottomNavigationBar
+  [Understanding navigation - Material Design](https://m2.material.io/design/navigation/understanding-navigation.html#lateral-navigation)
+  */
+  "navigationType": "navigationDrawer" // 应用导航方式（默认为抽屉式）
 };
 
 class AppSettings {
@@ -114,24 +121,27 @@ class AppSettings {
   bool? isEnableDevMode;
   bool? hasReadDisclaimer;
   bool? isEnableCaptchaRecognizer;
+  String? navigationType;
 
-  AppSettings(
-      {this.isMD3,
-      this.themeMode,
-      this.themeColor,
-      this.startupPage,
-      this.isAutoCheckUpdate,
-      this.isShowAllCheckUpdateResult,
-      this.isShowPageTurnArrow,
-      this.isShowOccupiedOrEmptyText,
-      this.classScheduleFilePath,
-      this.courseColorFilePath,
-      this.semesterStartDate,
-      this.curveDuration,
-      this.curveType,
-      this.isEnableDevMode,
-      this.hasReadDisclaimer,
-      this.isEnableCaptchaRecognizer});
+  AppSettings({
+    this.isMD3,
+    this.themeMode,
+    this.themeColor,
+    this.startupPage,
+    this.isAutoCheckUpdate,
+    this.isShowAllCheckUpdateResult,
+    this.isShowPageTurnArrow,
+    this.isShowOccupiedOrEmptyText,
+    this.classScheduleFilePath,
+    this.courseColorFilePath,
+    this.semesterStartDate,
+    this.curveDuration,
+    this.curveType,
+    this.isEnableDevMode,
+    this.hasReadDisclaimer,
+    this.isEnableCaptchaRecognizer,
+    this.navigationType,
+  });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
     isMD3 = json['isMD3'];
@@ -150,6 +160,7 @@ class AppSettings {
     isEnableDevMode = json['isEnableDevMode'];
     hasReadDisclaimer = json['hasReadDisclaimer'];
     isEnableCaptchaRecognizer = json['isEnableCaptchaRecognizer'];
+    navigationType = json['navigationType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -170,6 +181,7 @@ class AppSettings {
     data['isEnableDevMode'] = this.isEnableDevMode;
     data['hasReadDisclaimer'] = this.hasReadDisclaimer;
     data['isEnableCaptchaRecognizer'] = this.isEnableCaptchaRecognizer;
+    data['navigationType'] = this.navigationType;
     return data;
   }
 }
@@ -310,3 +322,12 @@ const curveTypes = {
   'Curves.fastOutSlowIn': Curves.fastOutSlowIn,
   'Curves.slowMiddle': Curves.slowMiddle,
 };
+
+enum NavType {
+  navigationDrawer('抽屉导航栏', 'navigationDrawer'),
+  bottomNavigationBar('底部导航栏', 'bottomNavigationBar');
+
+  const NavType(this.label, this.type);
+  final String label;
+  final String type;
+}
