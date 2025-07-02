@@ -227,10 +227,12 @@ class _ClassPageViewState extends State<ClassPageView> {
             ),
           ],
         ),
-        body: Selector<SettingsProvider, String>(
-            selector: (_, settingsProvider) =>
-                settingsProvider.classScheduleFilePath,
-            builder: (_, classScheduleFilePath, __) {
+        body: Selector<SettingsProvider, (String, Map?)>(
+            selector: (_, settingsProvider) => (
+                  settingsProvider.classScheduleFilePath,
+                  settingsProvider.courseColorData,
+                ),
+            builder: (_, __, ___) {
               return FutureBuilder(
                   future: context.read<SettingsProvider>().generatePageList(),
                   builder: (context, snapshot) {

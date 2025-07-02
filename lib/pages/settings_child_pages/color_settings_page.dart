@@ -51,6 +51,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
     } else if (result == true) {
       _getCurrentCourseColorData();
     }
+    await context.read<SettingsProvider>().refreshCourseColorData();
   }
 
   void showChangeColorDialog(String courseTitle) async {
@@ -76,8 +77,8 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         formatJsonEncode(_courseColorData),
         context.read<SettingsProvider>().courseColorFilePath,
       );
-
       // 刷新
+      await context.read<SettingsProvider>().refreshCourseColorData();
       setState(() {});
     }
   }
@@ -99,6 +100,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         );
       }
       // 刷新
+      await context.read<SettingsProvider>().refreshCourseColorData();
       setState(() {});
     } else {
       String? fileName = await showDialog(

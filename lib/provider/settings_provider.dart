@@ -155,6 +155,16 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Map? courseColorData;
+
+  Future refreshCourseColorData() async {
+    courseColorData = await CachedDataStorage().getDecodedData(
+      path: courseColorFilePath,
+      type: Map,
+    );
+    notifyListeners();
+  }
+
   /// 加载夏季作息的课程时间数据
   static Future<List> loadClassSessionSummerAsset() async {
     String data = await rootBundle
@@ -185,10 +195,12 @@ class SettingsProvider extends ChangeNotifier {
         courseScheduleItemsList = null;
       }
     }
-    Map courseColorData = await CachedDataStorage().getDecodedData(
-      path: courseColorFilePath,
-      type: Map,
-    );
+    if (courseColorData == null) {
+      courseColorData = await CachedDataStorage().getDecodedData(
+        path: courseColorFilePath,
+        type: Map,
+      );
+    }
     List classSessionSummerDataList = await loadClassSessionSummerAsset();
     List classSessionWinterDataList = await loadClassSessionWinterAsset();
     List<Widget> pageList = [];
@@ -196,7 +208,7 @@ class SettingsProvider extends ChangeNotifier {
       pageList.add(ClassSinglePage(
         weekCount: i,
         courseScheduleItemsList: courseScheduleItemsList,
-        courseColorData: courseColorData,
+        courseColorData: courseColorData ?? {},
         classSessionSummerDataList: classSessionSummerDataList,
         classSessionWinterDataList: classSessionWinterDataList,
       ));
