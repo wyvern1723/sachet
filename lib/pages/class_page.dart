@@ -137,7 +137,7 @@ class _ClassPageViewState extends State<ClassPageView> {
           // title: Text(
           //   "第$_currentWeekCount周",
           // ),
-          titleSpacing: 4.0,
+          titleSpacing: 16.0,
           title: WeekCountDropdownMenu(pageController: _pageController),
           actions: [
             // 是否显示翻页箭头
