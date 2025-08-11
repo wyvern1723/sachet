@@ -41,7 +41,7 @@ class _NavDrawerMD3State extends State<NavDrawerMD3> {
       selectedIndex: _routeNames.indexOf(ScreenNavProvider.currentPage),
       children: <Widget>[
         MyUserAccountDrawerHeader(),
-        ...destinations.map(
+        ...navDrawerDestinations.map(
           (NavDestination destination) {
             return NavigationDrawerDestination(
               label: Text(destination.label),

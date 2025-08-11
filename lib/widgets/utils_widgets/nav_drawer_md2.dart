@@ -40,7 +40,7 @@ class _NavDrawerMD2State extends State<NavDrawerMD2> {
   Widget _buildDrawerList() {
     return Column(
       children: [
-        ...destinations.map(
+        ...navDrawerDestinations.map(
           (NavDestination destination) {
             return ListTile(
               title: Text(destination.label),

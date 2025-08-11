@@ -33,7 +33,8 @@ class NavDestination {
   final String routeName;
 }
 
-const List<NavDestination> destinations = <NavDestination>[
+/// Drawer Nav (抽屉导航）的 destinations
+const List<NavDestination> navDrawerDestinations = <NavDestination>[
   NavDestination(
       label: '课程表',
       icon: Icon(Icons.calendar_month_outlined),

@@ -6,8 +6,10 @@ import 'package:sachet/pages/profile_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/provider/screen_nav_provider.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
+import 'package:sachet/widgets/utils_widgets/nav_bottom.dart';
+import 'package:sachet/widgets/utils_widgets/nav_side.dart';
 
-const List _routeNames = ['/class', '/home', '/profile'];
+const List<String> _routeNames = ['/class', '/home', '/profile'];
 
 const List<NavDestination> _destinations = <NavDestination>[
   NavDestination(
@@ -41,52 +43,38 @@ class WithNavigationBarView extends StatelessWidget {
     int currentPageIndex = _routeNames.indexOf(
         context.select<ScreenNavProvider, String>(
             (screenNavProvider) => ScreenNavProvider.currentPage));
-    return Scaffold(
-      body: [ClassPage(), HomePage(), ProfilePage()][currentPageIndex],
-      bottomNavigationBar: Theme.of(context).useMaterial3
-          ? NavigationBar(
-              onDestinationSelected: (int index) {
-                if (index != currentPageIndex) {
-                  context
-                      .read<ScreenNavProvider>()
-                      .setCurrentPage(_routeNames[index]);
-                }
-              },
-              selectedIndex: currentPageIndex,
-              destinations: <Widget>[
-                ..._destinations.map(
-                  (NavDestination destination) {
-                    return NavigationDestination(
-                      icon: destination.icon,
-                      selectedIcon: destination.selectedIcon,
-                      label: destination.label,
-                    );
-                  },
+    return LayoutBuilder(builder: (context, BoxConstraints constraints) {
+      // 是否宽屏。
+      // 为什么还要判断主题是否启用了 MD3 呢，
+      // 因为如果是 MD2 风格，AppBar 背景色为主题色,而侧边导航栏 NavigationRail 背景色是白色，看起来不协调。
+      // 启用 MD3 时，两者背景色都是白色。
+      // TODO: 优化 MaterialDesign2 时的宽屏模式（响应式设计）
+      final bool isWideScreenMode = (constraints.maxWidth > 600 &&
+          Theme.of(context).useMaterial3 == true);
+      return Scaffold(
+        body: Row(
+          children: [
+            if (isWideScreenMode)
+              SafeArea(
+                child: NavSide(
+                  destinations: _destinations,
+                  routeNames: _routeNames,
+                  currentPageIndex: currentPageIndex,
                 ),
-              ],
-            )
-          : BottomNavigationBar(
-              items: <BottomNavigationBarItem>[
-                ..._destinations.map(
-                  (NavDestination destination) {
-                    return BottomNavigationBarItem(
-                      icon: destination.icon,
-                      activeIcon: destination.selectedIcon,
-                      label: destination.label,
-                    );
-                  },
-                ),
-              ],
-              currentIndex: currentPageIndex,
-              type: BottomNavigationBarType.fixed,
-              onTap: (int index) {
-                if (index != currentPageIndex) {
-                  context
-                      .read<ScreenNavProvider>()
-                      .setCurrentPage(_routeNames[index]);
-                }
-              },
+              ),
+            Expanded(
+              child: [ClassPage(), HomePage(), ProfilePage()][currentPageIndex],
             ),
-    );
+          ],
+        ),
+        bottomNavigationBar: !isWideScreenMode
+            ? NavBottom(
+                destinations: _destinations,
+                routeNames: _routeNames,
+                currentPageIndex: currentPageIndex,
+              )
+            : null,
+      );
+    });
   }
 }
