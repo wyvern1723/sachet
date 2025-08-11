@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 class CardLinkWidget extends StatelessWidget {
   const CardLinkWidget({
@@ -18,7 +18,7 @@ class CardLinkWidget extends StatelessWidget {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
-        onTap: () => launchUrl(Uri.parse(link)),
+        onTap: () => openLink(link),
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: link));
           ScaffoldMessenger.of(context).showSnackBar(

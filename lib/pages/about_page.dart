@@ -6,6 +6,7 @@ import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/utils/auto_check_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -157,7 +158,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
             title: const Text('开发者'),
             subtitle: const Text('Wyvern1723'),
-            onTap: () => launchUrl(Uri.parse(appDeveloperProfileUrl)),
+            onTap: () => openLink(appDeveloperProfileUrl),
           ),
           ListTile(
             leading: Align(
@@ -167,7 +168,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
             title: Text('源代码'),
             subtitle: Text(appRepoUrl),
-            onTap: () => launchUrl(Uri.parse(appRepoUrl)),
+            onTap: () => openLink(appRepoUrl),
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: appRepoUrl));
               ScaffoldMessenger.of(context).showSnackBar(
@@ -200,7 +201,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
             title: Text('最新版下载'),
             subtitle: Text(appReleaseUrl),
-            onTap: () => launchUrl(Uri.parse(appReleaseUrl)),
+            onTap: () => openLink(appReleaseUrl),
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: appReleaseUrl));
               ScaffoldMessenger.of(context).showSnackBar(

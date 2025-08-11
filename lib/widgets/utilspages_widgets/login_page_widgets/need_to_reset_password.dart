@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 class NeedToResetPasswordDialog extends StatelessWidget {
   const NeedToResetPasswordDialog({super.key});
@@ -29,7 +29,7 @@ class NeedToResetPasswordDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             Navigator.pop(context);
-            launchUrl(Uri.parse(jwxtBaseUrlHttps));
+            openLink(jwxtBaseUrlHttps);
           },
           child: Text('在浏览器访问教务系统'),
         ),

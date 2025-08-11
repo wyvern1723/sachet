@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/provider/settings_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future selectSemesterStartDate(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
@@ -20,4 +21,12 @@ Future selectSemesterStartDate(BuildContext context) async {
         .read<SettingsProvider>()
         .setSemesterStartDate(picked.toIso8601String());
   }
+}
+
+/// 打开链接
+Future openLink(String link) async {
+  LaunchMode launchMode = SettingsProvider.isOpenLinkInExternalBrowser
+      ? LaunchMode.externalApplication
+      : LaunchMode.inAppBrowserView;
+  await launchUrl(Uri.parse(link), mode: launchMode);
 }

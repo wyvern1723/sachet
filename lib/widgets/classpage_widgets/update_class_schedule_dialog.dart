@@ -9,7 +9,6 @@ import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum UpdateState {
   inquire, // 询问是否确认更新 (inquire vs none?)
@@ -258,7 +257,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    launchUrl(Uri.parse(xtuSchoolCalendarUrl));
+                    openLink(xtuSchoolCalendarUrl);
                   },
                   onLongPress: () {
                     Clipboard.setData(

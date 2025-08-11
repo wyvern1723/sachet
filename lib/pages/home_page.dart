@@ -8,11 +8,11 @@ import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
 import 'package:sachet/pages/home_child_pages/free_class_page.dart';
 import 'package:sachet/pages/home_child_pages/grade_page.dart';
 import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OpenLinkListTile {
   String title;
@@ -210,8 +210,7 @@ class HomePage extends StatelessWidget {
                     title: Text(openLinkListTileList[index].title),
                     subtitle: Text(openLinkListTileList[index].subtitle),
                     trailing: Icon(Icons.launch_outlined),
-                    onTap: () =>
-                        launchUrl(Uri.parse(openLinkListTileList[index].link)),
+                    onTap: () => openLink(openLinkListTileList[index].link),
                     onLongPress: () {
                       Clipboard.setData(ClipboardData(
                           text: openLinkListTileList[index].link));

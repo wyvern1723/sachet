@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 /// 有新版本可用 Dialog
 class NewVersionAvailableDialog extends StatelessWidget {
@@ -59,7 +59,7 @@ class NewVersionAvailableDialog extends StatelessWidget {
                     data: latestReleaseNote ?? '',
                     onTapLink: (text, href, title) {
                       if (href != null) {
-                        launchUrl(Uri.parse(href));
+                        openLink(href);
                       }
                     },
                   ),
@@ -68,7 +68,7 @@ class NewVersionAvailableDialog extends StatelessWidget {
                       Navigator.pop(context);
                       String? _latestTagUrl = latestTagUrl;
                       if (_latestTagUrl != null) {
-                        launchUrl(Uri.parse(_latestTagUrl));
+                        openLink(_latestTagUrl);
                       }
                     },
                     child: const Text('查看详细信息', style: TextStyle(fontSize: 14)),
@@ -95,7 +95,7 @@ class NewVersionAvailableDialog extends StatelessWidget {
             Navigator.pop(context);
             String? _downloadLink = downloadLink;
             if (_downloadLink != null) {
-              launchUrl(Uri.parse(_downloadLink));
+              openLink(_downloadLink);
             }
           },
           child: const Text('打开浏览器下载'),

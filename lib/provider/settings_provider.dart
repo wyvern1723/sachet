@@ -30,6 +30,8 @@ class SettingsProvider extends ChangeNotifier {
       _appSettings.isEnableCaptchaRecognizer ?? true;
   static String get navigationType =>
       _appSettings.navigationType ?? NavType.navigationDrawer.type;
+  static bool get isOpenLinkInExternalBrowser =>
+      _appSettings.isOpenLinkInExternalBrowser ?? false;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -150,6 +152,14 @@ class SettingsProvider extends ChangeNotifier {
   void setNavigationType(String value) {
     if (value != navigationType) {
       _appSettings.navigationType = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setIsOpenLinkInExternalBrowser(bool value) {
+    if (value != isOpenLinkInExternalBrowser) {
+      _appSettings.isOpenLinkInExternalBrowser = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

@@ -101,7 +101,8 @@ const defaultAppSettingsConfig = {
   2. bottomNavigationBar
   [Understanding navigation - Material Design](https://m2.material.io/design/navigation/understanding-navigation.html#lateral-navigation)
   */
-  "navigationType": "navigationDrawer" // 应用导航方式（默认为抽屉式）
+  "navigationType": "navigationDrawer", // 应用导航方式（默认为抽屉式）
+  "isOpenLinkInExternalBrowser": false // 是否在外部浏览器打开链接。否则使用 Android Custom Tabs
 };
 
 class AppSettings {
@@ -122,6 +123,7 @@ class AppSettings {
   bool? hasReadDisclaimer;
   bool? isEnableCaptchaRecognizer;
   String? navigationType;
+  bool? isOpenLinkInExternalBrowser;
 
   AppSettings({
     this.isMD3,
@@ -141,6 +143,7 @@ class AppSettings {
     this.hasReadDisclaimer,
     this.isEnableCaptchaRecognizer,
     this.navigationType,
+    this.isOpenLinkInExternalBrowser,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -161,6 +164,7 @@ class AppSettings {
     hasReadDisclaimer = json['hasReadDisclaimer'];
     isEnableCaptchaRecognizer = json['isEnableCaptchaRecognizer'];
     navigationType = json['navigationType'];
+    isOpenLinkInExternalBrowser = json['isOpenLinkInExternalBrowser'];
   }
 
   Map<String, dynamic> toJson() {
@@ -182,6 +186,7 @@ class AppSettings {
     data['hasReadDisclaimer'] = this.hasReadDisclaimer;
     data['isEnableCaptchaRecognizer'] = this.isEnableCaptchaRecognizer;
     data['navigationType'] = this.navigationType;
+    data['isOpenLinkInExternalBrowser'] = this.isOpenLinkInExternalBrowser;
     return data;
   }
 }
