@@ -73,7 +73,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
       currentState = UpdateState.updating;
     });
     await getClassScheduleData(selectedSemester).then(
-      (pathList) {
+      (pathList) async {
         if (!mounted) {
           // 如果取消，不保存
           // TODO: 只是没有保存和应用获取到的课表数据，实际上后台还是在获取课表。
@@ -82,7 +82,9 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
         // 修改当前课程表文件
         context.read<SettingsProvider>().setClassScheduleFilePath(pathList[0]);
         // 修改当前课程对应的配色文件
-        context.read<SettingsProvider>().setCourseColorFilePath(pathList[1]);
+        await context
+            .read<SettingsProvider>()
+            .setCourseColorFilePath(pathList[1]);
         setState(() {
           currentState = UpdateState.setSemesterStartDate;
         });

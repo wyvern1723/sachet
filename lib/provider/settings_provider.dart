@@ -85,11 +85,11 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void setCourseColorFilePath(String value) {
+  Future setCourseColorFilePath(String value) async {
     if (value != courseColorFilePath) {
       _appSettings.courseColorFilePath = value;
       AppGlobal.saveAppSettings();
-      notifyListeners();
+      await refreshCourseColorData();
     }
   }
 

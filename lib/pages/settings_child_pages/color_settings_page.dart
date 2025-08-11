@@ -46,12 +46,14 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
       ),
     );
     if (result is String) {
-      context.read<SettingsProvider>().setCourseColorFilePath(result);
+      // 返回结果为 String: 配色文件路径改变，需要更新配色文件路径。
+      await context.read<SettingsProvider>().setCourseColorFilePath(result);
       _getCurrentCourseColorData();
     } else if (result == true) {
+      // 返回结果为 true: 配色文件被修改，配色文件路径不变，需要更新之前读取的配色数据。
+      await context.read<SettingsProvider>().refreshCourseColorData();
       _getCurrentCourseColorData();
     }
-    await context.read<SettingsProvider>().refreshCourseColorData();
   }
 
   void showChangeColorDialog(String courseTitle) async {
@@ -121,7 +123,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         String appDir = await CachedDataStorage().getPath();
         String filePath =
             '$appDir${Platform.pathSeparator}${AppFolder.courseColor.name}${Platform.pathSeparator}$fileName.json';
-        context.read<SettingsProvider>().setCourseColorFilePath(filePath);
+        await context.read<SettingsProvider>().setCourseColorFilePath(filePath);
         isCurrentCourseColorFileExist = true;
       }
     }
