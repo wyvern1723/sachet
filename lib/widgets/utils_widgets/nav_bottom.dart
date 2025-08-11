@@ -62,6 +62,10 @@ class NavBottom extends StatelessWidget {
                     .setCurrentPage(routeNames[index]);
               }
             },
+            showUnselectedLabels: false,
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
+            landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
           );
   }
 }

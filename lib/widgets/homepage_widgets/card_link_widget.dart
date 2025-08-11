@@ -26,7 +26,7 @@ class CardLinkWidget extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -27,7 +27,7 @@ class CardWidget extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
           width: double.infinity,
           child: Column(
             children: [
