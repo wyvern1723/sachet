@@ -58,13 +58,16 @@ class ClassPageProvider extends ChangeNotifier {
     }
   }
 
-  // PageController _pageController = PageController(initialPage: 2);
-  // PageController get pageController => _pageController;
+  PageController _pageController = PageController(
+      initialPage: min(
+              weekCountOfToday(
+                  DateTime.parse(SettingsProvider.semesterStartDate)),
+              20) -
+          1);
+  PageController get pageController => _pageController;
 
-  // void updatePageController(int index) {
-
-  //     _pageController = PageController(initialPage: index - 1);
-  //     notifyListeners();
-
-  // }
+  void updatePageController(int index) {
+    _pageController = PageController(initialPage: index - 1);
+    notifyListeners();
+  }
 }

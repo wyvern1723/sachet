@@ -6,11 +6,7 @@ import 'package:sachet/widgets/modified_widgets/my_drop_down_menu.dart';
 import 'package:provider/provider.dart';
 
 class WeekCountDropdownMenu extends StatefulWidget {
-  const WeekCountDropdownMenu({
-    super.key,
-    required this.pageController,
-  });
-  final PageController pageController;
+  const WeekCountDropdownMenu({super.key});
 
   @override
   State<WeekCountDropdownMenu> createState() => _WeekCountDropdownMenuState();
@@ -47,12 +43,11 @@ class _WeekCountDropdownMenuState extends State<WeekCountDropdownMenu> {
       ),
       onSelected: (int? page) {
         if (page != null) {
-          // context.watch<ClassPageModel>().updateCurrentWeekCount(page);
-          widget.pageController.animateToPage(
-            page - 1,
-            duration: Duration(milliseconds: curveDuration),
-            curve: curveTypes[curveType] ?? Easing.standard,
-          );
+          context.read<ClassPageProvider>().pageController.animateToPage(
+                page - 1,
+                duration: Duration(milliseconds: curveDuration),
+                curve: curveTypes[curveType] ?? Easing.standard,
+              );
         }
       },
       dropdownMenuEntries: pageMenuList.map((int value) {
