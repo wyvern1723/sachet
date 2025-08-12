@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/utils/services/path_provider_service.dart';
@@ -310,32 +311,60 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
               await showDeleteCachedDataDialog();
             },
           ),
-          Selector<SettingsProvider, bool>(
-              selector: (_, settingsProvider) =>
-                  SettingsProvider.isOpenLinkInExternalBrowser,
-              builder: (_, isOpenLinkInExternalBrowser, __) {
-                return ListTile(
-                  leading: Align(
-                    widthFactor: 1,
-                    alignment: Alignment.centerLeft,
-                    child: isOpenLinkInExternalBrowser
-                        ? const Icon(Icons.open_in_new)
-                        : const Icon(Icons.open_in_new_off),
-                  ),
-                  title: const Text('在外部浏览器打开链接'),
-                  subtitle: isOpenLinkInExternalBrowser
-                      ? const Text('在外部浏览器打开（打开链接时离开应用）')
-                      : const Text('在 Android Custom Tabs 打开（打开链接时不离开应用）'),
-                  trailing: Switch(
-                    value: isOpenLinkInExternalBrowser,
-                    onChanged: (value) {
-                      context
-                          .read<SettingsProvider>()
-                          .setIsOpenLinkInExternalBrowser(value);
-                    },
-                  ),
-                );
-              }),
+          if (defaultTargetPlatform == TargetPlatform.android)
+            Selector<SettingsProvider, bool>(
+                selector: (_, settingsProvider) =>
+                    SettingsProvider.isOpenLinkInExternalBrowser,
+                builder: (_, isOpenLinkInExternalBrowser, __) {
+                  return ListTile(
+                    leading: Align(
+                      widthFactor: 1,
+                      alignment: Alignment.centerLeft,
+                      child: isOpenLinkInExternalBrowser
+                          ? const Icon(Icons.open_in_new)
+                          : const Icon(Icons.open_in_new_off),
+                    ),
+                    title: const Text('在外部浏览器打开链接'),
+                    subtitle: isOpenLinkInExternalBrowser
+                        ? const Text('在外部浏览器打开（打开链接时离开应用）')
+                        : const Text('在 Android Custom Tabs 打开（打开链接时不离开应用）'),
+                    trailing: Switch(
+                      value: isOpenLinkInExternalBrowser,
+                      onChanged: (value) {
+                        context
+                            .read<SettingsProvider>()
+                            .setIsOpenLinkInExternalBrowser(value);
+                      },
+                    ),
+                  );
+                }),
+          if (defaultTargetPlatform == TargetPlatform.iOS)
+            Selector<SettingsProvider, bool>(
+                selector: (_, settingsProvider) =>
+                    SettingsProvider.isOpenLinkInExternalBrowser,
+                builder: (_, isOpenLinkInExternalBrowser, __) {
+                  return ListTile(
+                    leading: Align(
+                      widthFactor: 1,
+                      alignment: Alignment.centerLeft,
+                      child: isOpenLinkInExternalBrowser
+                          ? const Icon(Icons.open_in_new)
+                          : const Icon(Icons.open_in_new_off),
+                    ),
+                    title: const Text('在外部浏览器打开链接'),
+                    subtitle: isOpenLinkInExternalBrowser
+                        ? const Text('在外部浏览器打开（打开链接时离开应用）')
+                        : const Text('在 SFSafariViewController 打开（打开链接时不离开应用）'),
+                    trailing: Switch(
+                      value: isOpenLinkInExternalBrowser,
+                      onChanged: (value) {
+                        context
+                            .read<SettingsProvider>()
+                            .setIsOpenLinkInExternalBrowser(value);
+                      },
+                    ),
+                  );
+                }),
           Selector<SettingsProvider, bool>(
               selector: (_, settingsProvider) =>
                   SettingsProvider.isEnableCaptchaRecognizer,
