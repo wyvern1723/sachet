@@ -64,13 +64,17 @@ class SnackbarGlobal {
       backgroundColor: Theme.of(context).colorScheme.onErrorContainer,
       content: Row(
         children: [
-          Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
+          Icon(Icons.warning,
+              color: Theme.of(context).colorScheme.errorContainer),
           const SizedBox(width: 20),
-          Text(
-            '从 Github 服务器获取更新信息失败',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onInverseSurface,
-              fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+          Flexible(
+            child: Text(
+              '从 Github 服务器获取更新信息失败',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onInverseSurface,
+                fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+              ),
+              softWrap: true,
             ),
           ),
         ],

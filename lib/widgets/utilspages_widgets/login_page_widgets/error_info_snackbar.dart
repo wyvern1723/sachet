@@ -12,14 +12,18 @@ SnackBar errorInfoSnackBar(BuildContext context, String errorText) {
       children: [
         Icon(
           Icons.warning,
-          color: Theme.of(context).colorScheme.error,
+          color: Theme.of(context).colorScheme.errorContainer,
         ),
         const SizedBox(width: 20),
-        Text(
-          errorText,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onInverseSurface,
-            fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+        Flexible(
+          child: Text(
+            errorText,
+            style: TextStyle(
+              // color: Theme.of(context).colorScheme.onInverseSurface,
+              color: Theme.of(context).colorScheme.error,
+              fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+            ),
+            softWrap: true,
           ),
         ),
       ],
