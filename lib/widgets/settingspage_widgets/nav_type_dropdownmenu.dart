@@ -15,8 +15,19 @@ class NavTypeDropdownmenu extends StatelessWidget {
       initialSelection: navigationType,
       requestFocusOnTap: false,
       enableSearch: false,
-      inputDecorationTheme: const InputDecorationTheme(
+      inputDecorationTheme: InputDecorationTheme(
         filled: true,
+        fillColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+          return switch ((
+            Theme.of(context).brightness,
+            states.contains(WidgetState.disabled)
+          )) {
+            (Brightness.dark, true) => const Color(0x0DFFFFFF), //  5% white
+            (Brightness.dark, false) => const Color(0x1AFFFFFF), // 10% white
+            (Brightness.light, true) => const Color(0x05000000), //  2% black
+            (Brightness.light, false) => const Color(0x0A000000), //  4% black
+          };
+        }),
         contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       ),
       onSelected: (String? type) {

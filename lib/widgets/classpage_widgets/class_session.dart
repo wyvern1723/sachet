@@ -18,9 +18,8 @@ class ClassSession extends StatelessWidget {
   Widget build(BuildContext context) {
     double cardHeight = context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardHeight);
-    return Container(
+    return SizedBox(
       height: cardHeight,
-      color: Theme.of(context).colorScheme.surface,
       child: Center(
         child: SingleChildScrollView(
           child: Padding(

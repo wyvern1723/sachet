@@ -28,10 +28,15 @@ class _WeekCountDropdownMenuState extends State<WeekCountDropdownMenu> {
       selectedTrailingIcon: const SizedBox.shrink(),
       menuHeight: 500,
       textStyle: TextStyle(
-          color: Theme.of(context).useMaterial3 &&
-                  Theme.of(context).brightness == Brightness.light
-              ? Colors.black
-              : Colors.white,
+          color: Theme.of(context).useMaterial3
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).brightness == Brightness.light
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface,
+          // OR:
+          // color: (!Theme.of(context).useMaterial3 && Theme.of(context).brightness == Brightness.light)
+          //     ? Theme.of(context).colorScheme.onPrimary
+          //     : Theme.of(context).colorScheme.onSurface,
           fontSize: 18,
           fontWeight: FontWeight.w500),
       menuStyle: const MenuStyle(),
