@@ -6,6 +6,7 @@ class ThemeProvider extends ChangeNotifier {
   AppSettings get _appSettings => AppGlobal.appSettings;
 
   bool get isMD3 => _appSettings.isMD3 ?? false;
+  bool get isUsingDynamicColors => _appSettings.isUsingDynamicColors ?? false;
   int get themeMode => _appSettings.themeMode ?? 0;
   Color get themeColor =>
       colorFromHex(_appSettings.themeColor ?? "#FF64C564") ?? Color(0xFF64C564);
@@ -29,6 +30,14 @@ class ThemeProvider extends ChangeNotifier {
   void setThemeColor(Color color) {
     if (colorToHex(color) != _appSettings.themeColor) {
       _appSettings.themeColor = colorToHex(color);
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setIsUsingDynamicColors(bool isDynamicColors) {
+    if (isDynamicColors != isUsingDynamicColors) {
+      _appSettings.isUsingDynamicColors = isDynamicColors;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

@@ -22,39 +22,38 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  url_launcher: ^6.3.1 # (调起浏览器)打开链接
 
   # 文件
-  shared_preferences: ^2.3.5 # 存储不重要的数据(设置等)
-  path_provider: ^2.1.5 # 获取文件系统路径(Android/data、下载路径……)
-  file_picker: ^8.1.7 # 调起系统文件选择器
-  flutter_secure_storage: ^9.2.4 # 安全储存用户敏感信息
-  path: ^1.9.0 # 关于文件路径的操作，目前用于从文件路径提取文件名
+  shared_preferences: ^2.3.5      # 存储不重要的数据(设置等)
+  path_provider: ^2.1.5           # 获取文件系统路径(Android/data、下载路径……)
+  file_picker: ^8.1.7             # 调起系统文件选择器
+  flutter_secure_storage: ^9.2.4  # 安全储存用户敏感信息
+  path: ^1.9.0                    # 关于文件路径的操作，目前用于从文件路径提取文件名
 
   # 状态管理
   provider: ^6.1.2 
 
   # 网络
-  http: ^1.2.2 # Flutter 官方的 http 包
+  http: ^1.2.2                    # Flutter 官方的 http 包
   html: ^0.15.5
-  dio: ^5.7.0 # Dio，flutter 中常用的网络包
-  flutter_inappwebview: ^6.1.5 # 应用内显示 webview, 用于手动登录
-
-  flutter_gbk2utf8: ^1.0.1 # 解码 GBK
-
-  # 颜色选择器
-  flutter_colorpicker: ^1.1.0 # 颜色选择器
-
-  # 辅助生成项目文件的 package，应用代码中没有依赖它们(生成后删除以下两行无影响)
-  flutter_native_splash: ^2.4.4 # 生成 splash screen (应用启动时的界面)
-  flutter_launcher_icons: ^0.14.2 # 生成应用图标
-
-  package_info_plus: ^8.1.2 # 用于获取应用当前版本信息
-  flutter_markdown: ^0.7.7 # 用于渲染更新内容的 Markdown
+  dio: ^5.7.0                     # Dio，flutter 中常用的网络包
+  flutter_inappwebview: ^6.1.5    # 应用内显示 webview, 用于手动登录
 
   # 验证码图片自动识别(TensorFlow)
-  tflite_flutter: ^0.11.0  # TensorFlow Lite(TFlite、LiteRT) 库
-  image: ^4.1.0            # 对验证码图片进行预先处理（灰度化、二值化）
+  tflite_flutter: ^0.11.0         # TensorFlow Lite(TFlite、LiteRT) 库
+  image: ^4.1.0                   # 对验证码图片进行预先处理（灰度化、二值化）
+
+  # 辅助生成项目文件的 package，应用代码中没有依赖它们(生成后删除以下两行无影响)
+  flutter_native_splash: ^2.4.4   # 生成 splash screen (应用启动时的界面)
+  flutter_launcher_icons: ^0.14.2 # 生成应用图标
+
+  # 其他
+  url_launcher: ^6.3.1            # (调起浏览器)打开链接
+  flutter_gbk2utf8: ^1.0.1        # 解码 GBK
+  flutter_colorpicker: ^1.1.0     # 颜色选择器
+  package_info_plus: ^8.1.2       # 用于获取应用当前版本信息
+  flutter_markdown: ^0.7.7        # 用于渲染更新内容的 Markdown
+  dynamic_color: 1.7.0            # 动态取色 [动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)
 
 dev_dependencies:
   flutter_test:

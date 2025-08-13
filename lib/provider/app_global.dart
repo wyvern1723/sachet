@@ -102,7 +102,10 @@ const defaultAppSettingsConfig = {
   [Understanding navigation - Material Design](https://m2.material.io/design/navigation/understanding-navigation.html#lateral-navigation)
   */
   "navigationType": "navigationDrawer", // 应用导航方式（默认为抽屉式）
-  "isOpenLinkInExternalBrowser": false // 是否在外部浏览器打开链接。否则使用 Android Custom Tabs
+  "isOpenLinkInExternalBrowser": false, // 是否在外部浏览器打开链接。否则使用 Android Custom Tabs
+  // 是否使用动态取色的颜色作为应用主题色
+  //（官方叫[动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)，但国内叫「动态取色」更多也更易理解）。默认不启用，因为国内魔改 Android 系统五花八门，不确定具体实现的效果，而且我不喜欢。
+  "isUsingDynamicColors": false
 };
 
 class AppSettings {
@@ -124,6 +127,7 @@ class AppSettings {
   bool? isEnableCaptchaRecognizer;
   String? navigationType;
   bool? isOpenLinkInExternalBrowser;
+  bool? isUsingDynamicColors;
 
   AppSettings({
     this.isMD3,
@@ -144,6 +148,7 @@ class AppSettings {
     this.isEnableCaptchaRecognizer,
     this.navigationType,
     this.isOpenLinkInExternalBrowser,
+    this.isUsingDynamicColors,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -165,6 +170,7 @@ class AppSettings {
     isEnableCaptchaRecognizer = json['isEnableCaptchaRecognizer'];
     navigationType = json['navigationType'];
     isOpenLinkInExternalBrowser = json['isOpenLinkInExternalBrowser'];
+    isUsingDynamicColors = json['isUsingDynamicColors'];
   }
 
   Map<String, dynamic> toJson() {
@@ -187,6 +193,7 @@ class AppSettings {
     data['isEnableCaptchaRecognizer'] = this.isEnableCaptchaRecognizer;
     data['navigationType'] = this.navigationType;
     data['isOpenLinkInExternalBrowser'] = this.isOpenLinkInExternalBrowser;
+    data['isUsingDynamicColors'] = this.isUsingDynamicColors;
     return data;
   }
 }

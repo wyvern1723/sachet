@@ -60,20 +60,47 @@ class ThemeSettingsPage extends StatelessWidget {
                   }),
             ),
 
-            // 可折叠（可展开）选择主题颜色 ListTile
-            ExpansionTile(
-              leading: const Align(
+            // 动态取色开关
+            ListTile(
+              leading: Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.palette),
+                child: Icon(
+                  Icons.colorize,
+                  color: themeProvider.isUsingDynamicColors
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                ),
               ),
-              title: const Text('选择主题颜色'),
-              subtitle: Text('0x${colorToHex(themeProvider.themeColor)}'),
-              children: const [
-                SizedBox(height: 10),
-                ChooseThemeColor(),
-                SizedBox(height: 20),
-              ],
+              title: const Text('动态取色'),
+              subtitle: const Text('从壁纸提取主题色'),
+              trailing: Switch(
+                  value: themeProvider.isUsingDynamicColors,
+                  onChanged: (value) {
+                    context
+                        .read<ThemeProvider>()
+                        .setIsUsingDynamicColors(value);
+                  }),
+            ),
+
+            // 如果启用动态取色，隐藏这个供用户自定义主题色的组件
+            Offstage(
+              offstage: themeProvider.isUsingDynamicColors,
+              // 可折叠（可展开）选择主题颜色 ListTile
+              child: ExpansionTile(
+                leading: const Align(
+                  widthFactor: 1,
+                  alignment: Alignment.centerLeft,
+                  child: Icon(Icons.palette),
+                ),
+                title: const Text('选择主题颜色'),
+                subtitle: Text('0x${colorToHex(themeProvider.themeColor)}'),
+                children: const [
+                  SizedBox(height: 10),
+                  ChooseThemeColor(),
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
           ],
         ),
