@@ -19,8 +19,7 @@ SnackBar errorInfoSnackBar(BuildContext context, String errorText) {
           child: Text(
             errorText,
             style: TextStyle(
-              // color: Theme.of(context).colorScheme.onInverseSurface,
-              color: Theme.of(context).colorScheme.error,
+              color: Theme.of(context).colorScheme.onInverseSurface,
               fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
             ),
             softWrap: true,

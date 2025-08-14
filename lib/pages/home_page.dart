@@ -90,6 +90,7 @@ class HomePage extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const CardWidget(
                   title: '空闲教室',
@@ -126,17 +127,11 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '打开外部网站',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    '打开外部网站',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),

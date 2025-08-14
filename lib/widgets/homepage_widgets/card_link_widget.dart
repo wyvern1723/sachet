@@ -25,14 +25,14 @@ class CardLinkWidget extends StatelessWidget {
             SnackBar(content: Text("链接已复制到剪贴板")),
           );
         },
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
             children: [
               Icon(icon),
-              SizedBox(width: 16),
               Text(title),
             ],
           ),
