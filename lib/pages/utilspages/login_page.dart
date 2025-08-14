@@ -2,22 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/model/captcha_recognizer.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/provider/user_provider.dart';
+import 'package:sachet/models/store_item.dart';
+import 'package:sachet/models/user.dart';
+import 'package:sachet/services/captcha_recognizer.dart';
+import 'package:sachet/services/login.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/pages/utilspages/manual_login_page.dart';
-import 'package:sachet/model/login.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/load_captcha_img_error_widget.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/logging_in_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/login_successful_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/password_form_field.dart';
-import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/fill_in_cookie_dialog.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/log_in_use_cookie_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/use_cookie_login_successful_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/username_form_field.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/verifycode_form_field.dart';
-import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/need_to_reset_password.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/need_to_reset_password_dialog.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -212,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
   Future loginUseCookie(BuildContext context) async {
     String? cookie = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) => FillInCookieDialog(),
+      builder: (BuildContext context) => LogInUseCookieDialog(),
     );
     if (cookie != null) {
       await LoginModel().confirmLogin(cookie).then((List userInfo) async {

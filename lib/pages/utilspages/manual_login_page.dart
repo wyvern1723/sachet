@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/provider/user_provider.dart';
-import 'package:sachet/model/login.dart';
+import 'package:sachet/models/user.dart';
+import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/services/login.dart';
 import 'package:sachet/widgets/utilspages_widgets/manual_login_page_widgets/manual_login_successful_dialog.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';

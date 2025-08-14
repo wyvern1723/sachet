@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/provider/theme_provider.dart';
+import 'package:sachet/providers/theme_provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/theme_settings_widgets/choose_theme_mode_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/theme_settings_widgets/pick_theme_color_dialog.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

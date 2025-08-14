@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/app_global.dart';
-import 'package:sachet/provider/screen_nav_provider.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/provider/class_page_provider.dart';
+import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/utils/app_global.dart';
+import 'package:sachet/providers/screen_nav_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/classpage_appbar.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:provider/provider.dart';

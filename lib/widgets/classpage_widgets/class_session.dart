@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/course_card_settings_provider.dart';
+import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:provider/provider.dart';
 
 class ClassSession extends StatelessWidget {

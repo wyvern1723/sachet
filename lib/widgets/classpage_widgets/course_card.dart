@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:sachet/model/get_web_data/process_data/get_class_schedule.dart';
-import 'package:sachet/provider/course_card_settings_provider.dart';
-import 'package:sachet/model/course_model.dart';
+import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/providers/course_card_settings_provider.dart';
+import 'package:sachet/utils/course_info_helper.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
 import 'package:provider/provider.dart';
 
@@ -35,19 +35,19 @@ class CourseCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        List weeks = CourseModel().getWeeksOfCourse(
+        List weeks = CourseInfoHelper.getWeeksOfCourse(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List lengths = CourseModel().getLengths(
+        List lengths = CourseInfoHelper.getLengths(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List instructors = CourseModel().getInstructors(
+        List instructors = CourseInfoHelper.getInstructors(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List places = CourseModel().getPlaces(
+        List places = CourseInfoHelper.getPlaces(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );

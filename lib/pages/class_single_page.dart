@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/model/get_web_data/process_data/get_class_schedule.dart';
-import 'package:sachet/model/time_manager.dart';
-import 'package:sachet/provider/course_card_settings_provider.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/providers/course_card_settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/class_session_routine_column.dart';
 import 'package:sachet/widgets/classpage_widgets/course_card.dart';
 import 'package:sachet/widgets/classpage_widgets/day_of_the_week_topbar.dart';

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sachet/pages/settings_child_pages/view_data_page.dart';
 import 'package:sachet/utils/custom_route.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/classpage_widgets/rename_app_file_dialog.dart';
 import 'package:intl/intl.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:sachet/model/get_web_data/process_data/get_class_schedule.dart';
+import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/widgets/classpage_widgets/course_card.dart';
 
 // 预览卡片 Widget

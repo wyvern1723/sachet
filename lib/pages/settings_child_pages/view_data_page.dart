@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 
 class ViewCachedDataPage extends StatefulWidget {
   const ViewCachedDataPage({super.key, required this.filePath});

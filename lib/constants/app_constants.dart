@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 final DateTime constSemesterStartDate = DateTime(2025, 2, 17);
 
-const appPackageName = "io.github.wyvern1723.sachet";
-
-const abi = String.fromEnvironment('abi', defaultValue: "arm64-v8a");
-
 /// 应用预设主题色（MaterialColor）
 const List defaultThemeColors = <MaterialColor>[
   Colors.indigo,

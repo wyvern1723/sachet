@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 enum StartupPageLabel {

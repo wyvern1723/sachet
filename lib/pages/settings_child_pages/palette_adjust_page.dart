@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/add_new_color_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/change_color_dialog.dart';

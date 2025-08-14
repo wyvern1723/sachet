@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../provider/grade_page_provider.dart';
+import '../../../providers/grade_page_provider.dart';
 import '../../utils_widgets/login_expired.dart';
 
 class GradeSimple extends StatefulWidget {
@@ -15,14 +15,6 @@ class GradeSimple extends StatefulWidget {
 }
 
 class _GradeSimpleState extends State<GradeSimple> {
-  // late Future<List> getDataFuture;
-
-  @override
-  void initState() {
-    // getDataFuture = getExamScoresGradeData('');
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     context.select<GradePageProvider, String>(

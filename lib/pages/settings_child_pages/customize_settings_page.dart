@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/course_card_settings_provider.dart';
+import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_double_value_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/preview_card.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';

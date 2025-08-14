@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/theme_provider.dart';
+import 'package:sachet/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class ChooseThemeModeDialog extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/model/get_web_data/get_cacheable_data/get_exam_time.dart';
-import 'package:sachet/widgets/homepage_widgets/exam_page_widgets/change_semester_dialog.dart';
-import 'package:sachet/widgets/homepage_widgets/exam_page_widgets/exam_time_widgets.dart';
+import 'package:sachet/services/get_jwxt_data/get_cacheable_data/get_exam_time.dart';
+import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/change_semester_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/exam_time_widgets.dart';
 import 'package:sachet/widgets/utils_widgets/data_from_cache_or_http.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 

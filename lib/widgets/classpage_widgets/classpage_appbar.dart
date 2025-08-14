@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/model/time_manager.dart';
+import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
-import 'package:sachet/provider/app_global.dart';
-import 'package:sachet/provider/class_page_provider.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/utils/app_global.dart';
+import 'package:sachet/providers/class_page_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';

@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/login_page.dart';
-import 'package:sachet/provider/screen_nav_provider.dart';
-import 'package:sachet/provider/user_provider.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/providers/screen_nav_provider.dart';
+import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/logout_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Future showLogoutDialog() async {
+  Future showLogoutDialog(BuildContext context) async {
     var result = await showDialog(
         context: context, builder: (BuildContext context) => LogoutDialog());
     if (result != null) {
@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     subtitle: Text(data.id),
                     trailing: IconButton(
                         onPressed: () async {
-                          await showLogoutDialog();
+                          await showLogoutDialog(context);
                         },
                         tooltip: '退出登录',
                         icon: Icon(Icons.logout_outlined)),

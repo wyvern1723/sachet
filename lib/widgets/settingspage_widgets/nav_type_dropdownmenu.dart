@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/app_global.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 class NavTypeDropdownmenu extends StatelessWidget {

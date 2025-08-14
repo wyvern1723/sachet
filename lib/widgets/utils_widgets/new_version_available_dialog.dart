@@ -4,15 +4,6 @@ import 'package:sachet/utils/utils_funtions.dart';
 
 /// 有新版本可用 Dialog
 class NewVersionAvailableDialog extends StatelessWidget {
-  final String? appVersion;
-  final String? appBuildNumber;
-  final String? latestTagName;
-  final String? publishedDate;
-  final String? apkSizeMB;
-  final String? latestReleaseNote;
-  final String? latestTagUrl;
-  final String? downloadLink;
-
   const NewVersionAvailableDialog({
     super.key,
     required this.appVersion,
@@ -24,6 +15,24 @@ class NewVersionAvailableDialog extends StatelessWidget {
     required this.downloadLink,
     required this.latestTagUrl,
   });
+  final String? appVersion;
+  final String? appBuildNumber;
+
+  /// 最新版本的 tag (版本号)
+  final String? latestTagName;
+
+  /// 发布日期
+  final String? publishedDate;
+  final String? apkSizeMB;
+
+  /// releaseNote (更新内容)
+  final String? latestReleaseNote;
+
+  /// 最新一个 tag 的网页链接
+  final String? latestTagUrl;
+
+  /// 下载直链
+  final String? downloadLink;
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/utils/services/path_provider_service.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_duration_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
 import 'package:provider/provider.dart';

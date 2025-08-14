@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/app_global.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/provider/class_page_provider.dart';
+import 'package:sachet/utils/app_global.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/widgets/modified_widgets/my_drop_down_menu.dart';
 import 'package:provider/provider.dart';
 

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:sachet/provider/free_class_page_provider.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/model/get_web_data/process_data/get_free_class.dart';
+import 'package:sachet/providers/free_class_page_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/services/get_jwxt_data/process_data/get_free_classroom.dart';
 import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_fab.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +49,7 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
   }
 
   Future<List> getRoomData(Day day) async {
-    List<List<String>> freeClassRoomData = await getFreeClassData(day);
+    List<List<String>> freeClassRoomData = await getFreeClassroomData(day);
     context
         .read<FreeClassPageProvider>()
         .setAllClassroomsData(freeClassRoomData, day);

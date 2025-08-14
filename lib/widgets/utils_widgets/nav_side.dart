@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/provider/screen_nav_provider.dart';
-import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
+import 'package:sachet/models/nav_destination.dart';
+import 'package:sachet/providers/screen_nav_provider.dart';
 
 class NavSide extends StatelessWidget {
   final List<NavDestination> destinations;

@@ -7,7 +7,7 @@ import 'package:sachet/pages/settings_child_pages/cached_data_listview_page.dart
 import 'package:sachet/pages/settings_child_pages/class_schedule_data_listview_page.dart';
 import 'package:sachet/pages/settings_child_pages/course_color_data_listview_page.dart';
 import 'package:sachet/pages/settings_child_pages/other_data_listview_page.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/custom_route.dart';
 
 class DevSettingsPage extends StatelessWidget {

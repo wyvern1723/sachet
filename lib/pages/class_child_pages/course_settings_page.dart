@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/pages/settings_child_pages/palette_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/utils_funtions.dart';

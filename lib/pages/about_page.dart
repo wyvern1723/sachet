@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/provider/settings_provider.dart';
-import 'package:sachet/utils/auto_check_update.dart';
+import 'package:sachet/constants/app_info_constants.dart';
+import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/services/check_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,7 +26,7 @@ class _AboutPageState extends State<AboutPage> {
   int _tapCount = 0;
   late bool _isDeveloperModeEnabled;
 
-  void _hitDev() {
+  void _hitDev(BuildContext context) {
     Duration twoTapDuration =
         DateTime.now().difference(_lastTapTime ??= DateTime.now());
     // 如果间隔时间 < 500ms，记为有效 Tap => _tapCount++（如果是第一次 Tap，也记为有效 Tap）
@@ -69,6 +68,38 @@ class _AboutPageState extends State<AboutPage> {
       appVersion = packageInfo.version;
       appBuildNumber = packageInfo.buildNumber;
     });
+  }
+
+  void showAboutAppDialog(BuildContext context) {
+    showAboutDialog(
+      applicationName: 'Sachet',
+      applicationVersion: appVersion,
+      applicationIcon: SizedBox(
+        width: 74,
+        height: 94,
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6.0),
+            child: Image.asset(
+              'assets/icon/icon.png',
+              fit: BoxFit.fill,
+              width: 70,
+              height: 70,
+              cacheWidth:
+                  (70 * MediaQuery.of(context).devicePixelRatio).round(),
+              cacheHeight:
+                  (70 * MediaQuery.of(context).devicePixelRatio).round(),
+            ),
+          ),
+        ),
+      ),
+      applicationLegalese: '©2025 Wyvern1723',
+      children: [
+        const Text(
+            "Sachet is a FREE software published under MIT License and comes with ABSOLUTELY NO WARRANTY.")
+      ],
+      context: context,
+    );
   }
 
   @override
@@ -119,36 +150,7 @@ class _AboutPageState extends State<AboutPage> {
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('关于应用'),
-            onTap: () => showAboutDialog(
-              applicationName: 'Sachet',
-              applicationVersion: appVersion,
-              applicationIcon: SizedBox(
-                width: 74,
-                height: 94,
-                child: Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6.0),
-                    child: Image.asset(
-                      'assets/icon/icon.png',
-                      fit: BoxFit.fill,
-                      width: 70,
-                      height: 70,
-                      cacheWidth: (70 * MediaQuery.of(context).devicePixelRatio)
-                          .round(),
-                      cacheHeight:
-                          (70 * MediaQuery.of(context).devicePixelRatio)
-                              .round(),
-                    ),
-                  ),
-                ),
-              ),
-              applicationLegalese: '©2025 Wyvern1723',
-              children: [
-                const Text(
-                    "Sachet is a FREE software published under MIT License and comes with ABSOLUTELY NO WARRANTY.")
-              ],
-              context: context,
-            ),
+            onTap: () => showAboutAppDialog(context),
           ),
           ListTile(
             leading: const Align(
@@ -157,7 +159,7 @@ class _AboutPageState extends State<AboutPage> {
               child: Icon(Icons.person),
             ),
             title: const Text('开发者'),
-            subtitle: const Text('Wyvern1723'),
+            subtitle: const Text(authorName),
             onTap: () => openLink(appDeveloperProfileUrl),
           ),
           ListTile(
@@ -189,9 +191,7 @@ class _AboutPageState extends State<AboutPage> {
                 },
                 child: Text('检查更新')),
             subtitle: Text('v$appVersion ($appBuildNumber)  $abi'),
-            onTap: () {
-              _hitDev();
-            },
+            onTap: () => _hitDev(context),
           ),
           ListTile(
             leading: Align(
@@ -216,13 +216,12 @@ class _AboutPageState extends State<AboutPage> {
               child: Icon(Icons.email),
             ),
             title: Text('反馈'),
-            subtitle: Text('wyvern1723@outlook.com'),
-            onTap: () => launchUrl(Uri.parse("mailto:wyvern1723@outlook.com")),
+            subtitle: Text(authorMail),
+            onTap: () => launchUrl(Uri.parse("mailto:$authorMail")),
             onLongPress: () {
-              Clipboard.setData(
-                  ClipboardData(text: "mailto:wyvern1723@outlook.com"));
+              Clipboard.setData(ClipboardData(text: authorMail));
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("链接已复制到剪贴板")),
+                SnackBar(content: Text("邮箱地址已复制到剪贴板")),
               );
             },
           ),

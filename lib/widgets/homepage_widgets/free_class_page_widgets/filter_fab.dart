@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/free_class_page_provider.dart';
+import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:provider/provider.dart';
 
 /// 空闲教室页面的筛选 FloatingActionButton

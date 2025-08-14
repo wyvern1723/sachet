@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sachet/provider/course_card_settings_provider.dart';
+import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/change_color_dialog.dart';
@@ -18,6 +18,7 @@ class SetCourseCardAppearance extends StatefulWidget {
   final String dialogTitle;
   final IconData icon;
 
+  @override
   State<SetCourseCardAppearance> createState() =>
       _SetCourseCardAppearanceState();
 }

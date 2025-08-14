@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/model/get_web_data/process_data/get_exam_scores.dart';
+import 'package:sachet/services/get_jwxt_data/process_data/get_exam_scores.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 import 'package:provider/provider.dart';
 
-import '../../../provider/grade_page_provider.dart';
+import '../../../providers/grade_page_provider.dart';
 
 class GPAWidget extends StatelessWidget {
   /// GPAWidget Card

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/provider/user_provider.dart';
+import 'package:sachet/models/nav_destination.dart';
+import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
@@ -16,22 +17,6 @@ Widget myNavDrawer = Builder(
       ? const NavDrawerMD3()
       : const NavDrawerMD2(),
 );
-
-class NavDestination {
-  const NavDestination({
-    required this.label,
-    required this.icon,
-    required this.selectedIcon,
-    required this.page,
-    required this.routeName,
-  });
-
-  final String label;
-  final Widget icon;
-  final Widget selectedIcon;
-  final Widget page;
-  final String routeName;
-}
 
 /// Drawer Nav (抽屉导航）的 destinations
 const List<NavDestination> navDrawerDestinations = <NavDestination>[

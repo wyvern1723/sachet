@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/model/time_manager.dart';
+import 'package:sachet/services/time_manager.dart';
 
 import '../../utils/transform.dart';
 

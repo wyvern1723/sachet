@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/provider/app_global.dart';
-import 'package:sachet/provider/screen_nav_provider.dart';
+import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/utils/app_global.dart';
+import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
 import 'package:sachet/pages/home_child_pages/free_class_page.dart';
 import 'package:sachet/pages/home_child_pages/grade_page.dart';
-import 'package:sachet/provider/settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
