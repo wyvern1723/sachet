@@ -77,124 +77,86 @@ class MyApp extends StatelessWidget {
                 }
                 // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
 
-                return MaterialApp(
-                  title: 'Sachet',
-                  scaffoldMessengerKey: SnackbarGlobal.key,
-                  navigatorKey: NavigatorGlobal.navigatorKey,
-                  localizationsDelegates: const [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: const [
-                    Locale('zh', 'CN'), // 中文
-                  ],
-                  debugShowCheckedModeBanner: false,
-                  themeMode: ThemeMode.values[themeProvider.themeMode],
-                  theme: ThemeData(
-                    colorScheme: lightColorScheme,
-                    useMaterial3: themeProvider.isMD3 ? true : false,
-                    pageTransitionsTheme: PageTransitionsTheme(
-                      builders: <TargetPlatform, PageTransitionsBuilder>{
-                        TargetPlatform.android: themeProvider.transitionBuilder,
-                        TargetPlatform.iOS: themeProvider.transitionBuilder,
-                        TargetPlatform.macOS: themeProvider.transitionBuilder,
-                        TargetPlatform.fuchsia: themeProvider.transitionBuilder,
-                        TargetPlatform.linux: themeProvider.transitionBuilder,
-                        TargetPlatform.windows: themeProvider.transitionBuilder,
-                      },
-                    ),
-                  ),
-                  darkTheme: ThemeData(
-                    colorScheme: darkColorScheme,
-                    useMaterial3: themeProvider.isMD3 ? true : false,
-                    pageTransitionsTheme: PageTransitionsTheme(
-                      builders: <TargetPlatform, PageTransitionsBuilder>{
-                        TargetPlatform.android: themeProvider.transitionBuilder,
-                        TargetPlatform.iOS: themeProvider.transitionBuilder,
-                        TargetPlatform.macOS: themeProvider.transitionBuilder,
-                        TargetPlatform.fuchsia: themeProvider.transitionBuilder,
-                        TargetPlatform.linux: themeProvider.transitionBuilder,
-                        TargetPlatform.windows: themeProvider.transitionBuilder,
-                      },
-                    ),
-                  ),
-                  initialRoute: SettingsProvider.navigationType ==
-                          NavType.navigationDrawer.type
-                      ? AppGlobal.appSettings.startupPage ?? '/class'
-                      : '/navBarView',
-                  routes: {
-                    '/class': (context) => ClassPage(),
-                    '/home': (context) => HomePage(),
-                    '/settings': (context) => SettingsPage(),
-                    '/about': (context) => AboutPage(),
-                    '/login': (context) => LoginPage(),
-                    '/profile': (context) => ProfilePage(),
-                    '/navBarView': (context) => WithNavigationBarView(),
-                  },
+                return _buildMaterialApp(
+                  lightScheme: lightColorScheme,
+                  darkScheme: darkColorScheme,
+                  themeProvider: themeProvider,
                 );
               },
             );
           } else {
-            return MaterialApp(
-              title: 'Sachet',
-              scaffoldMessengerKey: SnackbarGlobal.key,
-              navigatorKey: NavigatorGlobal.navigatorKey,
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('zh', 'CN'), // 中文
-              ],
-              debugShowCheckedModeBanner: false,
-              themeMode: ThemeMode.values[themeProvider.themeMode],
-              theme: ThemeData(
-                colorSchemeSeed: themeProvider.themeColor,
-                brightness: Brightness.light,
-                useMaterial3: themeProvider.isMD3 ? true : false,
-                pageTransitionsTheme: PageTransitionsTheme(
-                  builders: <TargetPlatform, PageTransitionsBuilder>{
-                    TargetPlatform.android: themeProvider.transitionBuilder,
-                    TargetPlatform.iOS: themeProvider.transitionBuilder,
-                    TargetPlatform.macOS: themeProvider.transitionBuilder,
-                    TargetPlatform.fuchsia: themeProvider.transitionBuilder,
-                    TargetPlatform.linux: themeProvider.transitionBuilder,
-                    TargetPlatform.windows: themeProvider.transitionBuilder,
-                  },
-                ),
-              ),
-              darkTheme: ThemeData(
-                colorSchemeSeed: themeProvider.themeColor,
-                brightness: Brightness.dark,
-                useMaterial3: themeProvider.isMD3 ? true : false,
-                pageTransitionsTheme: PageTransitionsTheme(
-                  builders: <TargetPlatform, PageTransitionsBuilder>{
-                    TargetPlatform.android: themeProvider.transitionBuilder,
-                    TargetPlatform.iOS: themeProvider.transitionBuilder,
-                    TargetPlatform.macOS: themeProvider.transitionBuilder,
-                    TargetPlatform.fuchsia: themeProvider.transitionBuilder,
-                    TargetPlatform.linux: themeProvider.transitionBuilder,
-                    TargetPlatform.windows: themeProvider.transitionBuilder,
-                  },
-                ),
-              ),
-              initialRoute: SettingsProvider.navigationType ==
-                      NavType.navigationDrawer.type
-                  ? AppGlobal.appSettings.startupPage ?? '/class'
-                  : '/navBarView',
-              routes: {
-                '/class': (context) => ClassPage(),
-                '/home': (context) => HomePage(),
-                '/settings': (context) => SettingsPage(),
-                '/about': (context) => AboutPage(),
-                '/login': (context) => LoginPage(),
-                '/profile': (context) => ProfilePage(),
-                '/navBarView': (context) => WithNavigationBarView(),
-              },
+            final Color seed = themeProvider.themeColor;
+            final ColorScheme lightScheme = ColorScheme.fromSeed(
+                seedColor: seed, brightness: Brightness.light);
+            final ColorScheme darkScheme = ColorScheme.fromSeed(
+                seedColor: seed, brightness: Brightness.dark);
+
+            return _buildMaterialApp(
+              lightScheme: lightScheme,
+              darkScheme: darkScheme,
+              themeProvider: themeProvider,
             );
           }
+        },
+      ),
+    );
+  }
+
+  // 构建 MaterialApp（复用）
+  Widget _buildMaterialApp({
+    required ColorScheme lightScheme,
+    required ColorScheme darkScheme,
+    required ThemeProvider themeProvider,
+  }) {
+    final ThemeData theme = _buildThemeData(lightScheme, themeProvider);
+    final ThemeData darkTheme = _buildThemeData(darkScheme, themeProvider);
+
+    return MaterialApp(
+      title: 'Sachet',
+      scaffoldMessengerKey: SnackbarGlobal.key,
+      navigatorKey: NavigatorGlobal.navigatorKey,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('zh', 'CN'), // 中文
+      ],
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.values[themeProvider.themeMode],
+      theme: theme,
+      darkTheme: darkTheme,
+      initialRoute:
+          SettingsProvider.navigationType == NavType.navigationDrawer.type
+              ? AppGlobal.appSettings.startupPage ?? '/class'
+              : '/navBarView',
+      routes: {
+        '/class': (context) => ClassPage(),
+        '/home': (context) => HomePage(),
+        '/settings': (context) => SettingsPage(),
+        '/about': (context) => AboutPage(),
+        '/login': (context) => LoginPage(),
+        '/profile': (context) => ProfilePage(),
+        '/navBarView': (context) => WithNavigationBarView(),
+      },
+    );
+  }
+
+  // 构建 ThemeData（复用）
+  ThemeData _buildThemeData(
+      ColorScheme colorScheme, ThemeProvider themeProvider) {
+    return ThemeData(
+      colorScheme: colorScheme,
+      useMaterial3: themeProvider.isMD3,
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: themeProvider.transitionBuilder,
+          TargetPlatform.iOS: themeProvider.transitionBuilder,
+          TargetPlatform.macOS: themeProvider.transitionBuilder,
+          TargetPlatform.linux: themeProvider.transitionBuilder,
+          TargetPlatform.windows: themeProvider.transitionBuilder,
+          TargetPlatform.fuchsia: themeProvider.transitionBuilder,
         },
       ),
     );
