@@ -94,22 +94,28 @@ class MyApp extends StatelessWidget {
                   theme: ThemeData(
                     colorScheme: lightColorScheme,
                     useMaterial3: themeProvider.isMD3 ? true : false,
-                    pageTransitionsTheme: const PageTransitionsTheme(
+                    pageTransitionsTheme: PageTransitionsTheme(
                       builders: <TargetPlatform, PageTransitionsBuilder>{
-                        // Set the predictive back transitions for Android.
-                        TargetPlatform.android:
-                            PredictiveBackPageTransitionsBuilder(),
+                        TargetPlatform.android: themeProvider.transitionBuilder,
+                        TargetPlatform.iOS: themeProvider.transitionBuilder,
+                        TargetPlatform.macOS: themeProvider.transitionBuilder,
+                        TargetPlatform.fuchsia: themeProvider.transitionBuilder,
+                        TargetPlatform.linux: themeProvider.transitionBuilder,
+                        TargetPlatform.windows: themeProvider.transitionBuilder,
                       },
                     ),
                   ),
                   darkTheme: ThemeData(
                     colorScheme: darkColorScheme,
                     useMaterial3: themeProvider.isMD3 ? true : false,
-                    pageTransitionsTheme: const PageTransitionsTheme(
+                    pageTransitionsTheme: PageTransitionsTheme(
                       builders: <TargetPlatform, PageTransitionsBuilder>{
-                        // Set the predictive back transitions for Android.
-                        TargetPlatform.android:
-                            PredictiveBackPageTransitionsBuilder(),
+                        TargetPlatform.android: themeProvider.transitionBuilder,
+                        TargetPlatform.iOS: themeProvider.transitionBuilder,
+                        TargetPlatform.macOS: themeProvider.transitionBuilder,
+                        TargetPlatform.fuchsia: themeProvider.transitionBuilder,
+                        TargetPlatform.linux: themeProvider.transitionBuilder,
+                        TargetPlatform.windows: themeProvider.transitionBuilder,
                       },
                     ),
                   ),
@@ -148,11 +154,14 @@ class MyApp extends StatelessWidget {
                 colorSchemeSeed: themeProvider.themeColor,
                 brightness: Brightness.light,
                 useMaterial3: themeProvider.isMD3 ? true : false,
-                pageTransitionsTheme: const PageTransitionsTheme(
+                pageTransitionsTheme: PageTransitionsTheme(
                   builders: <TargetPlatform, PageTransitionsBuilder>{
-                    // Set the predictive back transitions for Android.
-                    TargetPlatform.android:
-                        PredictiveBackPageTransitionsBuilder(),
+                    TargetPlatform.android: themeProvider.transitionBuilder,
+                    TargetPlatform.iOS: themeProvider.transitionBuilder,
+                    TargetPlatform.macOS: themeProvider.transitionBuilder,
+                    TargetPlatform.fuchsia: themeProvider.transitionBuilder,
+                    TargetPlatform.linux: themeProvider.transitionBuilder,
+                    TargetPlatform.windows: themeProvider.transitionBuilder,
                   },
                 ),
               ),
@@ -160,11 +169,14 @@ class MyApp extends StatelessWidget {
                 colorSchemeSeed: themeProvider.themeColor,
                 brightness: Brightness.dark,
                 useMaterial3: themeProvider.isMD3 ? true : false,
-                pageTransitionsTheme: const PageTransitionsTheme(
+                pageTransitionsTheme: PageTransitionsTheme(
                   builders: <TargetPlatform, PageTransitionsBuilder>{
-                    // Set the predictive back transitions for Android.
-                    TargetPlatform.android:
-                        PredictiveBackPageTransitionsBuilder(),
+                    TargetPlatform.android: themeProvider.transitionBuilder,
+                    TargetPlatform.iOS: themeProvider.transitionBuilder,
+                    TargetPlatform.macOS: themeProvider.transitionBuilder,
+                    TargetPlatform.fuchsia: themeProvider.transitionBuilder,
+                    TargetPlatform.linux: themeProvider.transitionBuilder,
+                    TargetPlatform.windows: themeProvider.transitionBuilder,
                   },
                 ),
               ),

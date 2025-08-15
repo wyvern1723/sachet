@@ -18,6 +18,8 @@ class AppSettings {
   String? navigationType;
   bool? isOpenLinkInExternalBrowser;
   bool? isUsingDynamicColors;
+  String? pageTransition;
+  bool? isPredictiveBack;
 
   AppSettings({
     this.isMD3,
@@ -39,6 +41,8 @@ class AppSettings {
     this.navigationType,
     this.isOpenLinkInExternalBrowser,
     this.isUsingDynamicColors,
+    this.pageTransition,
+    this.isPredictiveBack,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -61,6 +65,8 @@ class AppSettings {
     navigationType = json['navigationType'];
     isOpenLinkInExternalBrowser = json['isOpenLinkInExternalBrowser'];
     isUsingDynamicColors = json['isUsingDynamicColors'];
+    pageTransition = json['pageTransition'];
+    isPredictiveBack = json['isPredictiveBack'];
   }
 
   Map<String, dynamic> toJson() {
@@ -84,6 +90,8 @@ class AppSettings {
     data['navigationType'] = this.navigationType;
     data['isOpenLinkInExternalBrowser'] = this.isOpenLinkInExternalBrowser;
     data['isUsingDynamicColors'] = this.isUsingDynamicColors;
+    data['pageTransition'] = this.pageTransition;
+    data['isPredictiveBack'] = this.isPredictiveBack;
     return data;
   }
 }

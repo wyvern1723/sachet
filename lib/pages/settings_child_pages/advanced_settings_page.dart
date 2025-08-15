@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sachet/models/page_transitions_type.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/providers/theme_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
+import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/page_transitions_dropdownmenu.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_duration_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
 import 'package:provider/provider.dart';
@@ -66,15 +69,83 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
             child: Row(
               children: [
                 Text(
-                  '动画设置',
+                  '应用动画',
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.animation_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
+              ],
+            ),
+          ),
+
+          // 页面过渡动画设置
+          ListTile(
+            leading: Align(
+              widthFactor: 1,
+              alignment: Alignment.centerLeft,
+              // child: Icon(Icons.web_stories_outlined),
+              // TODO: 寻找更合适的 Icon
+              child: Icon(Icons.animation_outlined),
+            ),
+            title: Text('页面过渡'), // PageTransition
+            subtitle: Text('页面过渡动画'),
+            trailing: PageTransitionsDropdownmenu(),
+          ),
+
+          // 预测性返回开关
+          if (defaultTargetPlatform == TargetPlatform.android)
+            Selector<ThemeProvider, String>(
+                selector: (_, themeProvider) => themeProvider.pageTransition,
+                builder: (_, pageTransition, __) {
+                  return Offstage(
+                    offstage:
+                        pageTransition != PageTransitionsType.zoom.storageValue,
+                    child: ListTile(
+                      leading: Align(
+                        widthFactor: 1,
+                        alignment: Alignment.centerLeft,
+                        // child: Icon(Icons.fiber_smart_record_outlined)
+                        // TODO: 寻找更合适的 Icon
+                        child: Icon(Icons.toll_outlined),
+                      ),
+                      title: Text('预测性返回'),
+                      subtitle: Text('启用预测性返回（预见式返回）手势 (Android 14+)'),
+                      trailing: Selector<ThemeProvider, bool>(
+                          selector: (_, themeProvider) =>
+                              themeProvider.isPredictiveBack,
+                          builder: (_, isPredictiveBack, __) {
+                            return Switch(
+                              value: isPredictiveBack,
+                              onChanged: (value) {
+                                context
+                                    .read<ThemeProvider>()
+                                    .setPredictiveBack(value);
+                              },
+                            );
+                          }),
+                    ),
+                  );
+                }),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            child: Row(
+              children: [
+                Text(
+                  '课程表页面动画',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(width: 4),
                 Icon(
                   Icons.animation_outlined,
                   color: Theme.of(context).colorScheme.primary,
@@ -93,7 +164,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     alignment: Alignment.centerLeft,
                     child: Icon(Icons.view_array_outlined),
                   ),
-                  title: const Text('课程表翻页动画'),
+                  title: const Text('翻页动画类型'),
                   subtitle: Text(curveType),
                   onTap: () async {
                     await showDialog(
@@ -134,9 +205,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4),
                 Icon(
                   Icons.build,
                   color: Theme.of(context).colorScheme.primary,
@@ -203,9 +272,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4),
                 Icon(
                   Icons.app_settings_alt,
                   color: Theme.of(context).colorScheme.primary,
@@ -299,18 +366,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   ),
                 );
               }),
-          ListTile(
-            leading: Align(
-              widthFactor: 1,
-              alignment: Alignment.centerLeft,
-              child: Icon(Icons.delete_forever),
-            ),
-            title: const Text('删除缓存数据'),
-            subtitle: const Text('删除「培养方案」、「考试时间」的缓存数据（不包括课程表）'),
-            onTap: () async {
-              await showDeleteCachedDataDialog();
-            },
-          ),
+
+          // 是否在外部浏览器打开链接开关
           if (defaultTargetPlatform == TargetPlatform.android)
             Selector<SettingsProvider, bool>(
                 selector: (_, settingsProvider) =>
@@ -365,6 +422,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     ),
                   );
                 }),
+
+          // 自动识别图片验证码开关
           Selector<SettingsProvider, bool>(
               selector: (_, settingsProvider) =>
                   SettingsProvider.isEnableCaptchaRecognizer,
@@ -387,6 +446,20 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   ),
                 );
               }),
+
+          // 删除缓存数据
+          ListTile(
+            leading: Align(
+              widthFactor: 1,
+              alignment: Alignment.centerLeft,
+              child: Icon(Icons.delete_forever),
+            ),
+            title: const Text('删除缓存数据'),
+            subtitle: const Text('删除「培养方案」、「考试时间」的缓存数据（不包括课程表）'),
+            onTap: () async {
+              await showDeleteCachedDataDialog();
+            },
+          ),
         ],
       ),
     );

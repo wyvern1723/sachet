@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/pages/settings_child_pages/palette_settings_page.dart';
-import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:intl/intl.dart';
 import '../settings_child_pages/customize_settings_page.dart';
@@ -62,8 +61,13 @@ class CourseSettingsPage extends StatelessWidget {
             subtitle: const Text('定制课程安排卡片外观'),
             trailing: Icon(Icons.arrow_forward_outlined),
             onTap: () {
-              Navigator.of(context)
-                  .push(slideTransitionPageRoute(CustomizeSettingsPage()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return const CustomizeSettingsPage();
+                  },
+                ),
+              );
             },
           ),
           // 配色管理
@@ -78,8 +82,13 @@ class CourseSettingsPage extends StatelessWidget {
             subtitle: const Text('调整课程对应的颜色'),
             trailing: Icon(Icons.arrow_forward_outlined),
             onTap: () {
-              Navigator.of(context)
-                  .push(slideTransitionPageRoute(ColorSettingsPage()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return const ColorSettingsPage();
+                  },
+                ),
+              );
             },
           ),
           // 配色管理
@@ -94,8 +103,13 @@ class CourseSettingsPage extends StatelessWidget {
             subtitle: const Text('修改、创建配色方案'),
             trailing: Icon(Icons.arrow_forward_outlined),
             onTap: () {
-              Navigator.of(context)
-                  .push(slideTransitionPageRoute(PaletteSettingsPage()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return const PaletteSettingsPage();
+                  },
+                ),
+              );
             },
           ),
         ],

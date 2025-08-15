@@ -107,7 +107,13 @@ const defaultAppSettingsConfig = {
   "isOpenLinkInExternalBrowser": false, // 是否在外部浏览器打开链接。否则使用 Android Custom Tabs
   // 是否使用动态取色的颜色作为应用主题色
   //（官方叫[动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)，但国内叫「动态取色」更多也更易理解）。默认不启用，因为国内魔改 Android 系统五花八门，不确定具体实现的效果，而且我不喜欢。
-  "isUsingDynamicColors": false
+  "isUsingDynamicColors": false,
+  // 页面过渡动画 (PageTransitionsBuilder)
+  // TODO: iOS 和 MacOS 改为默认 "cupertino"
+  "pageTransition": "zoom",
+  // 是否启用预测性返回手势
+  // [添加对预测性返回手势的支持  |  App architecture  |  Android Developers](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture?hl=zh-cn)
+  "isPredictiveBack": true
 };
 
 // 默认课程卡片外观设置

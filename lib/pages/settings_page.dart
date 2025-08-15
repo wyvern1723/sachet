@@ -250,8 +250,13 @@ class _SettingsPageState extends State<SettingsPage> {
               // subtitle: const Text('更多'),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
-                Navigator.of(context)
-                    .push(fadeTransitionPageRoute(AdvancedSettingsPage()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const AdvancedSettingsPage();
+                    },
+                  ),
+                );
               },
             ),
             // 开发者设置
