@@ -52,26 +52,6 @@ Future<List> getExamScoresGradeData(String semester) async {
   }
 }
 
-Future<List> getExamScoresGradeDataTest(String requiredSemester) async {
-  await Future.delayed(Duration(milliseconds: 1000));
-
-  return [
-    {
-      "序号": "1",
-      "开课学期": "$requiredSemester",
-      "课程名称": "$requiredSemester",
-      "总成绩": "80",
-      "学分": "6",
-      "总学时": "96",
-      "考核方式": "考试",
-      "课程属性": "必修",
-      "课程性质": "公共基础课",
-      "detailsUrl":
-          "/jsxsd/kscj/pscj_list.do?xs0101id=202305500304&jx0404id=202320241008134&zcj=优"
-    },
-  ];
-}
-
 /// 获取成绩查询的可选择学期
 Future getGradeSemesterData() async {
   var result = await fetchGradeSemesterData();

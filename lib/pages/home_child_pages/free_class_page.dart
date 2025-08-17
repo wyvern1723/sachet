@@ -149,7 +149,16 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                         ),
                       );
                     } else {
-                      return Text('${snapshot.error}');
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      );
                     }
                   } else {
                     return FreeRoomsColumn(
@@ -179,7 +188,16 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                         ),
                       );
                     } else {
-                      return Text('${snapshot.error}');
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      );
                     }
                   } else {
                     return FreeRoomsColumn(
@@ -263,9 +281,11 @@ class _Head extends StatelessWidget {
                   alignment: Alignment.center,
                   color: Theme.of(context).colorScheme.secondaryContainer,
                   margin: const EdgeInsets.all(2.0),
-                  child: Text(
-                    "${_classSessionList[index]}",
-                    style: TextStyle(fontSize: 10.0),
+                  child: FittedBox(
+                    child: Text(
+                      "${_classSessionList[index]}",
+                      style: TextStyle(fontSize: 10.0),
+                    ),
                   ),
                 ),
               );
@@ -321,28 +341,41 @@ class _Body extends StatelessWidget {
             ),
           ),
         ),
-        ...List.generate(
-          5,
-          (i) => list[index][i + 1] == '空'
-              ? Flexible(
-                  flex: 1,
-                  child: Container(
-                    alignment: Alignment.center,
-                    color: Colors.green.shade400,
-                    margin: const EdgeInsets.all(2.0),
-                    child: Text(isShowOccupiedOrEmptyText ? '空' : ''),
-                  ),
-                )
-              : Flexible(
-                  flex: 1,
-                  child: Container(
-                    alignment: Alignment.center,
-                    color: Colors.red.shade400,
-                    margin: const EdgeInsets.all(2.0),
-                    child: Text(isShowOccupiedOrEmptyText ? '满' : ''),
-                  ),
+        ...List.generate(5, (i) {
+          final status = list[index][i + 1];
+          switch (status) {
+            case '空':
+              return Flexible(
+                flex: 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.green.shade400,
+                  margin: const EdgeInsets.all(2.0),
+                  child: Text(isShowOccupiedOrEmptyText ? '空' : ''),
                 ),
-        )
+              );
+            case '满':
+              return Flexible(
+                flex: 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.red.shade400,
+                  margin: const EdgeInsets.all(2.0),
+                  child: Text(isShowOccupiedOrEmptyText ? '满' : ''),
+                ),
+              );
+            default:
+              return Flexible(
+                flex: 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.grey.shade400,
+                  margin: const EdgeInsets.all(2.0),
+                  child: Text(status),
+                ),
+              );
+          }
+        }),
       ];
     }
 
