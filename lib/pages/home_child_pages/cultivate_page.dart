@@ -45,34 +45,38 @@ class _CultivatePageState extends State<CultivatePage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(15.0),
-          child: FutureBuilder<List?>(
-            future: getDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  if (snapshot.error == '登录失效，请重新登录') {
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: LoginExpired(onGoBack: (value) => onGoBack(value)),
-                    );
-                  } else {
-                    return Text('${snapshot.error}');
-                  }
-                } else {
-                  return CultivatePlanTable(
-                    listData: snapshot.data![0],
-                    sourceData: snapshot.data![1],
-                  );
-                }
+      body: FutureBuilder<List?>(
+        future: getDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              if (snapshot.error == '登录失效，请重新登录') {
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: LoginExpired(onGoBack: (value) => onGoBack(value)),
+                  ),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('${snapshot.error}'),
+                );
               }
-              // By default, show a loading spinner.
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ),
+            } else {
+              return SingleChildScrollView(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                child: CultivatePlanTable(
+                  listData: snapshot.data![0],
+                  sourceData: snapshot.data![1],
+                ),
+              );
+            }
+          }
+          // By default, show a loading spinner.
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }

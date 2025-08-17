@@ -79,50 +79,52 @@ class _ExamTimePageState extends State<ExamTimePage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: FutureBuilder(
-            future: getDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  if (snapshot.error == '登录失效，请重新登录') {
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: LoginExpired(onGoBack: (value) => onGoBack(value)),
-                    );
-                  } else {
-                    return Text('${snapshot.error}');
-                  }
-                } else {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      isDoubleColumn
-                          ? DoubleColumn(data: snapshot.data[0]['data'])
-                          : SingleColumn(data: snapshot.data[0]['data']),
-                      SizedBox(height: 4),
-                      Text(
-                        '查询学期: ${snapshot.data[0]['semester']}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: DataFromCacheOrHttp(
-                          useCache: snapshot.data[1]['isUseCacheData'],
-                          updataTime: snapshot.data[1]['lastModifiedTime'],
-                        ),
-                      )
-                    ],
-                  );
-                }
+      body: FutureBuilder(
+        future: getDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              if (snapshot.error == '登录失效，请重新登录') {
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: LoginExpired(onGoBack: (value) => onGoBack(value)),
+                  ),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('${snapshot.error}'),
+                );
               }
-              // By default, show a loading spinner.
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ),
+            } else {
+              return ListView(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                children: [
+                  isDoubleColumn
+                      ? DoubleColumn(data: snapshot.data[0]['data'])
+                      : SingleColumn(data: snapshot.data[0]['data']),
+                  SizedBox(height: 4),
+                  Text(
+                    '查询学期: ${snapshot.data[0]['semester']}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: DataFromCacheOrHttp(
+                      useCache: snapshot.data[1]['isUseCacheData'],
+                      updataTime: snapshot.data[1]['lastModifiedTime'],
+                    ),
+                  )
+                ],
+              );
+            }
+          }
+          // By default, show a loading spinner.
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
