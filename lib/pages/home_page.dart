@@ -61,11 +61,18 @@ class HomePage extends StatelessWidget {
       icon: Icons.domain_outlined,
       link: xinXiMenHuBaseUrl,
     );
+    OpenLinkListTile newJwxt = OpenLinkListTile(
+      title: '新教务系统',
+      subtitle: newJwxtBaseUrl,
+      icon: Icons.public,
+      link: newJwxtBaseUrl,
+    );
     List<OpenLinkListTile> openLinkListTileList = [
       campusNetworkAuth,
       campusNetworkSelfService,
       jwxt,
       xinXiMenHu,
+      newJwxt,
     ];
 
     return PopScope(

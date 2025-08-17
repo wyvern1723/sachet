@@ -3,6 +3,12 @@ import 'dart:io';
 /// 教务系统网址（默认登录的网址，也是教务系统所有(?)功能的 baseURL）
 const String jwxtBaseUrlHttps = 'https://jwxt.xtu.edu.cn/jsxsd/';
 
+/*
+最早是 2025年6月 选课出现，当时只用于选课，其他功能还不可用，不知道以后会不会迁移到这个新教务系统。
+*/
+/// 新教务系统网址
+const String newJwxtBaseUrl = 'https://jw.xtu.edu.cn/jwglxt/';
+
 /// 信息门户网址
 const String xinXiMenHuBaseUrl = 'https://portal2020.xtu.edu.cn/cas/login';
 
