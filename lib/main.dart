@@ -77,23 +77,35 @@ class MyApp extends StatelessWidget {
                 }
                 // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
 
+                final ThemeData theme = _buildThemeDataFromColorScheme(
+                  colorScheme: lightColorScheme,
+                  brightness: Brightness.light,
+                  themeProvider: themeProvider,
+                );
+                final ThemeData darkTheme = _buildThemeDataFromColorScheme(
+                  colorScheme: darkColorScheme,
+                  brightness: Brightness.dark,
+                  themeProvider: themeProvider,
+                );
                 return _buildMaterialApp(
-                  lightScheme: lightColorScheme,
-                  darkScheme: darkColorScheme,
+                  theme: theme,
+                  darkTheme: darkTheme,
                   themeProvider: themeProvider,
                 );
               },
             );
           } else {
-            final Color seed = themeProvider.themeColor;
-            final ColorScheme lightScheme = ColorScheme.fromSeed(
-                seedColor: seed, brightness: Brightness.light);
-            final ColorScheme darkScheme = ColorScheme.fromSeed(
-                seedColor: seed, brightness: Brightness.dark);
-
+            final ThemeData theme = _buildThemeDataFromSeedColor(
+              brightness: Brightness.light,
+              themeProvider: themeProvider,
+            );
+            final ThemeData darkTheme = _buildThemeDataFromSeedColor(
+              brightness: Brightness.dark,
+              themeProvider: themeProvider,
+            );
             return _buildMaterialApp(
-              lightScheme: lightScheme,
-              darkScheme: darkScheme,
+              theme: theme,
+              darkTheme: darkTheme,
               themeProvider: themeProvider,
             );
           }
@@ -104,13 +116,10 @@ class MyApp extends StatelessWidget {
 
   // 构建 MaterialApp（复用）
   Widget _buildMaterialApp({
-    required ColorScheme lightScheme,
-    required ColorScheme darkScheme,
+    required ThemeData theme,
+    required ThemeData darkTheme,
     required ThemeProvider themeProvider,
   }) {
-    final ThemeData theme = _buildThemeData(lightScheme, themeProvider);
-    final ThemeData darkTheme = _buildThemeData(darkScheme, themeProvider);
-
     return MaterialApp(
       title: 'Sachet',
       scaffoldMessengerKey: SnackbarGlobal.key,
@@ -143,9 +152,32 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // 构建 ThemeData（复用）
-  ThemeData _buildThemeData(
-      ColorScheme colorScheme, ThemeProvider themeProvider) {
+  ThemeData _buildThemeDataFromSeedColor({
+    required Brightness brightness,
+    required ThemeProvider themeProvider,
+  }) {
+    return ThemeData(
+      colorSchemeSeed: themeProvider.themeColor,
+      brightness: brightness,
+      useMaterial3: themeProvider.isMD3,
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: themeProvider.transitionBuilder,
+          TargetPlatform.iOS: themeProvider.transitionBuilder,
+          TargetPlatform.macOS: themeProvider.transitionBuilder,
+          TargetPlatform.linux: themeProvider.transitionBuilder,
+          TargetPlatform.windows: themeProvider.transitionBuilder,
+          TargetPlatform.fuchsia: themeProvider.transitionBuilder,
+        },
+      ),
+    );
+  }
+
+  ThemeData _buildThemeDataFromColorScheme({
+    required ColorScheme colorScheme,
+    required Brightness brightness,
+    required ThemeProvider themeProvider,
+  }) {
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: themeProvider.isMD3,
