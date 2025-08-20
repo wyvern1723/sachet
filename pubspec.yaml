@@ -54,6 +54,7 @@ dependencies:
   package_info_plus: ^8.1.2       # 用于获取应用当前版本信息
   flutter_markdown: ^0.7.7        # 用于渲染更新内容的 Markdown
   dynamic_color: 1.7.0            # 动态取色 [动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)
+  pointycastle: ^4.0.0            # RSA 加密，用于正方教务系统登录时对用户密码的加密
 
 dev_dependencies:
   flutter_test:
