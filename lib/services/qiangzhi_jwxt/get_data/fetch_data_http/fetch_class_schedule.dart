@@ -1,10 +1,10 @@
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/dio_get_post_jwxt.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
-/// 从教务系统网站获取课表数据
+/// 从强智教务系统网站获取课表数据
 ///
 /// weekCount: 1-30(?); semester: 2023-2024-1/2023-2024-2/2024-2025-1/2024-2025-2
-Future fetchClassSchedule({
+Future fetchClassScheduleQZ({
   required int weekCount,
   required String semester,
 }) async {
@@ -12,7 +12,7 @@ Future fetchClassSchedule({
   // 默认的直接 get 就行，
   // refer https://jwxt.xtu.edu.cn/jsxsd/pyfa/pyfazd_query?Ves632DSdyV=NEW_XSD_PYGL
 
-  return await dioPOSTjwxt(
+  return await dioPOSTjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn/jsxsd/xskb/xskb_list.do',
     data: {
       'cj0701id': '',

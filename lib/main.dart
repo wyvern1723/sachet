@@ -13,7 +13,7 @@ import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/pages/utilspages/login_page.dart';
+import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/services/check_update.dart';
 import 'package:provider/provider.dart';
@@ -145,7 +145,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/settings': (context) => SettingsPage(),
         '/about': (context) => AboutPage(),
-        '/login': (context) => LoginPage(),
+        '/login': (context) => QiangZhiJwxtLoginPage(),
         '/profile': (context) => ProfilePage(),
         '/navBarView': (context) => WithNavigationBarView(),
       },

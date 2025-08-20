@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:sachet/models/app_folder.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/course_schedule_raw_data.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_class_schedule.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/generate_course_color.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_class_schedule.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/generate_course_color.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:html/parser.dart';
@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 /// 获取课程表文件（是一个庞大复杂的函数）
 ///
 /// return [生成的课程表文件路径，随机分配颜色的课程-颜色文件路径]
-Future<List<String>> getClassScheduleData(String semester) async {
+Future<List<String>> getClassScheduleDataQZ(String semester) async {
   List<List<CourseScheduleRawData>> courseses = [];
 
   // fetchDataDuration（获取数据的延迟，发现请求太快可能会发生错误，所以加入了一个保险的延迟）
@@ -22,7 +22,7 @@ Future<List<String>> getClassScheduleData(String semester) async {
 
   for (int i = 1; i < 21; i++) {
     /// 获取第 i 周数据
-    var weekiData = await fetchClassSchedule(
+    var weekiData = await fetchClassScheduleQZ(
       weekCount: i,
       semester: semester,
     );
@@ -95,10 +95,10 @@ Future<List<String>> getClassScheduleData(String semester) async {
 // 总项数 35 x (1~2) = 35 ~ 70 项，可见，极大的压缩了文件项数，让文件信息更集中，更容易处理数据。
 // TODO: 中间数据处理有些复杂，可以简化一下（因为这两个部分是分开写的，本来没考虑一步到位。）
   List<List<CourseSchedule>> classScheduleData =
-      getAllScheduleItemCourse(courseses);
+      _getAllScheduleItemCourse(courseses);
   // 把课程表文件储存到 AppSupportDir
   String outputClassScheduleFilePath =
-      await storeClassScheduleFile(classScheduleData, semester);
+      await _storeClassScheduleFile(classScheduleData, semester);
 
   // 获取课程名称 List
   List courseTitleList = getCourseList(classScheduleData: classScheduleData);
@@ -119,7 +119,7 @@ Future<List<String>> getClassScheduleData(String semester) async {
 /// 获取一个 ScheduleItem 内所有周次的课程信息。
 ///
 /// 一个 ScheduleItem：(1 2)节/(3 4)节/ 5 6)节/(7 8)节/(9 10 11) 节…… 共 5(ScheduleItem/天) x 7(天) = 35 ScheduleItems。
-List<CourseSchedule> getOneScheduleItemCourses({
+List<CourseSchedule> _getOneScheduleItemCourses({
   required List<CourseScheduleRawData> courseScheduleData,
   required int originItem,
   required int newItem,
@@ -196,12 +196,12 @@ List<CourseSchedule> getOneScheduleItemCourses({
 /// */
 ///
 /// return allScheduleItemCoursesData
-List<List<CourseSchedule>> getAllScheduleItemCourse(
+List<List<CourseSchedule>> _getAllScheduleItemCourse(
   List<List<CourseScheduleRawData>> classScheduleData,
 ) {
   List<List<CourseSchedule>> allScheduleItemCoursesData = [];
   for (int newItem in List.generate(35, (i) => i)) {
-    int originItem = getReoderIndex(newItem);
+    int originItem = _getReoderIndex(newItem);
     // 一个 scheduleItem 段 在所有周次的 课程信息 List
     List<CourseScheduleRawData> scheduleItemRawDataInAllWeeks = [];
     for (int weekCount = 1; weekCount < 21; weekCount++) {
@@ -209,7 +209,7 @@ List<List<CourseSchedule>> getAllScheduleItemCourse(
           classScheduleData[weekCount - 1][originItem];
       scheduleItemRawDataInAllWeeks.add(courseScheduleRawData);
     }
-    List<CourseSchedule> oneSessionCoursesData = getOneScheduleItemCourses(
+    List<CourseSchedule> oneSessionCoursesData = _getOneScheduleItemCourses(
         courseScheduleData: scheduleItemRawDataInAllWeeks,
         originItem: originItem,
         newItem: newItem);
@@ -237,7 +237,7 @@ List<List<CourseSchedule>> getAllScheduleItemCourse(
 /// 78      3   8  13  18  23  28  33
 /// 91011   4   9  14  19  24  29  34
 /// */
-int getReoderIndex(int o) {
+int _getReoderIndex(int o) {
   int result = (o % 5) * 7 + (o ~/ 5);
   return result;
 }
@@ -245,7 +245,7 @@ int getReoderIndex(int o) {
 /// 把课程表文件储存到 AppSupportDir
 ///
 /// return 储存课程表文件的路径
-Future<String> storeClassScheduleFile(
+Future<String> _storeClassScheduleFile(
     List allSessionsCoursesData, String semester) async {
   String fileName =
       "class_schedule_${semester}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json";

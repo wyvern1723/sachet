@@ -1,11 +1,10 @@
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/dio_get_post_jwxt.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
-/// 从教务系统网站获取成绩查询可选学期和当前学期
-Future<String> fetchExamTimeSemestersData() async {
-  return await dioGETjwxt(
-    url:
-        'https://jwxt.xtu.edu.cn/jsxsd/xsks/xsksap_query?Ves632DSdyV=NEW_XSD_KSBM',
+/// 从强智教务系统网站获取课表可选学期和当前学期
+Future<String> fetchClassScheduleSemestersDataQZ() async {
+  return await dioGETjwxtQZ(
+    url: 'https://jwxt.xtu.edu.cn/jsxsd/xskb/xskb_list.do',
     headers: {
       'Accept':
           'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',

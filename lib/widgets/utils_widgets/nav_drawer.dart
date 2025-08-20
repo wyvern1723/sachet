@@ -5,7 +5,7 @@ import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/pages/utilspages/login_page.dart';
+import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:provider/provider.dart';
 
 import 'nav_drawer_md2.dart';
@@ -64,7 +64,7 @@ class MyUserAccountDrawerHeader extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) {
-              return const LoginPage();
+              return const QiangZhiJwxtLoginPage();
             },
           ),
         );

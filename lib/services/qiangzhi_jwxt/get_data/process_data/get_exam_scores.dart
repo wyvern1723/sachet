@@ -1,11 +1,11 @@
 // 在成绩查询那一页上使用的数据的 model 都在这里
 
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_exam_scores.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_exam_scores.dart';
 import 'package:html/parser.dart';
 
 /// 获取考试成绩数据
-Future<List> getExamScoresGradeData(String semester) async {
-  var result = await fetchExamScoresGradeData(semester);
+Future<List> getExamScoresGradeDataQZ(String semester) async {
+  var result = await fetchExamScoresGradeDataQZ(semester);
 
   var document = parse(encoding: '', result);
   // pathElement 表示在 html DOM 里的位置，减少代码量。
@@ -54,7 +54,7 @@ Future<List> getExamScoresGradeData(String semester) async {
 
 /// 获取成绩查询的可选择学期
 Future getGradeSemesterData() async {
-  var result = await fetchGradeSemesterData();
+  var result = await fetchGradeSemesterDataQZ();
 
   var document = parse(encoding: '', result);
   var pathElement = document.getElementById('kksj');
@@ -73,7 +73,7 @@ Future getGradeSemesterData() async {
 
 /// 获取 GPA 和排名数据
 Future getGPAandRankData(String semester) async {
-  var result = await fetchGPAandRankData(semester);
+  var result = await fetchGPAandRankDataQZ(semester);
 
   var document = parse(encoding: '', result);
   var pathElement = document.getElementById('dataList')?.children[0];
@@ -103,7 +103,7 @@ Future getGPAandRankData(String semester) async {
 ///
 /// return ['平时成绩','平时成绩比例']
 Future<List<String>> getGeneralPerformanceMarksData(String detailsUrl) async {
-  var result = await fetchGeneralPerformanceMarksData(detailsUrl);
+  var result = await fetchGeneralPerformanceMarksDataQZ(detailsUrl);
 
   var document = parse(encoding: '', result);
   var pathElement =

@@ -1,9 +1,9 @@
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/dio_get_post_jwxt.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
-/// 从教务系统网站获取成绩查询的可选择学期
-Future fetchGradeSemesterData() async {
-  return await dioGETjwxt(
+/// 从强智教务系统网站获取成绩查询的可选择学期
+Future fetchGradeSemesterDataQZ() async {
+  return await dioGETjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn/jsxsd/kscj/cjcx_query',
     headers: {
       'Accept':
@@ -20,9 +20,9 @@ Future fetchGradeSemesterData() async {
   );
 }
 
-/// 从教务系统网站获取考试成绩数据
-Future<String> fetchExamScoresGradeData(String semester) async {
-  return await dioPOSTjwxt(
+/// 从强智教务系统网站获取考试成绩数据
+Future<String> fetchExamScoresGradeDataQZ(String semester) async {
+  return await dioPOSTjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn/jsxsd/kscj/cjcx_list',
     data: {'kksj': semester, 'kclb': '', 'kcmc': '', 'xsfs': 'all'},
     queryParameters: {"xq": semester},
@@ -46,9 +46,9 @@ Future<String> fetchExamScoresGradeData(String semester) async {
   );
 }
 
-/// 从教务系统网站获取 GPA 和排名数据
-Future fetchGPAandRankData(String semester) async {
-  return await dioPOSTjwxt(
+/// 从强智教务系统网站获取 GPA 和排名数据
+Future fetchGPAandRankDataQZ(String semester) async {
+  return await dioPOSTjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn/jsxsd/kscj/cjjd_list',
     data: {'kksj': semester, 'kclb': '1', 'zsb': ''},
     headers: {
@@ -71,9 +71,9 @@ Future fetchGPAandRankData(String semester) async {
   );
 }
 
-/// 从教务系统网站获取平时分数据
-Future<String> fetchGeneralPerformanceMarksData(String detailsUrl) async {
-  return await dioGETjwxt(
+/// 从强智教务系统网站获取平时分数据
+Future<String> fetchGeneralPerformanceMarksDataQZ(String detailsUrl) async {
+  return await dioGETjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn$detailsUrl',
     headers: {
       'Accept':

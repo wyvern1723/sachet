@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/get_exam_scores.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_scores.dart';
 
 class GradePageProvider extends ChangeNotifier {
   bool _isShowDetails = false; // 是否显示成绩的详细信息
@@ -20,12 +20,12 @@ class GradePageProvider extends ChangeNotifier {
   var data;
 
   Future<List> getExamScoresSimpleData() async {
-    data = await getExamScoresGradeData(_semester);
+    data = await getExamScoresGradeDataQZ(_semester);
     return data;
   }
 
   Future<List> getExamScoresDetailsData() async {
-    data = await getExamScoresGradeData(_semester);
+    data = await getExamScoresGradeDataQZ(_semester);
     await appendMoreDataToSimple(data);
     return data;
   }

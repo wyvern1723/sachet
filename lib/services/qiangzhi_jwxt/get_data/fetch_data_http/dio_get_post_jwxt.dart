@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 
-Future<String> dioGETjwxt({
+Future<String> dioGETjwxtQZ({
   required String url,
   required Map<String, dynamic>? headers,
 }) async {
@@ -50,7 +50,7 @@ Future<String> dioGETjwxt({
   }
 }
 
-Future<String> dioPOSTjwxt({
+Future<String> dioPOSTjwxtQZ({
   required String url,
   required Object data,
   required Map<String, dynamic>? headers,

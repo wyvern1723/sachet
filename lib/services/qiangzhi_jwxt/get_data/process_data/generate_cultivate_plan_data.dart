@@ -1,10 +1,10 @@
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_cultivate_plan.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_cultivate_plan.dart';
 
 import 'package:html/parser.dart';
 
 /// 使用网页返回的数据生成培养方案数据
-Future<List?> generateCultivatePlanData() async {
-  var result = await fetchCultivatePlanData();
+Future<List?> generateCultivatePlanDataQZ() async {
+  var result = await fetchCultivatePlanDataQZ();
   var document = parse(encoding: '', result);
 
   // pathElement 表示在 html DOM 里的位置，减少代码量。

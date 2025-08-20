@@ -2,13 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/login_response_status.dart';
 import 'package:sachet/models/store_item.dart';
 import 'package:sachet/models/user.dart';
-import 'package:sachet/services/captcha_recognizer.dart';
-import 'package:sachet/services/login.dart';
+import 'package:sachet/services/qiangzhi_jwxt/login/captcha_recognizer.dart';
+import 'package:sachet/services/qiangzhi_jwxt/login/qiangzhi_login_service.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/pages/utilspages/manual_login_page.dart';
+import 'package:sachet/pages/utilspages/qiangzhi_jwxt_manual_login_page.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/load_captcha_img_error_widget.dart';
@@ -22,14 +23,14 @@ import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/verifycode_
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/need_to_reset_password_dialog.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class QiangZhiJwxtLoginPage extends StatefulWidget {
+  const QiangZhiJwxtLoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<QiangZhiJwxtLoginPage> createState() => _QiangZhiJwxtLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
   final _loginFormKey = GlobalKey<FormState>();
   final usernameTextController = TextEditingController();
   final verifycodeTextController = TextEditingController();
@@ -62,12 +63,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Uint8List> getVerifyCodeImg() async {
-    String cookie = await LoginModel().getCookie();
+    String cookie = await QiangZhiLoginService().getCookie();
     _cookie = cookie;
     if (kDebugMode) {
       setState(() {});
     }
-    Uint8List verifyCodeImgBytes = await LoginModel().getVerifyCodeImg(cookie);
+    Uint8List verifyCodeImgBytes =
+        await QiangZhiLoginService().getVerifyCodeImg(cookie);
     return verifyCodeImgBytes;
   }
 
@@ -92,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(loggingInSnackBar(context));
 
       // 向服务器发送登录信息
-      var loginResponseList = await LoginModel().loginPost(
+      var loginResponseList = await QiangZhiLoginService().loginPost(
           usernameTextController.text,
           passwordTextController.text,
           verifycodeTextController.text,
@@ -217,7 +219,8 @@ class _LoginPageState extends State<LoginPage> {
       builder: (BuildContext context) => LogInUseCookieDialog(),
     );
     if (cookie != null) {
-      await LoginModel().confirmLogin(cookie).then((List userInfo) async {
+      await QiangZhiLoginService().confirmLogin(cookie).then(
+          (List userInfo) async {
         // 写入 User 信息
         User user = User(
           cookie: cookie,

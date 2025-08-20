@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/get_exam_time_semesters.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_time_semesters.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 
 class ChangeSemesterDialog extends StatefulWidget {
@@ -18,7 +18,7 @@ class _ChangeSemesterDialogState extends State<ChangeSemesterDialog> {
   @override
   void initState() {
     super.initState();
-    getDataFuture = getExamTimeSemestersData();
+    getDataFuture = getExamTimeSemestersDataQZ();
   }
 
   @override

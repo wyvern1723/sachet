@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:sachet/models/app_folder.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/generate_cultivate_plan_data.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/generate_cultivate_plan_data.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +36,7 @@ Future<List?> getCultivatePlanData() async {
 
 /// 从网站获取培养方案数据
 Future<List?> getCultivatePlanDataFromWeb() async {
-  var listData = await generateCultivatePlanData();
+  var listData = await generateCultivatePlanDataQZ();
 
   // var jsonData = jsonEncode(dataList);
   var jsonData = formatJsonEncode(listData);

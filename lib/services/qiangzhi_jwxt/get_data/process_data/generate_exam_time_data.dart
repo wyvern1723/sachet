@@ -1,11 +1,11 @@
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_exam_time.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_exam_time.dart';
 import 'package:html/parser.dart';
 
 /// 使用网页返回的数据生成考试时间数据
 ///
 /// return  {semester: 2024-2025-1, data: [{序号: 1, 课程名称: 大学体育3, 考核方式: 考试, 考试时间: , 考场: , 备注: 星期一7-8节}, {序号: 2, 课程名称: 形势与政策3, 考核方式: , 考试时间: , 考场: , 备注: }...]}
-Future<Map> generateExamTimeData(String semester) async {
-  var result = await fetchExamTimeData(semester);
+Future<Map> generateExamTimeDataQZ(String semester) async {
+  var result = await fetchExamTimeDataQZ(semester);
 
   var document = parse(encoding: '', result);
   var listLength =

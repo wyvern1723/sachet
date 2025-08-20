@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/services/login.dart';
+import 'package:sachet/services/qiangzhi_jwxt/login/qiangzhi_login_service.dart';
 import 'package:sachet/widgets/utilspages_widgets/manual_login_page_widgets/manual_login_successful_dialog.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +62,8 @@ class _ManualLoginPageState extends State<ManualLoginPage> {
       var cookie = await getCookie(url, controller);
       debugPrint(cookie);
       List userInfo = [];
-      await LoginModel().confirmLogin(cookie).then((List result) async {
+      await QiangZhiLoginService().confirmLogin(cookie).then(
+          (List result) async {
         userInfo = result;
 
         // 写入 User 信息

@@ -7,7 +7,7 @@ import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/pages/settings_child_pages/dev_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/theme_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/advanced_settings_page.dart';
-import 'package:sachet/pages/utilspages/login_page.dart';
+import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -119,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return const LoginPage();
+                            return const QiangZhiJwxtLoginPage();
                           },
                         ),
                       );

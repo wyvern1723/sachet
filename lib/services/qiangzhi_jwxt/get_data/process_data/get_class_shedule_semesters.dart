@@ -1,4 +1,4 @@
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_class_schedule_semesters.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_class_schedule_semesters.dart';
 import 'package:html/parser.dart';
 
 /// 获取课表的可选择学期
@@ -6,8 +6,8 @@ import 'package:html/parser.dart';
 /// return [当前学期,{semesterLabel: semesterValue,.......} ({学期名称(网页显示的文本): 学期值(实际的值)})]
 ///
 /// {semesterLabel: semesterValue,.......}: eg. {"2024-2025-2":"2024-2025-2","2024-2025-1":"2024-2025-1","2023-2024-2":"2023-2024-2"}
-Future<List> getClassScheduleSemestersData() async {
-  var result = await fetchClassScheduleSemestersData();
+Future<List> getClassScheduleSemestersDataQZ() async {
+  var result = await fetchClassScheduleSemestersDataQZ();
 
   var document = parse(encoding: '', result);
 

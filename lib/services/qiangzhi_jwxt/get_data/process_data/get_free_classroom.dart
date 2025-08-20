@@ -1,10 +1,10 @@
 import 'package:sachet/providers/free_class_page_provider.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_free_classroom.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_free_classroom.dart';
 import 'package:html/parser.dart';
 
 /// 获取空闲教室数据
-Future<List<List<String>>> getFreeClassroomData(Day day) async {
-  var result = await fetchFreeClassroomData(day == Day.tomorrow ? 1 : 0);
+Future<List<List<String>>> getFreeClassroomDataQZ(Day day) async {
+  var result = await fetchFreeClassroomDataQZ(day == Day.tomorrow ? 1 : 0);
 
   var document = parse(encoding: '', result);
   var pathElement = document.getElementById('dataList')?.children[0];

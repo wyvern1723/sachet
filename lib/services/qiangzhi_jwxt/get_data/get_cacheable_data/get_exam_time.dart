@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:sachet/models/app_folder.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/generate_exam_time_data.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/get_exam_time_semesters.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/generate_exam_time_data.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_time_semesters.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:intl/intl.dart';
@@ -38,11 +38,11 @@ Future<List> getExamTimeDataFromWeb(
     {String? semester, required bool isStoreData}) async {
   Map jsonData;
   if (semester == null) {
-    List semestersData = await getExamTimeSemestersData();
+    List semestersData = await getExamTimeSemestersDataQZ();
     String semester = semestersData[0];
-    jsonData = await generateExamTimeData(semester);
+    jsonData = await generateExamTimeDataQZ(semester);
   } else {
-    jsonData = await generateExamTimeData(semester);
+    jsonData = await generateExamTimeDataQZ(semester);
   }
 
   String prettyJonData = formatJsonEncode(jsonData);

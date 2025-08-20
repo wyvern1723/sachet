@@ -5,17 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:html/parser.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/login_response_status.dart';
 
-/// 登录结果
-enum LoginResponseStatus {
-  success, //成功
-  unknowError, // 未知错误
-  failed, // 登录失败（用户名或密码错误，验证码错误……）
-  otherStatusCode, // 返回了其他 StatusCode
-  needResetPassword // 需要重设密码
-}
-
-class LoginModel {
+class QiangZhiLoginService {
   // ***********************************
   // 001 set-cookie —— 第一次访问网址，得到服务器为我们分配的 'set-cookie'
   // ***********************************

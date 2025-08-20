@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/pages/utilspages/login_page.dart';
+import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return const LoginPage();
+                            return const QiangZhiJwxtLoginPage();
                           },
                         ),
                       );

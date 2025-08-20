@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/get_class_schedule.dart';
-import 'package:sachet/services/get_jwxt_data/process_data/get_class_shedule_semesters.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_schedule.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_shedule_semesters.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +39,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
     setState(() {
       currentState = UpdateState.gettingSemester;
     });
-    await getClassScheduleSemestersData().then(
+    await getClassScheduleSemestersDataQZ().then(
       (result) {
         if (!mounted) {
           return;
@@ -71,7 +71,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
     setState(() {
       currentState = UpdateState.updating;
     });
-    await getClassScheduleData(selectedSemester).then(
+    await getClassScheduleDataQZ(selectedSemester).then(
       (pathList) async {
         if (!mounted) {
           // 如果取消，不保存

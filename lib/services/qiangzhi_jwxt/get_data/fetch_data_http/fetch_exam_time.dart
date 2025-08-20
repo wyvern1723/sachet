@@ -1,9 +1,9 @@
 import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/dio_get_post_jwxt.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
-/// 从教务系统网站获取考试时间数据
-Future fetchExamTimeData(String semester) async {
-  return await dioPOSTjwxt(
+/// 从强智教务系统网站获取考试时间数据
+Future fetchExamTimeDataQZ(String semester) async {
+  return await dioPOSTjwxtQZ(
     url: 'https://jwxt.xtu.edu.cn/jsxsd/xsks/xsksap_list',
     data: {'xqlbmc': '', 'xnxqid': semester, 'xqlb': ''},
     headers: {

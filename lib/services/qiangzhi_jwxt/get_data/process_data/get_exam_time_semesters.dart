@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:sachet/services/get_jwxt_data/fetch_data_http/fetch_exam_time_semesters.dart';
+import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_exam_time_semesters.dart';
 import 'package:html/parser.dart';
 
 /// 获取考试时间查询的学期
@@ -8,8 +8,8 @@ import 'package:html/parser.dart';
 /// return [当前学期,{semesterLabel: semesterValue,.......} ({学期名称(网页显示的文本): 学期值(实际的值)})]
 ///
 /// {semesterLabel: semesterValue,.......}: eg. {"2024-2025-2":"2024-2025-2","2024-2025-1":"2024-2025-1","2023-2024-2":"2023-2024-2"}
-Future<List> getExamTimeSemestersData() async {
-  var result = await fetchExamTimeSemestersData();
+Future<List> getExamTimeSemestersDataQZ() async {
+  var result = await fetchExamTimeSemestersDataQZ();
 
   var document = parse(encoding: '', result);
 
