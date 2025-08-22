@@ -5,6 +5,7 @@ import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
+import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,6 +30,16 @@ class _ProfilePageState extends State<ProfilePage> {
         appBar: AppBar(title: Text('我')),
         body: ListView(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 0, 8),
+              child: Text(
+                '教务系统（旧）',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
             // 强智教务系统
             Selector<QiangZhiUserProvider, ({String name, String id})>(
               selector: (_, qiangzhiUserProvider) => (
@@ -61,6 +72,45 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     });
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 0, 8),
+              child: Text(
+                '新教务系统',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            // 正方教务系统
+            Selector<ZhengFangUserProvider, ({String name, String id})>(
+              selector: (_, zhengFangUserProvider) => (
+                name: zhengFangUserProvider.user.name ?? '未登录',
+                id: zhengFangUserProvider.user.studentID ?? '点击登录'
+              ),
+              builder: (_, data, __) {
+                return ListTile(
+                    leading: Align(
+                      widthFactor: 1,
+                      alignment: Alignment.centerLeft,
+                      child: Icon(Icons.account_circle),
+                    ),
+                    title: Text(data.name),
+                    subtitle: Text(data.id),
+                    trailing: IconButton(
+                      onPressed: () async {
+                        await showLogoutDialog(context, JwxtType.zhengfang);
+                      },
+                      tooltip: '退出登录',
+                      icon: Icon(Icons.logout_outlined),
+                    ),
+                    onTap: () {});
+              },
+            ),
+            Divider(
+              indent: 16,
+              endIndent: 16,
             ),
             ListTile(
               title: Text('设置'),

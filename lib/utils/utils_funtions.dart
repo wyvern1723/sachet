@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
+import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -42,9 +43,9 @@ Future showLogoutDialog(BuildContext context, JwxtType jwxtType) async {
         }
       case JwxtType.zhengfang:
         {
+          context.read<ZhengFangUserProvider>().deleteUser();
           break;
         }
-      default:
     }
     // 如果返回 true,同时删除缓存数据
     if (result == true) {
