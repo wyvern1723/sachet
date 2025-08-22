@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/nav_destination.dart';
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
@@ -53,11 +53,11 @@ class MyUserAccountDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String name = context.select<UserProvider, String?>(
-            (userProvider) => userProvider.user.name) ??
+    String name = context.select<QiangZhiUserProvider, String?>(
+            (qiangzhiUserProvider) => qiangzhiUserProvider.user.name) ??
         '未登录';
-    String studentID = context.select<UserProvider, String?>(
-            (userProvider) => userProvider.user.studentID) ??
+    String studentID = context.select<QiangZhiUserProvider, String?>(
+            (qiangzhiUserProvider) => qiangzhiUserProvider.user.studentID) ??
         '点击登录';
     return GestureDetector(
       onTap: () {

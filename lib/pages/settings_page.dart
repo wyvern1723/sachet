@@ -3,18 +3,16 @@ import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/pages/settings_child_pages/dev_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/theme_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/advanced_settings_page.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
-import 'package:sachet/utils/storage/path_provider_utils.dart';
-import 'package:sachet/widgets/settingspage_widgets/logout_dialog.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/settingspage_widgets/nav_type_dropdownmenu.dart';
 import 'package:sachet/widgets/settingspage_widgets/startup_page_dropdownmenu.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -25,20 +23,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Future showLogoutDialog() async {
-    var result = await showDialog(
-        context: context, builder: (BuildContext context) => LogoutDialog());
-    if (result != null) {
-      context.read<UserProvider>().deleteUser();
-      final secureStorage = FlutterSecureStorage();
-      secureStorage.deleteAll();
-      // 如果返回 true,同时删除缓存数据
-      if (result == true) {
-        await CachedDataStorage().deleteAllCachedData();
-      }
-    }
-  }
-
   final _navType = SettingsProvider.navigationType;
 
   /// NavType 是否与进入页面时不一样了
@@ -104,8 +88,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
-            Selector<UserProvider, bool>(
-                selector: (_, userProvider) => userProvider.isLogin,
+            Selector<QiangZhiUserProvider, bool>(
+                selector: (_, qiangzhiUserProvider) =>
+                    qiangzhiUserProvider.isLogin,
                 builder: (_, isLogin, __) {
                   return ListTile(
                     leading: const Align(
@@ -139,8 +124,9 @@ class _SettingsPageState extends State<SettingsPage> {
             //   onTap: () {}
             // ),
 
-            Selector<UserProvider, bool>(
-                selector: (_, userProvider) => userProvider.isLogin,
+            Selector<QiangZhiUserProvider, bool>(
+                selector: (_, qiangzhiUserProvider) =>
+                    qiangzhiUserProvider.isLogin,
                 builder: (_, isLogin, __) {
                   if (isLogin) {
                     return ListTile(
@@ -152,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text('退出登录'),
                       subtitle: const Text('登出此账号，删除应用中关于此账号的记录'),
                       onTap: () async {
-                        await showLogoutDialog();
+                        await showLogoutDialog(context, JwxtType.qiangzhi);
                       },
                     );
                   } else {

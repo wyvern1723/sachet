@@ -3,12 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/login_response_status.dart';
-import 'package:sachet/models/store_item.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/services/qiangzhi_jwxt/login/captcha_recognizer.dart';
 import 'package:sachet/services/qiangzhi_jwxt/login/qiangzhi_login_service.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_manual_login_page.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
@@ -48,9 +47,8 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
   Future loadDataFromSecureStorage() async {
     // String? studentIDText =
     //     await _secureStorage.read(key: StoreItem.studentID.keyName);
-    String? studentIDText = context.read<UserProvider>().user.studentID;
-    String? passwordText =
-        await UserProvider.secureStorage.read(key: StoreItem.password.keyName);
+    String? studentIDText = context.read<QiangZhiUserProvider>().user.studentID;
+    String? passwordText = await QiangZhiUserProvider.readPassword();
     usernameTextController.text = studentIDText ?? '';
     passwordTextController.text = passwordText ?? '';
 
@@ -80,7 +78,7 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
       });
     } else if (value == false) {
       // 如果选择不记住密码，删除之前储存的密码（曾经可能选择记住，但这次又改变选择，那就不再储存，删除以前储存的）
-      UserProvider.secureStorage.delete(key: StoreItem.password.keyName);
+      QiangZhiUserProvider.deletePassword();
 
       setState(() {
         _isRememberPassword = false;
@@ -159,14 +157,12 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
             );
             debugPrint(user.toJson().toString());
 
-            await context.read<UserProvider>().setUser(user);
+            await context.read<QiangZhiUserProvider>().setUser(user);
 
             // 如果选择记住密码，储存至 secureStorage
             if (_isRememberPassword) {
-              await UserProvider.secureStorage.write(
-                key: StoreItem.password.keyName,
-                value: passwordTextController.text,
-              );
+              await QiangZhiUserProvider.savePassword(
+                  passwordTextController.text);
             }
             // 隐藏正在登录 SnackBar
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -227,7 +223,7 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
           name: userInfo[0],
           studentID: userInfo[1],
         );
-        await context.read<UserProvider>().setUser(user);
+        await context.read<QiangZhiUserProvider>().setUser(user);
 
         // 显示获取登录信息成功的 Dialog
         showDialog(

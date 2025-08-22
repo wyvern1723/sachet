@@ -1,4 +1,4 @@
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
 /// 从强智教务系统网站获取课表可选学期和当前学期
@@ -13,7 +13,7 @@ Future<String> fetchClassScheduleSemestersDataQZ() async {
       'Host': 'jwxt.xtu.edu.cn',
       'Referer':
           'https://jwxt.xtu.edu.cn/jsxsd/pyfa/pyfazd_query?Ves632DSdyV=NEW_XSD_PYGL',
-      'Cookie': UserProvider.cookie,
+      'Cookie': QiangZhiUserProvider.cookie,
       'Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'User-Agent':

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/user.dart';
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/login/qiangzhi_login_service.dart';
 import 'package:sachet/widgets/utilspages_widgets/manual_login_page_widgets/manual_login_successful_dialog.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -72,7 +72,7 @@ class _ManualLoginPageState extends State<ManualLoginPage> {
           name: userInfo[0],
           studentID: userInfo[1],
         );
-        await context.read<UserProvider>().setUser(user);
+        await context.read<QiangZhiUserProvider>().setUser(user);
 
         // 显示获取登录信息成功的 Dialog
         showDialog(

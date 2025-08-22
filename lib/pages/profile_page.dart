@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
-import 'package:sachet/providers/user_provider.dart';
-import 'package:sachet/utils/storage/path_provider_utils.dart';
-import 'package:sachet/widgets/settingspage_widgets/logout_dialog.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,20 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Future showLogoutDialog(BuildContext context) async {
-    var result = await showDialog(
-        context: context, builder: (BuildContext context) => LogoutDialog());
-    if (result != null) {
-      context.read<UserProvider>().deleteUser();
-      final secureStorage = FlutterSecureStorage();
-      secureStorage.deleteAll();
-      // 如果返回 true,同时删除缓存数据
-      if (result == true) {
-        await CachedDataStorage().deleteAllCachedData();
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -45,22 +29,28 @@ class _ProfilePageState extends State<ProfilePage> {
         appBar: AppBar(title: Text('我')),
         body: ListView(
           children: [
-            Selector<UserProvider, ({String name, String id})>(
-              selector: (_, userProvider) => (
-                name: userProvider.user.name ?? '未登录',
-                id: userProvider.user.studentID ?? '点击登录'
+            // 强智教务系统
+            Selector<QiangZhiUserProvider, ({String name, String id})>(
+              selector: (_, qiangzhiUserProvider) => (
+                name: qiangzhiUserProvider.user.name ?? '未登录',
+                id: qiangzhiUserProvider.user.studentID ?? '点击登录'
               ),
               builder: (_, data, __) {
                 return ListTile(
-                    leading: Icon(Icons.account_circle),
+                    leading: Align(
+                      widthFactor: 1,
+                      alignment: Alignment.centerLeft,
+                      child: Icon(Icons.account_circle),
+                    ),
                     title: Text(data.name),
                     subtitle: Text(data.id),
                     trailing: IconButton(
-                        onPressed: () async {
-                          await showLogoutDialog(context);
-                        },
-                        tooltip: '退出登录',
-                        icon: Icon(Icons.logout_outlined)),
+                      onPressed: () async {
+                        await showLogoutDialog(context, JwxtType.qiangzhi);
+                      },
+                      tooltip: '退出登录',
+                      icon: Icon(Icons.logout_outlined),
+                    ),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(

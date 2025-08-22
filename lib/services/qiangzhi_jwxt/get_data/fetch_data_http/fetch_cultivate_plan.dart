@@ -1,4 +1,4 @@
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
 /// 从强智教务系统网站获取培养方案数据
@@ -12,7 +12,7 @@ Future<String> fetchCultivatePlanDataQZ() async {
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'zh-CN,zh;q=0.9',
       'Host': 'jwxt.xtu.edu.cn',
-      'Cookie': UserProvider.cookie,
+      'Cookie': QiangZhiUserProvider.cookie,
       'Proxy-Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'User-Agent':

@@ -1,4 +1,4 @@
-import 'package:sachet/providers/user_provider.dart';
+import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/dio_get_post_jwxt.dart';
 
 /// 从强智教务系统网站获取空闲教室数据
@@ -21,7 +21,7 @@ Future fetchFreeClassroomDataQZ(int isTomorrow) async {
       'Connection': 'keep-alive',
       // 'Content-Length': '35',
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Cookie': UserProvider.cookie,
+      'Cookie': QiangZhiUserProvider.cookie,
       'Host': 'jwxt.xtu.edu.cn',
       'Refer': 'https://jwxt.xtu.edu.cn/jsxsd/kbxx/kxjs_query',
       'Upgrade-Insecure-Requests': '1',

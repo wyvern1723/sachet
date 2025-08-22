@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/models/app_settings.dart';
 import 'package:sachet/models/course_card_settings.dart';
-import 'package:sachet/providers/user_provider.dart';
 import 'package:sachet/services/check_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +36,7 @@ class AppGlobal {
     }
 
     startupPage = appSettings.startupPage ?? '/class';
-    UserProvider.init();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (appSettings.isAutoCheckUpdate == true) {
         autoCheckUpdate();
