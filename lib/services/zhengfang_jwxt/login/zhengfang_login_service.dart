@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/encrypt.dart';
+import 'package:sachet/utils/transform.dart';
 
 class ZhengFangLoginService {
   final Dio _dio;
@@ -82,7 +84,11 @@ class ZhengFangLoginService {
       _cookie = '$jsessionid; $route';
       _route = route;
     } on DioException catch (e) {
-      throw Exception('初始化网络请求失败: ${e.message}');
+      String? errorTypeText = dioExceptionTypeToText[e.type];
+      if (kDebugMode) {
+        print(e);
+      }
+      throw Exception('初始化网络请求失败: $errorTypeText');
     } catch (e) {
       throw Exception('初始化请求失败: $e');
     }
@@ -139,7 +145,11 @@ class ZhengFangLoginService {
 
       return response.data;
     } on DioException catch (e) {
-      throw Exception('获取公钥网络请求失败: ${e.message}');
+      String? errorTypeText = dioExceptionTypeToText[e.type];
+      if (kDebugMode) {
+        print(e);
+      }
+      throw Exception('获取公钥失败: $errorTypeText');
     } catch (e) {
       throw Exception('获取公钥失败: $e');
     }
@@ -182,10 +192,8 @@ class ZhengFangLoginService {
       );
       if (response.statusCode == 200) {
         String? errorMessage = _extractErrorMessage(response.data);
-        if (errorMessage == null || errorMessage == '') {
-          throw '登录失败';
-        }
-        throw '登录失败: $errorMessage';
+
+        throw errorMessage ?? '';
       }
 
       if (response.statusCode != 302) {
@@ -224,9 +232,13 @@ class ZhengFangLoginService {
       }
       _cookie = '$jsessionid; $_route';
     } on DioException catch (e) {
-      throw Exception('登录 POST 网络请求失败: ${e.message}');
+      String? errorTypeText = dioExceptionTypeToText[e.type];
+      if (kDebugMode) {
+        print(e);
+      }
+      throw Exception('登录失败: $errorTypeText');
     } catch (e) {
-      throw Exception('登录 POST 失败: $e');
+      throw Exception('登录失败: $e');
     }
   }
 

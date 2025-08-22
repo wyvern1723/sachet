@@ -1,0 +1,249 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/user.dart';
+import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
+import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/logging_in_snackbar.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/login_successful_dialog.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/password_form_field.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/username_form_field.dart';
+import 'package:provider/provider.dart';
+
+class ZhengFangJwxtLoginPage extends StatefulWidget {
+  const ZhengFangJwxtLoginPage({super.key});
+
+  @override
+  State<ZhengFangJwxtLoginPage> createState() => _ZhengFangJwxtLoginPageState();
+}
+
+class _ZhengFangJwxtLoginPageState extends State<ZhengFangJwxtLoginPage> {
+  final _loginFormKey = GlobalKey<FormState>();
+  final usernameTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
+  String? showErrorText;
+  String? _cookie;
+
+  bool _isRememberPassword = false; // 是否记住密码
+
+  /// 获取储存的 学号和密码
+  Future loadDataFromSecureStorage() async {
+    String? studentIDText =
+        context.read<ZhengFangUserProvider>().user.studentID;
+    String? passwordText = await ZhengFangUserProvider.readPassword();
+    usernameTextController.text = studentIDText ?? '';
+    passwordTextController.text = passwordText ?? '';
+
+    // 如果存在保存的数据，更改 是否记住 的状态 = true
+    if (passwordText != null) {
+      setState(() {
+        _isRememberPassword = true;
+      });
+    }
+  }
+
+  void onChangedIsRememberPassword(bool? value) {
+    if (value == true) {
+      setState(() {
+        _isRememberPassword = true;
+      });
+    } else if (value == false) {
+      // 如果选择不记住密码，删除之前储存的密码（曾经可能选择记住，但这次又改变选择，那就不再储存，删除以前储存的）
+      ZhengFangUserProvider.deletePassword();
+
+      setState(() {
+        _isRememberPassword = false;
+      });
+    }
+  }
+
+  Future _pressLoginButton(BuildContext context) async {
+    if (_loginFormKey.currentState!.validate()) {
+      final messenger = ScaffoldMessenger.of(context);
+      // 显示正在登录 SnackBar
+      messenger.showSnackBar(loggingInSnackBar(context));
+      ZhengFangLoginService zhengFangLoginService = ZhengFangLoginService();
+
+      try {
+        // 尝试登录
+        await zhengFangLoginService.login(
+          username: usernameTextController.text,
+          password: passwordTextController.text,
+        );
+
+        // *****无异常*****
+        // 保存用户信息
+        User user = User(
+          cookie: zhengFangLoginService.cookie,
+          // name: name,
+          studentID: usernameTextController.text,
+        );
+        await context.read<ZhengFangUserProvider>().setUser(user);
+        // 如果选择记住密码，储存至 secureStorage
+        if (_isRememberPassword) {
+          await ZhengFangUserProvider.savePassword(passwordTextController.text);
+        }
+        // 隐藏正在登录 SnackBar
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+        // 显示登录成功 Dialog
+        // TODO: 获取姓名
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) =>
+              LoginSuccessfulDialog(userName: ''),
+        );
+      } catch (e) {
+        // *****有异常*****
+        // 隐藏正在登录 SnackBar
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+        // 显示 显示登录错误信息的 SnackBar，显示3秒后隐藏
+        ScaffoldMessenger.of(context).showSnackBar(errorInfoSnackBar(
+            context, e.toString().replaceAll('Exception: ', '')));
+        await Future.delayed(const Duration(seconds: 3));
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadDataFromSecureStorage();
+  }
+
+  @override
+  void dispose() {
+    usernameTextController.dispose();
+    passwordTextController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('登录'),
+      ),
+      body: Form(
+        key: _loginFormKey,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MaterialBanner(
+                forceActionsBelow: true,
+                content: Text('若您是使用初始密码首次登录，请先在浏览器登录教务系统后设置新密码'),
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                actions: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: TextStyle(fontSize: 12),
+                    ),
+                    child: Text('在浏览器打开教务系统'),
+                    onPressed: () {
+                      openLink(newJwxtBaseUrl);
+                    },
+                  ),
+                ],
+                padding: EdgeInsetsDirectional.only(
+                  start: 16.0,
+                  top: 8.0,
+                  end: 16.0,
+                  bottom: 0.0,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(
+                    Icons.login_outlined,
+                    size: 44,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text('登录到新教务系统',
+                    style: Theme.of(context).textTheme.titleLarge),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text('(正方教务系统)',
+                    style: Theme.of(context).textTheme.titleSmall),
+              ),
+              const SizedBox(height: 32),
+
+              // 学号输入框
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: UsernameFormField(controller: usernameTextController),
+              ),
+
+              const SizedBox(height: 12),
+
+              // 密码输入框
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: PasswordFormField(controller: passwordTextController),
+              ),
+
+              const SizedBox(height: 12),
+
+              if (kDebugMode)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: SelectableText(_cookie ?? '_cookie is null'),
+                ),
+
+              // 记住密码
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                      visualDensity: VisualDensity(
+                          horizontal: VisualDensity.minimumDensity,
+                          vertical: VisualDensity.compact.vertical),
+                      value: _isRememberPassword,
+                      onChanged: onChangedIsRememberPassword,
+                      semanticLabel: '记住密码',
+                    ),
+                    Text('记住密码'),
+                  ],
+                ),
+              ),
+
+              // TODO: 正在登录时禁用登录按钮
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  onPressed: () async {
+                    await _pressLoginButton(context);
+                  },
+                  child: const Text('登录'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
+import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
@@ -105,7 +106,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       tooltip: '退出登录',
                       icon: Icon(Icons.logout_outlined),
                     ),
-                    onTap: () {});
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return const ZhengFangJwxtLoginPage();
+                          },
+                        ),
+                      );
+                    });
               },
             ),
             Divider(
