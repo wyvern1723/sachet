@@ -5,8 +5,8 @@ import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/widgets/utils_widgets/select_jwxt_login_dialog.dart';
 
 import 'nav_drawer_md2.dart';
 import 'nav_drawer_md3.dart';
@@ -61,12 +61,9 @@ class MyUserAccountDrawerHeader extends StatelessWidget {
         '点击登录';
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return const QiangZhiJwxtLoginPage();
-            },
-          ),
+        showDialog(
+          context: context,
+          builder: (context) => SelectJwxtLoginDialog(),
         );
       },
       child: UserAccountsDrawerHeader(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
+import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -26,8 +27,6 @@ Future selectSemesterStartDate(BuildContext context) async {
         .setSemesterStartDate(picked.toIso8601String());
   }
 }
-
-enum JwxtType { qiangzhi, zhengfang }
 
 Future showLogoutDialog(BuildContext context, JwxtType jwxtType) async {
   var result = await showDialog(
