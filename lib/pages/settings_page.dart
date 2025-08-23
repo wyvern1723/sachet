@@ -15,6 +15,7 @@ import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/settingspage_widgets/nav_type_dropdownmenu.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/settingspage_widgets/startup_page_dropdownmenu.dart';
 import 'package:provider/provider.dart';
 
@@ -84,15 +85,12 @@ class _SettingsPageState extends State<SettingsPage> {
         body: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-              child: Text(
-                '账号设置',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              child: SettingsSectionTitle(title: '账号设置'),
             ),
             Card(
               clipBehavior: Clip.hardEdge,
-              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +154,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             Card(
               clipBehavior: Clip.hardEdge,
-              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +217,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-              child: Text(
-                '软件设置',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
+              padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+              child: SettingsSectionTitle(title: '软件设置'),
             ),
 
             // 主题设置

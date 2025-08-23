@@ -11,6 +11,7 @@ import 'package:sachet/pages/home_child_pages/grade_page.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
 import 'package:provider/provider.dart';
@@ -132,17 +133,10 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Text(
-                    '打开外部网站',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                  padding: const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 4.0),
+                  child: SettingsSectionTitle(title: '打开外部网站'),
                 ),
-                const SizedBox(height: 20),
 
                 Row(
                   children: [

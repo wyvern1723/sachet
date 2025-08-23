@@ -9,6 +9,7 @@ import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -33,14 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
         body: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 0, 8),
-              child: Text(
-                '教务系统（旧）',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              child: SettingsSectionTitle(title: '旧教务系统'),
             ),
             // 强智教务系统
             Selector<QiangZhiUserProvider, ({String name, String id})>(
@@ -76,15 +71,10 @@ class _ProfilePageState extends State<ProfilePage> {
               },
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 0, 8),
-              child: Text(
-                '新教务系统',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              child: SettingsSectionTitle(title: '新教务系统'),
             ),
+
             // 正方教务系统
             Selector<ZhengFangUserProvider, ({String name, String id})>(
               selector: (_, zhengFangUserProvider) => (

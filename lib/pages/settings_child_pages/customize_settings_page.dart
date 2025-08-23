@@ -4,6 +4,7 @@ import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/s
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/preview_card.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class CustomizeSettingsPage extends StatelessWidget {
   const CustomizeSettingsPage({super.key});
@@ -24,27 +25,14 @@ class CustomizeSettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '课程卡片外观',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  // Icons.format_size_outlined,
-                  Icons.text_format_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '课程卡片外观',
+              // iconData: Icons.format_size_outlined,
+              iconData: Icons.text_format_outlined,
             ),
           ),
+
           // 卡片高度
           Selector<CourseCardSettingsProvider, double>(
               selector: (_, courseCardSettingsProvider) =>
@@ -135,26 +123,11 @@ class CustomizeSettingsPage extends StatelessWidget {
               }),
 
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '文本外观',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  // Icons.format_size_outlined,
-                  Icons.text_format_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '文本外观',
+              // iconData: Icons.format_size_outlined,
+              iconData: Icons.text_format_outlined,
             ),
           ),
 
@@ -179,27 +152,13 @@ class CustomizeSettingsPage extends StatelessWidget {
           ),
 
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '效果预览',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  Icons.preview_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '效果预览',
+              iconData: Icons.preview_outlined,
             ),
           ),
+
           // 预览卡片
           PreviewCard(),
         ],

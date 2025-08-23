@@ -8,6 +8,7 @@ import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/pa
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_duration_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class AdvancedSettingsPage extends StatefulWidget {
   const AdvancedSettingsPage({super.key});
@@ -64,24 +65,10 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
       body: ListView(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '应用动画',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.animation_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '应用动画',
+              iconData: Icons.animation_outlined,
             ),
           ),
 
@@ -134,24 +121,10 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   );
                 }),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '课程表页面动画',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.animation_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '课程表页面动画',
+              iconData: Icons.animation_outlined,
             ),
           ),
           // 翻页动画
@@ -194,24 +167,10 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                 );
               }),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '显示设置',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.build,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '显示设置',
+              iconData: Icons.build,
             ),
           ),
           Selector<SettingsProvider, bool>(
@@ -260,25 +219,12 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   ),
                 );
               }),
+
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '应用设置',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.app_settings_alt,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '应用设置',
+              iconData: Icons.app_settings_alt,
             ),
           ),
           Selector<SettingsProvider, bool>(

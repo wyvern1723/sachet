@@ -9,6 +9,7 @@ import 'package:sachet/pages/settings_child_pages/course_color_data_listview_pag
 import 'package:sachet/pages/settings_child_pages/other_data_listview_page.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/custom_route.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class DevSettingsPage extends StatelessWidget {
   const DevSettingsPage({super.key});
@@ -48,26 +49,10 @@ class DevSettingsPage extends StatelessWidget {
                 ),
               )),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '应用设置',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  Icons.app_settings_alt,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '应用设置',
+              iconData: Icons.app_settings_alt,
             ),
           ),
           ListTile(
@@ -128,24 +113,10 @@ class DevSettingsPage extends StatelessWidget {
               },
             ),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '关于我们',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.help_outline,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
+            child: SettingsSectionTitle(
+              title: '关于我们',
+              iconData: Icons.help_outline,
             ),
           ),
           ListTile(
