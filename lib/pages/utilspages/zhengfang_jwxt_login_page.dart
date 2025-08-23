@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/user.dart';
+import 'package:sachet/pages/utilspages/zhengfang_jwxt_manual_login_page.dart';
 import 'package:sachet/providers/login_page_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_name.dart';
@@ -314,9 +315,56 @@ class _ZhengFangJwxtLoginPageViewState
                     }),
               ),
 
+              // 手动登录
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return const ZhengFangManualLoginPage(
+                                initialUrl: newJwxtBaseUrl,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('手动登录'),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 从信息门户登录
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return const ZhengFangManualLoginPage(
+                                initialUrl: xinXiMenHuBaseUrl,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('从信息门户登录'),
+                    ),
+                  ],
+                ),
+              ),
               // 使用 Cookie 登录
               Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

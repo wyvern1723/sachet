@@ -57,9 +57,9 @@ Future<String> fetchNameZF(String cookie) async {
     if (kDebugMode) {
       print(e);
     }
-    throw Exception('获取姓名失败: $errorTypeText');
+    throw Exception('$errorTypeText');
   } catch (e) {
-    throw Exception('获取姓名失败: $e');
+    throw Exception('$e');
   }
 }
 
