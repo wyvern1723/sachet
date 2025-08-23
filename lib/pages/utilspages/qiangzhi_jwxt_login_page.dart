@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/login_response_status.dart';
 import 'package:sachet/models/user.dart';
+import 'package:sachet/providers/login_page_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/login/captcha_recognizer.dart';
 import 'package:sachet/services/qiangzhi_jwxt/login/qiangzhi_login_service.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -22,14 +24,27 @@ import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/verifycode_
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/need_to_reset_password_dialog.dart';
 import 'package:provider/provider.dart';
 
-class QiangZhiJwxtLoginPage extends StatefulWidget {
+class QiangZhiJwxtLoginPage extends StatelessWidget {
   const QiangZhiJwxtLoginPage({super.key});
 
   @override
-  State<QiangZhiJwxtLoginPage> createState() => _QiangZhiJwxtLoginPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => LoginPageProvider(),
+      child: QiangZhiJwxtLoginPageView(),
+    );
+  }
 }
 
-class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
+class QiangZhiJwxtLoginPageView extends StatefulWidget {
+  const QiangZhiJwxtLoginPageView({super.key});
+
+  @override
+  State<QiangZhiJwxtLoginPageView> createState() =>
+      _QiangZhiJwxtLoginPageViewState();
+}
+
+class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
   final _loginFormKey = GlobalKey<FormState>();
   final usernameTextController = TextEditingController();
   final verifycodeTextController = TextEditingController();
@@ -41,12 +56,8 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
   String? showErrorText;
   String? _cookie;
 
-  bool _isRememberPassword = false; // 是否记住密码
-
   /// 获取储存的 学号和密码
   Future loadDataFromSecureStorage() async {
-    // String? studentIDText =
-    //     await _secureStorage.read(key: StoreItem.studentID.keyName);
     String? studentIDText = context.read<QiangZhiUserProvider>().user.studentID;
     String? passwordText = await QiangZhiUserProvider.readPassword();
     usernameTextController.text = studentIDText ?? '';
@@ -54,9 +65,9 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
 
     // 如果存在保存的数据，更改 是否记住 的状态 = true
     if (passwordText != null) {
-      setState(() {
-        _isRememberPassword = true;
-      });
+      context
+          .read<LoginPageProvider>()
+          .setIsRememberPassword(true, JwxtType.qiangzhi);
     }
   }
 
@@ -71,23 +82,11 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
     return verifyCodeImgBytes;
   }
 
-  void onChangedIsRememberPassword(bool? value) {
-    if (value == true) {
-      setState(() {
-        _isRememberPassword = true;
-      });
-    } else if (value == false) {
-      // 如果选择不记住密码，删除之前储存的密码（曾经可能选择记住，但这次又改变选择，那就不再储存，删除以前储存的）
-      QiangZhiUserProvider.deletePassword();
-
-      setState(() {
-        _isRememberPassword = false;
-      });
-    }
-  }
-
-  void pressLoginButton() async {
+  Future _pressLoginButton(BuildContext context) async {
     if (_loginFormKey.currentState!.validate()) {
+      // 设置登录状态为正在登录
+      context.read<LoginPageProvider>().setIsLoggingIn(true);
+
       // 显示正在登录 SnackBar
       ScaffoldMessenger.of(context).showSnackBar(loggingInSnackBar(context));
 
@@ -160,7 +159,7 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
             await context.read<QiangZhiUserProvider>().setUser(user);
 
             // 如果选择记住密码，储存至 secureStorage
-            if (_isRememberPassword) {
+            if (context.read<LoginPageProvider>().isRememberPassword == true) {
               await QiangZhiUserProvider.savePassword(
                   passwordTextController.text);
             }
@@ -206,6 +205,8 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
       }
+      // 重置登录状态
+      context.read<LoginPageProvider>().setIsLoggingIn(false);
     }
   }
 
@@ -409,48 +410,55 @@ class _QiangZhiJwxtLoginPageState extends State<QiangZhiJwxtLoginPage> {
 
                 if (kDebugMode) SelectableText(_cookie ?? '_cookie is null'),
 
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Checkbox(
-                        visualDensity: VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                            vertical: VisualDensity.compact.vertical),
-                        value: _isRememberPassword,
-                        onChanged: onChangedIsRememberPassword,
-                        semanticLabel: '记住密码'),
-                    Text('记住密码')
-                  ],
-                ),
+                // 记住密码
+                Selector<LoginPageProvider, bool>(
+                    selector: (_, loginPageProvider) =>
+                        loginPageProvider.isRememberPassword,
+                    builder: (_, isRememberPassword, __) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            visualDensity: VisualDensity(
+                                horizontal: VisualDensity.minimumDensity,
+                                vertical: VisualDensity.compact.vertical),
+                            value: isRememberPassword,
+                            onChanged: (value) {
+                              if (value != null) {
+                                context
+                                    .read<LoginPageProvider>()
+                                    .setIsRememberPassword(
+                                        value, JwxtType.qiangzhi);
+                              }
+                            },
+                            semanticLabel: '记住密码',
+                          ),
+                          Text('记住密码'),
+                        ],
+                      );
+                    }),
 
-                // ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Theme.of(context).colorScheme.primary,
-                //     foregroundColor:
-                //         Theme.of(context).colorScheme.onPrimary,
-                //   ),
-                //   // 如果正在加载，按钮不可用，避免用户暴力输入
-                //   onPressed: _isLoading ? null : _postLoginData,
-                //   child: const Text('登录'),
-                // ),
+                // 登录按钮
+                Selector<LoginPageProvider, bool>(
+                    selector: (_, loginPageProvider) =>
+                        loginPageProvider.isLoggingIn,
+                    builder: (_, isLoggingIn, __) {
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        onPressed: isLoggingIn
+                            ? null
+                            : () async {
+                                await _pressLoginButton(context);
+                              },
+                        child: const Text('登录'),
+                      );
+                    }),
 
-                // // 登录按钮
-                // LoginButton(
-                //   username: usernameTextController.text,
-                //   password: passwordTextController.text,
-                //   verifycode: verifycodeTextController.text,
-                //   formKey: _loginFormKey,
-                //   cookie: _currentCookie,
-                // ),
-
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  onPressed: pressLoginButton,
-                  child: const Text('登录'),
-                ),
                 // 手动登录
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
