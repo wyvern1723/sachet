@@ -469,7 +469,7 @@ class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return const ManualLoginPage(
+                              return const QiangZhiManualLoginPage(
                                 initialUrl: jwxtBaseUrlHttps,
                               );
                             },
@@ -489,7 +489,7 @@ class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return const ManualLoginPage(
+                              return const QiangZhiManualLoginPage(
                                 initialUrl: xinXiMenHuBaseUrl,
                               );
                             },

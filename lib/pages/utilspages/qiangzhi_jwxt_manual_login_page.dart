@@ -7,15 +7,16 @@ import 'package:sachet/widgets/utilspages_widgets/manual_login_page_widgets/manu
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
-class ManualLoginPage extends StatefulWidget {
-  const ManualLoginPage({super.key, required this.initialUrl});
+class QiangZhiManualLoginPage extends StatefulWidget {
+  const QiangZhiManualLoginPage({super.key, required this.initialUrl});
   final String initialUrl;
 
   @override
-  State<ManualLoginPage> createState() => _ManualLoginPageState();
+  State<QiangZhiManualLoginPage> createState() =>
+      _QiangZhiManualLoginPageState();
 }
 
-class _ManualLoginPageState extends State<ManualLoginPage> {
+class _QiangZhiManualLoginPageState extends State<QiangZhiManualLoginPage> {
   final CookieManager _cookieManager = CookieManager.instance();
   InAppWebViewController? _webViewController;
 
