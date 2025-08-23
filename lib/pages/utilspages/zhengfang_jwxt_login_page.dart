@@ -9,9 +9,11 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_name.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/log_in_use_cookie_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/logging_in_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/login_successful_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/password_form_field.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/use_cookie_login_successful_dialog.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/username_form_field.dart';
 import 'package:provider/provider.dart';
 
@@ -117,6 +119,54 @@ class _ZhengFangJwxtLoginPageViewState
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
       context.read<LoginPageProvider>().setIsLoggingIn(false);
+    }
+  }
+
+  Future _loginUseCookie(BuildContext context) async {
+    String? cookie = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) =>
+          LogInUseCookieDialog(jwxtType: JwxtType.zhengfang),
+    );
+    if (cookie != null && cookie != '') {
+      try {
+        final String name = await getNameZF(cookie);
+        User user = User(
+          cookie: cookie,
+          name: name,
+          // TODO: 获取学号
+          studentID: '',
+        );
+        await context.read<ZhengFangUserProvider>().setUser(user);
+
+        // 显示获取登录信息成功的 Dialog
+        showDialog(
+          context: context,
+          builder: (context) => UseCookieLoginSuccessfulDialog(
+            userName: name,
+            cookie: cookie,
+          ),
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('登录失败'),
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('确认'),
+              )
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -263,6 +313,23 @@ class _ZhengFangJwxtLoginPageViewState
                       );
                     }),
               ),
+
+              // 使用 Cookie 登录
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () async {
+                        await _loginUseCookie(context);
+                      },
+                      label: const Text('使用 Cookie 登录'),
+                      icon: const Icon(Icons.cookie),
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),

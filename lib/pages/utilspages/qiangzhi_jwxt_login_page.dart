@@ -213,7 +213,8 @@ class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
   Future loginUseCookie(BuildContext context) async {
     String? cookie = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) => LogInUseCookieDialog(),
+      builder: (BuildContext context) =>
+          LogInUseCookieDialog(jwxtType: JwxtType.qiangzhi),
     );
     if (cookie != null) {
       await QiangZhiLoginService().confirmLogin(cookie).then(
