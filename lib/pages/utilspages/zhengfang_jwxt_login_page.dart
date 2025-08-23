@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/providers/login_page_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_name.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
@@ -74,9 +76,18 @@ class _ZhengFangJwxtLoginPageViewState
 
         // *****无异常*****
         // 保存用户信息
+        String cookie = zhengFangLoginService.cookie;
+        String name = '';
+        try {
+          name = await getNameZF(cookie);
+        } catch (e) {
+          if (kDebugMode) {
+            print(e);
+          }
+        }
         User user = User(
-          cookie: zhengFangLoginService.cookie,
-          // name: name,
+          cookie: cookie,
+          name: name,
           studentID: usernameTextController.text,
         );
         await context.read<ZhengFangUserProvider>().setUser(user);
@@ -88,12 +99,11 @@ class _ZhengFangJwxtLoginPageViewState
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
         // 显示登录成功 Dialog
-        // TODO: 获取姓名
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) =>
-              LoginSuccessfulDialog(userName: ''),
+              LoginSuccessfulDialog(userName: name),
         );
       } catch (e) {
         // *****有异常*****
