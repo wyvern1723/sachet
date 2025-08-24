@@ -98,7 +98,7 @@ Future<List<String>> getClassScheduleDataQZ(String semester) async {
       _getAllScheduleItemCourse(courseses);
   // 把课程表文件储存到 AppSupportDir
   String outputClassScheduleFilePath =
-      await _storeClassScheduleFile(classScheduleData, semester);
+      await storeClassScheduleFile(classScheduleData, semester);
 
   // 获取课程名称 List
   List courseTitleList = getCourseList(classScheduleData: classScheduleData);
@@ -245,7 +245,7 @@ int _getReoderIndex(int o) {
 /// 把课程表文件储存到 AppSupportDir
 ///
 /// return 储存课程表文件的路径
-Future<String> _storeClassScheduleFile(
+Future<String> storeClassScheduleFile(
     List allSessionsCoursesData, String semester) async {
   String fileName =
       "class_schedule_${semester}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json";
