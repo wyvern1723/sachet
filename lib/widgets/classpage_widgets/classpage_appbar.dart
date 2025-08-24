@@ -7,7 +7,7 @@ import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
-import 'package:sachet/widgets/classpage_widgets/update_class_schedule_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/update_class_schedule_qz_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
 
 class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -46,7 +46,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   Future showUpdateClassScheduleDialog(BuildContext context) async {
     var result = await showDialog(
       context: context,
-      builder: (BuildContext context) => const UpdateClassScheduleDialog(),
+      builder: (BuildContext context) => const UpdateClassScheduleQZDialog(),
     );
     if (result == true) {
       context.read<ClassPageProvider>().pageController.jumpToPage(

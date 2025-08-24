@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_schedule.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_shedule_semesters.dart';
@@ -10,35 +11,24 @@ import 'package:sachet/widgets/utils_widgets/login_expired.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-enum UpdateState {
-  inquire, // 询问是否确认更新 (inquire vs none?)
-  gettingSemester, // 获取学期（当前学期和其他可选学期）  成功 --> selectSemester; 失败 --> loginExpired/failed
-  selectSemester, // 用户选择学期（默认是从网页获取的当前学期)   成功 --> updating; 失败 --> failed
-  updating, // 开始更新
-  setSemesterStartDate, // 设置学期开始日期
-  // success, // 更新成功
-  loginExpired, // 登录过期
-  failed // 因为其它问题导致获取学期和更新课表失败
-}
-
-class UpdateClassScheduleDialog extends StatefulWidget {
-  const UpdateClassScheduleDialog({super.key});
+class UpdateClassScheduleQZDialog extends StatefulWidget {
+  /// 从强智教务系统更新课表的 Dialog
+  const UpdateClassScheduleQZDialog({super.key});
 
   @override
-  State<UpdateClassScheduleDialog> createState() =>
-      _UpdateClassScheduleDialogState();
+  State<UpdateClassScheduleQZDialog> createState() =>
+      _UpdateClassScheduleQZDialogState();
 }
 
-class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
-  UpdateState currentState = UpdateState.inquire;
+class _UpdateClassScheduleQZDialogState
+    extends State<UpdateClassScheduleQZDialog> {
+  UpdateClassScheduleState currentState =
+      UpdateClassScheduleState.gettingSemester;
   Map semesters = {};
   String selectedSemester = '';
 
   /// 获取可选择学期和当前学期数据
-  Future getSemesters() async {
-    setState(() {
-      currentState = UpdateState.gettingSemester;
-    });
+  Future _getSemesters() async {
     await getClassScheduleSemestersDataQZ().then(
       (result) {
         if (!mounted) {
@@ -47,7 +37,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
         selectedSemester = result[0];
         semesters = result[1];
         setState(() {
-          currentState = UpdateState.selectSemester;
+          currentState = UpdateClassScheduleState.selectSemester;
         });
       },
       onError: (e) {
@@ -56,20 +46,20 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
         }
         if (e == '登录失效，请重新登录') {
           setState(() {
-            currentState = UpdateState.loginExpired;
+            currentState = UpdateClassScheduleState.loginExpired;
           });
         } else {
           setState(() {
-            currentState = UpdateState.failed;
+            currentState = UpdateClassScheduleState.failed;
           });
         }
       },
     );
   }
 
-  Future updateClassSchedule() async {
+  Future _updateClassSchedule(BuildContext context) async {
     setState(() {
-      currentState = UpdateState.updating;
+      currentState = UpdateClassScheduleState.updating;
     });
     await getClassScheduleDataQZ(selectedSemester).then(
       (pathList) async {
@@ -85,7 +75,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
             .read<SettingsProvider>()
             .setCourseColorFilePath(pathList[1]);
         setState(() {
-          currentState = UpdateState.setSemesterStartDate;
+          currentState = UpdateClassScheduleState.setSemesterStartDate;
         });
       },
       onError: (e) {
@@ -94,11 +84,11 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
         }
         if (e == '登录失效，请重新登录') {
           setState(() {
-            currentState = UpdateState.loginExpired;
+            currentState = UpdateClassScheduleState.loginExpired;
           });
         } else {
           setState(() {
-            currentState = UpdateState.failed;
+            currentState = UpdateClassScheduleState.failed;
           });
         }
       },
@@ -108,33 +98,20 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
     if (value == true) {
-      getSemesters();
+      _getSemesters();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getSemesters();
   }
 
   @override
   Widget build(BuildContext context) {
     switch (currentState) {
-      case UpdateState.inquire:
-        return AlertDialog(
-          title: const Text('更新课程表'),
-          content: Text('确认要更新课程表吗?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () async {
-                await getSemesters();
-              },
-              child: const Text('确认'),
-            )
-          ],
-        );
-      case UpdateState.gettingSemester:
+      case UpdateClassScheduleState.gettingSemester:
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -155,7 +132,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
             ),
           ],
         );
-      case UpdateState.selectSemester: // 选择学期
+      case UpdateClassScheduleState.selectSemester: // 选择学期
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -190,13 +167,13 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
             ),
             TextButton(
               onPressed: () async {
-                await updateClassSchedule();
+                await _updateClassSchedule(context);
               },
               child: const Text('确认'),
             )
           ],
         );
-      case UpdateState.updating: // 获取课表中
+      case UpdateClassScheduleState.updating: // 获取课表中
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -236,7 +213,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
       //       )
       //     ],
       //   );
-      case UpdateState.setSemesterStartDate: // 设置学期开始日期
+      case UpdateClassScheduleState.setSemesterStartDate: // 设置学期开始日期
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -317,7 +294,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
             )
           ],
         );
-      case UpdateState.loginExpired:
+      case UpdateClassScheduleState.loginExpired:
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -336,7 +313,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
             )
           ],
         );
-      case UpdateState.failed:
+      case UpdateClassScheduleState.failed:
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
@@ -349,7 +326,7 @@ class _UpdateClassScheduleDialogState extends State<UpdateClassScheduleDialog> {
           actions: [
             TextButton(
               onPressed: () async {
-                await updateClassSchedule();
+                await _updateClassSchedule(context);
               },
               child: const Text('重试'),
             ),
