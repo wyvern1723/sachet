@@ -254,8 +254,14 @@ class _UpdateClassScheduleQZDialogState
                   child: Text(
                     '校历',
                     style: TextStyle(
-                      color: Colors.indigo.shade900,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Color(0xFF0645AD)
+                          : Colors.blue,
                       decoration: TextDecoration.underline,
+                      decorationColor:
+                          Theme.of(context).brightness == Brightness.light
+                              ? const Color(0xFF0645AD)
+                              : Colors.blue,
                       fontSize: 12.0,
                     ),
                   ),
@@ -286,7 +292,10 @@ class _UpdateClassScheduleQZDialogState
                       onPressed: () async {
                         await selectSemesterStartDate(context);
                       },
-                      icon: Icon(Icons.edit_calendar_outlined),
+                      icon: Icon(
+                        Icons.edit_calendar_outlined,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     )
                   ],
                 ),
