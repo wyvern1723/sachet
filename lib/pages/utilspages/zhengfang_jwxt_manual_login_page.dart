@@ -146,7 +146,7 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
                 onPressed: () async {
                   await checkLogin(
                     context: context,
-                    url: jwxtBaseUrlHttps,
+                    url: newJwxtBaseUrl,
                     controller: _webViewController,
                   );
                 },
@@ -188,9 +188,9 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
                     });
                   }
                 }
-
                 // 登录成功
-                if (url?.path == '/jwglxt/xtgl/lxtgl/index_initMenu.html') {
+                if (url?.path == '/jwglxt/xtgl/lxtgl/index_initMenu.html' ||
+                    url?.path == '/jwglxt/xtgl/index_initMenu.html') {
                   checkLogin(
                     context: context,
                     url: url!.rawValue,
