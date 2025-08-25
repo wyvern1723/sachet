@@ -49,70 +49,75 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CourseCardSettingsProvider()),
         ChangeNotifierProvider(create: (_) => ScreenNavProvider()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
-          // 是否使用动态取色
-          if (themeProvider.isUsingDynamicColors) {
-            return DynamicColorBuilder(
-              builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-                // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
-                ColorScheme lightColorScheme;
-                ColorScheme darkColorScheme;
+      child: Builder(builder: (context) {
+        // 强制初始化所有需要提前加载的 Provider
+        context.read<QiangZhiUserProvider>();
+        context.read<ZhengFangUserProvider>();
+        return Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            // 是否使用动态取色
+            if (themeProvider.isUsingDynamicColors) {
+              return DynamicColorBuilder(
+                builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+                  // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
+                  ColorScheme lightColorScheme;
+                  ColorScheme darkColorScheme;
 
-                if (lightDynamic != null && darkDynamic != null) {
-                  // On Android S+ devices, use the provided dynamic color scheme.
-                  // (Recommended) Harmonize the dynamic color scheme' built-in semantic colors.
-                  lightColorScheme = lightDynamic.harmonized();
+                  if (lightDynamic != null && darkDynamic != null) {
+                    // On Android S+ devices, use the provided dynamic color scheme.
+                    // (Recommended) Harmonize the dynamic color scheme' built-in semantic colors.
+                    lightColorScheme = lightDynamic.harmonized();
 
-                  // Repeat for the dark color scheme.
-                  darkColorScheme = darkDynamic.harmonized();
-                } else {
-                  // Otherwise, use fallback schemes.
-                  lightColorScheme = ColorScheme.fromSeed(
-                    seedColor: appBrandColor,
+                    // Repeat for the dark color scheme.
+                    darkColorScheme = darkDynamic.harmonized();
+                  } else {
+                    // Otherwise, use fallback schemes.
+                    lightColorScheme = ColorScheme.fromSeed(
+                      seedColor: appBrandColor,
+                      brightness: Brightness.light,
+                    );
+                    darkColorScheme = ColorScheme.fromSeed(
+                      seedColor: appBrandColor,
+                      brightness: Brightness.dark,
+                    );
+                  }
+                  // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
+
+                  final ThemeData theme = _buildThemeDataFromColorScheme(
+                    colorScheme: lightColorScheme,
                     brightness: Brightness.light,
+                    themeProvider: themeProvider,
                   );
-                  darkColorScheme = ColorScheme.fromSeed(
-                    seedColor: appBrandColor,
+                  final ThemeData darkTheme = _buildThemeDataFromColorScheme(
+                    colorScheme: darkColorScheme,
                     brightness: Brightness.dark,
+                    themeProvider: themeProvider,
                   );
-                }
-                // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
-
-                final ThemeData theme = _buildThemeDataFromColorScheme(
-                  colorScheme: lightColorScheme,
-                  brightness: Brightness.light,
-                  themeProvider: themeProvider,
-                );
-                final ThemeData darkTheme = _buildThemeDataFromColorScheme(
-                  colorScheme: darkColorScheme,
-                  brightness: Brightness.dark,
-                  themeProvider: themeProvider,
-                );
-                return _buildMaterialApp(
-                  theme: theme,
-                  darkTheme: darkTheme,
-                  themeProvider: themeProvider,
-                );
-              },
-            );
-          } else {
-            final ThemeData theme = _buildThemeDataFromSeedColor(
-              brightness: Brightness.light,
-              themeProvider: themeProvider,
-            );
-            final ThemeData darkTheme = _buildThemeDataFromSeedColor(
-              brightness: Brightness.dark,
-              themeProvider: themeProvider,
-            );
-            return _buildMaterialApp(
-              theme: theme,
-              darkTheme: darkTheme,
-              themeProvider: themeProvider,
-            );
-          }
-        },
-      ),
+                  return _buildMaterialApp(
+                    theme: theme,
+                    darkTheme: darkTheme,
+                    themeProvider: themeProvider,
+                  );
+                },
+              );
+            } else {
+              final ThemeData theme = _buildThemeDataFromSeedColor(
+                brightness: Brightness.light,
+                themeProvider: themeProvider,
+              );
+              final ThemeData darkTheme = _buildThemeDataFromSeedColor(
+                brightness: Brightness.dark,
+                themeProvider: themeProvider,
+              );
+              return _buildMaterialApp(
+                theme: theme,
+                darkTheme: darkTheme,
+                themeProvider: themeProvider,
+              );
+            }
+          },
+        );
+      }),
     );
   }
 
