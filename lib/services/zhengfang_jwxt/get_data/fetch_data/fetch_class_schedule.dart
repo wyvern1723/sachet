@@ -52,7 +52,7 @@ Future<Map> fetchClassScheduleZF({
     );
 
     if (response.statusCode == 901) {
-      throw 'Http status code = 901: 验证身份信息失败';
+      throw 'Http status code = 901, 验证身份信息失败';
     }
     if (response.statusCode != 200) {
       throw 'Http status code = ${response.statusCode}';

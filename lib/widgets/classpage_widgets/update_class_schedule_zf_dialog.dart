@@ -56,7 +56,7 @@ class _UpdateClassScheduleZFDialogState
         currentState = UpdateClassScheduleState.selectSemester;
       });
     } catch (e) {
-      if (e == '登录失效，请重新登录') {
+      if (e == '获取课表学期数据失败: Http status code = 302, 可能需要重新登录') {
         setState(() {
           currentState = UpdateClassScheduleState.loginExpired;
         });
@@ -103,7 +103,7 @@ class _UpdateClassScheduleZFDialogState
         if (kDebugMode) {
           print(e);
         }
-        if (e == '登录失效，请重新登录') {
+        if (e == '获取课表数据失败: Http status code = 901, 验证身份信息失败') {
           setState(() {
             currentState = UpdateClassScheduleState.loginExpired;
           });

@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:sachet/utils/transform.dart';
 
 Future fetchClassScheduleSemetersZF({required String cookie}) async {
-  final dio = Dio(BaseOptions(validateStatus: (_) => true));
+  final dio = Dio(BaseOptions(
+    validateStatus: (_) => true,
+    followRedirects: false,
+  ));
   try {
     Response response = await dio.get(
       'https://jw.xtu.edu.cn/jwglxt/kbcx/xskbcx_cxXskbcxIndex.html?gnmkdm=N2151',
@@ -28,6 +31,9 @@ Future fetchClassScheduleSemetersZF({required String cookie}) async {
     );
     if (response.statusCode == 901) {
       throw 'Http status code = 901, 验证身份信息失败';
+    }
+    if (response.statusCode == 302) {
+      throw 'Http status code = 302, 可能需要重新登录';
     }
     if (response.statusCode != 200) {
       throw 'Http status code = ${response.statusCode}';
