@@ -11,7 +11,7 @@ class SelectJwxtLoginDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: const Text("选择要登录的教务系统"),
-      contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 40.0),
+      contentPadding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 24.0),
       children: JwxtType.values
           .map(
             (e) => Padding(
@@ -57,10 +57,9 @@ class SelectJwxtLoginDialog extends StatelessWidget {
                       ),
                       // 教务系统链接 (小字提示)
                       Text(
-                        '(${e.baseUrl.replaceFirst('', '')})',
+                        '(${e.baseUrl})',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
+                            color: Theme.of(context).colorScheme.outline),
                       ),
                     ],
                   ),
