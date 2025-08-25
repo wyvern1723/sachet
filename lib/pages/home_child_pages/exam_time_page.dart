@@ -3,7 +3,7 @@ import 'package:sachet/services/qiangzhi_jwxt/get_data/get_cacheable_data/get_ex
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/exam_time_widgets.dart';
 import 'package:sachet/widgets/utils_widgets/data_from_cache_or_http.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 
 class ExamTimePage extends StatefulWidget {
   const ExamTimePage({super.key});
@@ -89,7 +89,7 @@ class _ExamTimePageState extends State<ExamTimePage> {
                   alignment: Alignment.topCenter,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: LoginExpired(onGoBack: (value) => onGoBack(value)),
+                    child: LoginExpiredQZ(onGoBack: (value) => onGoBack(value)),
                   ),
                 );
               } else {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/grade_page_provider.dart';
-import '../../utils_widgets/login_expired.dart';
+import '../../utils_widgets/login_expired_qz.dart';
 import 'item_filter_dialog.dart';
 
 class GradeDetails extends StatefulWidget {
@@ -26,7 +26,7 @@ class _GradeDetailsState extends State<GradeDetails> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               if (snapshot.error == '登录失效，请重新登录') {
-                return LoginExpired();
+                return LoginExpiredQZ();
               } else if (snapshot.error == '评教未完成，不能查询成绩。请先完成评教。') {
                 return Text(
                   '评教未完成，不能查询成绩。请先完成评教。',

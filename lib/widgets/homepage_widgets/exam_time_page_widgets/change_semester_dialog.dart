@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_time_semesters.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 
 class ChangeSemesterDialog extends StatefulWidget {
   const ChangeSemesterDialog({super.key});
@@ -37,7 +37,7 @@ class _ChangeSemesterDialogState extends State<ChangeSemesterDialog> {
                   if (snapshot.error == '登录失效，请重新登录') {
                     return Align(
                       alignment: Alignment.topCenter,
-                      child: LoginExpired(),
+                      child: LoginExpiredQZ(),
                     );
                   } else {
                     return Text('${snapshot.error}');

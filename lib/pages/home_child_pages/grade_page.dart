@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_scores.dart';
 import 'package:sachet/providers/grade_page_provider.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/gpa_card.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/help_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/grade_details.dart';
@@ -75,7 +75,7 @@ class _GradePageState extends State<GradePage> {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasError) {
                             if (snapshot.error == '登录失效，请重新登录') {
-                              return LoginExpired(
+                              return LoginExpiredQZ(
                                 onGoBack: (value) => onGoBack(value),
                               );
                             } else {

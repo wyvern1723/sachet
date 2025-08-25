@@ -6,7 +6,7 @@ import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_free_classroom.dart';
 import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_fab.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:provider/provider.dart';
 
 List _classSessionList = ['12', '34', '56', '78', '091011'];
@@ -143,7 +143,7 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: LoginExpired(
+                          child: LoginExpiredQZ(
                             onGoBack: (value) => onGoBack(value),
                           ),
                         ),
@@ -182,7 +182,7 @@ class _FreeClassPageViewState extends State<FreeClassPageView> {
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: LoginExpired(
+                          child: LoginExpiredQZ(
                             onGoBack: (value) => onGoBack(value),
                           ),
                         ),

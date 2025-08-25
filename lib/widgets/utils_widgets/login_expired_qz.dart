@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoginExpired extends StatelessWidget {
-  const LoginExpired({
+class LoginExpiredQZ extends StatelessWidget {
+  const LoginExpiredQZ({
     super.key,
     this.onGoBack, // 从登录页面返回后回调的函数
   });

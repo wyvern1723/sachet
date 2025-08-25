@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_scores.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/grade_page_provider.dart';
@@ -19,7 +19,7 @@ class GPAWidget extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               if (snapshot.error == '登录失效，请重新登录') {
-                return LoginExpired();
+                return LoginExpiredQZ();
               } else {
                 return Text('${snapshot.error}');
               }

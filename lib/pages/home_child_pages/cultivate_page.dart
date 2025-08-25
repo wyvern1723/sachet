@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/get_cacheable_data/get_cultivate_plan.dart';
 import 'package:sachet/widgets/utils_widgets/data_from_cache_or_http.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 
 class CultivatePage extends StatefulWidget {
   const CultivatePage({super.key});
@@ -55,7 +55,7 @@ class _CultivatePageState extends State<CultivatePage> {
                   alignment: Alignment.topCenter,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: LoginExpired(onGoBack: (value) => onGoBack(value)),
+                    child: LoginExpiredQZ(onGoBack: (value) => onGoBack(value)),
                   ),
                 );
               } else {

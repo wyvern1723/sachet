@@ -7,7 +7,7 @@ import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_schedule.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_shedule_semesters.dart';
 import 'package:sachet/utils/utils_funtions.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -309,7 +309,7 @@ class _UpdateClassScheduleQZDialogState
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 10),
-              LoginExpired(onGoBack: (value) => onGoBack(value)),
+              LoginExpiredQZ(onGoBack: (value) => onGoBack(value)),
             ],
           ),
           actions: [
