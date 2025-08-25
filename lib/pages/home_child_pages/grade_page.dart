@@ -141,7 +141,7 @@ class _GradePageState extends State<GradePage> {
                         width: double.infinity,
                         child: Wrap(
                           alignment: WrapAlignment.spaceBetween,
-                          spacing: 20,
+                          // spacing: 20,
                           children: [
                             //选择学期
                             Selector<GradePageProvider, String>(
