@@ -90,7 +90,7 @@ const defaultAppSettingsConfig = {
   "isShowOccupiedOrEmptyText": true, // 空闲教室是否显示 空/满 的文字
   "classScheduleFilePath": "", // 当前使用的课程表文件路径
   "courseColorFilePath": "", // 当前使用的课程配色文件路径
-  "semesterStartDate": "2025-02-17", // 学期开始日期
+  "semesterStartDate": "2025-09-01", // 学期开始日期
   "curveDuration ": 1500, // 课表翻页动画时长
   "curveType": "Easing.standard", // 课表翻页动画类型
   "isEnableDevMode": false, // 是否启用开发者模式

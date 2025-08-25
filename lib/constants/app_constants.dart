@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final DateTime constSemesterStartDate = DateTime(2025, 2, 17);
+final DateTime constSemesterStartDate = DateTime(2025, 9, 1);
 
 /// 应用预设主题色（MaterialColor）
 const List defaultThemeColors = <MaterialColor>[
