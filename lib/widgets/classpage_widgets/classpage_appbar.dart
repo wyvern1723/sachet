@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/widgets/classpage_widgets/select_jwxt_as_schedule_source_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_qz_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
 
 class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -44,10 +47,29 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   Future showUpdateClassScheduleDialog(BuildContext context) async {
-    var result = await showDialog(
+    final jwxtType = await showDialog(
       context: context,
-      builder: (BuildContext context) => const UpdateClassScheduleQZDialog(),
+      builder: (BuildContext context) =>
+          const SelectJwxtAsScheduleSourceDialog(),
     );
+    var result;
+    switch (jwxtType) {
+      case JwxtType.qiangzhi:
+        result = await showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              const UpdateClassScheduleQZDialog(),
+        );
+        break;
+      case JwxtType.zhengfang:
+        result = await showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              const UpdateClassScheduleZFDialog(),
+        );
+        break;
+    }
+
     if (result == true) {
       context.read<ClassPageProvider>().pageController.jumpToPage(
             weekCountOfToday(

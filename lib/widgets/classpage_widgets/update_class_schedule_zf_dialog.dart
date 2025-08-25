@@ -1,31 +1,41 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_schedule.dart';
-import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_shedule_semesters.dart';
+import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule_semesters.dart';
 import 'package:sachet/utils/utils_funtions.dart';
-import 'package:sachet/widgets/utils_widgets/login_expired.dart';
+import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class UpdateClassScheduleQZDialog extends StatefulWidget {
-  /// 从强智教务系统更新课表的 Dialog
-  const UpdateClassScheduleQZDialog({super.key});
+class UpdateClassScheduleZFDialog extends StatefulWidget {
+  /// 更新课程表数据（从正方教务系统） Dialog
+  const UpdateClassScheduleZFDialog({super.key});
 
   @override
-  State<UpdateClassScheduleQZDialog> createState() =>
-      _UpdateClassScheduleQZDialogState();
+  State<UpdateClassScheduleZFDialog> createState() =>
+      _UpdateClassScheduleZFDialogState();
 }
 
-class _UpdateClassScheduleQZDialogState
-    extends State<UpdateClassScheduleQZDialog> {
+class _UpdateClassScheduleZFDialogState
+    extends State<UpdateClassScheduleZFDialog> {
   UpdateClassScheduleState currentState =
       UpdateClassScheduleState.gettingSemester;
-  Map semesters = {};
-  String selectedSemester = '';
+  Map semestersYears = {};
+  String? _selectedSemesterYear;
+  Map semesterIndexes = {"1": "3", "2": "12", "3": "16"};
+  String? _selectedSemesterIndex;
+
+  /// 是否在 学年 DropDownMenu 显示 ErrorTexy
+  bool _isShowSemesterYearDropDownMenuError = false;
+
+  /// 是否在 学期 DropDownMenu 显示 ErrorTexy
+  bool _isShowSemesterIndexDropDownMenuError = false;
 
   /// 更新课表失败原因
   String _updateClassScheduleFailedErrorMsg = '';
@@ -35,59 +45,63 @@ class _UpdateClassScheduleQZDialogState
 
   /// 获取可选择学期和当前学期数据
   Future _getSemesters() async {
-    await getClassScheduleSemestersDataQZ().then(
-      (result) {
-        if (!mounted) {
-          return;
-        }
-        selectedSemester = result[0];
-        semesters = result[1];
+    try {
+      final result = await getClassScheduleSemestersZF(
+        cookie: ZhengFangUserProvider.cookie,
+      );
+      _selectedSemesterYear = result.$1;
+      semestersYears = result.$2;
+      _selectedSemesterIndex = result.$3;
+      setState(() {
+        currentState = UpdateClassScheduleState.selectSemester;
+      });
+    } catch (e) {
+      if (e == '登录失效，请重新登录') {
         setState(() {
-          currentState = UpdateClassScheduleState.selectSemester;
+          currentState = UpdateClassScheduleState.loginExpired;
         });
-      },
-      onError: (e) {
-        if (!mounted) {
-          return;
+      } else {
+        if (kDebugMode) {
+          print(e);
         }
-        if (e == '登录失效，请重新登录') {
-          setState(() {
-            currentState = UpdateClassScheduleState.loginExpired;
-          });
-        } else {
-          _getSemestesrFailedErrorMsg = e.toString();
-          setState(() {
-            currentState = UpdateClassScheduleState.getSemestersFailed;
-          });
-        }
-      },
-    );
+        _getSemestesrFailedErrorMsg = e.toString();
+        setState(() {
+          currentState = UpdateClassScheduleState.getSemestersFailed;
+        });
+      }
+    }
   }
 
   Future _updateClassSchedule(BuildContext context) async {
-    setState(() {
-      currentState = UpdateClassScheduleState.updating;
-    });
-    await getClassScheduleDataQZ(selectedSemester).then(
-      (pathList) async {
-        if (!mounted) {
-          // 如果取消，不保存
-          // TODO: 只是没有保存和应用获取到的课表数据，实际上后台还是在获取课表。
-          return;
-        }
+    if (_selectedSemesterYear == null || _selectedSemesterIndex == null) {
+      setState(() {
+        _isShowSemesterYearDropDownMenuError = (_selectedSemesterYear == null);
+        _isShowSemesterIndexDropDownMenuError =
+            (_selectedSemesterIndex == null);
+      });
+    } else {
+      setState(() {
+        currentState = UpdateClassScheduleState.updating;
+      });
+      try {
+        final result = await getClassScheduleZF(
+          cookie: ZhengFangUserProvider.cookie,
+          semesterYear: _selectedSemesterYear!,
+          semesterIndex: _selectedSemesterIndex!,
+        );
         // 修改当前课程表文件
-        context.read<SettingsProvider>().setClassScheduleFilePath(pathList[0]);
+        context.read<SettingsProvider>().setClassScheduleFilePath(result[0]);
+
         // 修改当前课程对应的配色文件
         await context
             .read<SettingsProvider>()
-            .setCourseColorFilePath(pathList[1]);
+            .setCourseColorFilePath(result[1]);
         setState(() {
           currentState = UpdateClassScheduleState.setSemesterStartDate;
         });
-      },
-      onError: (e) {
-        if (!mounted) {
-          return;
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
         }
         if (e == '登录失效，请重新登录') {
           setState(() {
@@ -99,8 +113,8 @@ class _UpdateClassScheduleQZDialogState
             currentState = UpdateClassScheduleState.updateClassScheduleFailed;
           });
         }
-      },
-    );
+      }
+    }
   }
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -143,29 +157,62 @@ class _UpdateClassScheduleQZDialogState
       case UpdateClassScheduleState.selectSemester: // 选择学期
         return AlertDialog(
           title: const Text('更新课程表'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+          content: Wrap(
+            spacing: 8,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
             children: [
-              SizedBox(height: 8),
               DropdownMenu<String>(
+                width: 160,
                 menuHeight: 400,
-                initialSelection: selectedSemester,
+                errorText:
+                    _isShowSemesterYearDropDownMenuError ? "请选择一项" : null,
+                initialSelection: _selectedSemesterYear,
+                requestFocusOnTap: false,
+                label: const Text('学年'),
+                onSelected: (String? semester) {
+                  if (semester != null) {
+                    _selectedSemesterYear = semester;
+                    if (_isShowSemesterYearDropDownMenuError == true) {
+                      setState(() {
+                        _isShowSemesterYearDropDownMenuError = false;
+                      });
+                    }
+                  }
+                },
+                dropdownMenuEntries: semestersYears.entries
+                    .map((e) =>
+                        DropdownMenuEntry<String>(value: e.value, label: e.key))
+                    .toList(),
+              ),
+              DropdownMenu<String>(
+                width: 78,
+                menuHeight: 400,
+                errorText:
+                    _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
+                initialSelection: _selectedSemesterIndex,
                 requestFocusOnTap: false,
                 label: const Text('学期'),
                 onSelected: (String? semester) {
                   if (semester != null) {
-                    selectedSemester = semester;
+                    _selectedSemesterIndex = semester;
+                    if (_isShowSemesterIndexDropDownMenuError == true) {
+                      setState(() {
+                        _isShowSemesterIndexDropDownMenuError = false;
+                      });
+                    }
                   }
                 },
-                dropdownMenuEntries: semesters.entries
-                    .map((e) => DropdownMenuEntry<String>(
-                          value: e.value,
-                          label: e.key,
-                        ))
+                dropdownMenuEntries: semesterIndexes.entries
+                    .map((e) =>
+                        DropdownMenuEntry<String>(value: e.value, label: e.key))
                     .toList(),
               ),
             ],
           ),
+          contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 24.0),
           actions: [
             TextButton(
               onPressed: () {
@@ -202,25 +249,6 @@ class _UpdateClassScheduleQZDialogState
             ),
           ],
         );
-      // case UpdateState.success: // 获取课表完成
-      //   return AlertDialog(
-      //     title: const Text('更新课程表'),
-      //     content: Column(
-      //       mainAxisSize: MainAxisSize.min,
-      //       children: [
-      //         SizedBox(height: 10),
-      //         Text('更新完成！'),
-      //       ],
-      //     ),
-      //     actions: [
-      //       TextButton(
-      //         onPressed: () async {
-      //           Navigator.pop(context);
-      //         },
-      //         child: const Text('确认'),
-      //       )
-      //     ],
-      //   );
       case UpdateClassScheduleState.setSemesterStartDate: // 设置学期开始日期
         return AlertDialog(
           title: const Text('更新课程表'),
@@ -254,8 +282,14 @@ class _UpdateClassScheduleQZDialogState
                   child: Text(
                     '校历',
                     style: TextStyle(
-                      color: Colors.indigo.shade900,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Color(0xFF0645AD)
+                          : Colors.blue,
                       decoration: TextDecoration.underline,
+                      decorationColor:
+                          Theme.of(context).brightness == Brightness.light
+                              ? const Color(0xFF0645AD)
+                              : Colors.blue,
                       fontSize: 12.0,
                     ),
                   ),
@@ -286,7 +320,11 @@ class _UpdateClassScheduleQZDialogState
                       onPressed: () async {
                         await selectSemesterStartDate(context);
                       },
-                      icon: Icon(Icons.edit_calendar_outlined),
+                      icon: Icon(
+                        Icons.edit_calendar_outlined,
+                        // color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     )
                   ],
                 ),
@@ -302,14 +340,14 @@ class _UpdateClassScheduleQZDialogState
             )
           ],
         );
-      case UpdateClassScheduleState.loginExpired:
+      case UpdateClassScheduleState.loginExpired: // 登录失效（登录过期）
         return AlertDialog(
           title: const Text('更新课程表'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 10),
-              LoginExpired(onGoBack: (value) => onGoBack(value)),
+              LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
             ],
           ),
           actions: [
@@ -335,7 +373,7 @@ class _UpdateClassScheduleQZDialogState
           actions: [
             TextButton(
               onPressed: () async {
-                await _getSemesters();
+                await _updateClassSchedule(context);
               },
               child: const Text('重试'),
             ),

@@ -8,14 +8,14 @@ Future<Map> fetchClassScheduleZF({
   /// xnm 学年名，如 '2025'=> 指 2025-2026 学年
   required String semesterYear,
 
-  /// xqm 学期名，1=> 第1学期，2=>第二学期，3=>第三学期
+  /// xqm 学期名，"3"=> 第1学期，"12"=>第二学期，"16"=>第三学期
   required String semesterIndex,
 }) async {
-  Map<String, String> indexToXnm = {
-    '1': '3',
-    '2': '12',
-    '3': '16',
-  };
+  // Map<String, String> indexToXnm = {
+  //   '1': '3',
+  //   '2': '12',
+  //   '3': '16',
+  // };
   final dio = Dio(BaseOptions(
     validateStatus: (_) => true,
   ));
@@ -24,7 +24,7 @@ Future<Map> fetchClassScheduleZF({
       'https://jw.xtu.edu.cn/jwglxt/kbcx/xskbcx_cxXsgrkb.html?gnmkdm=N2151',
       data: {
         "xnm": semesterYear,
-        "xqm": indexToXnm[semesterIndex],
+        "xqm": semesterIndex,
         "kzlx": "ck",
         "xsdm": "",
         "kclbdm": ""
@@ -67,8 +67,8 @@ Future<Map> fetchClassScheduleZF({
     if (kDebugMode) {
       print(e);
     }
-    throw Exception('获取课表数据失败: $errorTypeText');
+    throw '获取课表数据失败: $errorTypeText';
   } catch (e) {
-    throw Exception('获取课表数据失败: $e');
+    throw '获取课表数据失败: $e';
   }
 }
