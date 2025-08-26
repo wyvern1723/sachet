@@ -120,6 +120,9 @@ class _UpdateClassScheduleZFDialogState
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
     if (value == true) {
+      setState(() {
+        currentState = UpdateClassScheduleState.gettingSemester;
+      });
       _getSemesters();
     }
   }
@@ -373,7 +376,7 @@ class _UpdateClassScheduleZFDialogState
           actions: [
             TextButton(
               onPressed: () async {
-                await _updateClassSchedule(context);
+                await _getSemesters();
               },
               child: const Text('重试'),
             ),
@@ -397,6 +400,14 @@ class _UpdateClassScheduleZFDialogState
             ],
           ),
           actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  currentState = UpdateClassScheduleState.selectSemester;
+                });
+              },
+              child: const Text('重选学期'),
+            ),
             TextButton(
               onPressed: () async {
                 await _updateClassSchedule(context);
