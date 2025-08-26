@@ -55,67 +55,71 @@ class CourseCard extends StatelessWidget {
         lengths.forEach((element) => sectionsShowText.add(
             '${classCountToSection[classcount]}~${classCountToSection[classcount]! + element - 1}节次'));
         return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(height: 6),
-              ListTile(
-                leading: const Icon(Icons.class_),
-                title: SelectableText(courseTitle),
-              ),
-              ListTile(
-                leading: const Icon(Icons.school),
-                title: SelectableText(instructors.join(' / ')),
-              ),
-              ListTile(
-                leading: const Icon(Icons.room),
-                title: SelectableText(places.join(' / ')),
-              ),
-              ListTile(
-                leading: const Icon(Icons.schedule_outlined),
-                title: SelectableText('${weekDayToXingQiJi[weekday]} '
-                    '${sectionsShowText.join(' / ')}'),
-              ),
-              const ListTile(
-                leading: Icon(Icons.date_range),
-                title: Text('周次：'),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 8.0),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    // alignment: WrapAlignment.spaceBetween,
-                    spacing: 8,
-                    runSpacing: 8,
-                    direction: Axis.horizontal,
-                    children: [
-                      ...List.generate(20, (index) {
-                        int weekCount = index + 1;
-                        return Ink(
-                          height: 38,
-                          width: 38,
-                          color: weeks.contains(weekCount)
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.surface,
-                          child: Center(
-                              child: Text(
-                            '$weekCount',
-                            style: TextStyle(
+          child: SelectionArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 6),
+                ListTile(
+                  leading: const Icon(Icons.class_),
+                  title: Text(courseTitle),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.school),
+                  title: Text(instructors.join(' / ')),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.room),
+                  title: Text(places.join(' / ')),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.schedule_outlined),
+                  title: Text('${weekDayToXingQiJi[weekday]} '
+                      '${sectionsShowText.join(' / ')}'),
+                ),
+                const ListTile(
+                  leading: Icon(Icons.date_range),
+                  title: Text('周次：'),
+                ),
+                SelectionContainer.disabled(
+                  child: Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 8.0),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        // alignment: WrapAlignment.spaceBetween,
+                        spacing: 8,
+                        runSpacing: 8,
+                        direction: Axis.horizontal,
+                        children: [
+                          ...List.generate(20, (index) {
+                            int weekCount = index + 1;
+                            return Ink(
+                              height: 38,
+                              width: 38,
                               color: weeks.contains(weekCount)
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                          )),
-                        );
-                      }),
-                    ],
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.surface,
+                              child: Center(
+                                  child: Text(
+                                '$weekCount',
+                                style: TextStyle(
+                                  color: weeks.contains(weekCount)
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                ),
+                              )),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16)
-            ],
+                const SizedBox(height: 16)
+              ],
+            ),
           ),
         );
       },
