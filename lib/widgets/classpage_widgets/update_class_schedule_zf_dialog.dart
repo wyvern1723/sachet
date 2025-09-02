@@ -376,6 +376,9 @@ class _UpdateClassScheduleZFDialogState
           actions: [
             TextButton(
               onPressed: () async {
+                setState(() {
+                  currentState = UpdateClassScheduleState.gettingSemester;
+                });
                 await _getSemesters();
               },
               child: const Text('重试'),
