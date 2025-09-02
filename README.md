@@ -58,6 +58,8 @@ Sachet 是一款使用 Flutter 构建的应用，旨在为湘潭大学学生提�
 
 [所有发布](https://github.com/wyvern1723/sachet/releases/latest)
 
+[更新日志(CHANGELOG)](./CHANGELOG.md)
+
 ## 给开发者
 
 Flutter version: 3.24.5
