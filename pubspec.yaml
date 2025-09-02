@@ -4,7 +4,7 @@ description: "An app designed for Xiangtan University students, offering easy-to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.4.0+5
+version: 0.4.1+6
 
 homepage: https://github.com/wyvern1723/sachet
 repository: https://github.com/wyvern1723/sachet
