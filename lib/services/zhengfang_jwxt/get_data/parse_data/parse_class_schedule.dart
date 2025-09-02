@@ -36,9 +36,25 @@ class ClassScheduleDataParserZF {
   ///
   /// e.g.
   ///
-  /// "8-12周" -> [8, 9, 10, 11, 12]
+  /// input: "2周", output: [2]
   ///
-  /// "2-4周,6-11周" -> [2, 3, 4, 6, 7, 8, 9, 10, 11]
+  /// input: "2-5周", output: [2, 3, 4, 5]
+  ///
+  /// input: "2-5周,7周", output: [2, 3, 4, 5, 7]
+  ///
+  /// input: "2-5周,7-9周", output: [2, 3, 4, 5, 7, 8, 9]
+  ///
+  /// input: "1-15周(单)", output: [1, 3, 5, 7, 9, 11, 13, 15]
+  ///
+  /// input: "2-16周(双)", output: [2, 4, 6, 8, 10, 12, 14, 16]
+  ///
+  /// input: "1-15周(单),16周", output: [1, 3, 5, 7, 9, 11, 13, 15, 16]
+  ///
+  /// input: "1-15周(单),16-20周", output: [1, 3, 5, 7, 9, 11, 13, 15, 16, 17, 18, 19, 20]
+  ///
+  /// input: "1-5周(单),8-12周(双),13周,19-20周", output: [1, 3, 5, 8, 10, 12, 13, 19, 20]
+  ///
+  /// (?)不知道会不会有这种情况: input: "2周(双),3周(单)", output: [2, 3]
   static List<int> parseWeeks(String input) {
     // 移除所有“周”字和空格
     final cleaned = input.replaceAll(RegExp(r'周|\s'), '');
@@ -48,29 +64,77 @@ class ClassScheduleDataParserZF {
 
     final Set<int> weeks = {}; // 使用 Set 避免重复
 
+    // 单个数字, e.g. "1", "3", "12"
+    final RegExp digitRegex = RegExp(r'\d+');
+    // 数字范围, e.g. "2-5", "16-20", "1-15"
+    final RegExp rangeRegex = RegExp(r'(\d+)-(\d+)');
+
     for (final range in ranges) {
       if (range.isEmpty) continue;
 
       final parts = range.split('-');
       if (parts.length == 1) {
-        // 单个周，如 "5"
-        final week = int.tryParse(parts[0]);
+        // 单个周，如 "5周"
+        final Match? numMatch = digitRegex.firstMatch(range);
+        if (numMatch == null) {
+          throw '解析周次失败: $input';
+        }
+        final int? week = int.tryParse(numMatch.group(0)!);
         if (week != null) {
           weeks.add(week);
         } else {
           throw '解析周次失败: $input';
         }
       } else if (parts.length == 2) {
-        // 范围，如 "2-4"
-        final start = int.tryParse(parts[0]);
-        final end = int.tryParse(parts[1]);
-
-        if (start != null && end != null && start <= end) {
-          for (int i = start; i <= end; i++) {
-            weeks.add(i);
+        if (range.contains("双")) {
+          // e.g. "2-16周(双)"
+          final Match? rangeMatch = rangeRegex.firstMatch(range);
+          if (rangeMatch == null || rangeMatch.groupCount != 2) {
+            throw '解析周次失败: $input';
+          }
+          final int? start = int.tryParse(rangeMatch.group(1)!);
+          final int? end = int.tryParse(rangeMatch.group(2)!);
+          if (start != null && end != null && start <= end) {
+            for (int i = start; i <= end; i++) {
+              if (i.isEven) {
+                weeks.add(i);
+              }
+            }
+          } else {
+            throw '解析周次失败: $input';
+          }
+        } else if (range.contains("单")) {
+          // e.g. "1-15周(单)"
+          final Match? rangeMatch = rangeRegex.firstMatch(range);
+          if (rangeMatch == null || rangeMatch.groupCount != 2) {
+            throw '解析周次失败: $input';
+          }
+          final int? start = int.tryParse(rangeMatch.group(1)!);
+          final int? end = int.tryParse(rangeMatch.group(2)!);
+          if (start != null && end != null && start <= end) {
+            for (int i = start; i <= end; i++) {
+              if (i.isOdd) {
+                weeks.add(i);
+              }
+            }
+          } else {
+            throw '解析周次失败: $input';
           }
         } else {
-          throw '解析周次失败: $input';
+          // 完全的范围，不含 "单"/"双" 周，如 "2-4周"
+          final Match? rangeMatch = rangeRegex.firstMatch(range);
+          if (rangeMatch == null || rangeMatch.groupCount != 2) {
+            throw '解析周次失败: $input';
+          }
+          final int? start = int.tryParse(rangeMatch.group(1)!);
+          final int? end = int.tryParse(rangeMatch.group(2)!);
+          if (start != null && end != null && start <= end) {
+            for (int i = start; i <= end; i++) {
+              weeks.add(i);
+            }
+          } else {
+            throw '解析周次失败: $input';
+          }
         }
       } else {
         throw '解析周次失败: $input';
