@@ -22,10 +22,14 @@ const String jwxtMainPageUrlHttps =
 const String xtuSchoolCalendarUrl = 'https://www.xtu.edu.cn/xysh1/ggfw/xl.htm';
 
 /// 校园网上网认证
-const String campusNetworkAuthUrl = 'http://172.16.0.32:8080';
+const String campusNetworkAuthUrl = 'http://zz.xtu.edu.cn/portal/portal-main';
 
-/// 校园网自助服务（踢出在线设设备……）
-const String campusNetworkSelfServiceUrl = 'https://zz.xtu.edu.cn/selfservice';
+/// 校园网自助服务系统（踢出在线设备……）
+///
+/// 2025-2026-1 开学从 <https://zz.xtu.edu.cn/selfservice> 改成 <https://zz.xtu.edu.cn> 了
+///
+/// [湘潭大学校园网接入使用说明-湘潭大学网络与信息中心](https://nic.xtu.edu.cn/info/1022/1184.htm)
+const String campusNetworkSelfServiceUrl = 'https://zz.xtu.edu.cn';
 
 /// 图书馆的馆藏检索网址
 // TODO 平板大屏也改为桌面端网页

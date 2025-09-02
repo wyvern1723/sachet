@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
       link: campusNetworkAuthUrl,
     );
     OpenLinkListTile campusNetworkSelfService = OpenLinkListTile(
-      title: '校园网自助服务',
+      title: '校园网自助服务系统',
       subtitle: '踢出占线设备',
       icon: Icons.wifi_protected_setup_outlined,
       link: campusNetworkSelfServiceUrl,
