@@ -17,7 +17,6 @@ class PageTransitionsDropdownmenu extends StatelessWidget {
       // width: 168,
       initialSelection: pageTransition,
       requestFocusOnTap: false,
-      enableSearch: false,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {

@@ -41,7 +41,6 @@ class _WeekCountDropdownMenuState extends State<WeekCountDropdownMenu> {
           fontWeight: FontWeight.w500),
       menuStyle: const MenuStyle(),
       requestFocusOnTap: false,
-      enableSearch: false,
       inputDecorationTheme: const InputDecorationTheme(
         filled: false,
         border: UnderlineInputBorder(borderSide: BorderSide.none),

@@ -14,7 +14,6 @@ class NavTypeDropdownmenu extends StatelessWidget {
       // width: 152,
       initialSelection: navigationType,
       requestFocusOnTap: false,
-      enableSearch: false,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {

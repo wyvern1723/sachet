@@ -23,7 +23,6 @@ class StartupPageDropdownMenu extends StatelessWidget {
       initialSelection: startupPage,
       // enableFilter: true,
       requestFocusOnTap: false,
-      enableSearch: false,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
