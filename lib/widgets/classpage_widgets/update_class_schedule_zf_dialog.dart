@@ -8,6 +8,7 @@ import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule_semesters.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_semester_start_date.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:intl/intl.dart';
@@ -96,9 +97,6 @@ class _UpdateClassScheduleZFDialogState
         await context
             .read<SettingsProvider>()
             .setCourseColorFilePath(result[1]);
-        setState(() {
-          currentState = UpdateClassScheduleState.setSemesterStartDate;
-        });
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -114,6 +112,23 @@ class _UpdateClassScheduleZFDialogState
           });
         }
       }
+
+      // 获取开学日期
+      try {
+        // 如果从教务系统获取当前开学日期成功，更改默认开学日期
+        final result =
+            await getSemesterStartDate(cookie: ZhengFangUserProvider.cookie);
+        context.read<SettingsProvider>().setSemesterStartDate(result.$1);
+      } catch (e) {
+        // 如果从教务系统获取当前开学日期失败，则保持使用预设的默认开学日期(constSemesterStartDate)
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+      // 当前状态切换为用户手动设置(调整,如有必要)开学日期
+      setState(() {
+        currentState = UpdateClassScheduleState.setSemesterStartDate;
+      });
     }
   }
 
