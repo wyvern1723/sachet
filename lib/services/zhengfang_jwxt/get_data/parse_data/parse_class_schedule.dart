@@ -201,6 +201,7 @@ class ClassScheduleDataParserZF {
 
   /// 从 xqj(星期几) 和 jc(节次) 得到 item
   ///
+  /// ```
   /// item:
   ///
   ///       Mon Tue Wed Thu Fri Sat Sun
@@ -209,13 +210,27 @@ class ClassScheduleDataParserZF {
   /// 56      2   7  12  17  22  27  32
   /// 78      3   8  13  18  23  28  33
   /// 91011   4   9  14  19  24  29  34
-  static int parseItemIndex(String weekDayInput, String sessionInput) {
-    int? weekDay = int.tryParse(weekDayInput);
-    if (weekDay == null) {
-      throw '解析星期几失败: $weekDayInput';
+  /// ```
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final item1 = ClassScheduleDataParserZF.parseItemIndex("1","1-2节");
+  /// print(item1); // 0
+  /// final item2 = ClassScheduleDataParserZF.parseItemIndex("1","3-4节");
+  /// print(item2); // 1
+  /// final item3 = ClassScheduleDataParserZF.parseItemIndex("3","5-6节");
+  /// print(item3); // 12
+  /// final item4 = ClassScheduleDataParserZF.parseItemIndex("7","9-10节");
+  /// print(item4); // 34
+  /// ```
+  static int parseItemIndex(String weekdayInput, String sessionInput) {
+    int? weekday = int.tryParse(weekdayInput);
+    if (weekday == null) {
+      throw '解析星期几失败: $weekdayInput';
     }
-    if (weekDay < 1 || weekDay > 7) {
-      throw '星期几超出范围: $weekDayInput';
+    if (weekday < 1 || weekday > 7) {
+      throw '星期几超出范围: $weekdayInput';
     }
     int? startSession = parseStartSession(sessionInput);
     if (startSession == null) {
@@ -226,7 +241,7 @@ class ClassScheduleDataParserZF {
       throw '解析 item 失败: $sessionInput';
     }
 
-    int item = (weekDay - 1) * 5 + startItem - 1;
+    int item = (weekday - 1) * 5 + startItem - 1;
 
     return item;
   }

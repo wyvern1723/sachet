@@ -29,12 +29,12 @@ class DayOfTheWeekTopBar extends StatelessWidget {
           ),
         ),
         // 周几几号
-        for (int weekDay = 0; weekDay < DateTime.daysPerWeek; weekDay++)
+        for (int weekday = 1; weekday <= DateTime.daysPerWeek; weekday++)
           Expanded(
             flex: 5,
-            child: DateAndWeekDay(
+            child: DateAndWeekday(
               weekCount: weekCount,
-              weekDay: weekDay,
+              weekday: weekday,
               semesterStartDate: semesterStartDate,
             ),
           ),
@@ -43,23 +43,23 @@ class DayOfTheWeekTopBar extends StatelessWidget {
   }
 }
 
-class DateAndWeekDay extends StatelessWidget {
-  const DateAndWeekDay({
+class DateAndWeekday extends StatelessWidget {
+  const DateAndWeekday({
     super.key,
     required this.weekCount,
-    required this.weekDay,
+    required this.weekday,
     required this.semesterStartDate,
   });
   final int weekCount;
-  final int weekDay;
+  final int weekday;
   final DateTime semesterStartDate;
 
   @override
   Widget build(BuildContext context) {
-    DateTime thatDay = getDate(
-      semesterStartDate,
-      weekCount,
-      weekDay,
+    DateTime thatDay = getDateFromWeekCountAndWeekday(
+      semesterStartDate: semesterStartDate,
+      weekCount: weekCount,
+      weekday: weekday,
     );
     // ignore: no_leading_underscores_for_local_identifiers
     bool _isToday = isToday(thatDay);
@@ -74,7 +74,7 @@ class DateAndWeekDay extends StatelessWidget {
         children: [
           // 周几
           Text(
-            weekDayToZhouJi[weekDay] ?? '',
+            weekdayToZhouJi[weekday] ?? '',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

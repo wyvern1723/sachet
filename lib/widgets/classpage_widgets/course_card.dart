@@ -12,7 +12,7 @@ import 'course_card_item.dart';
 class CourseCard extends StatelessWidget {
   final double cardHeight;
   final int weekCount;
-  final int weekDay;
+  final int weekday;
   final int classCount; // classCount 节次（ 1~5 ）
   final List<CourseSchedule> courseScheduleItems;
   final Map courseColorData;
@@ -20,7 +20,7 @@ class CourseCard extends StatelessWidget {
     super.key,
     required this.cardHeight,
     required this.weekCount,
-    required this.weekDay,
+    required this.weekday,
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
@@ -75,7 +75,7 @@ class CourseCard extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.schedule_outlined),
-                  title: Text('${weekDayToXingQiJi[weekday]} '
+                  title: Text('${weekdayToXingQiJi[weekday]} '
                       '${sectionsShowText.join(' / ')}'),
                 ),
                 const ListTile(
@@ -153,7 +153,7 @@ class CourseCard extends StatelessWidget {
             _showCourseDetails(
               context: context,
               courseTitle: courseSchedule.title ?? '',
-              weekday: weekDay,
+              weekday: weekday,
               classcount: classCount,
             );
           });

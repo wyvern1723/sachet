@@ -60,7 +60,7 @@ class ExamTimeCard extends StatelessWidget {
                           ? '空'
                           : isHalf
                               ? time
-                              : '$time  ${weekDayToXingQiJi[DateTime.parse(time.split(' ')[0]).weekday - 1]}',
+                              : '$time  ${weekdayToXingQiJi[DateTime.parse(time.split(' ')[0]).weekday]}',
                       maxLines: 3,
                       style: TextStyle(
                         fontSize: 16,
@@ -88,9 +88,8 @@ class ExamTimeCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        weekDayToXingQiJi[
-                                DateTime.parse(time.split(' ')[0]).weekday -
-                                    1] ??
+                        weekdayToXingQiJi[
+                                DateTime.parse(time.split(' ')[0]).weekday] ??
                             '',
                         maxLines: 3,
                         style: TextStyle(

@@ -17,10 +17,36 @@ int weekCountOfToday(DateTime semesterStartDate) {
   return dWeek;
 }
 
-// 从周数和 weekDay 得到那一天的日期
-DateTime getDate(DateTime semesterStartDate, int weekCount, int weekDay) {
-  final date = semesterStartDate
-      .add(Duration(days: (weekCount - 1) * DateTime.daysPerWeek + weekDay));
+/// 根据学期起始日和给定日期，计算给定日期的周次和星期几
+///
+/// - `semesterStartDate`: 学期开始日期
+/// - `date`: 需要计算的日期
+///
+/// Returns: (String weekCount, DateTime weekday)
+/// - `weekCount`: 周次(1-20)
+/// - `weekday`: 星期几(1-7)
+({int weekCount, int weekday}) getWeekCountAndWeekdayOfDate({
+  required DateTime semesterStartDate,
+  required DateTime date,
+}) {
+  final difference = date.difference(semesterStartDate);
+  final int weekCount = (difference.inDays ~/ 7) + 1;
+  final int weekday = date.weekday;
+  return (weekCount: weekCount, weekday: weekday);
+}
+
+/// 根据学期起始日、周次和星期几，计算对应的具体日期
+///
+/// - `semesterStartDate`: 学期开始日期
+/// - `weekCount`: 周次（第几周）（1-20）
+/// - `weekday`: 星期几（1=星期一, 7=星期日，与 [DateTime.weekday] 一致）
+DateTime getDateFromWeekCountAndWeekday({
+  required DateTime semesterStartDate,
+  required int weekCount,
+  required int weekday,
+}) {
+  final date = semesterStartDate.add(
+      Duration(days: (weekCount - 1) * DateTime.daysPerWeek + weekday - 1));
   return date;
 }
 

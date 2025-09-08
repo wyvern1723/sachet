@@ -77,7 +77,9 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
                 ),
 
                 // 右侧是课程表的卡片区域
-                for (int weekDay = 0; weekDay < DateTime.daysPerWeek; weekDay++)
+                for (int weekday = 1;
+                    weekday <= DateTime.daysPerWeek;
+                    weekday++)
                   Expanded(
                     flex: 5,
                     // 这里是一星期的每一天
@@ -91,7 +93,7 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
                                     selector: (_, courseCardSettingsProvider) =>
                                         courseCardSettingsProvider.cardHeight,
                                     builder: (context, cardHeight, __) {
-                                      int item = weekDay * 5 + classCount;
+                                      int item = (weekday - 1) * 5 + classCount;
                                       List list =
                                           widget.courseScheduleItemsList![item];
                                       List<CourseSchedule> courseScheduleItems =
@@ -107,7 +109,7 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
                                           child: CourseCard(
                                             cardHeight: cardHeight,
                                             weekCount: widget.weekCount,
-                                            weekDay: weekDay,
+                                            weekday: weekday,
                                             classCount: classCount,
                                             courseScheduleItems:
                                                 courseScheduleItems,
