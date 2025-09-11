@@ -312,8 +312,12 @@ class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  '登录到湘潭大学教务系统',
+                  '登录到湘潭大学教务系统 (旧)',
                   style: Theme.of(context).textTheme.titleLarge,
+                ),
+                Text(
+                  '(老教务系统仅限2024级及之前学生登录，2025级及之后无账号)',
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 32),
 
