@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/pages/home_child_pages/free_classroom_zf_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
-import 'package:sachet/pages/home_child_pages/free_class_page.dart';
+// import 'package:sachet/pages/home_child_pages/free_class_page.dart';
 import 'package:sachet/pages/home_child_pages/grade_page.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
@@ -104,7 +105,7 @@ class HomePage extends StatelessWidget {
                 const CardWidget(
                   title: '空闲教室',
                   icon: Icons.meeting_room_outlined,
-                  page: FreeClassPage(),
+                  page: FreeClassroomPageZF(),
                 ),
                 const Row(
                   children: [

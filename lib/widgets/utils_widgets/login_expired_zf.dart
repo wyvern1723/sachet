@@ -18,7 +18,7 @@ class LoginExpiredZF extends StatelessWidget {
         const Text('登录失效，请重新'),
         TextButton(
           onPressed: () {
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (BuildContext context) {
                   return const ZhengFangJwxtLoginPage();
