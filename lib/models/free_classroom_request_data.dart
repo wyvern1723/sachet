@@ -1,4 +1,4 @@
-class FreeClassRequestData {
+class FreeClassroomRequestDataZF {
   /// 校区号
   /// ```html
   ///  <option value="02" selected="selected">校本部</option>
@@ -130,50 +130,35 @@ class FreeClassRequestData {
 
   /// 当前页
   String queryModelCurrentPage;
+
+  /// 排序依据:
+  ///
+  /// "cdbh+"=>场地编号
+  ///
+  /// "cdmc+"=>场地名称
+  ///
+  /// "xqmc+"=>校区
+  ///
+  /// "cdlb_id+"=>场地类别
+  ///
+  /// "zws+"=>座位数
+  ///
+  /// "kszws1+"=>考试座位数
+  ///
+  /// "jxlmc+"=>楼号
+  ///
+  /// "cdejlbmc+"=>场地二级类别
+  ///
+  /// ......
   String queryModelSortName;
+
+  /// 排序方式: "asc"=>正序，"desc"=>倒序
   String queryModelSortOrder;
 
-  /// 可能是查询次数？第一次是 "0"，第二次查询是 "1"
+  /// 查询次数，第一次是 "0"，第二次查询是 "1"……
   String time;
-  // "xqh_id": "02", // 校本部02,兴湘学院03
-  //       "xnm": semesterYear,
-  //       "xqm": semesterIndex,
-  //       /*
-  //       场地类别
-  //           <option value="242AD80DD82F326AE06364FD18AC1791">画室</option>
-  //   <option value="242AD80DD830326AE06364FD18AC1791">工作室</option>
-  //   <option value="242AD80DD831326AE06364FD18AC1791">雕塑室</option>
-  //   <option value="242AD80DD839326AE06364FD18AC1791">体育馆</option>
-  //   <option value="242AD80DD84A326AE06364FD18AC1791">实验室（工2）</option>
-  //   <option value="242A39144A5E320DE06364FD18AC0E46">实验室（工1）</option>
-  //   <option value="39B2DE0501CF86B3E063C94418AC0F6A">琴房</option>
-  //   <option value="242A39144A5D320DE06364FD18AC0E46">机房</option>
-  //   <option value="242BB3E52A3032E3E06364FD18AC182D">报告厅</option>
-  //   <option value="D3AE0862A9DC4958934863C3672200FC">实验室（文）</option>
-  //   <option value="01" selected="selected">教室</option>
-  //   <option value="09">实验室（理）</option>
-  //   <option value="263675C3C9F74057E06364FD18ACDEE3">运动场</option>
-  //   */
-  //       "cdlb_id": "01",
-  //       "cdejlb_id": "",
-  //       "qszws": "",
-  //       "jszws": "",
-  //       "cdmc": "",
-  //       "lh": "",
-  //       "jyfs": "",
-  //       "cdjylx": "",
-  //       "sfbhkc": "",
-  //       "zcd": "1",
-  //       "xqj": "1",
-  //       "jcd": "1",
-  //       "_search": "false",
-  //       "nd": "1756376982515",
-  //       "queryModel.showCount": "9999", // 每页最大显示数量
-  //       "queryModel.currentPage": "1", // 当前页
-  //       "queryModel.sortName": "cdbh",
-  //       "queryModel.sortOrder": "asc",
-  //       "time": "1",
-  FreeClassRequestData({
+
+  FreeClassroomRequestDataZF({
     required this.xqhId,
     required this.xnm,
     required this.xqm,
@@ -193,7 +178,7 @@ class FreeClassRequestData {
     required this.nd,
     this.queryModelShowCount = "9999",
     this.queryModelCurrentPage = "1",
-    this.queryModelSortName = "cdbh",
+    this.queryModelSortName = "cdmc+",
     this.queryModelSortOrder = "asc",
     this.time = "0",
   });

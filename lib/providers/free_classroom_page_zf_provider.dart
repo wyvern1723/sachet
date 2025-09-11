@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/free_class_request_data.dart';
+import 'package:sachet/models/free_classroom_request_data.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/time_manager.dart';
@@ -318,7 +318,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
         (!_isFilterSeatAmount || _currentMaxSeatAmount == null)
             ? ""
             : _currentMaxSeatAmount!.round().toString();
-    final Map data = FreeClassRequestData(
+    final Map data = FreeClassroomRequestDataZF(
       xqhId: _selectedCampus,
       xnm: _semesterYear,
       xqm: _semesterIndex,
