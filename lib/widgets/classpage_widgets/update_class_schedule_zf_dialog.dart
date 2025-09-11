@@ -45,10 +45,11 @@ class _UpdateClassScheduleZFDialogState
   String _getSemestesrFailedErrorMsg = '';
 
   /// 获取可选择学期和当前学期数据
-  Future _getSemesters() async {
+  Future _getSemesters(ZhengFangUserProvider? zhengFangUserProvider) async {
     try {
       final result = await getClassScheduleSemestersZF(
         cookie: ZhengFangUserProvider.cookie,
+        zhengFangUserProvider: zhengFangUserProvider,
       );
       _selectedSemesterYear = result.$1;
       semestersYears = result.$2;
@@ -138,14 +139,15 @@ class _UpdateClassScheduleZFDialogState
       setState(() {
         currentState = UpdateClassScheduleState.gettingSemester;
       });
-      _getSemesters();
+      _getSemesters(null);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _getSemesters();
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    _getSemesters(zhengFangUserProvider);
   }
 
   @override
@@ -394,7 +396,7 @@ class _UpdateClassScheduleZFDialogState
                 setState(() {
                   currentState = UpdateClassScheduleState.gettingSemester;
                 });
-                await _getSemesters();
+                await _getSemesters(null);
               },
               child: const Text('重试'),
             ),
