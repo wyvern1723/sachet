@@ -58,6 +58,16 @@ class ZhengFangUserProvider extends ChangeNotifier {
     }
   }
 
+  /// 设置 cookie
+  Future setCookie(String newCookie) async {
+    _user.cookie = newCookie;
+    await _secureStorageUtil.save(
+      key: StoreItem.cookieZF.keyName,
+      value: _user.cookie,
+    );
+    notifyListeners();
+  }
+
   /// 读取密码
   static Future<String?> readPassword() async {
     return _secureStorageUtil.read(key: StoreItem.passwordZF.keyName);

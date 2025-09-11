@@ -27,9 +27,13 @@ class _FreeClassroomFilterScreenZFState
     extends State<FreeClassroomFilterScreenZF> {
   late Future<FreeClassroomFilterOptionsZF> future;
 
-  Future<FreeClassroomFilterOptionsZF> getData() async {
+  Future<FreeClassroomFilterOptionsZF> getData(
+    ZhengFangUserProvider? zhengFangUserProvider,
+  ) async {
     final result = await getFreeClassroomFilterOptionsZF(
-        cookie: ZhengFangUserProvider.cookie);
+      cookie: ZhengFangUserProvider.cookie,
+      zhengFangUserProvider: zhengFangUserProvider,
+    );
     return result;
   }
 
@@ -37,7 +41,7 @@ class _FreeClassroomFilterScreenZFState
   void onGoBack(dynamic value) {
     if (value == true) {
       setState(() {
-        future = getData();
+        future = getData(null);
       });
     }
   }
@@ -45,7 +49,8 @@ class _FreeClassroomFilterScreenZFState
   @override
   void initState() {
     super.initState();
-    future = getData();
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    future = getData(zhengFangUserProvider);
   }
 
   @override
