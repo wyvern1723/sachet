@@ -68,7 +68,7 @@ Flutter version: 3.24.5
 
 - 强智教务系统，相关文件见: [lib/services/qiangzhi_jwxt/](./lib/services/qiangzhi_jwxt/) (实现登录，获取个人课表、培养方案、空闲教室、考试成绩、考试时间)
 
-- 正方教务系统，相关文件见: [lib/services/zhengfang_jwxt/](./lib/services/zhengfang_jwxt/) (🚧 正在施工，目前已实现登录和获取课表)
+- 正方教务系统，相关文件见: [lib/services/zhengfang_jwxt/](./lib/services/zhengfang_jwxt/) (🚧 正在施工，目前已实现登录，获取个人课表、空闲教室)
 
 - 强智教务系统的图片验证码自动识别
   - 模型文件: [assets/models/captcha_model.tflite](./assets/models/captcha_model.tflite) (使用 TensorFlow v2.15.0 训练生成，基于 1748 张验证码图片数据集。在 80%/20% 划分的训练/测试集上，测试准确率达到 100%。最终模型使用全部数据集重新训练生成)
