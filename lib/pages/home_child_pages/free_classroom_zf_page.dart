@@ -45,10 +45,18 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('空闲教室')),
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: routeFilterScreen,
-        onGenerateRoute: _onGenerateRoute,
+      body: NavigatorPopHandler(
+        onPop: () {
+          // 当返回事件发生时，尝试在嵌套的 Navigator 中 pop
+          // 如果嵌套的 Navigator 已经没有可以 pop 的页面，它将什么也不做
+          // 这种情况下，外部的 Navigator 将会处理返回事件
+          _navigatorKey.currentState?.pop();
+        },
+        child: Navigator(
+          key: _navigatorKey,
+          initialRoute: routeFilterScreen,
+          onGenerateRoute: _onGenerateRoute,
+        ),
       ),
     );
   }
