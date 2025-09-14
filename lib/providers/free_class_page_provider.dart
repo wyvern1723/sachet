@@ -44,8 +44,9 @@ class FreeClassPageProvider extends ChangeNotifier {
   List<List<String>> _classroomsDataToday = [];
   List<List<String>> get classroomDataToday => _classroomsDataToday;
 
-  late List<List<String>> _allClassroomsDataTomorrow;
-  List<List<String>> get allClassroomDataTomorrow => _allClassroomsDataTomorrow;
+  List<List<String>>? _allClassroomsDataTomorrow;
+  List<List<String>>? get allClassroomDataTomorrow =>
+      _allClassroomsDataTomorrow;
 
   List<List<String>> _classroomsDataTomorrow = [];
   List<List<String>> get classroomDataTomorrow => _classroomsDataTomorrow;
@@ -89,8 +90,21 @@ class FreeClassPageProvider extends ChangeNotifier {
     switch (day) {
       case Day.today:
         _classroomsDataToday = data;
+        break;
       case Day.tomorrow:
-        _classroomsDataTomorrow = data;
+        // 如果筛选过（可能是在「今日」页面筛选过，这时还没有加载「明日」的数据，所以「明日」数据没被筛选，需要在此时传入数据时筛选）
+        if (_selectedRoomFilters.isNotEmpty ||
+            _selectedSessionFilters.isNotEmpty) {
+          _classroomsDataTomorrow = getFilteredClassrooms(
+            data,
+            roomFilterList: _selectedRoomFilters,
+            sessionFilterList: _selectedSessionFilters,
+          );
+        } else {
+          // 如果没筛选过，赋原始值
+          _classroomsDataTomorrow = data;
+        }
+        break;
     }
     notifyListeners();
   }
@@ -181,19 +195,21 @@ class FreeClassPageProvider extends ChangeNotifier {
         _allClassroomsDataToday,
         newRoomFilterList,
       );
-      List<List<String>> reversefilteredClassroomsTomorrow =
-          getReverseFilteredClassrooms(
-        _allClassroomsDataTomorrow,
-        newRoomFilterList,
-      );
       _classroomsDataToday = getFilteredClassrooms(
         reversefilteredClassroomsToday,
         sessionFilterList: _selectedSessionFilters,
       );
-      _classroomsDataTomorrow = getFilteredClassrooms(
-        reversefilteredClassroomsTomorrow,
-        sessionFilterList: _selectedSessionFilters,
-      );
+      if (_allClassroomsDataTomorrow != null) {
+        List<List<String>> reversefilteredClassroomsTomorrow =
+            getReverseFilteredClassrooms(
+          _allClassroomsDataTomorrow!,
+          newRoomFilterList,
+        );
+        _classroomsDataTomorrow = getFilteredClassrooms(
+          reversefilteredClassroomsTomorrow,
+          sessionFilterList: _selectedSessionFilters,
+        );
+      }
       notifyListeners();
     } else {
       _classroomsDataToday = getFilteredClassrooms(
@@ -201,11 +217,13 @@ class FreeClassPageProvider extends ChangeNotifier {
         roomFilterList: _selectedRoomFilters,
         sessionFilterList: _selectedSessionFilters,
       );
-      _classroomsDataTomorrow = getFilteredClassrooms(
-        _allClassroomsDataTomorrow,
-        roomFilterList: _selectedRoomFilters,
-        sessionFilterList: _selectedSessionFilters,
-      );
+      if (_allClassroomsDataTomorrow != null) {
+        _classroomsDataTomorrow = getFilteredClassrooms(
+          _allClassroomsDataTomorrow!,
+          roomFilterList: _selectedRoomFilters,
+          sessionFilterList: _selectedSessionFilters,
+        );
+      }
       notifyListeners();
     }
   }

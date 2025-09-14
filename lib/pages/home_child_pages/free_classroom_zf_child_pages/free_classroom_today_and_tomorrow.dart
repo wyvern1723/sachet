@@ -35,110 +35,17 @@ class FreeClassroomTodayAndTomorrowView extends StatefulWidget {
 
 class _FreeClassroomTodayAndTomorrowViewState
     extends State<FreeClassroomTodayAndTomorrowView> {
-  late Future<List> futureRoomToday;
-  late Future<List> futureRoomTomorrow;
-  final PageStorageKey _pageStorageKey = PageStorageKey('key');
-  late final ScrollController _scrollController1 = ScrollController();
-  late final ScrollController _scrollController2 = ScrollController();
   bool _showFab = true;
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      setState(() {
-        futureRoomToday = getRoomData(Day.today, null);
-        futureRoomTomorrow = getRoomData(Day.tomorrow, null);
-      });
+  void _handleScroll(ScrollController controller) {
+    final direction = controller.position.userScrollDirection;
+    if (direction == ScrollDirection.reverse && _showFab) {
+      // 向下滑动, 隐藏 FAB
+      setState(() => _showFab = false);
+    } else if (direction == ScrollDirection.forward && !_showFab) {
+      // 向上（向前）滑动，显示 FAB
+      setState(() => _showFab = true);
     }
-  }
-
-  Future<List> getRoomData(
-    Day day,
-    ZhengFangUserProvider? zhengFangUserProvider,
-  ) async {
-    if (day == Day.tomorrow) {
-      await Future.delayed(Duration(seconds: 2));
-    }
-    String semesterYear =
-        context.read<FreeClassroomPageZFProvider>().semesterYear;
-    if (semesterYear.isEmpty) {
-      // 如果没有当前学期数据，获取当前学期
-      final filterOptions = await getFreeClassroomFilterOptionsZF(
-        cookie: ZhengFangUserProvider.cookie,
-        zhengFangUserProvider: zhengFangUserProvider,
-      );
-      context
-          .read<FreeClassroomPageZFProvider>()
-          .setSemester(filterOptions.selectedSemester);
-      semesterYear = context.read<FreeClassroomPageZFProvider>().semesterYear;
-    }
-    final String semesterIndex =
-        context.read<FreeClassroomPageZFProvider>().semesterIndex;
-
-    List<List<String>> freeClassroomData =
-        await getFreeClassroomTodayAndTomorrowZF(
-      cookie: ZhengFangUserProvider.cookie,
-      semesterYear: semesterYear,
-      semesterIndex: semesterIndex,
-      day: day,
-      zhengFangUserProvider: zhengFangUserProvider,
-    );
-
-    context
-        .read<FreeClassPageProvider>()
-        .setAllClassroomsData(freeClassroomData, day);
-    context
-        .read<FreeClassPageProvider>()
-        .setClassroomsData(freeClassroomData, day);
-    context.read<FreeClassPageProvider>().setHasData();
-
-    return freeClassroomData;
-  }
-
-  // 更新 FloatingActionButton 的显示状态
-  void _updateFABVisibility(bool show) {
-    if (_showFab != show) {
-      setState(() {
-        _showFab = show;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-    futureRoomToday = getRoomData(Day.today, zhengFangUserProvider);
-    futureRoomTomorrow = getRoomData(Day.tomorrow, zhengFangUserProvider);
-    super.initState();
-    _scrollController1.addListener(() {
-      if (_scrollController1.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        // 向下滑动, 隐藏 FAB
-        _updateFABVisibility(false);
-      } else if (_scrollController1.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        // 向上（向前）滑动，显示 FAB
-        _updateFABVisibility(true);
-      }
-    });
-    _scrollController2.addListener(() {
-      if (_scrollController2.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        // 向下滑动, 隐藏 FAB
-        _updateFABVisibility(false);
-      } else if (_scrollController2.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        // 向上（向前）滑动，显示 FAB
-        _updateFABVisibility(true);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController1.dispose();
-    _scrollController2.dispose();
-    super.dispose();
   }
 
   @override
@@ -163,86 +70,14 @@ class _FreeClassroomTodayAndTomorrowViewState
         ),
         body: TabBarView(
           children: [
-            FutureBuilder(
-              future: futureRoomToday,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    if (snapshot.error ==
-                        '获取可选数据失败: Http status code = 302, 可能需要重新登录') {
-                      return Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: LoginExpiredZF(
-                            onGoBack: (value) => onGoBack(value),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${snapshot.error}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      );
-                    }
-                  } else {
-                    return FreeRoomsColumn(
-                      listViewKey: _pageStorageKey,
-                      day: Day.today,
-                      scrollController: _scrollController1,
-                    );
-                  }
-                }
-                // By default, show a loading spinner.
-                return const Center(child: CircularProgressIndicator());
-              },
+            _ClassroomDataView(
+              day: Day.today,
+              onScroll: _handleScroll,
             ),
-            FutureBuilder(
-              future: futureRoomTomorrow,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    if (snapshot.error ==
-                        '获取可选数据失败: Http status code = 302, 可能需要重新登录') {
-                      return Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: LoginExpiredZF(
-                            onGoBack: (value) => onGoBack(value),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${snapshot.error}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      );
-                    }
-                  } else {
-                    return FreeRoomsColumn(
-                      listViewKey: _pageStorageKey,
-                      day: Day.tomorrow,
-                      scrollController: _scrollController2,
-                    );
-                  }
-                }
-                // By default, show a loading spinner.
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
+            _ClassroomDataView(
+              day: Day.tomorrow,
+              onScroll: _handleScroll,
+            )
           ],
         ),
         floatingActionButton: AnimatedSlide(
@@ -256,36 +91,149 @@ class _FreeClassroomTodayAndTomorrowViewState
   }
 }
 
-class FreeRoomsColumn extends StatelessWidget {
-  const FreeRoomsColumn({
-    super.key,
-    required this.listViewKey,
+class _ClassroomDataView extends StatefulWidget {
+  const _ClassroomDataView({
     required this.day,
-    required this.scrollController,
+    required this.onScroll,
   });
-  final Key listViewKey;
+
   final Day day;
-  final ScrollController scrollController;
+  final void Function(ScrollController) onScroll;
+
+  @override
+  State<_ClassroomDataView> createState() => _ClassroomDataViewState();
+}
+
+//  使用 mixin 来保持 TabBarView 中页面的状态（包括滚动位置）
+class _ClassroomDataViewState extends State<_ClassroomDataView>
+    with AutomaticKeepAliveClientMixin {
+  late final ScrollController _scrollController;
+  late Future<List> _dataFuture;
+
+  @override
+  bool get wantKeepAlive => true; // 启用状态保持
+
+  Future<List> _getRoomData(
+    ZhengFangUserProvider? zhengFangUserProvider,
+  ) async {
+    if (widget.day == Day.tomorrow) {
+      await Future.delayed(Duration(seconds: 2));
+    }
+    String semesterYear =
+        context.read<FreeClassroomPageZFProvider>().semesterYear;
+    if (semesterYear.isEmpty) {
+      // 如果没有当前学期数据，获取当前学期
+      final filterOptions = await getFreeClassroomFilterOptionsZF(
+        cookie: ZhengFangUserProvider.cookie,
+        zhengFangUserProvider: zhengFangUserProvider,
+      );
+      context
+          .read<FreeClassroomPageZFProvider>()
+          .setSemester(filterOptions.selectedSemester);
+      semesterYear = context.read<FreeClassroomPageZFProvider>().semesterYear;
+    }
+    final String semesterIndex =
+        context.read<FreeClassroomPageZFProvider>().semesterIndex;
+
+    List<List<String>> freeClassroomData =
+        await getFreeClassroomTodayAndTomorrowZF(
+      cookie: ZhengFangUserProvider.cookie,
+      semesterYear: semesterYear,
+      semesterIndex: semesterIndex,
+      day: widget.day,
+      zhengFangUserProvider: zhengFangUserProvider,
+    );
+    if (!mounted) return [];
+    context
+        .read<FreeClassPageProvider>()
+        .setAllClassroomsData(freeClassroomData, widget.day);
+    context
+        .read<FreeClassPageProvider>()
+        .setClassroomsData(freeClassroomData, widget.day);
+    context.read<FreeClassPageProvider>().setHasData();
+
+    return freeClassroomData;
+  }
+
+  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
+  void _onGoBack(dynamic value) {
+    if (value == true) {
+      // 登录成功后，重新获取数据并刷新UI
+      setState(() {
+        _dataFuture = _getRoomData(null);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    _dataFuture = _getRoomData(zhengFangUserProvider);
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(() => widget.onScroll(_scrollController));
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _Head(),
-        Flexible(
-          child: _Body(
-            listViewKey: listViewKey,
-            day: day,
-            scrollController: scrollController,
-          ),
-        ),
-      ],
+    super.build(context);
+
+    return FutureBuilder<List>(
+      future: _dataFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            if (snapshot.error ==
+                '获取可选数据失败: Http status code = 302, 可能需要重新登录') {
+              return Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: LoginExpiredZF(onGoBack: _onGoBack),
+                ),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              );
+            }
+          }
+
+          return Column(
+            children: [
+              const _Head(),
+              Expanded(
+                child: _Body(
+                  scrollController: _scrollController,
+                  day: widget.day,
+                ),
+              ),
+            ],
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }
 
+/// 表头，显示 「"节次","12","34","56","78","091011"」
 class _Head extends StatelessWidget {
-  const _Head({super.key});
+  const _Head();
 
   @override
   Widget build(BuildContext context) {
@@ -293,35 +241,31 @@ class _Head extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Builder(builder: (context) {
-            return Flexible(
-              flex: 5,
+          Flexible(
+            flex: 5,
+            child: Container(
+              alignment: Alignment.center,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              margin: const EdgeInsets.all(2.0),
+              child: const Text("节次"),
+            ),
+          ),
+          ...List.generate(
+            5,
+            (index) => Flexible(
+              flex: 1,
               child: Container(
                 alignment: Alignment.center,
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 margin: const EdgeInsets.all(2.0),
-                child: const Text("节次"),
-              ),
-            );
-          }),
-          ...List.generate(
-            5,
-            (index) => Builder(builder: (context) {
-              return Flexible(
-                flex: 1,
-                child: Container(
-                  alignment: Alignment.center,
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  margin: const EdgeInsets.all(2.0),
-                  child: FittedBox(
-                    child: Text(
-                      "${_classSessionList[index]}",
-                      style: TextStyle(fontSize: 10.0),
-                    ),
+                child: FittedBox(
+                  child: Text(
+                    "${_classSessionList[index]}",
+                    style: TextStyle(fontSize: 10.0),
                   ),
                 ),
-              );
-            }),
+              ),
+            ),
           )
         ],
       ),
@@ -331,12 +275,9 @@ class _Head extends StatelessWidget {
 
 class _Body extends StatelessWidget {
   const _Body({
-    super.key,
-    required this.listViewKey,
     required this.day,
     required this.scrollController,
   });
-  final Key listViewKey;
   final Day day;
   final ScrollController scrollController;
 
@@ -355,72 +296,71 @@ class _Body extends StatelessWidget {
                 freeClassPageProvider.classroomDataTomorrow);
         break;
     }
+    return ListView.builder(
+      controller: scrollController,
+      itemCount: freeClassroomsData.length,
+      itemBuilder: (context, index) {
+        return _ClassroomRow(rowData: freeClassroomsData[index]);
+      },
+    );
+  }
+}
 
-    List<Widget> buildRow(int index, List list) {
-      return [
-        // 教室名
-        Builder(
-          builder: (BuildContext context) => Flexible(
+/// 教室数据的一行
+class _ClassroomRow extends StatelessWidget {
+  const _ClassroomRow({required this.rowData});
+
+  final List rowData;
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 教室名
+          Flexible(
             flex: 5,
             child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               color: Theme.of(context).colorScheme.secondaryContainer,
               margin: const EdgeInsets.all(2.0),
-              child: Text("${list[index][0]}", textAlign: TextAlign.center),
+              child: Text("${rowData[0]}", textAlign: TextAlign.center),
             ),
           ),
-        ),
-        ...List.generate(5, (i) {
-          final status = list[index][i + 1];
-          switch (status) {
-            case '空':
-              return Flexible(
-                flex: 1,
-                child: Container(
-                  color: Colors.green.shade400,
-                  margin: const EdgeInsets.all(2.0),
-                ),
-              );
-            case '满':
-              return Flexible(
-                flex: 1,
-                child: Container(
-                  color: Colors.red.shade400,
-                  margin: const EdgeInsets.all(2.0),
-                ),
-              );
-            default:
-              return Flexible(
-                flex: 1,
-                child: Container(
-                  color: Colors.grey.shade400,
-                  margin: const EdgeInsets.all(2.0),
-                  child: Text(status),
-                ),
-              );
-          }
-        }),
-      ];
-    }
-
-    List<Widget> buildRows(List list) {
-      final count = list.length;
-      return List.generate(
-        count,
-        (index) => IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: buildRow(index, list),
-          ),
-        ),
-      );
-    }
-
-    return ListView(
-      controller: scrollController,
-      key: listViewKey,
-      children: buildRows(freeClassroomsData),
+          ...List.generate(5, (i) {
+            final status = rowData[i + 1];
+            switch (status) {
+              case '空':
+                return Flexible(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.green.shade400,
+                    margin: EdgeInsets.all(2.0),
+                  ),
+                );
+              case '满':
+                return Flexible(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.red.shade400,
+                    margin: EdgeInsets.all(2.0),
+                  ),
+                );
+              default:
+                return Flexible(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.grey.shade400,
+                    margin: const EdgeInsets.all(2.0),
+                    child: Text(status),
+                  ),
+                );
+            }
+          }),
+        ],
+      ),
     );
   }
 }
