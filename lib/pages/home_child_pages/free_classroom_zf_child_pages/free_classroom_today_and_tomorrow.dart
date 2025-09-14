@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
@@ -200,6 +203,33 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: LoginExpiredZF(onGoBack: _onGoBack),
+                ),
+              );
+            } else if (snapshot.error == '学期未开始' || snapshot.error == '学期已结束') {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 24.0, horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.sentiment_neutral_outlined, size: 30),
+                        SizedBox(width: 8),
+                        Text(
+                          '${snapshot.error}',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await selectSemesterStartDate(context);
+                      },
+                      label: Text('设置学期开始日期'),
+                      icon: Icon(Icons.edit_calendar_outlined),
+                    ),
+                  ],
                 ),
               );
             } else {

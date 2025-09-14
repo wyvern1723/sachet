@@ -37,6 +37,29 @@ Future<List<List<String>>> getFreeClassroomTodayAndTomorrowZF({
   required Day day,
   required ZhengFangUserProvider? zhengFangUserProvider,
 }) async {
+  final firstDate = getDateFromWeekCountAndWeekday(
+    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+        constSemesterStartDate,
+    weekCount: 1,
+    weekday: 1,
+  );
+  final lastDate = getDateFromWeekCountAndWeekday(
+    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+        constSemesterStartDate,
+    weekCount: 20,
+    weekday: 7,
+  );
+  if (DateTime.now()
+      .add(Duration(days: day == Day.today ? 0 : 1))
+      .isBefore(firstDate)) {
+    throw '学期未开始';
+  }
+  if (DateTime.now()
+      .add(Duration(days: day == Day.today ? 0 : 1))
+      .isAfter(lastDate)) {
+    throw '学期已结束';
+  }
+
   // 获取今天/明天的周次和星期几
   final weekCountAndWeekday = getWeekCountAndWeekdayOfDate(
     semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
