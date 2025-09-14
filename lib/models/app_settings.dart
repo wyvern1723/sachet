@@ -19,6 +19,7 @@ class AppSettings {
   bool? isUsingDynamicColors;
   String? pageTransition;
   bool? isPredictiveBack;
+  bool? isFreeClassroomUseLegacyStyle;
 
   AppSettings({
     this.isMD3,
@@ -41,6 +42,7 @@ class AppSettings {
     this.isUsingDynamicColors,
     this.pageTransition,
     this.isPredictiveBack,
+    this.isFreeClassroomUseLegacyStyle,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class AppSettings {
     isUsingDynamicColors = json['isUsingDynamicColors'];
     pageTransition = json['pageTransition'];
     isPredictiveBack = json['isPredictiveBack'];
+    isFreeClassroomUseLegacyStyle = json['isFreeClassroomUseLegacyStyle'];
   }
 
   Map<String, dynamic> toJson() {
@@ -88,6 +91,7 @@ class AppSettings {
     data['isUsingDynamicColors'] = this.isUsingDynamicColors;
     data['pageTransition'] = this.pageTransition;
     data['isPredictiveBack'] = this.isPredictiveBack;
+    data['isFreeClassroomUseLegacyStyle'] = this.isFreeClassroomUseLegacyStyle;
     return data;
   }
 }

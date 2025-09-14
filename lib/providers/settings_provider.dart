@@ -32,6 +32,8 @@ class SettingsProvider extends ChangeNotifier {
       _appSettings.navigationType ?? NavType.navigationDrawer.type;
   static bool get isOpenLinkInExternalBrowser =>
       _appSettings.isOpenLinkInExternalBrowser ?? false;
+  bool get isFreeClassroomUseLegacyStyle =>
+      _appSettings.isFreeClassroomUseLegacyStyle ?? false;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -146,6 +148,14 @@ class SettingsProvider extends ChangeNotifier {
   void setIsOpenLinkInExternalBrowser(bool value) {
     if (value != isOpenLinkInExternalBrowser) {
       _appSettings.isOpenLinkInExternalBrowser = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setIsFreeClassroomUseLegacyStyle(bool value) {
+    if (value != isFreeClassroomUseLegacyStyle) {
+      _appSettings.isFreeClassroomUseLegacyStyle = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

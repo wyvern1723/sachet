@@ -6,6 +6,7 @@ import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 
 import 'package:provider/provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 
 const routeFilterScreen = 'filter';
 const routeResultScreen = 'result';
@@ -45,9 +46,8 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
   @override
   Widget build(BuildContext context) {
     /// 是否使用以前的 今日/明日 样式
-    bool useLegacyStyle = context.select<FreeClassroomPageZFProvider, bool>(
-        (freeClassroomPageZFProvider) =>
-            freeClassroomPageZFProvider.useLegacyStyle);
+    bool useLegacyStyle = context.select<SettingsProvider, bool>(
+        (settingsProvider) => settingsProvider.isFreeClassroomUseLegacyStyle);
     if (useLegacyStyle) {
       return FreeClassroomTodayAndTomorrow();
     } else {
@@ -58,7 +58,9 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
             TextButton.icon(
               icon: Icon(Icons.swap_horiz),
               onPressed: () {
-                context.read<FreeClassroomPageZFProvider>().setUseLegacyStyle();
+                context
+                    .read<SettingsProvider>()
+                    .setIsFreeClassroomUseLegacyStyle(true);
               },
               label: Text('旧版样式'),
             ),

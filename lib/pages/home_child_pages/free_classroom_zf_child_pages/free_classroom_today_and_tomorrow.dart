@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
@@ -62,7 +63,9 @@ class _FreeClassroomTodayAndTomorrowViewState
             TextButton.icon(
               icon: Icon(Icons.swap_horiz),
               onPressed: () {
-                context.read<FreeClassroomPageZFProvider>().setUseLegacyStyle();
+                context
+                    .read<SettingsProvider>()
+                    .setIsFreeClassroomUseLegacyStyle(false);
               },
               label: Text('新版样式'),
             ),
