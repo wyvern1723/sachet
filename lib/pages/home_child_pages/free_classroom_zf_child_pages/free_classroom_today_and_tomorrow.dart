@@ -61,6 +61,9 @@ class _FreeClassroomTodayAndTomorrowViewState
           ),
           actions: <Widget>[
             TextButton.icon(
+              style: Theme.of(context).useMaterial3
+                  ? null
+                  : TextButton.styleFrom(foregroundColor: Colors.white),
               icon: Icon(Icons.swap_horiz),
               onPressed: () {
                 context

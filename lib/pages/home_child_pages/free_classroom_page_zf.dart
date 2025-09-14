@@ -53,9 +53,13 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
     } else {
       return Scaffold(
         appBar: AppBar(
+          elevation: !Theme.of(context).useMaterial3 ? 0 : null,
           title: const Text('空闲教室'),
           actions: [
             TextButton.icon(
+              style: Theme.of(context).useMaterial3
+                  ? null
+                  : TextButton.styleFrom(foregroundColor: Colors.white),
               icon: Icon(Icons.swap_horiz),
               onPressed: () {
                 context

@@ -129,11 +129,18 @@ class _FreeClassroomFilterScreenZFState
           child: Scaffold(
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
-              child: TabBar(
-                tabs: [
-                  Tab(text: '单日'),
-                  Tab(text: '多日'),
-                ],
+              child: Material(
+                color: Theme.of(context).useMaterial3
+                    ? null
+                    : Theme.of(context).brightness == Brightness.light
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceDim,
+                child: TabBar(
+                  tabs: [
+                    Tab(text: '单日'),
+                    Tab(text: '多日'),
+                  ],
+                ),
               ),
             ),
             body: TabBarView(
