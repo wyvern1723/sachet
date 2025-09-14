@@ -17,11 +17,27 @@ List<int> sessionOptions = List.generate(11, (i) => (i + 1));
 Map<String, String> campusTypeMap = {"校本部": "02", "兴湘学院": "03"};
 
 class FreeClassroomPageZFProvider extends ChangeNotifier {
+  // ======================================================
+  // ========== useLegacyStyle(是否使用以前的样式) ===========
+  // ======================================================
+  bool _useLegacyStyle = false;
+
+  /// 是否使用以前的 今日/明日 样式
+  bool get useLegacyStyle => _useLegacyStyle;
+
+  void setUseLegacyStyle() {
+    _useLegacyStyle = !_useLegacyStyle;
+    notifyListeners();
+  }
+
   // =====================================
   // ========== Semester(学期) ===========
   // =====================================
   String _semesterYear = '';
   String _semesterIndex = '';
+
+  String get semesterYear => _semesterYear;
+  String get semesterIndex => _semesterIndex;
 
   void setSemester(String? selectedSemester) {
     if (selectedSemester == null) {

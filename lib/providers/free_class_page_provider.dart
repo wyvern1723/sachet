@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 enum Day { today, tomorrow }
 
@@ -26,11 +26,12 @@ Map<String, String> classRoomFilter = {
   '逸夫楼': '逸夫楼',
   '一教楼': '一教楼',
   '兴教楼': '兴教楼',
-  '文科楼': '文科楼',
   '外语楼': '外语楼',
+  '第三教学楼': '第三教学楼',
+  '兴湘学院三教': '兴湘学院三教',
   '尚美楼': '尚美楼',
+  '经管楼': '经管楼',
   '行远楼': '行远楼',
-  '土木楼': '土木楼',
   '南山': '南山',
   '北山': '北山',
   '其他': '其他'
@@ -61,6 +62,10 @@ class FreeClassPageProvider extends ChangeNotifier {
 
   SessionFilterMode _sessionFilterMode = SessionFilterMode.or;
   SessionFilterMode get sessionFilterMode => _sessionFilterMode;
+
+  /// 教室是否全选
+  bool get isClassroomFiltersAllSelected =>
+      listEquals(_selectedRoomFilters, classRoomFilter.values.toList());
 
   /// 设置 _hasData (是否有空闲教室数据) 为 true
   void setHasData() {
@@ -222,8 +227,15 @@ class FreeClassPageProvider extends ChangeNotifier {
   }
 
   /// 把全部教室可筛选数据都加入教室筛选列表
-  void addAllToClassRoomFliters() {
+  void addAllToClassRoomFilters() {
     List<String> newList = classRoomFilter.values.toList();
+    _selectedRoomFilters = newList;
+    notifyListeners();
+  }
+
+  /// 清除教室筛选列表
+  void clearClassRoomFilters() {
+    List<String> newList = [];
     _selectedRoomFilters = newList;
     notifyListeners();
   }

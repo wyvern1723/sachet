@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_filter_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_query_page_zf.dart';
+import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_today_and_tomorrow.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -43,22 +44,41 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('空闲教室')),
-      body: NavigatorPopHandler(
-        onPop: () {
-          // 当返回事件发生时，尝试在嵌套的 Navigator 中 pop
-          // 如果嵌套的 Navigator 已经没有可以 pop 的页面，它将什么也不做
-          // 这种情况下，外部的 Navigator 将会处理返回事件
-          _navigatorKey.currentState?.pop();
-        },
-        child: Navigator(
-          key: _navigatorKey,
-          initialRoute: routeFilterScreen,
-          onGenerateRoute: _onGenerateRoute,
+    /// 是否使用以前的 今日/明日 样式
+    bool useLegacyStyle = context.select<FreeClassroomPageZFProvider, bool>(
+        (freeClassroomPageZFProvider) =>
+            freeClassroomPageZFProvider.useLegacyStyle);
+    if (useLegacyStyle) {
+      return FreeClassroomTodayAndTomorrow();
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('空闲教室'),
+          actions: [
+            TextButton.icon(
+              icon: Icon(Icons.swap_horiz),
+              onPressed: () {
+                context.read<FreeClassroomPageZFProvider>().setUseLegacyStyle();
+              },
+              label: Text('旧版样式'),
+            ),
+          ],
         ),
-      ),
-    );
+        body: NavigatorPopHandler(
+          onPop: () {
+            // 当返回事件发生时，尝试在嵌套的 Navigator 中 pop
+            // 如果嵌套的 Navigator 已经没有可以 pop 的页面，它将什么也不做
+            // 这种情况下，外部的 Navigator 将会处理返回事件
+            _navigatorKey.currentState?.pop();
+          },
+          child: Navigator(
+            key: _navigatorKey,
+            initialRoute: routeFilterScreen,
+            onGenerateRoute: _onGenerateRoute,
+          ),
+        ),
+      );
+    }
   }
 
   Route<dynamic> _onGenerateRoute(RouteSettings settings) {

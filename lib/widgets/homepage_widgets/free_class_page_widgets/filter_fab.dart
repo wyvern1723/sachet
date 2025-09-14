@@ -17,6 +17,7 @@ class FilterFAB extends StatelessWidget {
         onPressed: () {
           showModalBottomSheet(
             context: context,
+            isScrollControlled: true,
             builder: (context) => ChangeNotifierProvider.value(
               value: freeClassPageProvider,
               builder: (context, _) {
@@ -44,22 +45,43 @@ class FilterFAB extends StatelessWidget {
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    context
-                                        .read<FreeClassPageProvider>()
-                                        .addAllToClassRoomFliters();
-                                    context
-                                        .read<FreeClassPageProvider>()
-                                        .filter();
-                                  },
-                                  child: Text('全选'),
-                                ),
+                                child: Selector<FreeClassPageProvider, bool>(
+                                    selector:
+                                        (context, freeClassPageProvider) =>
+                                            freeClassPageProvider
+                                                .isClassroomFiltersAllSelected,
+                                    builder: (context,
+                                        isClassRoomFlitersAllSelected, __) {
+                                      if (!isClassRoomFlitersAllSelected) {
+                                        return TextButton(
+                                          onPressed: () {
+                                            context
+                                                .read<FreeClassPageProvider>()
+                                                .addAllToClassRoomFilters();
+                                            context
+                                                .read<FreeClassPageProvider>()
+                                                .filter();
+                                          },
+                                          child: Text('全选'),
+                                        );
+                                      } else {
+                                        return TextButton(
+                                          onPressed: () {
+                                            context
+                                                .read<FreeClassPageProvider>()
+                                                .clearClassRoomFilters();
+                                            context
+                                                .read<FreeClassPageProvider>()
+                                                .filter();
+                                          },
+                                          child: Text('取消全选'),
+                                        );
+                                      }
+                                    }),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4.0),
                         Selector<FreeClassPageProvider, List<String>>(
                             selector: (context, freeClassPageProvider) =>
                                 freeClassPageProvider.selectedRoomFilters,
@@ -90,6 +112,7 @@ class FilterFAB extends StatelessWidget {
                                 }).toList(),
                               );
                             }),
+                        SizedBox(height: 6),
                         Row(
                           children: [
                             Expanded(child: SizedBox()),
