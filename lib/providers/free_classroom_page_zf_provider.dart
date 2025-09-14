@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
+import 'package:sachet/models/free_classroom_filter_options.dart';
 import 'package:sachet/models/free_classroom_request_data.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -17,6 +18,17 @@ List<int> sessionOptions = List.generate(11, (i) => (i + 1));
 Map<String, String> campusTypeMap = {"校本部": "02", "兴湘学院": "03"};
 
 class FreeClassroomPageZFProvider extends ChangeNotifier {
+  // ================================================
+  // ========== filterOptions(可筛选的数据) ===========
+  // ================================================
+  FreeClassroomFilterOptionsZF? _filterOptions;
+  FreeClassroomFilterOptionsZF? get filterOptions => _filterOptions;
+
+  void setFilterOptions(FreeClassroomFilterOptionsZF options) {
+    _filterOptions = options;
+    setSemester(options.selectedSemester);
+  }
+
   // =====================================
   // ========== Semester(学期) ===========
   // =====================================
@@ -26,6 +38,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
   String get semesterYear => _semesterYear;
   String get semesterIndex => _semesterIndex;
 
+  /// 设置当前学期
   void setSemester(String? selectedSemester) {
     if (selectedSemester == null) {
       // TODO: 处理 selectedSemester 为 null 的情况

@@ -30,10 +30,18 @@ class _FreeClassroomFilterScreenZFState
   Future<FreeClassroomFilterOptionsZF> getData(
     ZhengFangUserProvider? zhengFangUserProvider,
   ) async {
+    // 检查 filterOptions 是否有数据
+    final filterOptions =
+        context.read<FreeClassroomPageZFProvider>().filterOptions;
+    if (filterOptions != null) {
+      return filterOptions;
+    }
+
     final result = await getFreeClassroomFilterOptionsZF(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
+    context.read<FreeClassroomPageZFProvider>().setFilterOptions(result);
     return result;
   }
 
@@ -118,12 +126,8 @@ class _FreeClassroomFilterScreenZFState
         }
 
         // 数据加载成功，传给筛选数据页面
-        final filterOptions = snapshot.data;
+        final filterOptions = snapshot.data!;
 
-        // 设置当前学期
-        context
-            .read<FreeClassroomPageZFProvider>()
-            .setSemester(filterOptions!.selectedSemester);
         return DefaultTabController(
           length: 2,
           child: Scaffold(

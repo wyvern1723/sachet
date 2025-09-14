@@ -122,22 +122,19 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
   Future<List> _getRoomData(
     ZhengFangUserProvider? zhengFangUserProvider,
   ) async {
-    if (widget.day == Day.tomorrow) {
-      await Future.delayed(Duration(seconds: 2));
-    }
-    String semesterYear =
-        context.read<FreeClassroomPageZFProvider>().semesterYear;
-    if (semesterYear.isEmpty) {
-      // 如果没有当前学期数据，获取当前学期
-      final filterOptions = await getFreeClassroomFilterOptionsZF(
+    // 检查 filterOptions 是否有数据
+    final filterOptions =
+        context.read<FreeClassroomPageZFProvider>().filterOptions;
+    if (filterOptions == null) {
+      final result = await getFreeClassroomFilterOptionsZF(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
       );
-      context
-          .read<FreeClassroomPageZFProvider>()
-          .setSemester(filterOptions.selectedSemester);
-      semesterYear = context.read<FreeClassroomPageZFProvider>().semesterYear;
+      context.read<FreeClassroomPageZFProvider>().setFilterOptions(result);
     }
+
+    final String semesterYear =
+        context.read<FreeClassroomPageZFProvider>().semesterYear;
     final String semesterIndex =
         context.read<FreeClassroomPageZFProvider>().semesterIndex;
 
