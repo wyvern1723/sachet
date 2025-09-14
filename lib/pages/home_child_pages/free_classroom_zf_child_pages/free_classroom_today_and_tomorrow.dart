@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
-import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
@@ -144,8 +143,6 @@ class _FreeClassroomTodayAndTomorrowViewState
 
   @override
   Widget build(BuildContext context) {
-    bool isShowOccupiedOrEmptyText = context.select<SettingsProvider, bool>(
-        (settingsProvider) => settingsProvider.isShowOccupiedOrEmptyText);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -161,17 +158,6 @@ class _FreeClassroomTodayAndTomorrowViewState
                 context.read<FreeClassroomPageZFProvider>().setUseLegacyStyle();
               },
               label: Text('新版样式'),
-            ),
-            IconButton(
-              icon: Icon(isShowOccupiedOrEmptyText
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined),
-              tooltip: isShowOccupiedOrEmptyText ? '隐藏文字' : '显示文字',
-              onPressed: () {
-                context
-                    .read<SettingsProvider>()
-                    .toggleIsShowOccupiedOrEmptyText();
-              },
             ),
           ],
         ),
@@ -356,8 +342,6 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isShowOccupiedOrEmptyText = context.select<SettingsProvider, bool>(
-        (settingsProvider) => settingsProvider.isShowOccupiedOrEmptyText);
     late List freeClassroomsData;
     switch (day) {
       case Day.today:
@@ -394,27 +378,22 @@ class _Body extends StatelessWidget {
               return Flexible(
                 flex: 1,
                 child: Container(
-                  alignment: Alignment.center,
                   color: Colors.green.shade400,
                   margin: const EdgeInsets.all(2.0),
-                  child: Text(isShowOccupiedOrEmptyText ? '空' : ''),
                 ),
               );
             case '满':
               return Flexible(
                 flex: 1,
                 child: Container(
-                  alignment: Alignment.center,
                   color: Colors.red.shade400,
                   margin: const EdgeInsets.all(2.0),
-                  child: Text(isShowOccupiedOrEmptyText ? '满' : ''),
                 ),
               );
             default:
               return Flexible(
                 flex: 1,
                 child: Container(
-                  alignment: Alignment.center,
                   color: Colors.grey.shade400,
                   margin: const EdgeInsets.all(2.0),
                   child: Text(status),

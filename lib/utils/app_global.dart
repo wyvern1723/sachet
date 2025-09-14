@@ -87,7 +87,6 @@ const defaultAppSettingsConfig = {
   "isAutoCheckUpdate": true, // 是否自动检查更新
   "isShowAllCheckUpdateResult": false, // 是否显示检查更新所有结果（检查更新失败和已是最新版）
   "isShowPageTurnArrow": true, // 是否显示课程表上一周下一周的翻页箭头
-  "isShowOccupiedOrEmptyText": true, // 空闲教室是否显示 空/满 的文字
   "classScheduleFilePath": "", // 当前使用的课程表文件路径
   "courseColorFilePath": "", // 当前使用的课程配色文件路径
   "semesterStartDate": "2025-09-01", // 学期开始日期

@@ -6,7 +6,6 @@ class AppSettings {
   bool? isAutoCheckUpdate;
   bool? isShowAllCheckUpdateResult;
   bool? isShowPageTurnArrow;
-  bool? isShowOccupiedOrEmptyText;
   String? classScheduleFilePath;
   String? courseColorFilePath;
   String? semesterStartDate;
@@ -29,7 +28,6 @@ class AppSettings {
     this.isAutoCheckUpdate,
     this.isShowAllCheckUpdateResult,
     this.isShowPageTurnArrow,
-    this.isShowOccupiedOrEmptyText,
     this.classScheduleFilePath,
     this.courseColorFilePath,
     this.semesterStartDate,
@@ -53,7 +51,6 @@ class AppSettings {
     isAutoCheckUpdate = json['isAutoCheckUpdate'];
     isShowAllCheckUpdateResult = json['isShowAllCheckUpdateResult'];
     isShowPageTurnArrow = json['isShowPageTurnArrow'];
-    isShowOccupiedOrEmptyText = json['isShowOccupiedOrEmptyText'];
     classScheduleFilePath = json['classScheduleFilePath'];
     courseColorFilePath = json['courseColorFilePath'];
     semesterStartDate = json['semesterStartDate'];
@@ -78,7 +75,6 @@ class AppSettings {
     data['isAutoCheckUpdate'] = this.isAutoCheckUpdate;
     data['isShowAllCheckUpdateResult'] = this.isShowAllCheckUpdateResult;
     data['isShowPageTurnArrow'] = this.isShowPageTurnArrow;
-    data['isShowOccupiedOrEmptyText'] = this.isShowOccupiedOrEmptyText;
     data['classScheduleFilePath'] = this.classScheduleFilePath;
     data['courseColorFilePath'] = this.courseColorFilePath;
     data['semesterStartDate'] = this.semesterStartDate;

@@ -17,8 +17,6 @@ class SettingsProvider extends ChangeNotifier {
   static bool get isShowAllCheckUpdateResult =>
       _appSettings.isShowAllCheckUpdateResult ?? false;
   bool get isShowPageTurnArrow => _appSettings.isShowPageTurnArrow ?? true;
-  bool get isShowOccupiedOrEmptyText =>
-      _appSettings.isShowOccupiedOrEmptyText ?? false;
   String get classScheduleFilePath => _appSettings.classScheduleFilePath ?? '';
   String get courseColorFilePath => _appSettings.courseColorFilePath ?? '';
   static String get semesterStartDate =>
@@ -65,20 +63,6 @@ class SettingsProvider extends ChangeNotifier {
       AppGlobal.saveAppSettings();
       notifyListeners();
     }
-  }
-
-  void setIsShowOccupiedOrEmptyText(bool value) {
-    if (value != isShowOccupiedOrEmptyText) {
-      _appSettings.isShowOccupiedOrEmptyText = value;
-    }
-    AppGlobal.saveAppSettings();
-    notifyListeners();
-  }
-
-  void toggleIsShowOccupiedOrEmptyText() {
-    _appSettings.isShowOccupiedOrEmptyText = !isShowOccupiedOrEmptyText;
-    AppGlobal.saveAppSettings();
-    notifyListeners();
   }
 
   void setClassScheduleFilePath(String value) {

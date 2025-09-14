@@ -175,28 +175,6 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
           ),
           Selector<SettingsProvider, bool>(
               selector: (_, settingsProvider) =>
-                  settingsProvider.isShowOccupiedOrEmptyText,
-              builder: (_, isShowOccupiedOrEmptyText, __) {
-                return ListTile(
-                  leading: const Align(
-                    widthFactor: 1,
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.disabled_by_default_outlined),
-                  ),
-                  title: const Text('显示空闲课表的文字'),
-                  subtitle: const Text('显示「空」和「满」'),
-                  trailing: Switch(
-                    value: isShowOccupiedOrEmptyText,
-                    onChanged: (value) {
-                      context
-                          .read<SettingsProvider>()
-                          .setIsShowOccupiedOrEmptyText(value);
-                    },
-                  ),
-                );
-              }),
-          Selector<SettingsProvider, bool>(
-              selector: (_, settingsProvider) =>
                   settingsProvider.isShowPageTurnArrow,
               builder: (_, isShowPageTurnArrow, __) {
                 return ListTile(
