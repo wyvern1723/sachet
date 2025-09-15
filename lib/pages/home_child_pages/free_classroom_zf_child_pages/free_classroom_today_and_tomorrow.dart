@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -331,8 +329,11 @@ class _Body extends StatelessWidget {
     }
     return ListView.builder(
       controller: scrollController,
-      itemCount: freeClassroomsData.length,
+      itemCount: freeClassroomsData.length + 1,
       itemBuilder: (context, index) {
+        if (index == freeClassroomsData.length) {
+          return _Foot(); // 最后一个 item 是 Foot
+        }
         return _ClassroomRow(rowData: freeClassroomsData[index]);
       },
     );
@@ -392,6 +393,45 @@ class _ClassroomRow extends StatelessWidget {
                 );
             }
           }),
+        ],
+      ),
+    );
+  }
+}
+
+class _Foot extends StatelessWidget {
+  /// 脚注，"* 全天满课的教室不参与显示", 绿色方块: 空，红色方块: 满
+  const _Foot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 16.0),
+      child: Row(
+        children: [
+          Text(
+            // '*仅显示有空闲时段的教室',
+            // '*仅列出当天有空闲时段的教室',
+            '* 全天满课的教室不参与显示',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 2, 0),
+            child: Container(
+              color: Colors.green.shade400,
+              child: SizedBox.square(dimension: 16),
+            ),
+          ),
+          Text(': 空', style: Theme.of(context).textTheme.bodySmall),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 2, 0),
+            child: Container(
+              color: Colors.red.shade400,
+              child: SizedBox.square(dimension: 16),
+            ),
+          ),
+          Text(': 满', style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );
