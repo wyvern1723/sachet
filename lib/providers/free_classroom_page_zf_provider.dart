@@ -167,10 +167,14 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
   // ========== Date(日期) ==========
   // ===============================
 
-  DateTime _selectedDate = DateTime.now();
-
   /// 选择的日期(仅在选择单日生效)
-  DateTime get selectedDate => _selectedDate;
+  DateTime get selectedDate => getDateFromWeekCountAndWeekday(
+        semesterStartDate:
+            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+                constSemesterStartDate,
+        weekCount: selectedWeekCounts.elementAt(0),
+        weekday: selectedWeekdays.elementAt(0),
+      );
 
   // ==================================
   // ========== Campus(校区) ===========
@@ -292,13 +296,6 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
     if (isSingleChoice) {
       selection.clear();
       selection.add(value);
-      _selectedDate = getDateFromWeekCountAndWeekday(
-        semesterStartDate:
-            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-                constSemesterStartDate,
-        weekCount: _selectedWeekCounts.elementAt(0),
-        weekday: _selectedWeekdays.elementAt(0),
-      );
     } else {
       if (selection.contains(value)) {
         selection.remove(value);
