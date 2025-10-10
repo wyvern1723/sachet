@@ -11,6 +11,7 @@ import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/pages/settings_child_pages/dev_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/theme_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/advanced_settings_page.dart';
+import 'package:sachet/pages/settings_child_pages/experialmental_settings_page.dart';
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
@@ -341,6 +342,46 @@ class _SettingsPageState extends State<SettingsPage> {
                 );
               },
             ),
+
+            // 实验性功能 Experimental features
+            ListTile(
+              leading: const Align(
+                widthFactor: 1,
+                alignment: Alignment.centerLeft,
+                child: Icon(Icons.science),
+              ),
+              title: const Text('实验性功能'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () async {
+                await showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text('⚠️注意'),
+                    content: Text(
+                      '实验性的功能可能不稳定',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                            ..pop()
+                            ..push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return const ExperialmentalSettingsPage();
+                                },
+                              ),
+                            );
+                        },
+                        child: const Text('确认'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
             // 开发者设置
             Selector<SettingsProvider, bool>(
                 selector: (_, settingsProvider) =>

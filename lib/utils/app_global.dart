@@ -112,7 +112,9 @@ const defaultAppSettingsConfig = {
   // 是否启用预测性返回手势
   // [添加对预测性返回手势的支持  |  App architecture  |  Android Developers](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture?hl=zh-cn)
   "isPredictiveBack": true,
-  "isFreeClassroomUseLegacyStyle": false // 空闲教室页面是否使用旧的「今日/明日」的样式
+  "isFreeClassroomUseLegacyStyle": false, // 空闲教室页面是否使用旧的「今日/明日」的样式
+  "isEnableCourseNotification": false, // 是否启用课程通知
+  "isSilentNotification": false // 课程通知是否是静默通知
 };
 
 // 默认课程卡片外观设置

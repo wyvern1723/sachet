@@ -34,6 +34,9 @@ class SettingsProvider extends ChangeNotifier {
       _appSettings.isOpenLinkInExternalBrowser ?? false;
   bool get isFreeClassroomUseLegacyStyle =>
       _appSettings.isFreeClassroomUseLegacyStyle ?? false;
+  bool get isEnableCourseNotification =>
+      _appSettings.isEnableCourseNotification ?? false;
+  bool get isSilentNotification => _appSettings.isSilentNotification ?? false;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -156,6 +159,22 @@ class SettingsProvider extends ChangeNotifier {
   void setIsFreeClassroomUseLegacyStyle(bool value) {
     if (value != isFreeClassroomUseLegacyStyle) {
       _appSettings.isFreeClassroomUseLegacyStyle = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setIsEnableCourseNotification(bool value) {
+    if (value != isEnableCourseNotification) {
+      _appSettings.isEnableCourseNotification = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setIsSilentNotification(bool value) {
+    if (value != isSilentNotification) {
+      _appSettings.isSilentNotification = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

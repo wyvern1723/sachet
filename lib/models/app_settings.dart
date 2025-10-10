@@ -20,6 +20,8 @@ class AppSettings {
   String? pageTransition;
   bool? isPredictiveBack;
   bool? isFreeClassroomUseLegacyStyle;
+  bool? isEnableCourseNotification;
+  bool? isSilentNotification;
 
   AppSettings({
     this.isMD3,
@@ -43,6 +45,8 @@ class AppSettings {
     this.pageTransition,
     this.isPredictiveBack,
     this.isFreeClassroomUseLegacyStyle,
+    this.isEnableCourseNotification,
+    this.isSilentNotification,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -67,6 +71,8 @@ class AppSettings {
     pageTransition = json['pageTransition'];
     isPredictiveBack = json['isPredictiveBack'];
     isFreeClassroomUseLegacyStyle = json['isFreeClassroomUseLegacyStyle'];
+    isEnableCourseNotification = json['isEnableCourseNotification'];
+    isSilentNotification = json['isSilentNotification'];
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +98,8 @@ class AppSettings {
     data['pageTransition'] = this.pageTransition;
     data['isPredictiveBack'] = this.isPredictiveBack;
     data['isFreeClassroomUseLegacyStyle'] = this.isFreeClassroomUseLegacyStyle;
+    data['isEnableCourseNotification'] = this.isEnableCourseNotification;
+    data['isSilentNotification'] = this.isSilentNotification;
     return data;
   }
 }
