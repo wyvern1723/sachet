@@ -24,7 +24,7 @@ const NotificationDetails notificationDetailsTestChannel = NotificationDetails(
     'notification_test',
     '测试通知',
     channelDescription: '用于测试是否能成功通知',
-    icon: "launcher_icon_foreground",
+    icon: "ic_notification",
     importance: Importance.max,
     priority: Priority.high,
   ),
@@ -51,7 +51,7 @@ class _ExperialmentalSettingsPageState
     await _configureLocalTimeZone();
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon_foreground');
+        AndroidInitializationSettings('ic_notification');
 
     final InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
