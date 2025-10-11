@@ -110,10 +110,10 @@ class _ExperialmentalSettingsPageState
   /// 开启课程通知（上课提醒）
   Future _turnOnCourseNotification(BuildContext context) async {
     // 检查是否具有通知权限
-    bool granted =
+    bool hasNotificationPermission =
         await androidImplementation?.areNotificationsEnabled() ?? false;
 
-    if (!granted) {
+    if (!hasNotificationPermission) {
       // 申请通知权限
       final bool? grantedNotificationPermission =
           await androidImplementation?.requestNotificationsPermission();
@@ -147,7 +147,12 @@ class _ExperialmentalSettingsPageState
         // throw '未授予通知权限';
         return;
       }
+    }
 
+    // 检查是否有精确通知权限
+    bool hasExactNotificationPermission =
+        await androidImplementation?.canScheduleExactNotifications() ?? false;
+    if (!hasExactNotificationPermission) {
       // 申请精确通知权限
       bool? grantedExactAlarmsPermission =
           await androidImplementation?.requestExactAlarmsPermission();
@@ -157,17 +162,17 @@ class _ExperialmentalSettingsPageState
       if (grantedExactAlarmsPermission != true) {
         // 权限被拒绝，可能是用户在系统弹出的权限申请弹窗点击了「不允许」，或是其他问题？（这个权限比较少见）
         // 向用户解释没有这个权限无法提供精确通知，但不授予也行，并提供「去授权」按钮
-        await showDialog<void>(
+        final bool? useInExactNotification = await showDialog<bool?>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: Text('未授予精确通知权限'),
+            title: Text('未授予“精确闹钟”权限'),
             content: Text(
-              '未授予精确通知权限，将使用非精确通知，可能导致通知不会执行',
+              '为了确保课程通知准时，建议开启“精确闹钟”权限。\n否则，当手机静置或进入省电模式时，通知可能会被严重延迟。',
               style: TextStyle(fontSize: 16),
             ),
             actions: <Widget>[
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pop(true),
                 child: const Text('不授权（使用非精确通知）'),
               ),
               TextButton(
@@ -180,9 +185,18 @@ class _ExperialmentalSettingsPageState
             ],
           ),
         );
+        if (useInExactNotification != true) {
+          // 当用户通过点击 Dialog 外区域或使用返回键关闭弹窗 或 点击「去授权」，都不会返回 true
+          // 即没有选择「使用非精确通知」。
+          // 因为没有精确通知权限用户又不选择「使用非精确通知」
+          // 所以将结束这个「开启课程通知」的过程
 
-        // throw '未授予精确通知权限';
-        return;
+          // 因为不方便判断用户点击「去授权」后是否真的完成授权
+          // 所以最简单的方法是结束这个「开启课程通知」的过程，关闭 Dialog，
+          // 「去授权」返回后，用户发现开关还是关闭，便会再次点击「开启课程通知」来开启
+          return;
+        }
+        // 如果用户选择「不授权（使用非精确通知）」，确认了要使用非精确通知，则继续执行后面的添加通知逻辑
       }
     }
 
@@ -365,14 +379,19 @@ class _ExperialmentalSettingsPageState
 
   /// 测试定时通知(显示测试定时通知,即使应用不在运行)
   Future<void> _showTestScheduleNotification() async {
+    // 是否有精确通知权限，如果有，使用精确通知，否则使用非精确通知
+    bool isExactNotification =
+        await androidImplementation?.canScheduleExactNotifications() ?? false;
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       '这是一条定时测试通知',
       '如果您看到说明测试定时通知成功',
       tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
       notificationDetailsTestChannel,
-      androidScheduleMode: AndroidScheduleMode
-          .alarmClock, // TODO: 授予了 SCHEDULE_EXACT_ALARM 权限则使用 AndroidScheduleMode.alarmClock, 否则使用 AndroidScheduleMode.exactAllowWhileIdle
+      androidScheduleMode: isExactNotification
+          ? AndroidScheduleMode.alarmClock
+          : AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
 
@@ -382,6 +401,9 @@ class _ExperialmentalSettingsPageState
     List<CourseReminder> reminders = await context
         .read<SettingsProvider>()
         .generateCourseScheduleReminders();
+    // 是否有精确通知权限，如果有，使用精确通知，否则使用非精确通知
+    bool isExactNotification =
+        await androidImplementation?.canScheduleExactNotifications() ?? false;
     for (var i = 0; i < reminders.length; i++) {
       await _addOneCourseNotification(
         id: i + 1,
@@ -393,6 +415,7 @@ class _ExperialmentalSettingsPageState
         courseEndTimeStr: reminders[i].courseEndTimeStr,
         courseDurationInMilliseconds: reminders[i].courseDurationInMilliseconds,
         isSilent: isSilent,
+        isExactNotification: isExactNotification,
       );
     }
   }
@@ -408,9 +431,10 @@ class _ExperialmentalSettingsPageState
     required String courseEndTimeStr,
     required int courseDurationInMilliseconds, // 这次课对应的毫秒数(课程结束后通知自动消失)
     required bool isSilent, // 是否静默通知
+    required bool
+        isExactNotification, // true => 使用 alarmClock,false => 使用 exactAllowWhileIdle
   }) async {
     String startAndEndTime = '$courseStartTimeStr - $courseEndTimeStr';
-
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       '$courseTitle | $coursePlace',
@@ -432,8 +456,9 @@ class _ExperialmentalSettingsPageState
           silent: isSilent,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode
-          .alarmClock, // TODO: 授予了 SCHEDULE_EXACT_ALARM 权限则使用 AndroidScheduleMode.alarmClock, 否则使用 AndroidScheduleMode.exactAllowWhileIdle
+      androidScheduleMode: isExactNotification
+          ? AndroidScheduleMode.alarmClock
+          : AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.dateAndTime,
     );
   }
