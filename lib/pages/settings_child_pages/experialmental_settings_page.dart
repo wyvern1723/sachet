@@ -77,7 +77,7 @@ class _ExperialmentalSettingsPageState
 
       if (grantedNotificationPermission != true) {
         // 权限被拒绝，可能是用户在系统弹出的权限申请弹窗点击了「不允许」
-        // 向用户解释没有这个权限无法提供通知，并提供跳转应用通知设置的按钮（用户拒绝第一次的权限申请弹窗后，无法再次弹出，需要用户进入应用通知设置打开通知权限）
+        // 向用户解释没有这个权限无法提供通知，并提供「去授权」按钮
         await showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -90,8 +90,7 @@ class _ExperialmentalSettingsPageState
               ),
               TextButton(
                 onPressed: () {
-                  AppSettings.openAppSettings(
-                      type: AppSettingsType.notification);
+                  _requestNotificationsPermission();
                   Navigator.of(context).pop();
                 },
                 child: const Text('去授权'),
@@ -112,7 +111,7 @@ class _ExperialmentalSettingsPageState
 
       if (grantedExactAlarmsPermission != true) {
         // 权限被拒绝，可能是用户在系统弹出的权限申请弹窗点击了「不允许」，或是其他问题？（这个权限比较少见）
-        // 向用户解释没有这个权限无法提供精确通知，但不授予也行，并提供跳转应用精确通知设置的按钮
+        // 向用户解释没有这个权限无法提供精确通知，但不授予也行，并提供「去授权」按钮
         await showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -128,7 +127,7 @@ class _ExperialmentalSettingsPageState
               ),
               TextButton(
                 onPressed: () {
-                  AppSettings.openAppSettings(type: AppSettingsType.alarm);
+                  _requestExactAlarmsPermission();
                   Navigator.of(context).pop();
                 },
                 child: const Text('去授权'),
@@ -247,9 +246,11 @@ class _ExperialmentalSettingsPageState
     final bool? grantedNotificationPermission =
         await androidImplementation?.requestNotificationsPermission();
     if (grantedNotificationPermission != true) {
-      // 如果用户在应用第一次申请权限时选择「不允许」，
-      // 再次申请权限时，不会再弹出系统的申请权限弹窗,
-      // 需要打开系统设置里本应用的通知设置页面
+      // 如果用户在申请权限时选择「不允许」一次或多次后，
+      // 再次使用 androidImplementation?.requestNotificationsPermission() 不会再弹出系统的申请权限弹窗（允许/不允许），
+      // 需要打开系统设置里本应用的通知设置页面。
+      // [Android 11 中的权限更新  |  Android Developers](https://developer.android.com/about/versions/11/privacy/permissions?hl=zh-cn)
+      // 如 ColorOS 是 2 次: [OPPO 开放平台-OPPO开发者服务中心](https://open.oppomobile.com/documentation/page/info?id=12983)
       AppSettings.openAppSettings(type: AppSettingsType.notification);
     }
   }
@@ -398,6 +399,11 @@ class _ExperialmentalSettingsPageState
                   onPressed: () => AppSettings.openAppSettings(
                       type: AppSettingsType.notification),
                   child: Text('打开通知设置'),
+                ),
+                TextButton(
+                  onPressed: () =>
+                      AppSettings.openAppSettings(type: AppSettingsType.alarm),
+                  child: Text('打开精确通知设置'),
                 ),
                 TextButton(
                   onPressed: () => AppSettings.openAppSettings(
