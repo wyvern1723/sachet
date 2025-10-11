@@ -290,7 +290,10 @@ class _ExperialmentalSettingsPageState
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: _requestNotificationsPermission,
+              onPressed: () {
+                _requestNotificationsPermission();
+                Navigator.pop(context);
+              },
               child: const Text('去授权'),
             ),
           ],
@@ -335,7 +338,10 @@ class _ExperialmentalSettingsPageState
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: _requestExactAlarmsPermission,
+              onPressed: () {
+                _requestExactAlarmsPermission();
+                Navigator.pop(context);
+              },
               child: const Text('去授权'),
             ),
           ],
