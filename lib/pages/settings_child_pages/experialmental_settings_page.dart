@@ -64,6 +64,47 @@ class _ExperialmentalSettingsPageState
       initializationSettings,
       onDidReceiveNotificationResponse: selectNotificationStream.add,
     );
+
+    if (!mounted) return;
+
+    final bool isEnableNotification =
+        context.read<SettingsProvider>().isEnableCourseNotification;
+
+    if (isEnableNotification) {
+      _ensureNotificationPermission();
+    }
+  }
+
+  /// （在用户开启了课程通知的前提下）确认是否具有通知权限
+  Future<void> _ensureNotificationPermission() async {
+    final bool? areEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+    if (!mounted) return;
+
+    if (areEnabled == false) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('需要通知权限'),
+          content: Text(
+            '您已开启上课提醒，但应用通知权限被关闭，课程通知功能需要此权限才能正常工作。',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: _requestNotificationsPermission,
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   /// 开启课程通知（上课提醒）
@@ -231,6 +272,10 @@ class _ExperialmentalSettingsPageState
           content: Text('未授予通知权限', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
               onPressed: _requestNotificationsPermission,
               child: const Text('去授权'),
             ),
@@ -271,6 +316,10 @@ class _ExperialmentalSettingsPageState
         builder: (BuildContext context) => AlertDialog(
           content: Text('未授予精确通知权限', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
             TextButton(
               onPressed: _requestExactAlarmsPermission,
               child: const Text('去授权'),
