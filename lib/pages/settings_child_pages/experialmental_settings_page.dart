@@ -152,25 +152,15 @@ class _ExperialmentalSettingsPageState
 
     if (!context.mounted) return;
 
+    bool isSilent = context.read<SettingsProvider>().isSilentNotification;
+
     // 设置通知（添加通知）
     try {
-      await _addCourseScheduleNotifications(context);
+      await _addCourseScheduleNotifications(context, isSilent: isSilent);
     } catch (e) {
       if (!context.mounted) return;
 
-      await showDialog<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('添加课程通知失败'),
-          content: Text('$e', style: TextStyle(fontSize: 16)),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('确认'),
-            ),
-          ],
-        ),
-      );
+      await _showAddNotificationsFailedDialog(context, '$e');
 
       return;
     }
@@ -189,6 +179,24 @@ class _ExperialmentalSettingsPageState
 
     // 将「启用课程通知」状态设为关闭
     context.read<SettingsProvider>().setIsEnableCourseNotification(false);
+  }
+
+  /// 显示添加课程通知失败 Dialog
+  Future<void> _showAddNotificationsFailedDialog(
+      BuildContext context, String errorMessage) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('添加课程通知失败'),
+        content: Text(errorMessage, style: TextStyle(fontSize: 16)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// 检查通知权限
@@ -320,7 +328,8 @@ class _ExperialmentalSettingsPageState
   }
 
   /// 添加课程通知
-  Future _addCourseScheduleNotifications(BuildContext context) async {
+  Future _addCourseScheduleNotifications(BuildContext context,
+      {bool isSilent = false}) async {
     List<CourseReminder> reminders = await context
         .read<SettingsProvider>()
         .generateCourseScheduleReminders();
@@ -334,6 +343,7 @@ class _ExperialmentalSettingsPageState
         courseStartTimeStr: reminders[i].courseStartTimeStr,
         courseEndTimeStr: reminders[i].courseEndTimeStr,
         courseDurationInMilliseconds: reminders[i].courseDurationInMilliseconds,
+        isSilent: isSilent,
       );
     }
   }
@@ -348,6 +358,7 @@ class _ExperialmentalSettingsPageState
     required String courseStartTimeStr,
     required String courseEndTimeStr,
     required int courseDurationInMilliseconds, // 这次课对应的毫秒数(课程结束后通知自动消失)
+    required bool isSilent, // 是否静默通知
   }) async {
     String startAndEndTime = '$courseStartTimeStr - $courseEndTimeStr';
 
@@ -369,12 +380,69 @@ class _ExperialmentalSettingsPageState
           usesChronometer: true,
           chronometerCountDown: true,
           when: courseStartTime.millisecondsSinceEpoch,
+          silent: isSilent,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode
           .alarmClock, // TODO: 授予了 SCHEDULE_EXACT_ALARM 权限则使用 AndroidScheduleMode.alarmClock, 否则使用 AndroidScheduleMode.exactAllowWhileIdle
       matchDateTimeComponents: DateTimeComponents.dateAndTime,
     );
+  }
+
+  /// 启用静默通知
+  Future _enableSilentNotification(BuildContext context) async {
+    // 先取消所有已安排、待发送的通知
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+    if (!context.mounted) return;
+
+    // 重新安排通知
+    try {
+      await _addCourseScheduleNotifications(context, isSilent: true);
+    } catch (e) {
+      if (!context.mounted) return;
+
+      await _showAddNotificationsFailedDialog(context, '$e');
+
+      // 如果添加课程失败，取消所有待发送的通知并将「开始课程通知」开关关闭
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      if (!context.mounted) return;
+      context.read<SettingsProvider>().setIsEnableCourseNotification(false);
+
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    context.read<SettingsProvider>().setIsSilentNotification(true);
+  }
+
+  /// 关闭静默通知
+  Future _disableSilentNotification(BuildContext context) async {
+    // 先取消所有已安排、待发送的通知
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+    if (!context.mounted) return;
+
+    // 重新安排通知
+    try {
+      await _addCourseScheduleNotifications(context, isSilent: false);
+    } catch (e) {
+      if (!context.mounted) return;
+
+      await _showAddNotificationsFailedDialog(context, '$e');
+
+      if (!context.mounted) return;
+
+      // 如果添加课程失败，取消所有待发送的通知并将「开始课程通知」开关关闭
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      if (!context.mounted) return;
+      context.read<SettingsProvider>().setIsEnableCourseNotification(false);
+      return;
+    }
+
+    if (!context.mounted) return;
+    context.read<SettingsProvider>().setIsSilentNotification(false);
   }
 
   Future<void> _checkPendingNotificationRequests(BuildContext context) async {
@@ -487,9 +555,11 @@ class _ExperialmentalSettingsPageState
                     trailing: Switch(
                       value: isSilentNotification,
                       onChanged: (value) {
-                        context
-                            .read<SettingsProvider>()
-                            .setIsSilentNotification(value);
+                        if (value == true) {
+                          _enableSilentNotification(context);
+                        } else {
+                          _disableSilentNotification(context);
+                        }
                       },
                     ),
                   );
