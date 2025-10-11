@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
@@ -29,6 +30,9 @@ const NotificationDetails notificationDetailsTestChannel = NotificationDetails(
     priority: Priority.high,
   ),
 );
+
+/// 提前通知的时间（在上课多久前通知）
+const Duration advanceDuration = Duration(minutes: 40);
 
 class ExperialmentalSettingsPage extends StatefulWidget {
   const ExperialmentalSettingsPage({super.key});
@@ -143,7 +147,35 @@ class _ExperialmentalSettingsPageState
 
     if (!context.mounted) return;
 
-    // TODO: 设置通知
+    // 先取消所有待发送的通知
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+    if (!context.mounted) return;
+
+    // 设置通知（添加通知）
+    try {
+      await _addCourseScheduleNotifications(context);
+    } catch (e) {
+      if (!context.mounted) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('添加课程通知失败'),
+          content: Text('$e', style: TextStyle(fontSize: 16)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('确认'),
+            ),
+          ],
+        ),
+      );
+
+      return;
+    }
+
+    if (!context.mounted) return;
 
     // 将「启用课程通知」状态设为启用
     context.read<SettingsProvider>().setIsEnableCourseNotification(true);
@@ -284,6 +316,102 @@ class _ExperialmentalSettingsPageState
       notificationDetailsTestChannel,
       androidScheduleMode: AndroidScheduleMode
           .alarmClock, // TODO: 授予了 SCHEDULE_EXACT_ALARM 权限则使用 AndroidScheduleMode.alarmClock, 否则使用 AndroidScheduleMode.exactAllowWhileIdle
+    );
+  }
+
+  /// 添加课程通知
+  Future _addCourseScheduleNotifications(BuildContext context) async {
+    List<CourseReminder> reminders = await context
+        .read<SettingsProvider>()
+        .generateCourseScheduleReminders();
+    for (var i = 0; i < reminders.length; i++) {
+      await _addOneCourseNotification(
+        id: i + 1,
+        courseStartTime: reminders[i].courseStartDateTime,
+        courseTitle: reminders[i].courseTitle,
+        coursePlace: reminders[i].coursePlace,
+        courseInstructor: reminders[i].courseInstructor,
+        courseStartTimeStr: reminders[i].courseStartTimeStr,
+        courseEndTimeStr: reminders[i].courseEndTimeStr,
+        courseDurationInMilliseconds: reminders[i].courseDurationInMilliseconds,
+      );
+    }
+  }
+
+  /// 添加一条课程通知
+  Future<void> _addOneCourseNotification({
+    required int id,
+    required DateTime courseStartTime,
+    required String courseTitle,
+    required String coursePlace,
+    required String courseInstructor,
+    required String courseStartTimeStr,
+    required String courseEndTimeStr,
+    required int courseDurationInMilliseconds, // 这次课对应的毫秒数(课程结束后通知自动消失)
+  }) async {
+    String startAndEndTime = '$courseStartTimeStr - $courseEndTimeStr';
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      '$courseTitle | $coursePlace',
+      startAndEndTime,
+      tz.TZDateTime.from(courseStartTime.subtract(advanceDuration), tz.local),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'course_reminder',
+          '上课提醒',
+          channelDescription: '在上课前通过通知提醒',
+          icon: "ic_notification",
+          importance: Importance.max,
+          priority: Priority.high,
+          timeoutAfter:
+              courseDurationInMilliseconds + advanceDuration.inMilliseconds,
+          usesChronometer: true,
+          chronometerCountDown: true,
+          when: courseStartTime.millisecondsSinceEpoch,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode
+          .alarmClock, // TODO: 授予了 SCHEDULE_EXACT_ALARM 权限则使用 AndroidScheduleMode.alarmClock, 否则使用 AndroidScheduleMode.exactAllowWhileIdle
+      matchDateTimeComponents: DateTimeComponents.dateAndTime,
+    );
+  }
+
+  Future<void> _checkPendingNotificationRequests(BuildContext context) async {
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+    if (!context.mounted) return;
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(
+          '共有 ${pendingNotificationRequests.length} 条已安排的通知',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...pendingNotificationRequests.map(
+                (e) => ListTile(
+                  leading: Text('ID: ${e.id}'),
+                  title: Text('${e.title}'),
+                  subtitle: Text('${e.body}'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -433,6 +561,11 @@ class _ExperialmentalSettingsPageState
                   TextButton(
                     onPressed: _showTestScheduleNotification,
                     child: Text('测试定时通知(10s后通知)'),
+                  ),
+                  TextButton(
+                    onPressed: () => _checkPendingNotificationRequests(context),
+                    // child: Text('查看待发送的通知'),
+                    child: Text('查看已安排的通知'),
                   ),
                 ],
               ),

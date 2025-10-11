@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/app_settings.dart';
+import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/pages/class_single_page.dart';
+import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 
@@ -240,4 +243,138 @@ class SettingsProvider extends ChangeNotifier {
     }
     return pageList;
   }
+
+  /// 生成课程通知的信息 (CourseReminders)
+  Future<List<CourseReminder>> generateCourseScheduleReminders() async {
+    List courseScheduleItemsList = [];
+    final rawData = await CachedDataStorage().getDecodedData(
+      path: classScheduleFilePath,
+      type: List,
+    );
+    if (rawData is List && rawData.isNotEmpty) {
+      courseScheduleItemsList = rawData;
+      if (courseScheduleItemsList.length != 35) {
+        throw '无有效课程表文件';
+      }
+    } else {
+      throw '课程信息为空/无有效课程表文件';
+    }
+    List<CourseReminder> reminders = [];
+    for (var courseScheduleItems in courseScheduleItemsList) {
+      for (var courseScheduleItem in courseScheduleItems) {
+        CourseSchedule courseSchedule =
+            CourseSchedule.fromJson(courseScheduleItem);
+
+        final int? courseItem = courseSchedule.item;
+        final String? courseTitle = courseSchedule.title;
+        final String courseInstructor = courseSchedule.instructor ?? '';
+        final String coursePlace = courseSchedule.place ?? '';
+        final List? courseWeeks = courseSchedule.weeks;
+        final int courseLength = courseSchedule.length ?? 2;
+
+        if (courseTitle != null &&
+            courseTitle.isNotEmpty &&
+            courseWeeks != null &&
+            courseWeeks.isNotEmpty &&
+            courseItem != null) {
+          for (var courseWeek in courseWeeks) {
+            final result = _getWeekdayAndSessionFromItem(courseItem);
+            final int courseWeekday = result.weekday;
+
+            // 课程开始节次，有 1/3/5/7/9
+            final int courseStartSession = result.session;
+
+            /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
+            final DateTime courseDate = getDateFromWeekCountAndWeekday(
+              semesterStartDate: DateTime.tryParse(semesterStartDate) ??
+                  constSemesterStartDate,
+              weekCount: courseWeek,
+              weekday: courseWeekday,
+            );
+
+            String courseStartTimeStr = '';
+            String courseEndTimeStr = '';
+
+            /// 是否是夏令时
+            final bool isSummerRountine =
+                courseDate.month > 4 && courseDate.month < 10;
+            if (isSummerRountine) {
+              courseStartTimeStr =
+                  classSessionSummerRoutineStartTime[courseStartSession - 1];
+              courseEndTimeStr = classSessionSummerRoutineEndTime[
+                  courseStartSession - 1 + courseLength - 1];
+            } else {
+              courseStartTimeStr =
+                  classSessionWinterRoutineStartTime[courseStartSession - 1];
+              courseEndTimeStr = classSessionWinterRoutineEndTime[
+                  courseStartSession - 1 + courseLength - 1];
+            }
+
+            /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）
+            final DateTime courseStartDateTime = courseDate.add(
+              Duration(
+                hours: int.parse(courseStartTimeStr.split(':')[0]),
+                minutes: int.parse(courseStartTimeStr.split(':')[1]),
+              ),
+            );
+            if (courseStartDateTime.isBefore(DateTime.now())) {
+              // 如果这节课的开始时间在「现在」之前，则跳过（用户不一定是在学期开始即开启通知/使用本软件）
+              continue;
+            }
+
+            final DateTime courseEndDateTime = courseDate.add(
+              Duration(
+                hours: int.parse(courseEndTimeStr.split(':')[0]),
+                minutes: int.parse(courseEndTimeStr.split(':')[1]),
+              ),
+            );
+
+            // 这节课上多久（用于通知经过多长时间后自动消失）
+            final int courseDurationInMilliseconds = courseEndDateTime
+                .difference(courseStartDateTime)
+                .inMilliseconds;
+
+            // 添加这个时段的课的一个周次的通知信息
+            reminders.add(CourseReminder(
+              courseStartDateTime: courseStartDateTime,
+              courseDurationInMilliseconds: courseDurationInMilliseconds,
+              courseTitle: courseTitle,
+              coursePlace: coursePlace,
+              courseInstructor: courseInstructor,
+              courseStartTimeStr: courseStartTimeStr,
+              courseEndTimeStr: courseEndTimeStr,
+            ));
+          }
+        }
+      }
+    }
+    return reminders;
+  }
+}
+
+/// 从 item 得到 weekday 和 开始 session
+///
+/// 如 0 => weekday: 1, session: 1
+///
+/// 如 1 => weekday: 1, session: 3
+///
+/// 如 17 => weekday: 4, session: 5
+///
+/// 如 23 => weekday: 5, session: 7
+///
+/// 如 34 => weekday: 7, session: 9
+///
+/// ```
+/// item:
+///
+///       Mon Tue Wed Thu Fri Sat Sun
+/// 12      0   5  10  15  20  25  30
+/// 34      1   6  11  16  21  26  31
+/// 56      2   7  12  17  22  27  32
+/// 78      3   8  13  18  23  28  33
+/// 91011   4   9  14  19  24  29  34
+/// ```
+({int weekday, int session}) _getWeekdayAndSessionFromItem(int item) {
+  final int session = [1, 3, 5, 7, 9][item % 5];
+  return (weekday: (item ~/ 5) + 1, session: session);
 }
