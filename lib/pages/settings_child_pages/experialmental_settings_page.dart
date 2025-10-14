@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -373,6 +374,199 @@ class _ExperialmentalSettingsPageState
     }
   }
 
+  /// 检查是否允许自启动
+  ///
+  /// 成功: 弹出 "已允许自启动" Dialog
+  ///
+  /// 失败: 弹出 "未授予自启动权限，去授权" Dialog
+  Future<void> _checkAutoStart() async {
+    final bool isAutoStartEnabled =
+        await DisableBatteryOptimization.isAutoStartEnabled ?? false;
+    if (!mounted) return;
+
+    if (isAutoStartEnabled == true) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('自启动权限已启用', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('确认'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('未授予自启动权限', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                DisableBatteryOptimization.showEnableAutoStartSettings(
+                    "Enable Auto Start",
+                    "Follow the steps and enable the auto start of this app");
+              },
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  /// 检查是否禁用了电量优化
+  ///
+  /// 成功: 弹出 "已忽略电量优化" Dialog
+  ///
+  /// 失败: 弹出 "未忽略电量优化，去授权" Dialog
+  Future<void> _checkIsBatteryOptimizationDisabled() async {
+    final bool isBatteryOptimizationDisabled =
+        await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+    if (!mounted) return;
+
+    if (isBatteryOptimizationDisabled == true) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('已忽略电量优化', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('确认'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('未忽略电量优化', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                DisableBatteryOptimization
+                    .showDisableBatteryOptimizationSettings();
+              },
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  /// 检查是否禁用了电量优化（manufacturer(Android 定制系统，如 Xiaomi、Huawei、Oppo、Vivo)）
+  ///
+  /// 成功: 弹出 "已忽略制造商的电量优化" Dialog
+  ///
+  /// 失败: 弹出 "未忽略制造商的电量优化，去授权" Dialog
+  Future<void> _checkIsManufacturerBatteryOptimizationDisabled() async {
+    final bool isManufacturerBatteryOptimizationDisabled =
+        await DisableBatteryOptimization
+                .isManufacturerBatteryOptimizationDisabled ??
+            false;
+    if (!mounted) return;
+
+    if (isManufacturerBatteryOptimizationDisabled == true) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('已忽略制造商的电量优化', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('确认'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('未忽略制造商的电量优化', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                DisableBatteryOptimization
+                    .showDisableManufacturerBatteryOptimizationSettings(
+                        "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行");
+              },
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  /// 检查是否禁用了所有电量优化设置（自启动、电池优化、电池优化(OEM))
+  ///
+  /// 成功: 弹出 "已完成所有允许应用在后台运行设置" Dialog
+  ///
+  /// 失败: 弹出 "未已完成所有允许应用在后台运行设置有电量优化，去授权" Dialog
+  Future<void> _checkIsAllBatteryOptimizationDisabled() async {
+    final bool isAllBatteryOptimizationDisabled =
+        await DisableBatteryOptimization.isAllBatteryOptimizationDisabled ??
+            false;
+    if (!mounted) return;
+
+    if (isAllBatteryOptimizationDisabled == true) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('已完成所有允许应用在后台运行设置', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('确认'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text('未已完成所有允许应用在后台运行设置', style: TextStyle(fontSize: 18)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                DisableBatteryOptimization.showDisableAllOptimizationsSettings(
+                    "允许自启动", "请在设置中允许应用自启动", "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行");
+              },
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   /// 测试通知(显示测试通知)
   Future<void> _showTestNotification() async {
     await flutterLocalNotificationsPlugin.show(
@@ -651,12 +845,6 @@ class _ExperialmentalSettingsPageState
                 iconData: Icons.troubleshoot,
               ),
             ),
-            ListTile(
-              title: Text('忽略电池优化'),
-              subtitle: Text('针对部分国产深度定制系统'),
-              onTap: () => AppSettings.openAppSettings(
-                  type: AppSettingsType.batteryOptimization),
-            ),
             Wrap(
               alignment: WrapAlignment.center,
               children: [
@@ -670,6 +858,30 @@ class _ExperialmentalSettingsPageState
                 ),
               ],
             ),
+
+            Divider(),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: _checkAutoStart,
+                  child: Text('检查是否允许自启动'),
+                ),
+                TextButton(
+                  onPressed: _checkIsBatteryOptimizationDisabled,
+                  child: Text('检查是否忽略电池优化'),
+                ),
+                TextButton(
+                  onPressed: _checkIsManufacturerBatteryOptimizationDisabled,
+                  child: Text('检查是否忽略电池优化(OEM)'),
+                ),
+                TextButton(
+                  onPressed: _checkIsAllBatteryOptimizationDisabled,
+                  child: Text('检查是否完成了所有允许后台运行设置'),
+                ),
+              ],
+            ),
+            Divider(),
             Wrap(
               alignment: WrapAlignment.center,
               children: [
@@ -687,6 +899,40 @@ class _ExperialmentalSettingsPageState
                   onPressed: () => AppSettings.openAppSettings(
                       type: AppSettingsType.settings),
                   child: Text('打开应用设置'),
+                ),
+                TextButton(
+                  child: Text('打开电池优化设置'),
+                  onPressed: () => AppSettings.openAppSettings(
+                      type: AppSettingsType.batteryOptimization),
+                ),
+              ],
+            ),
+            Divider(),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () =>
+                      DisableBatteryOptimization.showEnableAutoStartSettings(
+                          "允许自启动", "请在设置中允许应用自启动"),
+                  child: Text('打开自启动设置'),
+                ),
+                TextButton(
+                  onPressed: () => DisableBatteryOptimization
+                      .showDisableBatteryOptimizationSettings(),
+                  child: Text('打开忽略电池优化设置'),
+                ),
+                TextButton(
+                  onPressed: () => DisableBatteryOptimization
+                      .showDisableManufacturerBatteryOptimizationSettings(
+                          "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行"),
+                  child: Text('打开忽略电池优化设置(OEM)'),
+                ),
+                TextButton(
+                  onPressed: () => DisableBatteryOptimization
+                      .showDisableAllOptimizationsSettings("允许自启动",
+                          "请在设置中允许应用自启动", "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行"),
+                  child: Text('打开所有后台运行设置'),
                 ),
               ],
             ),

@@ -58,8 +58,9 @@ dependencies:
   
   # 本地通知
   flutter_local_notifications: ^19.4.2  # 本地通知,用于发送课程通知(上课提醒)
-  app_settings: ^6.1.1            # 用于打开系统设置中的应用设置页面
-  timezone: ^0.10.1               # flutter_local_notifications 用到的
+  app_settings: ^6.1.1                  # 用于打开系统设置中的应用设置页面
+  timezone: ^0.10.1                     # flutter_local_notifications 用到的
+  disable_battery_optimization: ^1.1.2  # 打开自启动/电池优化设置 (Android)
 
 dev_dependencies:
   flutter_test:
