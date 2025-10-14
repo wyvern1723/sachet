@@ -185,10 +185,14 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('取消'),
               ),
-              TextButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
                 onPressed: () {
-                  _requestNotificationsPermission();
                   Navigator.of(context).pop();
+                  _requestNotificationsPermission();
                 },
                 child: const Text('去授权'),
               ),
@@ -227,10 +231,14 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
                 onPressed: () => Navigator.of(context).pop(true),
                 child: const Text('不授权（使用非精确通知）'),
               ),
-              TextButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
                 onPressed: () {
-                  _requestExactAlarmsPermission();
                   Navigator.of(context).pop();
+                  _requestExactAlarmsPermission();
                 },
                 child: const Text('去授权'),
               ),
@@ -253,6 +261,158 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
     }
 
     if (!context.mounted) return;
+
+    if (!_isAutoStartEnabled) {
+      final bool? result = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('未授予自启动权限'),
+          content: Text(
+            '部分国产定制系统会限制应用后台启动。为了防止错过课程通知，请允许本应用自启动',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('不设置（通知可能无法送达）'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                DisableBatteryOptimization.showEnableAutoStartSettings(
+                    "允许自启动", "请在设置中允许应用自启动");
+              },
+              child: const Text('去设置'),
+            ),
+          ],
+        ),
+      );
+      if (result != true) return;
+    }
+
+    if (!context.mounted) return;
+
+    if (!_isBatteryOptimizationDisabled) {
+      final bool? result = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('未忽略电池优化/允许应用在后台运行'),
+          content: Text(
+            'Android 系统默认会对后台应用进行电池优化，可能导致通知延迟或丢失。建议为本应用“忽略电池优化”以确保通知正常触发。',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('不设置（通知可能无法送达）'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                DisableBatteryOptimization
+                    .showDisableBatteryOptimizationSettings();
+              },
+              child: const Text('去设置'),
+            ),
+          ],
+        ),
+      );
+      if (result != true) return;
+    }
+
+    if (!context.mounted) return;
+
+    if (!_isManufacturerBatteryOptimizationDisabled) {
+      final bool? result = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('未关闭厂商后台限制'),
+          content: Text(
+            '您的设备厂商可能有额外的后台管理策略，请在设置中允许本应用“后台运行”、“无限制”或“忽略电池优化”',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('不设置（通知可能无法送达）'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                DisableBatteryOptimization
+                    .showDisableManufacturerBatteryOptimizationSettings(
+                        "部分手机厂商有额外的电池优化设置", "请在设置中允许应用“后台运行”、“无限制”或“忽略电池优化”");
+              },
+              child: const Text('去设置'),
+            ),
+          ],
+        ),
+      );
+      if (result != true) return;
+    }
+
+    if (!context.mounted) return;
+
+    if (!_isAllBatteryOptimizationDisabled) {
+      final bool? result = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('后台运行权限未完全配置'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '为确保课程通知可靠送达，请完成以下设置：',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '•  授予自启动权限\n'
+                '•  忽略应用电池优化\n'
+                '•  允许应用在后台运行',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('不设置（通知可能无法送达）'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                DisableBatteryOptimization.showDisableAllOptimizationsSettings(
+                  "允许自启动",
+                  "请在设置中允许应用自启动",
+                  "部分手机厂商有额外的电池优化设置",
+                  "请在设置中允许应用应用“后台运行”、“无限制”或“忽略电池优化”",
+                );
+              },
+              child: const Text('去授权'),
+            ),
+          ],
+        ),
+      );
+      if (result != true) return;
+    }
 
     // 先取消所有待发送的通知
     await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
