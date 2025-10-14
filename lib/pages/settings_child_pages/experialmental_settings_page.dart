@@ -6,7 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sachet/models/course_reminder.dart';
+import 'package:sachet/models/permission_check_item.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/widgets/settingspage_widgets/experimental_settings_widgets/check_list_tile.dart';
+import 'package:sachet/widgets/settingspage_widgets/experimental_settings_widgets/compact_error_tile.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 import 'package:provider/provider.dart';
@@ -45,6 +48,29 @@ class ExperialmentalSettingsPage extends StatefulWidget {
 
 class _ExperialmentalSettingsPageState
     extends State<ExperialmentalSettingsPage> {
+  /// 是否有通知权限
+  bool _hasNotificationPermission = false;
+
+  /// 是否有精确通知权限
+  bool _hasExactNotificationPermission = false;
+
+  /// 是否允许自启动
+  bool _isAutoStartEnabled = false;
+
+  /// 是否忽略电池优化
+  bool _isBatteryOptimizationDisabled = false;
+
+  /// 是否忽略电池优化(OEM)
+  bool _isManufacturerBatteryOptimizationDisabled = false;
+
+  /// 是否完成所有允许后台运行设置
+  bool _isAllBatteryOptimizationDisabled = false;
+
+  Future _init() async {
+    await _initializeNotifications();
+    await _checkAllPermission();
+  }
+
   /// 初始化 TZTimeZone
   Future<void> _configureLocalTimeZone() async {
     tz.initializeTimeZones();
@@ -74,6 +100,32 @@ class _ExperialmentalSettingsPageState
     if (isEnableNotification) {
       _ensureNotificationPermission();
     }
+  }
+
+  /// 检查所有权限和设置（通知权限、精确通知权限、自启动权限、忽略电池优化……）
+  Future _checkAllPermission() async {
+    _hasNotificationPermission = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.areNotificationsEnabled() ??
+        false;
+    _hasExactNotificationPermission = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.canScheduleExactNotifications() ??
+        false;
+    _isAutoStartEnabled =
+        await DisableBatteryOptimization.isAutoStartEnabled ?? false;
+    _isBatteryOptimizationDisabled =
+        await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+    _isManufacturerBatteryOptimizationDisabled =
+        await DisableBatteryOptimization
+                .isManufacturerBatteryOptimizationDisabled ??
+            false;
+    _isAllBatteryOptimizationDisabled =
+        await DisableBatteryOptimization.isAllBatteryOptimizationDisabled ??
+            false;
+    setState(() {});
   }
 
   /// （在用户开启了课程通知的前提下）确认是否具有通知权限
@@ -227,6 +279,7 @@ class _ExperialmentalSettingsPageState
     context.read<SettingsProvider>().setIsEnableCourseNotification(true);
   }
 
+  /// 关闭课程通知
   Future<void> _turnOffCourseNotification(BuildContext context) async {
     // 取消所有 schedule 通知
     await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
@@ -261,11 +314,19 @@ class _ExperialmentalSettingsPageState
   ///
   /// 失败: 弹出 "未授予通知权限，去授权" Dialog
   Future<void> _checkNotificationsPermission() async {
-    final bool? areEnabled = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.areNotificationsEnabled();
+    final bool areEnabled = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.areNotificationsEnabled() ??
+        false;
+
     if (!mounted) return;
+
+    if (areEnabled != _hasNotificationPermission) {
+      setState(() {
+        _hasNotificationPermission = areEnabled;
+      });
+    }
 
     if (areEnabled == true) {
       await showDialog<void>(
@@ -309,11 +370,19 @@ class _ExperialmentalSettingsPageState
   ///
   /// 失败: 弹出 "未授予精确通知权限，去授权" Dialog
   Future<void> _checkExactAlarmsPermission() async {
-    final bool? areEnabled = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.canScheduleExactNotifications();
+    final bool areEnabled = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.canScheduleExactNotifications() ??
+        false;
+
     if (!mounted) return;
+
+    if (areEnabled != _hasExactNotificationPermission) {
+      setState(() {
+        _hasExactNotificationPermission = areEnabled;
+      });
+    }
 
     if (areEnabled == true) {
       await showDialog<void>(
@@ -382,13 +451,20 @@ class _ExperialmentalSettingsPageState
   Future<void> _checkAutoStart() async {
     final bool isAutoStartEnabled =
         await DisableBatteryOptimization.isAutoStartEnabled ?? false;
+
     if (!mounted) return;
+
+    if (isAutoStartEnabled != _isAutoStartEnabled) {
+      setState(() {
+        _isAutoStartEnabled = isAutoStartEnabled;
+      });
+    }
 
     if (isAutoStartEnabled == true) {
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('自启动权限已启用', style: TextStyle(fontSize: 18)),
+          content: Text('已允许应用自启动', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -411,8 +487,7 @@ class _ExperialmentalSettingsPageState
               onPressed: () {
                 Navigator.pop(context);
                 DisableBatteryOptimization.showEnableAutoStartSettings(
-                    "Enable Auto Start",
-                    "Follow the steps and enable the auto start of this app");
+                    "允许自启动", "请在设置中允许应用自启动");
               },
               child: const Text('去授权'),
             ),
@@ -430,13 +505,20 @@ class _ExperialmentalSettingsPageState
   Future<void> _checkIsBatteryOptimizationDisabled() async {
     final bool isBatteryOptimizationDisabled =
         await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+
     if (!mounted) return;
+
+    if (isBatteryOptimizationDisabled != _isBatteryOptimizationDisabled) {
+      setState(() {
+        _isBatteryOptimizationDisabled = isBatteryOptimizationDisabled;
+      });
+    }
 
     if (isBatteryOptimizationDisabled == true) {
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('已忽略电量优化', style: TextStyle(fontSize: 18)),
+          content: Text('已忽略电池优化', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -449,7 +531,7 @@ class _ExperialmentalSettingsPageState
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('未忽略电量优化', style: TextStyle(fontSize: 18)),
+          content: Text('未忽略电池优化', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -479,13 +561,22 @@ class _ExperialmentalSettingsPageState
         await DisableBatteryOptimization
                 .isManufacturerBatteryOptimizationDisabled ??
             false;
+
     if (!mounted) return;
+
+    if (isManufacturerBatteryOptimizationDisabled !=
+        _isManufacturerBatteryOptimizationDisabled) {
+      setState(() {
+        _isManufacturerBatteryOptimizationDisabled =
+            isManufacturerBatteryOptimizationDisabled;
+      });
+    }
 
     if (isManufacturerBatteryOptimizationDisabled == true) {
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('已忽略制造商的电量优化', style: TextStyle(fontSize: 18)),
+          content: Text('已忽略手机厂商的电池优化', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -498,7 +589,7 @@ class _ExperialmentalSettingsPageState
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('未忽略制造商的电量优化', style: TextStyle(fontSize: 18)),
+          content: Text('未忽略手机厂商的电量优化', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -509,7 +600,7 @@ class _ExperialmentalSettingsPageState
                 Navigator.pop(context);
                 DisableBatteryOptimization
                     .showDisableManufacturerBatteryOptimizationSettings(
-                        "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行");
+                        "部分手机厂商有额外的电池优化设置", "请在设置中允许应用在后台运行/无限制/忽略电池优化");
               },
               child: const Text('去授权'),
             ),
@@ -521,20 +612,27 @@ class _ExperialmentalSettingsPageState
 
   /// 检查是否禁用了所有电量优化设置（自启动、电池优化、电池优化(OEM))
   ///
-  /// 成功: 弹出 "已完成所有允许应用在后台运行设置" Dialog
+  /// 成功: 弹出 "已完成所有允许应用在后台运行的设置" Dialog
   ///
-  /// 失败: 弹出 "未已完成所有允许应用在后台运行设置有电量优化，去授权" Dialog
+  /// 失败: 弹出 "未已完成所有允许应用在后台运行的设置，去授权" Dialog
   Future<void> _checkIsAllBatteryOptimizationDisabled() async {
     final bool isAllBatteryOptimizationDisabled =
         await DisableBatteryOptimization.isAllBatteryOptimizationDisabled ??
             false;
+
     if (!mounted) return;
+
+    if (isAllBatteryOptimizationDisabled != _isAllBatteryOptimizationDisabled) {
+      setState(() {
+        _isAllBatteryOptimizationDisabled = isAllBatteryOptimizationDisabled;
+      });
+    }
 
     if (isAllBatteryOptimizationDisabled == true) {
       await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text('已完成所有允许应用在后台运行设置', style: TextStyle(fontSize: 18)),
+          content: Text('已完成所有允许应用在后台运行的设置', style: TextStyle(fontSize: 18)),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -557,7 +655,11 @@ class _ExperialmentalSettingsPageState
               onPressed: () {
                 Navigator.pop(context);
                 DisableBatteryOptimization.showDisableAllOptimizationsSettings(
-                    "允许自启动", "请在设置中允许应用自启动", "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行");
+                  "允许自启动",
+                  "请在设置中允许应用自启动",
+                  "部分手机厂商有额外的电池优化设置",
+                  "请在设置中允许应用在后台运行/无限制/忽略电池优化",
+                );
               },
               child: const Text('去授权'),
             ),
@@ -760,13 +862,53 @@ class _ExperialmentalSettingsPageState
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    _init();
   }
 
   @override
   Widget build(BuildContext context) {
     bool isEnableCourseNotification = context.select<SettingsProvider, bool>(
         (settingsProvider) => settingsProvider.isEnableCourseNotification);
+
+    final List<PermissionCheckItem> permissionItems = [
+      PermissionCheckItem(
+        title: '通知权限',
+        value: _hasNotificationPermission,
+        onTap: _checkNotificationsPermission,
+        errorMsg: '通知权限未授予，无法发送通知',
+      ),
+      PermissionCheckItem(
+        title: '精确通知权限',
+        value: _hasExactNotificationPermission,
+        onTap: _checkExactAlarmsPermission,
+        errorMsg: '精确通知权限未授予，当手机静置或进入省电模式时，通知可能会被严重延迟',
+      ),
+      PermissionCheckItem(
+        title: '允许自启动',
+        value: _isAutoStartEnabled,
+        onTap: _checkAutoStart,
+        errorMsg: '自启动权限未授予，可能无法正常唤醒应用发送通知',
+      ),
+      PermissionCheckItem(
+        title: '忽略电池优化/允许后台运行',
+        value: _isBatteryOptimizationDisabled,
+        onTap: _checkIsBatteryOptimizationDisabled,
+        errorMsg: '未忽略电池优化，可能无法发送通知',
+      ),
+      PermissionCheckItem(
+        title: '忽略电池优化/允许后台运行(OEM)',
+        value: _isManufacturerBatteryOptimizationDisabled,
+        onTap: _checkIsManufacturerBatteryOptimizationDisabled,
+        errorMsg: '未忽略手机厂商的电池优化，可能无法发送通知',
+      ),
+      PermissionCheckItem(
+        title: '所有允许后台运行设置',
+        value: _isAllBatteryOptimizationDisabled,
+        onTap: _checkIsAllBatteryOptimizationDisabled,
+        errorMsg: '未完成所有允许应用在后台运行的设置，可能无法发送通知',
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(title: const Text("实验性功能")),
       body: ListView(
@@ -779,6 +921,8 @@ class _ExperialmentalSettingsPageState
                 iconData: Icons.notifications,
               ),
             ),
+
+            // 课程通知开关
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
@@ -811,6 +955,8 @@ class _ExperialmentalSettingsPageState
                 ),
               ),
             ),
+
+            // 静默通知开关
             Selector<SettingsProvider, bool>(
                 selector: (_, settingsProvider) =>
                     settingsProvider.isSilentNotification,
@@ -838,6 +984,8 @@ class _ExperialmentalSettingsPageState
                     ),
                   );
                 }),
+
+            // 故障排除
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
               child: SettingsSectionTitle(
@@ -845,43 +993,23 @@ class _ExperialmentalSettingsPageState
                 iconData: Icons.troubleshoot,
               ),
             ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: _checkNotificationsPermission,
-                  child: Text('检查通知权限'),
-                ),
-                TextButton(
-                  onPressed: _checkExactAlarmsPermission,
-                  child: Text('检查精确通知权限'),
-                ),
-              ],
+
+            // 显示各项权限是否具有
+            ...permissionItems.map(
+              (e) => CheckListTile(
+                title: e.title,
+                value: e.value,
+                onTap: e.onTap,
+              ),
             ),
 
+            // 对于没有权限的项目，在下面显示 ⚠警告信息
+            for (final permissionItem in permissionItems)
+              if (permissionItem.value != true)
+                CompactErrorTile(errorMsg: permissionItem.errorMsg),
             Divider(),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: _checkAutoStart,
-                  child: Text('检查是否允许自启动'),
-                ),
-                TextButton(
-                  onPressed: _checkIsBatteryOptimizationDisabled,
-                  child: Text('检查是否忽略电池优化'),
-                ),
-                TextButton(
-                  onPressed: _checkIsManufacturerBatteryOptimizationDisabled,
-                  child: Text('检查是否忽略电池优化(OEM)'),
-                ),
-                TextButton(
-                  onPressed: _checkIsAllBatteryOptimizationDisabled,
-                  child: Text('检查是否完成了所有允许后台运行设置'),
-                ),
-              ],
-            ),
-            Divider(),
+
+            // 手动打开各项设置页面
             Wrap(
               alignment: WrapAlignment.center,
               children: [
@@ -904,35 +1032,6 @@ class _ExperialmentalSettingsPageState
                   child: Text('打开电池优化设置'),
                   onPressed: () => AppSettings.openAppSettings(
                       type: AppSettingsType.batteryOptimization),
-                ),
-              ],
-            ),
-            Divider(),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () =>
-                      DisableBatteryOptimization.showEnableAutoStartSettings(
-                          "允许自启动", "请在设置中允许应用自启动"),
-                  child: Text('打开自启动设置'),
-                ),
-                TextButton(
-                  onPressed: () => DisableBatteryOptimization
-                      .showDisableBatteryOptimizationSettings(),
-                  child: Text('打开忽略电池优化设置'),
-                ),
-                TextButton(
-                  onPressed: () => DisableBatteryOptimization
-                      .showDisableManufacturerBatteryOptimizationSettings(
-                          "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行"),
-                  child: Text('打开忽略电池优化设置(OEM)'),
-                ),
-                TextButton(
-                  onPressed: () => DisableBatteryOptimization
-                      .showDisableAllOptimizationsSettings("允许自启动",
-                          "请在设置中允许应用自启动", "需要额外的忽略电池优化设置", "请在设置中允许应用在后台运行"),
-                  child: Text('打开所有后台运行设置'),
                 ),
               ],
             ),
@@ -960,7 +1059,6 @@ class _ExperialmentalSettingsPageState
                   ),
                   TextButton(
                     onPressed: () => _checkPendingNotificationRequests(context),
-                    // child: Text('查看待发送的通知'),
                     child: Text('查看已安排的通知'),
                   ),
                 ],
