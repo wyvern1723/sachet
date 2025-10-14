@@ -38,16 +38,15 @@ const NotificationDetails notificationDetailsTestChannel = NotificationDetails(
 /// 提前通知的时间（在上课多久前通知）
 const Duration advanceDuration = Duration(minutes: 40);
 
-class ExperialmentalSettingsPage extends StatefulWidget {
-  const ExperialmentalSettingsPage({super.key});
+class ExperimentalSettingsPage extends StatefulWidget {
+  const ExperimentalSettingsPage({super.key});
 
   @override
-  State<ExperialmentalSettingsPage> createState() =>
-      _ExperialmentalSettingsPageState();
+  State<ExperimentalSettingsPage> createState() =>
+      _ExperimentalSettingsPageState();
 }
 
-class _ExperialmentalSettingsPageState
-    extends State<ExperialmentalSettingsPage> {
+class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
   /// 是否有通知权限
   bool _hasNotificationPermission = false;
 
