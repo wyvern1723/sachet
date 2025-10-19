@@ -36,7 +36,7 @@ const NotificationDetails notificationDetailsTestChannel = NotificationDetails(
 );
 
 /// 提前通知的时间（在上课多久前通知）
-const Duration advanceDuration = Duration(minutes: 40);
+const Duration advanceDuration = Duration(minutes: 30);
 
 class ExperimentalSettingsPage extends StatefulWidget {
   const ExperimentalSettingsPage({super.key});
