@@ -8,7 +8,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 class ThemeProvider extends ChangeNotifier {
   AppSettings get _appSettings => AppGlobal.appSettings;
 
-  bool get isMD3 => _appSettings.isMD3 ?? false;
+  bool get isMD3 => _appSettings.isMD3 ?? true;
   bool get isUsingDynamicColors => _appSettings.isUsingDynamicColors ?? false;
   int get themeMode => _appSettings.themeMode ?? 0;
   Color get themeColor =>
