@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/app_folder.dart';
 import 'package:sachet/models/jwxt_type.dart';
@@ -7,6 +8,8 @@ import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/select_jwxt_as_schedule_source_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_qz_dialog.dart';
@@ -47,12 +50,18 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   Future showUpdateClassScheduleDialog(BuildContext context) async {
+    final String oldClassScheduleFilePath =
+        context.read<SettingsProvider>().classScheduleFilePath;
+
     final jwxtType = await showDialog(
       context: context,
       builder: (BuildContext context) =>
           const SelectJwxtAsScheduleSourceDialog(),
     );
-    var result;
+
+    if (!context.mounted) return;
+
+    bool? result;
     switch (jwxtType) {
       case JwxtType.qiangzhi:
         result = await showDialog(
@@ -70,12 +79,54 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
         break;
     }
 
+    if (!context.mounted) return;
+
     if (result == true) {
       context.read<ClassPageProvider>().pageController.jumpToPage(
             weekCountOfToday(
                     DateTime.parse(SettingsProvider.semesterStartDate)) -
                 1,
           );
+    }
+
+    final String newClassScheduleFilePath =
+        context.read<SettingsProvider>().classScheduleFilePath;
+
+    // 判断是否成功更新课表
+    if (oldClassScheduleFilePath == newClassScheduleFilePath) {
+      // 课表未更新，无需处理课程通知
+      return;
+    }
+
+    // 以下为课表更新成功后的处理逻辑
+    final isEnableCourseNotification =
+        context.read<SettingsProvider>().isEnableCourseNotification;
+    if (isEnableCourseNotification) {
+      // ===== 用户之前启用了课程通知 =====
+      // 取消之前安排的课程通知
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+      if (!context.mounted) return;
+
+      // 将「启用课程通知」状态设为关闭
+      context.read<SettingsProvider>().setIsEnableCourseNotification(false);
+
+      // 显示「课程通知已重置（关闭），需要重新设置课程通知」Dialog
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            const CourseNotificationResetDialog(),
+      );
+    } else {
+      //  ===== 用户之前未启用课程通知 =====
+      // 显示「课程通知已关闭，是否要开启课程通知」Dialog
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            const CourseNotificationEnablePromptDialog(),
+      );
     }
   }
 
