@@ -36,7 +36,7 @@ class SettingsProvider extends ChangeNotifier {
   static bool get isOpenLinkInExternalBrowser =>
       _appSettings.isOpenLinkInExternalBrowser ?? false;
   bool get isFreeClassroomUseLegacyStyle =>
-      _appSettings.isFreeClassroomUseLegacyStyle ?? false;
+      _appSettings.isFreeClassroomUseLegacyStyle ?? true;
   bool get isEnableCourseNotification =>
       _appSettings.isEnableCourseNotification ?? false;
   bool get isSilentNotification => _appSettings.isSilentNotification ?? false;
