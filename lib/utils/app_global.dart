@@ -101,7 +101,7 @@ const defaultAppSettingsConfig = {
   2. bottomNavigationBar
   [Understanding navigation - Material Design](https://m2.material.io/design/navigation/understanding-navigation.html#lateral-navigation)
   */
-  "navigationType": "navigationDrawer", // 应用导航方式（默认为抽屉式）
+  "navigationType": "bottomNavigationBar", // 应用导航方式（默认为底部导航栏）
   "isOpenLinkInExternalBrowser": false, // 是否在外部浏览器打开链接。否则使用 Android Custom Tabs
   // 是否使用动态取色的颜色作为应用主题色
   //（官方叫[动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)，但国内叫「动态取色」更多也更易理解）。默认不启用，因为国内魔改 Android 系统五花八门，不确定具体实现的效果，而且我不喜欢。

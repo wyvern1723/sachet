@@ -32,7 +32,7 @@ class SettingsProvider extends ChangeNotifier {
   static bool get isEnableCaptchaRecognizer =>
       _appSettings.isEnableCaptchaRecognizer ?? true;
   static String get navigationType =>
-      _appSettings.navigationType ?? NavType.navigationDrawer.type;
+      _appSettings.navigationType ?? NavType.bottomNavigationBar.type;
   static bool get isOpenLinkInExternalBrowser =>
       _appSettings.isOpenLinkInExternalBrowser ?? false;
   bool get isFreeClassroomUseLegacyStyle =>
