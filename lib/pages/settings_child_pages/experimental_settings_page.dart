@@ -1169,30 +1169,33 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
             Divider(),
 
             // 手动打开各项设置页面
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => AppSettings.openAppSettings(
-                      type: AppSettingsType.notification),
-                  child: Text('打开通知设置'),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      AppSettings.openAppSettings(type: AppSettingsType.alarm),
-                  child: Text('打开精确通知设置'),
-                ),
-                TextButton(
-                  onPressed: () => AppSettings.openAppSettings(
-                      type: AppSettingsType.settings),
-                  child: Text('打开应用设置'),
-                ),
-                TextButton(
-                  child: Text('打开电池优化设置'),
-                  onPressed: () => AppSettings.openAppSettings(
-                      type: AppSettingsType.batteryOptimization),
-                ),
-              ],
+            ListTile(
+              leading: Icon(Icons.edit_notifications),
+              title: Text('通知设置'),
+              trailing: Icon(Icons.open_in_new),
+              onTap: () => AppSettings.openAppSettings(
+                  type: AppSettingsType.notification),
+            ),
+            ListTile(
+              leading: Icon(Icons.app_settings_alt),
+              title: Text('应用设置'),
+              trailing: Icon(Icons.open_in_new),
+              onTap: () =>
+                  AppSettings.openAppSettings(type: AppSettingsType.settings),
+            ),
+            ListTile(
+              leading: Icon(Icons.battery_saver),
+              title: Text('电池优化设置'),
+              trailing: Icon(Icons.open_in_new),
+              onTap: () => AppSettings.openAppSettings(
+                  type: AppSettingsType.batteryOptimization),
+            ),
+            ListTile(
+              leading: Icon(Icons.access_alarm),
+              title: Text('精确通知设置'),
+              trailing: Icon(Icons.open_in_new),
+              onTap: () =>
+                  AppSettings.openAppSettings(type: AppSettingsType.alarm),
             ),
 
             // 测试通知
