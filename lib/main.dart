@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/pages/intro_screen/intro_screen.dart';
 import 'package:sachet/pages/profile_page.dart';
 import 'package:sachet/pages/with_navbar_view.dart';
 import 'package:sachet/utils/app_global.dart';
@@ -144,9 +145,12 @@ class MyApp extends StatelessWidget {
       theme: theme,
       darkTheme: darkTheme,
       initialRoute:
-          SettingsProvider.navigationType == NavType.navigationDrawer.type
-              ? AppGlobal.appSettings.startupPage ?? '/class'
-              : '/navBarView',
+          // 如果没有阅读过声明，进入引导页
+          AppGlobal.appSettings.hasReadDisclaimer != true
+              ? '/intro'
+              : SettingsProvider.navigationType == NavType.navigationDrawer.type
+                  ? AppGlobal.appSettings.startupPage ?? '/class'
+                  : '/navBarView',
       routes: {
         '/class': (context) => ClassPage(),
         '/home': (context) => HomePage(),
@@ -155,6 +159,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => QiangZhiJwxtLoginPage(),
         '/profile': (context) => ProfilePage(),
         '/navBarView': (context) => WithNavigationBarView(),
+        '/intro': (context) => IntroScreen(),
       },
     );
   }

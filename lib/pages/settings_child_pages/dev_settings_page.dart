@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/pages/intro_screen/intro_screen.dart';
 import 'package:sachet/pages/settings_child_pages/cached_data_listview_page.dart';
 import 'package:sachet/pages/settings_child_pages/class_schedule_data_listview_page.dart';
 import 'package:sachet/pages/settings_child_pages/course_color_data_listview_page.dart';
@@ -138,6 +139,16 @@ class DevSettingsPage extends StatelessWidget {
               title: const Text('太棒了，您正处于调试模式！'),
               subtitle: Text('Generating More Bugs...'),
             ),
+          ListTile(
+            title: Text('Intro Screen'),
+            leading: Icon(Icons.cruelty_free),
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => IntroScreen()),
+                (Route route) => false,
+              );
+            },
+          )
         ],
       ),
     );

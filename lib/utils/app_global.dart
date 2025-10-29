@@ -41,9 +41,6 @@ class AppGlobal {
       if (appSettings.isAutoCheckUpdate == true) {
         autoCheckUpdate();
       }
-      if (appSettings.hasReadDisclaimer != true) {
-        NavigatorGlobal.showDisclaimerDialog();
-      }
     });
     initCourseCardSettings();
   }

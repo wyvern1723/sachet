@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_info_constants.dart';
 import 'package:sachet/models/github_latest_release_api_response.dart';
+import 'package:sachet/pages/intro_screen/intro_screen.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/utils_widgets/disclaimer_dialog.dart';
 import 'package:sachet/widgets/utils_widgets/new_version_available_dialog.dart';
@@ -137,6 +138,15 @@ class NavigatorGlobal {
     showDialog(
       context: context,
       builder: (BuildContext context) => DisclaimerDialog(),
+    );
+  }
+
+  /// 显示 IntroScreen(引导页)
+  static void showIntroScreen() {
+    final context = NavigatorGlobal.navigatorKey.currentContext!;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => IntroScreen()),
+      (Route route) => false,
     );
   }
 }
