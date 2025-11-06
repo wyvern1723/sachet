@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_full_day.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_fab.dart';
@@ -36,8 +39,13 @@ class FreeClassroomTodayAndTomorrowView extends StatefulWidget {
 }
 
 class _FreeClassroomTodayAndTomorrowViewState
-    extends State<FreeClassroomTodayAndTomorrowView> {
+    extends State<FreeClassroomTodayAndTomorrowView>
+    with TickerProviderStateMixin {
   bool _showFab = true;
+
+  TabController? _tabController;
+  List<Widget> _tabs = [];
+  List<Widget> _tabViews = [];
 
   void _handleScroll(ScrollController controller) {
     final direction = controller.position.userScrollDirection;
@@ -50,61 +58,192 @@ class _FreeClassroomTodayAndTomorrowViewState
     }
   }
 
+  /// 选择日期并跳转到选择的日期的一页
+  Future _selectAndAddDate() async {
+    final firstDate = getDateFromWeekCountAndWeekday(
+      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      weekCount: 1,
+      weekday: 1,
+    );
+    final lastDate = getDateFromWeekCountAndWeekday(
+      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      weekCount: 20,
+      weekday: 7,
+    );
+    final pickedDate = await showDatePicker(
+      context: context,
+      locale: const Locale('zh', 'CN'),
+      initialDate: DateTime.now(),
+      firstDate: firstDate,
+      lastDate: lastDate,
+      helpText: '选择日期',
+    );
+    if (pickedDate != null) {
+      // 当前 Tab 的 index
+      final int newIndex = _tabs.length - 1;
+
+      // 新的刚刚选择的日期的空闲教室 TabView
+      final newPage = _ClassroomDataView(
+        date: pickedDate,
+        index: newIndex - 2,
+        onScroll: _handleScroll,
+      );
+
+      setState(() {
+        // 在 Tab 和 TabView 插入选择的日期
+        // e.g. 1
+        // 插入前: [今日, 明日, 自选日期]
+        // 插入后: [今日, 明日, 11/08, 自选日期]
+        //
+        // e.g. 2
+        // 插入前: [今日, 明日, 11/08, 自选日期]
+        // 插入后: [今日, 明日, 11/08, 11/09, 自选日期]
+        _tabs.insert(
+            newIndex, Tab(text: DateFormat('MM/dd').format(pickedDate)));
+        _tabViews.insert(newIndex, newPage);
+
+        final int previousIndex = _tabController!.index;
+        // 重新创建 TabController
+        _recreateTabController(initialIndex: previousIndex);
+      });
+
+      // 跳转到刚刚选择的日期的一页
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_tabController != null && _tabController!.length > newIndex) {
+          _tabController!.animateTo(newIndex);
+        }
+      });
+    }
+  }
+
+  /// 重新创建 TabController（主要是更新 length）
+  void _recreateTabController({int initialIndex = 0}) {
+    _tabController?.dispose();
+    _tabController = TabController(
+      length: _tabs.length,
+      vsync: this,
+      initialIndex: initialIndex,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      Tab(text: '今日'),
+      Tab(text: '明日'),
+      Tab(
+        child: Row(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.edit_calendar_outlined,
+                size: 20,
+                // color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(width: 4),
+            Text('自选日期'),
+          ],
+        ),
+      )
+    ];
+    _tabViews = [
+      _ClassroomDataView(
+        day: Day.today,
+        onScroll: _handleScroll,
+      ),
+      _ClassroomDataView(
+        day: Day.tomorrow,
+        onScroll: _handleScroll,
+      ),
+      Container(), // 占位，和 "自选日期" 对应，不会展示
+    ];
+    // 创建初始的 TabController
+    _recreateTabController();
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  // 处理 Tab 点击事件
+  void _handleTabTap(int index) {
+    // 判断点击的是否是最后一个 Tab (即“自选日期”)
+    if (index == _tabs.length - 1) {
+      // 阻止默认的切换行为
+      _tabController!.index = _tabController!.previousIndex;
+      // 选择日期并添加这个自选日期
+      _selectAndAddDate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('空闲教室'),
-          bottom: const TabBar(
-            tabs: [Tab(text: '今日'), Tab(text: '明日')],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('空闲教室'),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          onTap: _handleTabTap,
+          tabs: _tabs,
+        ),
+        actions: <Widget>[
+          TextButton.icon(
+            style: Theme.of(context).useMaterial3
+                ? null
+                : TextButton.styleFrom(foregroundColor: Colors.white),
+            icon: Icon(Icons.swap_horiz),
+            onPressed: () {
+              context
+                  .read<SettingsProvider>()
+                  .setIsFreeClassroomUseLegacyStyle(false);
+            },
+            label: Text('新版样式'),
           ),
-          actions: <Widget>[
-            TextButton.icon(
-              style: Theme.of(context).useMaterial3
-                  ? null
-                  : TextButton.styleFrom(foregroundColor: Colors.white),
-              icon: Icon(Icons.swap_horiz),
-              onPressed: () {
-                context
-                    .read<SettingsProvider>()
-                    .setIsFreeClassroomUseLegacyStyle(false);
-              },
-              label: Text('新版样式'),
-            ),
-          ],
-        ),
-        body: TabBarView(
-          children: [
-            _ClassroomDataView(
-              day: Day.today,
-              onScroll: _handleScroll,
-            ),
-            _ClassroomDataView(
-              day: Day.tomorrow,
-              onScroll: _handleScroll,
-            )
-          ],
-        ),
-        floatingActionButton: AnimatedSlide(
-          offset: _showFab ? Offset(0, 0) : Offset(0, 2),
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: FilterFAB(),
-        ),
+        ],
+      ),
+      body: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: _tabController,
+        children: _tabViews,
+      ),
+      floatingActionButton: AnimatedSlide(
+        offset: _showFab ? Offset(0, 0) : Offset(0, 2),
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: FilterFAB(),
       ),
     );
   }
 }
 
 class _ClassroomDataView extends StatefulWidget {
+  /// 如果 [day] != null,表示是 今日或明日
+  ///
+  /// 否则需要提供 [date] 和 [index]，表示是 自选日期
   const _ClassroomDataView({
-    required this.day,
+    this.day,
+    this.date,
+    this.index,
     required this.onScroll,
-  });
+  }) : assert(
+          day != null || date != null && index != null,
+          '必须提供 day 或 date + index',
+        );
 
-  final Day day;
+  /// 今日或明日
+  final Day? day;
+
+  /// 自选日期
+  final DateTime? date;
+
+  /// 新增的第几个自选日期，从 0 开始。例如新增的第一个自选日期的 index = 0;
+  final int? index;
   final void Function(ScrollController) onScroll;
 
   @override
@@ -139,24 +278,48 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     final String semesterIndex =
         context.read<FreeClassroomPageZFProvider>().semesterIndex;
 
-    List<List<String>> freeClassroomData =
-        await getFreeClassroomTodayAndTomorrowZF(
-      cookie: ZhengFangUserProvider.cookie,
-      semesterYear: semesterYear,
-      semesterIndex: semesterIndex,
-      day: widget.day,
-      zhengFangUserProvider: zhengFangUserProvider,
-    );
-    if (!mounted) return [];
-    context
-        .read<FreeClassPageProvider>()
-        .setAllClassroomsData(freeClassroomData, widget.day);
-    context
-        .read<FreeClassPageProvider>()
-        .setClassroomsData(freeClassroomData, widget.day);
-    context.read<FreeClassPageProvider>().setHasData();
+    final Day? day = widget.day;
+    final DateTime? date = widget.date;
+    if (day != null) {
+      List<List<String>> freeClassroomData =
+          await getFreeClassroomTodayAndTomorrowZF(
+        cookie: ZhengFangUserProvider.cookie,
+        semesterYear: semesterYear,
+        semesterIndex: semesterIndex,
+        day: day,
+        zhengFangUserProvider: zhengFangUserProvider,
+      );
+      if (!mounted) return [];
+      context
+          .read<FreeClassPageProvider>()
+          .setAllClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
+      context
+          .read<FreeClassPageProvider>()
+          .setClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
+      context.read<FreeClassPageProvider>().setHasData();
 
-    return freeClassroomData;
+      return freeClassroomData;
+    } else if (date != null) {
+      List<List<String>> freeClassroomData = await getFreeClassroomFullDayZF(
+        cookie: ZhengFangUserProvider.cookie,
+        semesterYear: semesterYear,
+        semesterIndex: semesterIndex,
+        date: date,
+        zhengFangUserProvider: zhengFangUserProvider,
+      );
+      if (!mounted) return [];
+      context
+          .read<FreeClassPageProvider>()
+          .setAllClassroomsDataForOtherDay(freeClassroomData);
+      context
+          .read<FreeClassPageProvider>()
+          .setClassroomsDataForOtherDay(freeClassroomData);
+      context.read<FreeClassPageProvider>().setHasData();
+
+      return freeClassroomData;
+    } else {
+      throw '必须提供 day 或 date';
+    }
   }
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -248,10 +411,15 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
             children: [
               const _Head(),
               Expanded(
-                child: _Body(
-                  scrollController: _scrollController,
-                  day: widget.day,
-                ),
+                child: widget.day != null
+                    ? _BodyOfTodayOrTomorrow(
+                        scrollController: _scrollController,
+                        day: widget.day!,
+                      )
+                    : _BodyOfOtherDay(
+                        scrollController: _scrollController,
+                        index: widget.index!,
+                      ),
               ),
             ],
           );
@@ -304,8 +472,9 @@ class _Head extends StatelessWidget {
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({
+class _BodyOfTodayOrTomorrow extends StatelessWidget {
+  /// 今日或明日的 Body
+  const _BodyOfTodayOrTomorrow({
     required this.day,
     required this.scrollController,
   });
@@ -318,15 +487,44 @@ class _Body extends StatelessWidget {
     switch (day) {
       case Day.today:
         freeClassroomsData = context.select<FreeClassPageProvider, List>(
-            (freeClassPageProvider) =>
-                freeClassPageProvider.classroomDataToday);
+            (freeClassPageProvider) => freeClassPageProvider.filteredDataToday);
         break;
       case Day.tomorrow:
         freeClassroomsData = context.select<FreeClassPageProvider, List>(
             (freeClassPageProvider) =>
-                freeClassPageProvider.classroomDataTomorrow);
+                freeClassPageProvider.filteredDataTomorrow);
         break;
     }
+    return ListView.builder(
+      controller: scrollController,
+      itemCount: freeClassroomsData.length + 1,
+      itemBuilder: (context, index) {
+        if (index == freeClassroomsData.length) {
+          return _Foot(); // 最后一个 item 是 Foot
+        }
+        return _ClassroomRow(rowData: freeClassroomsData[index]);
+      },
+    );
+  }
+}
+
+class _BodyOfOtherDay extends StatelessWidget {
+  /// 自选日期的 Body
+  const _BodyOfOtherDay({
+    required this.index,
+    required this.scrollController,
+  });
+  final int index;
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
+    late List freeClassroomsData;
+
+    freeClassroomsData = context.select<FreeClassPageProvider, List>(
+        (freeClassPageProvider) =>
+            freeClassPageProvider.filteredDataOtherDays[index]);
+
     return ListView.builder(
       controller: scrollController,
       itemCount: freeClassroomsData.length + 1,

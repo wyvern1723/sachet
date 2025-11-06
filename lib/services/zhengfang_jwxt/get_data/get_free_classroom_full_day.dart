@@ -1,7 +1,6 @@
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
 import 'package:sachet/models/free_classroom_request_data.dart';
-import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/time_manager.dart';
@@ -16,7 +15,7 @@ const List<List<int>> itemList = [
   [9, 10, 11]
 ];
 
-/// 获取今日或明日的空闲教室数据（正方教务）
+/// 获取一天的所有空闲教室的数据（正方教务）
 ///
 /// Return 空闲教室二维列表
 ///
@@ -30,41 +29,18 @@ const List<List<int>> itemList = [
 ///   ["逸夫楼-104","空","满","空","满","满"]
 /// ]
 /// ```
-Future<List<List<String>>> getFreeClassroomTodayAndTomorrowZF({
+Future<List<List<String>>> getFreeClassroomFullDayZF({
   required String cookie,
   required String semesterYear,
   required String semesterIndex,
-  required Day day,
+  required DateTime date,
   required ZhengFangUserProvider? zhengFangUserProvider,
 }) async {
-  final firstDate = getDateFromWeekCountAndWeekday(
-    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-        constSemesterStartDate,
-    weekCount: 1,
-    weekday: 1,
-  );
-  final lastDate = getDateFromWeekCountAndWeekday(
-    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-        constSemesterStartDate,
-    weekCount: 20,
-    weekday: 7,
-  );
-  if (DateTime.now()
-      .add(Duration(days: day == Day.today ? 0 : 1))
-      .isBefore(firstDate)) {
-    throw '学期未开始';
-  }
-  if (DateTime.now()
-      .add(Duration(days: day == Day.today ? 0 : 1))
-      .isAfter(lastDate)) {
-    throw '学期已结束';
-  }
-
-  // 获取今天/明天的周次和星期几
+  // 获取那一天的周次和星期几
   final weekCountAndWeekday = getWeekCountAndWeekdayOfDate(
     semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
         constSemesterStartDate,
-    date: DateTime.now().add(Duration(days: day == Day.today ? 0 : 1)),
+    date: date,
   );
 
   final String zcd =

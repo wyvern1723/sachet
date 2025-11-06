@@ -38,18 +38,26 @@ Map<String, String> classRoomFilter = {
 };
 
 class FreeClassPageProvider extends ChangeNotifier {
-  late List<List<String>> _allClassroomsDataToday;
-  // List get allClassroomsDataToday => _allClassroomsDataToday;
+  /// 完整的(未经筛选的)今日空闲教室数据
+  late List<List<String>> _allDataToday;
 
-  List<List<String>> _classroomsDataToday = [];
-  List<List<String>> get classroomDataToday => _classroomsDataToday;
+  /// 经过筛选的今日空闲教室数据
+  List<List<String>> _filteredDataToday = [];
+  List<List<String>> get filteredDataToday => _filteredDataToday;
 
-  List<List<String>>? _allClassroomsDataTomorrow;
-  List<List<String>>? get allClassroomDataTomorrow =>
-      _allClassroomsDataTomorrow;
+  /// 完整的(未经筛选的)明日空闲教室数据
+  List<List<String>>? _allDataTomorrow;
 
-  List<List<String>> _classroomsDataTomorrow = [];
-  List<List<String>> get classroomDataTomorrow => _classroomsDataTomorrow;
+  /// 经过筛选的明日空闲教室数据
+  List<List<String>> _filteredDataTomorrow = [];
+  List<List<String>> get filteredDataTomorrow => _filteredDataTomorrow;
+
+  /// 完整的(未经筛选的)的其他日期空闲教室数据
+  List<List<List<String>>> _allDataOtherDays = [];
+
+  /// 经过筛选的其他日期空闲教室数据
+  List<List<List<String>>> _filteredDataOtherDays = [];
+  List<List<List<String>>> get filteredDataOtherDays => _filteredDataOtherDays;
 
   bool _hasData = false;
   bool get hasData => _hasData;
@@ -74,37 +82,61 @@ class FreeClassPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 设置全部空闲教室数据
-  void setAllClassroomsData(List<List<String>> data, Day day) {
+  /// 设置今日/明日全部空闲教室数据
+  void setAllClassroomsDataForTodayOrTomorrow(
+      List<List<String>> data, Day day) {
     switch (day) {
       case Day.today:
-        _allClassroomsDataToday = data;
+        _allDataToday = data;
       case Day.tomorrow:
-        _allClassroomsDataTomorrow = data;
+        _allDataTomorrow = data;
     }
     notifyListeners();
   }
 
-  /// 设置空闲教室数据
-  void setClassroomsData(List<List<String>> data, Day day) {
+  /// 设置某一天的全部空闲教室数据
+  void setAllClassroomsDataForOtherDay(List<List<String>> data) {
+    _allDataOtherDays.add(data);
+    notifyListeners();
+  }
+
+  /// 为今日/明日设置空闲教室数据
+  void setClassroomsDataForTodayOrTomorrow(List<List<String>> data, Day day) {
     switch (day) {
       case Day.today:
-        _classroomsDataToday = data;
+        _filteredDataToday = data;
         break;
       case Day.tomorrow:
         // 如果筛选过（可能是在「今日」页面筛选过，这时还没有加载「明日」的数据，所以「明日」数据没被筛选，需要在此时传入数据时筛选）
         if (_selectedRoomFilters.isNotEmpty ||
             _selectedSessionFilters.isNotEmpty) {
-          _classroomsDataTomorrow = getFilteredClassrooms(
+          _filteredDataTomorrow = getFilteredClassrooms(
             data,
             roomFilterList: _selectedRoomFilters,
             sessionFilterList: _selectedSessionFilters,
           );
         } else {
           // 如果没筛选过，赋原始值
-          _classroomsDataTomorrow = data;
+          _filteredDataTomorrow = data;
         }
         break;
+    }
+    notifyListeners();
+  }
+
+  /// 为某一自选日期设置（添加）空闲教室数据
+  void setClassroomsDataForOtherDay(List<List<String>> data) {
+    // 如果筛选过（可能是在「今日」页面筛选过，这时还没有加载「自选日期」的数据，所以「自选日期」数据没被筛选，需要在此时传入数据时筛选）
+    if (_selectedRoomFilters.isNotEmpty || _selectedSessionFilters.isNotEmpty) {
+      final filteredData = getFilteredClassrooms(
+        data,
+        roomFilterList: _selectedRoomFilters,
+        sessionFilterList: _selectedSessionFilters,
+      );
+      _filteredDataOtherDays.add(filteredData);
+    } else {
+      // 如果没筛选过，赋原始值
+      _filteredDataOtherDays.add(data);
     }
     notifyListeners();
   }
@@ -192,37 +224,61 @@ class FreeClassPageProvider extends ChangeNotifier {
           .remove); // newRoomFilterList 删除 _classRoomFilters 中的每个元素，得到反选的教室筛选列表
       List<List<String>> reversefilteredClassroomsToday =
           getReverseFilteredClassrooms(
-        _allClassroomsDataToday,
+        _allDataToday,
         newRoomFilterList,
       );
-      _classroomsDataToday = getFilteredClassrooms(
+      _filteredDataToday = getFilteredClassrooms(
         reversefilteredClassroomsToday,
         sessionFilterList: _selectedSessionFilters,
       );
-      if (_allClassroomsDataTomorrow != null) {
+      if (_allDataTomorrow != null) {
         List<List<String>> reversefilteredClassroomsTomorrow =
             getReverseFilteredClassrooms(
-          _allClassroomsDataTomorrow!,
+          _allDataTomorrow!,
           newRoomFilterList,
         );
-        _classroomsDataTomorrow = getFilteredClassrooms(
+        _filteredDataTomorrow = getFilteredClassrooms(
           reversefilteredClassroomsTomorrow,
           sessionFilterList: _selectedSessionFilters,
         );
       }
+      if (_allDataOtherDays.isNotEmpty) {
+        for (var i = 0; i < _allDataOtherDays.length; i++) {
+          List<List<String>> reversefilteredDataOtherDay =
+              getReverseFilteredClassrooms(
+            _allDataOtherDays[i],
+            newRoomFilterList,
+          );
+          final filteredOtherDay = getFilteredClassrooms(
+            reversefilteredDataOtherDay,
+            sessionFilterList: _selectedSessionFilters,
+          );
+          _filteredDataOtherDays[i] = filteredOtherDay;
+        }
+      }
       notifyListeners();
     } else {
-      _classroomsDataToday = getFilteredClassrooms(
-        _allClassroomsDataToday,
+      _filteredDataToday = getFilteredClassrooms(
+        _allDataToday,
         roomFilterList: _selectedRoomFilters,
         sessionFilterList: _selectedSessionFilters,
       );
-      if (_allClassroomsDataTomorrow != null) {
-        _classroomsDataTomorrow = getFilteredClassrooms(
-          _allClassroomsDataTomorrow!,
+      if (_allDataTomorrow != null) {
+        _filteredDataTomorrow = getFilteredClassrooms(
+          _allDataTomorrow!,
           roomFilterList: _selectedRoomFilters,
           sessionFilterList: _selectedSessionFilters,
         );
+      }
+      if (_allDataOtherDays.isNotEmpty) {
+        for (var i = 0; i < _allDataOtherDays.length; i++) {
+          final filteredOtherDay = getFilteredClassrooms(
+            _allDataOtherDays[i],
+            roomFilterList: _selectedRoomFilters,
+            sessionFilterList: _selectedSessionFilters,
+          );
+          _filteredDataOtherDays[i] = filteredOtherDay;
+        }
       }
       notifyListeners();
     }
@@ -288,8 +344,9 @@ class FreeClassPageProvider extends ChangeNotifier {
     _selectedSessionFilters = List.empty();
 
     /// 把空闲教室数据设为全部数据
-    _classroomsDataToday = _allClassroomsDataToday;
-    _classroomsDataTomorrow = _allClassroomsDataToday;
+    _filteredDataToday = _allDataToday;
+    _filteredDataTomorrow = _allDataToday;
+    _filteredDataOtherDays = _allDataOtherDays;
     notifyListeners();
   }
 
