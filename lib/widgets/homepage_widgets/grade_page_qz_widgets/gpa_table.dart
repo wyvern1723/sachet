@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GPATable extends StatelessWidget {
+  /// GPA 表
   const GPATable({super.key});
 
   @override

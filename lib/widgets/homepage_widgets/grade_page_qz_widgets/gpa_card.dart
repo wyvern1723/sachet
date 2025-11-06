@@ -3,16 +3,16 @@ import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_sco
 import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/grade_page_provider.dart';
+import '../../../providers/grade_page_qz_provider.dart';
 
-class GPAWidget extends StatelessWidget {
-  /// GPAWidget Card
-  const GPAWidget({super.key});
+class GPAWidgetQZ extends StatelessWidget {
+  /// 成绩查询页面（强智教务）的 GPA Card
+  const GPAWidgetQZ({super.key});
 
   @override
   Widget build(BuildContext context) {
-    String semester = context
-        .select<GradePageProvider, String>((gradeModel) => gradeModel.semester);
+    String semester = context.select<GradePageQZProvider, String>(
+        (gradeModel) => gradeModel.semester);
     return FutureBuilder(
         future: getGPAandRankData(semester),
         builder: (context, snapshot) {

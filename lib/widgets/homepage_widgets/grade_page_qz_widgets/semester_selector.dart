@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/providers/grade_page_provider.dart';
+import 'package:sachet/providers/grade_page_qz_provider.dart';
 import 'package:provider/provider.dart';
 
-class SemesterSelector extends StatelessWidget {
-  const SemesterSelector({
+class SemesterSelectorQZ extends StatelessWidget {
+  /// 成绩查询页面（强智教务）的选择学期 DropdownMenu
+  const SemesterSelectorQZ({
     super.key,
     required this.data,
     required this.menuHeight,
@@ -22,7 +23,7 @@ class SemesterSelector extends StatelessWidget {
       label: const Text('学期'),
       onSelected: (String? date) {
         if (date != null) {
-          context.read<GradePageProvider>().changeSemester(date);
+          context.read<GradePageQZProvider>().changeSemester(date);
         }
       },
       dropdownMenuEntries: data.entries

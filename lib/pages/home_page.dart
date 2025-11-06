@@ -7,7 +7,7 @@ import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
-import 'package:sachet/pages/home_child_pages/grade_page.dart';
+import 'package:sachet/pages/home_child_pages/grade_page_qz.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
                         title: '成绩查询',
                         // icon: Icons.emoji_events_outlined,
                         icon: Icons.history_edu_outlined,
-                        page: GradePage(),
+                        page: GradePageQZ(),
                       ),
                     ),
                   ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-class ItemFilterDialog extends StatefulWidget {
-  const ItemFilterDialog({
+class ItemFilterDialogQZ extends StatefulWidget {
+  /// 成绩查询详细页面（强智教务）的筛选显示字段的 Dialog
+  const ItemFilterDialogQZ({
     super.key,
     required this.items,
     required this.selectedItems,
@@ -10,10 +11,10 @@ class ItemFilterDialog extends StatefulWidget {
   final List<String> selectedItems;
 
   @override
-  State<ItemFilterDialog> createState() => _ItemFilterDialogState();
+  State<ItemFilterDialogQZ> createState() => _ItemFilterDialogQZState();
 }
 
-class _ItemFilterDialogState extends State<ItemFilterDialog> {
+class _ItemFilterDialogQZState extends State<ItemFilterDialogQZ> {
   late List<String> _selectedItems;
   late List<String> _items;
 

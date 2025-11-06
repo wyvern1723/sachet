@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/grade_page_provider.dart';
+import '../../../providers/grade_page_qz_provider.dart';
 import '../../utils_widgets/login_expired_qz.dart';
 
-class GradeSimple extends StatefulWidget {
-  /// 成绩信息简单表
-  const GradeSimple({
-    super.key,
-  });
+class GradeSimpleQZ extends StatefulWidget {
+  /// 成绩信息简单表（强智教务）
+  const GradeSimpleQZ({super.key});
 
   @override
-  State<GradeSimple> createState() => _GradeSimpleState();
+  State<GradeSimpleQZ> createState() => _GradeSimpleQZState();
 }
 
-class _GradeSimpleState extends State<GradeSimple> {
+class _GradeSimpleQZState extends State<GradeSimpleQZ> {
   @override
   Widget build(BuildContext context) {
-    context.select<GradePageProvider, String>(
+    context.select<GradePageQZProvider, String>(
         (gradePageProvider) => (gradePageProvider.semester)); // 监听 semester 变化
     return FutureBuilder(
-      future: context.read<GradePageProvider>().getExamScoresSimpleData(),
+      future: context.read<GradePageQZProvider>().getExamScoresSimpleData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
@@ -41,7 +39,7 @@ class _GradeSimpleState extends State<GradeSimple> {
             return Column(
               children: [
                 SizedBox(height: 20),
-                GradeSimpleTable(data: snapshot.data ?? []),
+                GradeSimpleTableQZ(data: snapshot.data ?? []),
               ],
             );
           }
@@ -58,11 +56,11 @@ class _GradeSimpleState extends State<GradeSimple> {
   }
 }
 
-class GradeSimpleTable extends StatelessWidget {
+class GradeSimpleTableQZ extends StatelessWidget {
   final List data;
 
-  /// 成绩简单页面的信息表
-  const GradeSimpleTable({
+  /// 成绩简单页面的信息表（强智教务）
+  const GradeSimpleTableQZ({
     super.key,
     required this.data,
   });

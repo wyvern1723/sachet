@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/item_filter_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
 
 class FreeClassroomResultPageZF extends StatefulWidget {
   const FreeClassroomResultPageZF({
@@ -34,7 +34,7 @@ class _FreeClassroomResultPageZFState extends State<FreeClassroomResultPageZF> {
   Future showFilterDialog() async {
     List<List<String>>? results = await showDialog(
       context: context,
-      builder: (BuildContext context) => ItemFilterDialog(
+      builder: (BuildContext context) => ItemFilterDialogQZ(
         items: _items,
         selectedItems: _selectedItems,
       ),
