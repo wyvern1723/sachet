@@ -7,20 +7,13 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart';
 
-/// 时间段
-const List<List<int>> itemList = [
-  [1, 2],
-  [3, 4],
-  [5, 6],
-  [7, 8],
-  [9, 10, 11]
-];
-
 /// 获取今日或明日的空闲教室数据（正方教务）
 ///
 /// Return 空闲教室二维列表
 ///
 /// e.g.
+///
+/// itemList = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10, 11]];
 ///
 /// ```dart
 /// [
@@ -30,11 +23,32 @@ const List<List<int>> itemList = [
 ///   ["逸夫楼-104","空","满","空","满","满"]
 /// ]
 /// ```
+///
+/// itemList = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10],[11]];
+///
+/// ```dart
+/// [
+///   ["逸夫楼-101","空","满","空","空","满","满"],
+///   ["逸夫楼-102","空","空","空","空","满","满"],
+///   ["逸夫楼-103","空","满","满","空","空","空"],
+///   ["逸夫楼-104","空","满","空","满","满","满"]
+/// ]
+/// ```
 Future<List<List<String>>> getFreeClassroomTodayAndTomorrowZF({
   required String cookie,
   required String semesterYear,
   required String semesterIndex,
   required Day day,
+
+  /// 把一天分成的时间段, 例如
+  /// [
+  ///   [1, 2],
+  ///   [3, 4],
+  ///   [5, 6],
+  ///   [7, 8],
+  ///   [9, 10, 11]
+  /// ];
+  required List itemList,
   required ZhengFangUserProvider? zhengFangUserProvider,
 }) async {
   final firstDate = getDateFromWeekCountAndWeekday(
@@ -111,7 +125,10 @@ Future<List<List<String>>> getFreeClassroomTodayAndTomorrowZF({
 
       if (index == -1) {
         // classroomDataGrid 中没有这个教室，可能是之前时间段都是 "满"，或是第一个时间段就是 "空"。
-        final List<String> list = [classroomName, "满", "满", "满", "满", "满"];
+        final List<String> list = [
+          classroomName,
+          ...List.filled(itemList.length, "满")
+        ];
         list[itemList.indexOf(item) + 1] = "空";
         classroomDataGrid.add(list);
       } else {

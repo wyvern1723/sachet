@@ -8,6 +8,7 @@ import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/pa
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_duration_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_free_classroom_sections_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class AdvancedSettingsPage extends StatefulWidget {
@@ -197,7 +198,26 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   ),
                 );
               }),
-
+          Selector<SettingsProvider, List>(
+              selector: (_, settingsProvider) =>
+                  settingsProvider.freeClassroomSections,
+              builder: (_, sections, __) {
+                return ListTile(
+                  leading: const Align(
+                    widthFactor: 1,
+                    alignment: Alignment.centerLeft,
+                    child: Icon(Icons.horizontal_split),
+                  ),
+                  title: const Text('空闲教室查询节次分段'),
+                  subtitle: Text('${sections.join(',  ')}'),
+                  onTap: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => SetFreeClassroomSectionsDialog(),
+                    );
+                  },
+                );
+              }),
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
             child: SettingsSectionTitle(

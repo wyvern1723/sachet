@@ -14,14 +14,6 @@ Map<String, SessionFilterMode> sessionFilterModeMap = {
   "或": SessionFilterMode.or
 };
 
-Map<String, int> sessionFilter = {
-  '12': 1,
-  '34': 2,
-  '56': 3,
-  '78': 4,
-  '9 10 11': 5,
-};
-
 Map<String, String> classRoomFilter = {
   '逸夫楼': '逸夫楼',
   '一教楼': '一教楼',
@@ -326,13 +318,6 @@ class FreeClassPageProvider extends ChangeNotifier {
   void removeSessionFilter(int value) {
     List<int> newList = List.of(_selectedSessionFilters);
     newList.remove(value);
-    _selectedSessionFilters = newList;
-    notifyListeners();
-  }
-
-  /// 把全部节次可筛选数据都加入节次筛选列表
-  void addAllToSessionFliters() {
-    List<int> newList = sessionFilter.values.toList();
     _selectedSessionFilters = newList;
     notifyListeners();
   }

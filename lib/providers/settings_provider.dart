@@ -40,6 +40,15 @@ class SettingsProvider extends ChangeNotifier {
   bool get isEnableCourseNotification =>
       _appSettings.isEnableCourseNotification ?? false;
   bool get isSilentNotification => _appSettings.isSilentNotification ?? false;
+  List get freeClassroomSections =>
+      _appSettings.freeClassroomSections ??
+      [
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10, 11],
+      ];
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -178,6 +187,14 @@ class SettingsProvider extends ChangeNotifier {
   void setIsSilentNotification(bool value) {
     if (value != isSilentNotification) {
       _appSettings.isSilentNotification = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setFreeClassroomSections(List value) {
+    if (value != freeClassroomSections) {
+      _appSettings.freeClassroomSections = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 
 /// 空闲教室页面的筛选 FloatingActionButton
 class FilterFAB extends StatelessWidget {
-  const FilterFAB({super.key});
+  final Map<String, int> sessionFilter;
+  const FilterFAB({super.key, required this.sessionFilter});
 
   @override
   Widget build(BuildContext context) {

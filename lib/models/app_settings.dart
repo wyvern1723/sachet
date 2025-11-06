@@ -22,6 +22,7 @@ class AppSettings {
   bool? isFreeClassroomUseLegacyStyle;
   bool? isEnableCourseNotification;
   bool? isSilentNotification;
+  List? freeClassroomSections;
 
   AppSettings({
     this.isMD3,
@@ -47,6 +48,7 @@ class AppSettings {
     this.isFreeClassroomUseLegacyStyle,
     this.isEnableCourseNotification,
     this.isSilentNotification,
+    this.freeClassroomSections,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class AppSettings {
     isFreeClassroomUseLegacyStyle = json['isFreeClassroomUseLegacyStyle'];
     isEnableCourseNotification = json['isEnableCourseNotification'];
     isSilentNotification = json['isSilentNotification'];
+    freeClassroomSections = json['freeClassroomSections'];
   }
 
   Map<String, dynamic> toJson() {
@@ -100,6 +103,7 @@ class AppSettings {
     data['isFreeClassroomUseLegacyStyle'] = this.isFreeClassroomUseLegacyStyle;
     data['isEnableCourseNotification'] = this.isEnableCourseNotification;
     data['isSilentNotification'] = this.isSilentNotification;
+    data['freeClassroomSections'] = this.freeClassroomSections;
     return data;
   }
 }

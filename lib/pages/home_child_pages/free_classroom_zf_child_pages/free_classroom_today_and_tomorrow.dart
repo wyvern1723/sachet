@@ -16,8 +16,6 @@ import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_f
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
-List _classSessionList = ['12', '34', '56', '78', '091011'];
-
 class FreeClassroomTodayAndTomorrow extends StatelessWidget {
   const FreeClassroomTodayAndTomorrow({super.key});
 
@@ -181,6 +179,42 @@ class _FreeClassroomTodayAndTomorrowViewState
     }
   }
 
+  /// 给筛选按钮筛选的 map(因为可以自定义查询节次分段,所以需要动态生成)
+  ///
+  /// e.g.
+  ///
+  /// ```dart
+  /// {
+  ///   '12': 1,
+  ///   '34': 2,
+  ///   '56': 3,
+  ///   '78': 4,
+  ///   '9 10 11': 5,
+  /// };
+  /// ```
+  ///
+  /// /// ```dart
+  /// {
+  ///   '12': 1,
+  ///   '34': 2,
+  ///   '56': 3,
+  ///   '78': 4,
+  ///   '910': 5,
+  ///   '11': 6,
+  /// };
+  /// ```
+  Map<String, int> _sessionFilter() {
+    Map<String, int> sessionFilter = {};
+    List sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
+    List<List<int>> convertedList =
+        sections.map((innerList) => List<int>.from(innerList)).toList();
+    for (var i = 0; i < convertedList.length; i++) {
+      sessionFilter.addAll({convertedList[i].join(''): i + 1});
+    }
+    return sessionFilter;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,7 +250,7 @@ class _FreeClassroomTodayAndTomorrowViewState
         offset: _showFab ? Offset(0, 0) : Offset(0, 2),
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        child: FilterFAB(),
+        child: FilterFAB(sessionFilter: _sessionFilter()),
       ),
     );
   }
@@ -280,6 +314,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
     final Day? day = widget.day;
     final DateTime? date = widget.date;
+    List sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
     if (day != null) {
       List<List<String>> freeClassroomData =
           await getFreeClassroomTodayAndTomorrowZF(
@@ -287,6 +323,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,
         day: day,
+        itemList: sections,
         zhengFangUserProvider: zhengFangUserProvider,
       );
       if (!mounted) return [];
@@ -305,6 +342,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,
         date: date,
+        itemList: sections,
         zhengFangUserProvider: zhengFangUserProvider,
       );
       if (!mounted) return [];
@@ -320,6 +358,25 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     } else {
       throw '必须提供 day 或 date';
     }
+  }
+
+  /// 表头显示的节次(因为可以自定义查询节次分段,所以需要动态生成)
+  ///
+  /// e.g. ['12', '34', '56', '78', '91011'];
+  ///
+  /// e.g. ['12', '34', '56', '78', '910', '11'];
+  List _sessionList() {
+    List sessionList = [];
+
+    List sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
+    List<List<int>> convertedList =
+        sections.map((innerList) => List<int>.from(innerList)).toList();
+    for (var i = 0; i < convertedList.length; i++) {
+      sessionList.add(convertedList[i].join(''));
+    }
+
+    return sessionList;
   }
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -409,7 +466,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
           return Column(
             children: [
-              const _Head(),
+              _Head(sessionList: _sessionList()),
               Expanded(
                 child: widget.day != null
                     ? _BodyOfTodayOrTomorrow(
@@ -432,7 +489,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
 /// 表头，显示 「"节次","12","34","56","78","091011"」
 class _Head extends StatelessWidget {
-  const _Head();
+  final List sessionList;
+  const _Head({required this.sessionList});
 
   @override
   Widget build(BuildContext context) {
@@ -441,7 +499,7 @@ class _Head extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Flexible(
-            flex: 5,
+            flex: sessionList.length,
             child: Container(
               alignment: Alignment.center,
               color: Theme.of(context).colorScheme.secondaryContainer,
@@ -450,7 +508,7 @@ class _Head extends StatelessWidget {
             ),
           ),
           ...List.generate(
-            5,
+            sessionList.length,
             (index) => Flexible(
               flex: 1,
               child: Container(
@@ -459,7 +517,7 @@ class _Head extends StatelessWidget {
                 margin: const EdgeInsets.all(2.0),
                 child: FittedBox(
                   child: Text(
-                    "${_classSessionList[index]}",
+                    "${sessionList[index]}",
                     style: TextStyle(fontSize: 10.0),
                   ),
                 ),
@@ -552,7 +610,7 @@ class _ClassroomRow extends StatelessWidget {
         children: [
           // 教室名
           Flexible(
-            flex: 5,
+            flex: rowData.length - 1,
             child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -561,7 +619,7 @@ class _ClassroomRow extends StatelessWidget {
               child: Text("${rowData[0]}", textAlign: TextAlign.center),
             ),
           ),
-          ...List.generate(5, (i) {
+          ...List.generate(rowData.length - 1, (i) {
             final status = rowData[i + 1];
             switch (status) {
               case '空':

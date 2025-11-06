@@ -111,7 +111,14 @@ const defaultAppSettingsConfig = {
   "isPredictiveBack": true,
   "isFreeClassroomUseLegacyStyle": true, // 空闲教室页面是否使用旧的「今日/明日」的样式
   "isEnableCourseNotification": false, // 是否启用课程通知
-  "isSilentNotification": false // 课程通知是否是静默通知
+  "isSilentNotification": false, // 课程通知是否是静默通知
+  "freeClassroomSections": [
+    [1, 2],
+    [3, 4],
+    [5, 6],
+    [7, 8],
+    [9, 10, 11],
+  ] // 空闲教室查询的节次分段
 };
 
 // 默认课程卡片外观设置
