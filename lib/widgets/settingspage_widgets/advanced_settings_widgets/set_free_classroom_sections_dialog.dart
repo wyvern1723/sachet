@@ -18,7 +18,7 @@ class _SetFreeClassroomSectionsDialogState
 
   List _splitedSections = [];
 
-  List<bool> _isClip = List.filled(11, false);
+  List<bool> _isClip = List.filled(10, false);
 
   /// 根据 _isClip 生成 _splitedSections
   void _split() {
