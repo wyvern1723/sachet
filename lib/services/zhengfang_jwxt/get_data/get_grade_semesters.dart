@@ -66,7 +66,7 @@ Future<
     final html = await fetchGradeSemetersZF(cookie: cookie);
     return parseGradeSemestersFromHtmlZF(html);
   } catch (e) {
-    if (e == '获取成绩查询学期数据失败: Http status code = 302, 可能需要重新登录') {
+    if (e == '获取可查询学期数据失败: Http status code = 302, 可能需要重新登录') {
       if (zhengFangUserProvider == null) {
         rethrow;
       }

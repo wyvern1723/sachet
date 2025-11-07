@@ -23,7 +23,7 @@ Future<List> getGradeZF({
     );
     return parseGradeZF(result);
   } catch (e) {
-    if (e == '获取考试成绩数据失败: Http status code = 302, 可能需要重新登录') {
+    if (e == '获取成绩数据失败: Http status code = 302, 可能需要重新登录') {
       if (zhengFangUserProvider == null) {
         rethrow;
       }

@@ -45,8 +45,8 @@ Future fetchGradeSemetersZF({required String cookie}) async {
     if (kDebugMode) {
       print(e);
     }
-    throw '获取成绩查询学期数据失败: $errorTypeText';
+    throw '获取可查询学期数据失败: $errorTypeText';
   } catch (e) {
-    throw '获取成绩查询学期数据失败: $e';
+    throw '获取可查询学期数据失败: $e';
   }
 }
