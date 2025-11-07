@@ -379,6 +379,12 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     return sessionList;
   }
 
+  List<List<int>> sections() {
+    List<List<int>> sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
+    return sections;
+  }
+
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void _onGoBack(dynamic value) {
     if (value == true) {
@@ -466,7 +472,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
           return Column(
             children: [
-              _Head(sessionList: _sessionList()),
+              _Head(sessionList: _sessionList(), sections: sections()),
               Expanded(
                 child: widget.day != null
                     ? _BodyOfTodayOrTomorrow(
@@ -490,7 +496,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 /// 表头，显示 「"节次","12","34","56","78","091011"」
 class _Head extends StatelessWidget {
   final List sessionList;
-  const _Head({required this.sessionList});
+  final List sections;
+  const _Head({required this.sessionList, required this.sections});
 
   @override
   Widget build(BuildContext context) {
@@ -499,7 +506,7 @@ class _Head extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Flexible(
-            flex: sessionList.length,
+            flex: 11,
             child: Container(
               alignment: Alignment.center,
               color: Theme.of(context).colorScheme.secondaryContainer,
@@ -510,7 +517,7 @@ class _Head extends StatelessWidget {
           ...List.generate(
             sessionList.length,
             (index) => Flexible(
-              flex: 1,
+              flex: sections[index].length,
               child: Container(
                 alignment: Alignment.center,
                 color: Theme.of(context).colorScheme.secondaryContainer,
@@ -541,6 +548,9 @@ class _BodyOfTodayOrTomorrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<List<int>> sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
+
     late List freeClassroomsData;
     switch (day) {
       case Day.today:
@@ -560,7 +570,10 @@ class _BodyOfTodayOrTomorrow extends StatelessWidget {
         if (index == freeClassroomsData.length) {
           return _Foot(); // 最后一个 item 是 Foot
         }
-        return _ClassroomRow(rowData: freeClassroomsData[index]);
+        return _ClassroomRow(
+          rowData: freeClassroomsData[index],
+          sections: sections,
+        );
       },
     );
   }
@@ -577,6 +590,9 @@ class _BodyOfOtherDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<List<int>> sections =
+        List.from(context.read<SettingsProvider>().freeClassroomSections);
+
     late List freeClassroomsData;
 
     freeClassroomsData = context.select<FreeClassPageProvider, List>(
@@ -590,7 +606,10 @@ class _BodyOfOtherDay extends StatelessWidget {
         if (index == freeClassroomsData.length) {
           return _Foot(); // 最后一个 item 是 Foot
         }
-        return _ClassroomRow(rowData: freeClassroomsData[index]);
+        return _ClassroomRow(
+          rowData: freeClassroomsData[index],
+          sections: sections,
+        );
       },
     );
   }
@@ -598,9 +617,10 @@ class _BodyOfOtherDay extends StatelessWidget {
 
 /// 教室数据的一行
 class _ClassroomRow extends StatelessWidget {
-  const _ClassroomRow({required this.rowData});
+  const _ClassroomRow({required this.rowData, required this.sections});
 
   final List rowData;
+  final List sections;
 
   @override
   Widget build(BuildContext context) {
@@ -610,7 +630,7 @@ class _ClassroomRow extends StatelessWidget {
         children: [
           // 教室名
           Flexible(
-            flex: rowData.length - 1,
+            flex: 11,
             child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -624,7 +644,7 @@ class _ClassroomRow extends StatelessWidget {
             switch (status) {
               case '空':
                 return Flexible(
-                  flex: 1,
+                  flex: sections[i].length,
                   child: Container(
                     color: Colors.green.shade400,
                     margin: EdgeInsets.all(2.0),
@@ -632,7 +652,7 @@ class _ClassroomRow extends StatelessWidget {
                 );
               case '满':
                 return Flexible(
-                  flex: 1,
+                  flex: sections[i].length,
                   child: Container(
                     color: Colors.red.shade400,
                     margin: EdgeInsets.all(2.0),
@@ -640,7 +660,7 @@ class _ClassroomRow extends StatelessWidget {
                 );
               default:
                 return Flexible(
-                  flex: 1,
+                  flex: sections[i].length,
                   child: Container(
                     color: Colors.grey.shade400,
                     margin: const EdgeInsets.all(2.0),

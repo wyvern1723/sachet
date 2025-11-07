@@ -40,8 +40,10 @@ class SettingsProvider extends ChangeNotifier {
   bool get isEnableCourseNotification =>
       _appSettings.isEnableCourseNotification ?? false;
   bool get isSilentNotification => _appSettings.isSilentNotification ?? false;
-  List get freeClassroomSections =>
-      _appSettings.freeClassroomSections ??
+  List<List<int>> get freeClassroomSections =>
+      _appSettings.freeClassroomSections
+          ?.map((innerList) => List<int>.from(innerList))
+          .toList() ??
       [
         [1, 2],
         [3, 4],
