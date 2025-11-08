@@ -10,51 +10,76 @@ class SelectJwxtAsGradeSourceDialog extends StatelessWidget {
     return SimpleDialog(
       title: const Text("选择成绩数据来源"),
       contentPadding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 24.0),
-      children: JwxtType.values
-          .map(
-            (e) => Padding(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.pop(
+                context, JwxtType.zhengfang), // 关掉这个 Dialog，返回 jwxtType
+            child: Ink(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(8),
-                onTap: () {
-                  Navigator.pop(context, e); // 关掉这个 Dialog，返回 jwxtType
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: 1,
-                    ),
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 教务系统描述
+                  Text(
+                    JwxtType.zhengfang.description,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 教务系统描述
-                      Text(
-                        '${e.description} (${e.label})',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
 
-                      // 教务系统链接 (小字提示)
-                      Text(
-                        '(${e.baseUrl})',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outline),
-                      ),
-                    ],
+                  // 教务系统链接 (小字提示)
+                  Text(
+                    '(${JwxtType.zhengfang.baseUrl})',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.outline),
                   ),
-                ),
+                ],
               ),
             ),
-          )
-          .toList(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.pop(
+                context, JwxtType.qiangzhi), // 关掉这个 Dialog，返回 jwxtType
+            child: Ink(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 教务系统描述
+                  Text(
+                    JwxtType.qiangzhi.description,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  // 教务系统链接 (小字提示)
+                  Text(
+                    '(${JwxtType.qiangzhi.baseUrl})  ',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
