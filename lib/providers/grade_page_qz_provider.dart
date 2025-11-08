@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_scores.dart';
 
-class GradePageProvider extends ChangeNotifier {
+/// 用于 [GradePageQZ] 强智教务系统的成绩查询页面的 Provider
+class GradePageQZProvider extends ChangeNotifier {
   bool _isShowDetails = false; // 是否显示成绩的详细信息
 
   bool get isShowDetails => _isShowDetails;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'gpa_table.dart';
 
-class HelpDialog extends StatelessWidget {
-  const HelpDialog({super.key});
+class HelpDialogQZ extends StatelessWidget {
+  const HelpDialogQZ({super.key});
 
   @override
   Widget build(BuildContext context) {

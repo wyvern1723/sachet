@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_scores.dart';
-import 'package:sachet/providers/grade_page_provider.dart';
+import 'package:sachet/providers/grade_page_qz_provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/gpa_card.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/help_dialog.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/grade_details.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/grade_simple.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_widgets/semester_selector.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/gpa_card.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/help_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/grade_details.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/grade_simple.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/semester_selector.dart';
 import 'package:provider/provider.dart';
 
-class GradePage extends StatefulWidget {
-  const GradePage({super.key});
+class GradePageQZ extends StatefulWidget {
+  /// 成绩查询页面（强智教务）
+  const GradePageQZ({super.key});
 
   @override
-  State<GradePage> createState() => _GradePageState();
+  State<GradePageQZ> createState() => _GradePageQZState();
 }
 
-class _GradePageState extends State<GradePage> {
+class _GradePageQZState extends State<GradePageQZ> {
   bool isSelectingSemester = true; // true 为处于选择学期的状态，false 为查看成绩的状态
   late Future<Map> getDataFuture;
 
@@ -24,8 +25,6 @@ class _GradePageState extends State<GradePage> {
 
   Future<Map> getSemestersData() async {
     var data = await getGradeSemesterData();
-    // await Future.delayed(Duration(milliseconds: 500));
-    // var data = mapData;
     return data;
   }
 
@@ -47,7 +46,7 @@ class _GradePageState extends State<GradePage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => GradePageProvider(),
+      create: (context) => GradePageQZProvider(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('成绩查询'),
@@ -58,7 +57,7 @@ class _GradePageState extends State<GradePage> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => HelpDialog(),
+                  builder: (BuildContext context) => HelpDialogQZ(),
                 );
               },
             )
@@ -86,11 +85,11 @@ class _GradePageState extends State<GradePage> {
                             return Column(
                               children: [
                                 SizedBox(height: 20),
-                                Selector<GradePageProvider, String>(
+                                Selector<GradePageQZProvider, String>(
                                     selector: (_, gradePageProvider) =>
                                         gradePageProvider.semester,
                                     builder: (context, semester, __) {
-                                      return SemesterSelector(
+                                      return SemesterSelectorQZ(
                                         data: semestersData,
                                         initialSelection: semester,
                                         menuHeight: 400,
@@ -132,7 +131,7 @@ class _GradePageState extends State<GradePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       //GPA(绩点)
-                      GPAWidget(),
+                      GPAWidgetQZ(),
 
                       const SizedBox(height: 16),
 
@@ -144,11 +143,11 @@ class _GradePageState extends State<GradePage> {
                           // spacing: 20,
                           children: [
                             //选择学期
-                            Selector<GradePageProvider, String>(
+                            Selector<GradePageQZProvider, String>(
                                 selector: (_, gradePageProvider) =>
                                     gradePageProvider.semester,
                                 builder: (context, semester, __) {
-                                  return SemesterSelector(
+                                  return SemesterSelectorQZ(
                                     data: semestersData,
                                     initialSelection: semester,
                                     menuHeight: 400,
@@ -157,7 +156,7 @@ class _GradePageState extends State<GradePage> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Selector<GradePageProvider, bool>(
+                                Selector<GradePageQZProvider, bool>(
                                   selector: (_, gradePageProvider) =>
                                       gradePageProvider.isShowDetails,
                                   builder: (context, isShowDetails, __) {
@@ -165,7 +164,7 @@ class _GradePageState extends State<GradePage> {
                                       value: isShowDetails,
                                       onChanged: (bool? value) {
                                         context
-                                            .read<GradePageProvider>()
+                                            .read<GradePageQZProvider>()
                                             .changeIsShowDetails();
                                       },
                                       child: Text('显示详细信息'),
@@ -178,11 +177,13 @@ class _GradePageState extends State<GradePage> {
                         ),
                       ),
                       // 根据 isShowDetails （是否显示详细信息）决定显示 GradeSimple 成绩信息（简单）或 GradeDetails 成绩信息（详细）
-                      Selector<GradePageProvider, bool>(
+                      Selector<GradePageQZProvider, bool>(
                         selector: (_, gradePageProvider) =>
                             gradePageProvider.isShowDetails,
                         builder: (context, isShowDetails, __) {
-                          return isShowDetails ? GradeDetails() : GradeSimple();
+                          return isShowDetails
+                              ? GradeDetailsQZ()
+                              : GradeSimpleQZ();
                         },
                       ),
                       SizedBox(height: 4),

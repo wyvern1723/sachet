@@ -5,27 +5,32 @@ class CardWidget extends StatelessWidget {
     super.key,
     required this.title,
     required this.icon,
-    required this.page,
+    this.page,
+    this.onTap,
   });
   final String title;
   final IconData icon;
-  final dynamic page;
+  final Widget? page;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return page;
-              },
-            ),
-          );
-        },
+        onTap: onTap ??
+            () {
+              if (page != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return page!;
+                    },
+                  ),
+                );
+              }
+            },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
           child: Column(

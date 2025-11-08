@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
-import 'package:sachet/pages/home_child_pages/grade_page.dart';
+import 'package:sachet/pages/home_child_pages/grade_page_qz.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
+import 'package:sachet/widgets/homepage_widgets/select_jwxt_as_grade_source_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
@@ -31,6 +34,34 @@ class OpenLinkListTile {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  Future _openGradePage(BuildContext context) async {
+    final jwxtType = await showDialog(
+      context: context,
+      builder: (BuildContext context) => const SelectJwxtAsGradeSourceDialog(),
+    );
+
+    if (!context.mounted) return;
+
+    switch (jwxtType) {
+      case JwxtType.qiangzhi:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GradePageQZ(),
+          ),
+        );
+        break;
+      case JwxtType.zhengfang:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GradePageZF(),
+          ),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +137,7 @@ class HomePage extends StatelessWidget {
                   icon: Icons.meeting_room_outlined,
                   page: FreeClassroomPageZF(),
                 ),
-                const Row(
+                Row(
                   children: [
                     Expanded(
                       child: CardWidget(
@@ -127,7 +158,8 @@ class HomePage extends StatelessWidget {
                         title: '成绩查询',
                         // icon: Icons.emoji_events_outlined,
                         icon: Icons.history_edu_outlined,
-                        page: GradePage(),
+                        page: GradePageQZ(),
+                        onTap: () => _openGradePage(context),
                       ),
                     ),
                   ],

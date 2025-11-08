@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/grade_page_provider.dart';
+import '../../../providers/grade_page_qz_provider.dart';
 import '../../utils_widgets/login_expired_qz.dart';
 import 'item_filter_dialog.dart';
 
-class GradeDetails extends StatefulWidget {
-  /// 成绩信息详细表
-  const GradeDetails({
+class GradeDetailsQZ extends StatefulWidget {
+  /// 成绩信息详细表（强智教务）
+  const GradeDetailsQZ({
     super.key,
   });
 
   @override
-  State<GradeDetails> createState() => _GradeDetailsState();
+  State<GradeDetailsQZ> createState() => _GradeDetailsQZState();
 }
 
-class _GradeDetailsState extends State<GradeDetails> {
+class _GradeDetailsQZState extends State<GradeDetailsQZ> {
   @override
   Widget build(BuildContext context) {
-    context.select<GradePageProvider, String>(
+    context.select<GradePageQZProvider, String>(
         (gradePageProvider) => (gradePageProvider.semester)); // 监听 semester 变化
     return FutureBuilder(
-        future: context.read<GradePageProvider>().getExamScoresDetailsData(),
+        future: context.read<GradePageQZProvider>().getExamScoresDetailsData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
@@ -39,7 +39,7 @@ class _GradeDetailsState extends State<GradeDetails> {
                 return Text('${snapshot.error}');
               }
             } else {
-              return GradeDetailsTable(listData: snapshot.data ?? []);
+              return GradeDetailsTableQZ(listData: snapshot.data ?? []);
             }
           } else {
             return Column(
@@ -53,16 +53,16 @@ class _GradeDetailsState extends State<GradeDetails> {
   }
 }
 
-class GradeDetailsTable extends StatefulWidget {
-  /// 成绩信息详细界面的信息表
-  const GradeDetailsTable({super.key, required this.listData});
+class GradeDetailsTableQZ extends StatefulWidget {
+  /// 成绩信息详细界面（强智教务）的信息表
+  const GradeDetailsTableQZ({super.key, required this.listData});
   final List listData;
 
   @override
-  State<GradeDetailsTable> createState() => _GradeDetailsTableState();
+  State<GradeDetailsTableQZ> createState() => _GradeDetailsTableQZState();
 }
 
-class _GradeDetailsTableState extends State<GradeDetailsTable> {
+class _GradeDetailsTableQZState extends State<GradeDetailsTableQZ> {
   List<String> _items = [
     '开课学期',
     '课程名称',
@@ -172,7 +172,7 @@ class _GradeDetailsTableState extends State<GradeDetailsTable> {
   void showFilterDialog() async {
     List<List<String>>? results = await showDialog(
       context: context,
-      builder: (BuildContext context) => ItemFilterDialog(
+      builder: (BuildContext context) => ItemFilterDialogQZ(
         items: _items,
         selectedItems: _selectedItems,
       ),
