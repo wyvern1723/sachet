@@ -13,7 +13,7 @@ import 'package:sachet/pages/home_child_pages/grade_page_qz.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
-import 'package:sachet/widgets/homepage_widgets/select_jwxt_as_grade_source_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/select_jwxt_as_source_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
@@ -38,7 +38,8 @@ class HomePage extends StatelessWidget {
   Future _openGradePage(BuildContext context) async {
     final jwxtType = await showDialog(
       context: context,
-      builder: (BuildContext context) => const SelectJwxtAsGradeSourceDialog(),
+      builder: (BuildContext context) =>
+          const SelectJwxtAsSourceDialog(title: "选择成绩数据来源"),
     );
 
     if (!context.mounted) return;

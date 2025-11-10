@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/jwxt_type.dart';
 
-class SelectJwxtAsGradeSourceDialog extends StatelessWidget {
-  /// 选择哪个教务系统作为成绩数据来源的 Dialog
-  const SelectJwxtAsGradeSourceDialog({super.key});
+class SelectJwxtAsSourceDialog extends StatelessWidget {
+  /// 选择哪个教务系统作为数据来源的 Dialog
+  const SelectJwxtAsSourceDialog({super.key, required this.title});
+
+  /// Dialog 标题
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text("选择成绩数据来源"),
+      title: Text(title),
       contentPadding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 24.0),
       children: [
         Padding(
