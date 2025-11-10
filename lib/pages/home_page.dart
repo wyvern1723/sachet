@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
-import 'package:sachet/pages/home_child_pages/exam_time_page.dart';
+import 'package:sachet/pages/home_child_pages/exam_time_page_qz.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_qz.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -34,6 +35,35 @@ class OpenLinkListTile {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  Future _openExamTimePage(BuildContext context) async {
+    final jwxtType = await showDialog(
+      context: context,
+      builder: (BuildContext context) =>
+          const SelectJwxtAsSourceDialog(title: "选择考试时间数据来源"),
+    );
+
+    if (!context.mounted) return;
+
+    switch (jwxtType) {
+      case JwxtType.qiangzhi:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExamTimePageQZ(),
+          ),
+        );
+        break;
+      case JwxtType.zhengfang:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExamTimePageZF(),
+          ),
+        );
+        break;
+    }
+  }
 
   Future _openGradePage(BuildContext context) async {
     final jwxtType = await showDialog(
@@ -151,7 +181,7 @@ class HomePage extends StatelessWidget {
                       child: CardWidget(
                         title: '考试时间',
                         icon: Icons.alarm,
-                        page: ExamTimePageQZ(),
+                        onTap: () => _openExamTimePage(context),
                       ),
                     ),
                     Expanded(
