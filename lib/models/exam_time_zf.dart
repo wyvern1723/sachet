@@ -59,7 +59,7 @@ class ExamTimeZF {
   }
 
   ExamTimeZF.fromJson(Map<String, dynamic> json) {
-    semesterYear = json['xnmmc'] ?? '';
+    semesterYear = json['xnmc'] ?? '';
     semesterIndex = json['xqmmc'] ?? '';
     courseTitle = json['kcmc'] ?? '';
     examName = json['ksmc'] ?? '';
