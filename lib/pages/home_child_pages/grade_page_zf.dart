@@ -203,8 +203,9 @@ class __FilterButtonState extends State<_FilterButton> {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      style: ButtonStyle(
+      style: TextButton.styleFrom(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       ),
       onPressed: showFilterDialog,
       icon: Icon(Icons.filter_list_outlined),

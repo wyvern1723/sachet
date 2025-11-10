@@ -12,7 +12,7 @@ class SemesterIndexSelectorZF extends StatelessWidget {
     String selectedSemesterIndex = context.select<GradePageZFProvider, String>(
         (provider) => provider.selectedSemesterIndex);
     return DropdownMenu<String>(
-      width: 110,
+      width: 100,
       menuHeight: 400,
       initialSelection: selectedSemesterIndex,
       requestFocusOnTap: false,

@@ -13,7 +13,7 @@ class SemesterYearSelectorZF extends StatelessWidget {
     Map semestersYears = context.select<GradePageZFProvider, Map>(
         (provider) => provider.semestersYears);
     return DropdownMenu<String>(
-      width: 160,
+      width: 150,
       menuHeight: 600,
       initialSelection: selectedSemesterYear,
       requestFocusOnTap: false,
