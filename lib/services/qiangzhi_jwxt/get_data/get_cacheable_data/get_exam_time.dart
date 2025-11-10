@@ -7,8 +7,8 @@ import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:intl/intl.dart';
 
-/// 获取考试时间数据
-Future<List> getExamTimeData() async {
+/// 获取考试时间数据（强智教务系统）
+Future<List> getExamTimeDataQZ() async {
   // 不加延迟的话，太快了，没有动画过渡。
   await Future.delayed(Duration(milliseconds: 300));
 
@@ -29,12 +29,12 @@ Future<List> getExamTimeData() async {
     ];
   } else {
     // check == ''， 没有缓存数据，从网站获取数据。
-    return getExamTimeDataFromWeb(isStoreData: true);
+    return getExamTimeDataFromWebQZ(isStoreData: true);
   }
 }
 
-/// 在线获取考试时间数据
-Future<List> getExamTimeDataFromWeb(
+/// 在线获取考试时间数据（强智教务系统）
+Future<List> getExamTimeDataFromWebQZ(
     {String? semester, required bool isStoreData}) async {
   Map jsonData;
   if (semester == null) {

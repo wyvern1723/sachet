@@ -150,7 +150,7 @@ class HomePage extends StatelessWidget {
                       child: CardWidget(
                         title: '考试时间',
                         icon: Icons.alarm,
-                        page: ExamTimePage(),
+                        page: ExamTimePageQZ(),
                       ),
                     ),
                     Expanded(

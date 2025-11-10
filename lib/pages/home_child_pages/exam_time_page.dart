@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/get_cacheable_data/get_exam_time.dart';
-import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/change_semester_dialog.dart';
-import 'package:sachet/widgets/homepage_widgets/exam_time_page_widgets/exam_time_widgets.dart';
+import 'package:sachet/widgets/homepage_widgets/exam_time_page_qz_widgets/change_semester_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/exam_time_page_qz_widgets/exam_time_card.dart';
 import 'package:sachet/widgets/utils_widgets/data_from_cache_or_http.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 
-class ExamTimePage extends StatefulWidget {
-  const ExamTimePage({super.key});
+class ExamTimePageQZ extends StatefulWidget {
+  /// 考试时间查询页面（强智教务系统）
+  const ExamTimePageQZ({super.key});
 
   @override
-  State<ExamTimePage> createState() => _ExamTimePageState();
+  State<ExamTimePageQZ> createState() => _ExamTimePageQZState();
 }
 
-class _ExamTimePageState extends State<ExamTimePage> {
+class _ExamTimePageQZState extends State<ExamTimePageQZ> {
   late Future getDataFuture;
   bool isDoubleColumn = false;
 
@@ -20,7 +21,7 @@ class _ExamTimePageState extends State<ExamTimePage> {
   void onGoBack(dynamic value) {
     if (value == true) {
       setState(() {
-        getDataFuture = getExamTimeData();
+        getDataFuture = getExamTimeDataQZ();
       });
     }
   }
@@ -28,19 +29,19 @@ class _ExamTimePageState extends State<ExamTimePage> {
   Future changeSemester() async {
     List? result = await showDialog(
       context: context,
-      builder: (context) => ChangeSemesterDialog(),
+      builder: (context) => ChangeSemesterDialogQZ(),
     );
     if (result != null && result[0] != '') {
       setState(() {
-        getDataFuture =
-            getExamTimeDataFromWeb(semester: result[0], isStoreData: result[1]);
+        getDataFuture = getExamTimeDataFromWebQZ(
+            semester: result[0], isStoreData: result[1]);
       });
     }
   }
 
   @override
   void initState() {
-    getDataFuture = getExamTimeData();
+    getDataFuture = getExamTimeDataQZ();
     super.initState();
   }
 
@@ -71,7 +72,7 @@ class _ExamTimePageState extends State<ExamTimePage> {
           IconButton(
             onPressed: () {
               setState(() {
-                getDataFuture = getExamTimeDataFromWeb(isStoreData: true);
+                getDataFuture = getExamTimeDataFromWebQZ(isStoreData: true);
               });
             },
             icon: const Icon(Icons.refresh),
@@ -104,8 +105,8 @@ class _ExamTimePageState extends State<ExamTimePage> {
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 children: [
                   isDoubleColumn
-                      ? DoubleColumn(data: snapshot.data[0]['data'])
-                      : SingleColumn(data: snapshot.data[0]['data']),
+                      ? _DoubleColumn(data: snapshot.data[0]['data'])
+                      : _SingleColumn(data: snapshot.data[0]['data']),
                   SizedBox(height: 4),
                   Text(
                     '查询学期: ${snapshot.data[0]['semester']}',
@@ -130,8 +131,8 @@ class _ExamTimePageState extends State<ExamTimePage> {
   }
 }
 
-class SingleColumn extends StatelessWidget {
-  const SingleColumn({super.key, required this.data});
+class _SingleColumn extends StatelessWidget {
+  const _SingleColumn({super.key, required this.data});
   final List data;
 
   @override
@@ -141,7 +142,7 @@ class SingleColumn extends StatelessWidget {
         final String? course = examInfo["课程名称"];
         final String? time = examInfo["考试时间"];
         final String? place = examInfo["考场"];
-        return ExamTimeCard(
+        return ExamTimeCardQZ(
           course: course ?? '',
           time: time ?? '',
           place: place ?? '',
@@ -153,8 +154,8 @@ class SingleColumn extends StatelessWidget {
   }
 }
 
-class DoubleColumn extends StatelessWidget {
-  const DoubleColumn({
+class _DoubleColumn extends StatelessWidget {
+  const _DoubleColumn({
     super.key,
     required this.data,
   });
@@ -174,7 +175,7 @@ class DoubleColumn extends StatelessWidget {
         final String? time = examInfo["考试时间"];
         final String? place = examInfo["考场"];
 
-        return ExamTimeCard(
+        return ExamTimeCardQZ(
           course: course ?? '',
           time: time ?? '',
           place: place ?? '',

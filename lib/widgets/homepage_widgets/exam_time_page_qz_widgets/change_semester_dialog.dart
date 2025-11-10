@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_exam_time_semesters.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 
-class ChangeSemesterDialog extends StatefulWidget {
-  const ChangeSemesterDialog({super.key});
+class ChangeSemesterDialogQZ extends StatefulWidget {
+  /// 考试时间查询页面（强智教务），改变当前要查询学期 Dialog
+  const ChangeSemesterDialogQZ({super.key});
 
   @override
-  State<ChangeSemesterDialog> createState() => _ChangeSemesterDialogState();
+  State<ChangeSemesterDialogQZ> createState() => _ChangeSemesterDialogQZState();
 }
 
-class _ChangeSemesterDialogState extends State<ChangeSemesterDialog> {
+class _ChangeSemesterDialogQZState extends State<ChangeSemesterDialogQZ> {
   String selectedSemester = '';
   bool isStoreCacheData = false;
 

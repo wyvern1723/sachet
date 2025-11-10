@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/utils/transform.dart';
 
-class ExamTimeCard extends StatelessWidget {
-  const ExamTimeCard({
+class ExamTimeCardQZ extends StatelessWidget {
+  /// 考试时间查询页面（强智教务）的每门课程的考试时间信息 Card
+  const ExamTimeCardQZ({
     super.key,
     required this.course,
     required this.time,
@@ -11,9 +12,16 @@ class ExamTimeCard extends StatelessWidget {
     required this.isHalf,
   });
 
+  /// 课程名称
   final String course;
+
+  /// 考试时间
   final String time;
+
+  /// 考试地点
   final String place;
+
+  /// 备注
   final String note;
 
   // 是否是 DoubleColumn 的组件(只占屏幕宽度 1/2)
