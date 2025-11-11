@@ -28,6 +28,9 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   /// 当前查询的学期
   String _selectedSemesterIndex = '';
 
+  // true => 显示详细信息, false => 显示精简信息
+  bool _isDetailedView = true;
+
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
     if (value == true) {
@@ -104,6 +107,18 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           icon: Icon(Icons.history_outlined),
           tooltip: '切换查询学期',
         ),
+        // 切换显示详细信息/显示精简信息
+        IconButton(
+          onPressed: () {
+            setState(() {
+              _isDetailedView = !_isDetailedView;
+            });
+          },
+          icon: _isDetailedView
+              ? Icon(Icons.notes_outlined)
+              : Icon(Icons.subject_outlined),
+          tooltip: _isDetailedView ? "显示精简信息" : "显示详细信息",
+        ),
       ]),
       body: FutureBuilder(
         future: _future,
@@ -152,6 +167,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
               queryingSemesterIndex: semesterIndexes.keys.firstWhere(
                   (key) => semesterIndexes[key] == _selectedSemesterIndex,
                   orElse: () => _selectedSemesterIndex),
+              isDetailedView: _isDetailedView,
             ),
           );
         },
@@ -167,10 +183,12 @@ class _ExamTimeViewZF extends StatelessWidget {
     required this.examTimeData,
     required this.queryingSemesterYear,
     required this.queryingSemesterIndex,
+    required this.isDetailedView,
   });
   final List<ExamTimeZF> examTimeData;
   final String queryingSemesterYear;
   final String queryingSemesterIndex;
+  final bool isDetailedView;
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +198,10 @@ class _ExamTimeViewZF extends StatelessWidget {
         ...examTimeData.map((e) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ExamTimeCardZF(examTime: e),
+            child: ExamTimeCardZF(
+              examTime: e,
+              isDetailedView: isDetailedView,
+            ),
           );
         }),
         SizedBox(height: 4),
