@@ -19,7 +19,7 @@ const String jwxtMainPageUrlHttps =
     'https://jwxt.xtu.edu.cn/jsxsd/framework/xsMain.jsp';
 
 /// 湘大校历网址
-const String xtuSchoolCalendarUrl = 'https://www.xtu.edu.cn/xysh1/ggfw/xl.htm';
+const String xtuSchoolCalendarUrl = 'https://www.xtu.edu.cn/xysh/ggfw/xl.htm';
 
 /// 校园网上网认证
 const String campusNetworkAuthUrl = 'http://zz.xtu.edu.cn/portal/portal-main';
