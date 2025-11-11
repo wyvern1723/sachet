@@ -243,7 +243,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CardLinkWidget(
-                        title: '教学周历',
+                        title: '湘大校历',
                         icon: Icons.date_range,
                         link: xtuSchoolCalendarUrl,
                       ),
