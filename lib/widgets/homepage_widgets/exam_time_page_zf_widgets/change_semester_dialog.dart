@@ -39,7 +39,7 @@ class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
         runAlignment: WrapAlignment.center,
         children: [
           DropdownMenu<String>(
-            width: 160,
+            width: 150,
             menuHeight: 400,
             initialSelection: widget.selectedSemesterYear,
             requestFocusOnTap: false,
@@ -55,7 +55,7 @@ class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
                 .toList(),
           ),
           DropdownMenu<String>(
-            width: 110,
+            width: 100,
             menuHeight: 400,
             initialSelection: widget.selectedSemesterIndex,
             requestFocusOnTap: false,
