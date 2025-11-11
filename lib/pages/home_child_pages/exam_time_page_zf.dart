@@ -4,6 +4,7 @@ import 'package:sachet/models/exam_time_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time_semesters.dart';
+import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/exam_time_card.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
@@ -61,6 +62,30 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
     return result;
   }
 
+  Future _changeSemester() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => ChangeSemesterDialogZF(
+        semestersYears: semestersYears,
+        selectedSemesterYear: _selectedSemesterYear,
+        selectedSemesterIndex: _selectedSemesterIndex,
+      ),
+    );
+    if (result != null && result is List) {
+      _selectedSemesterYear = result[0];
+      _selectedSemesterIndex = result[1];
+      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+      setState(() {
+        _future = getExamTimeZF(
+          cookie: ZhengFangUserProvider.cookie,
+          zhengFangUserProvider: zhengFangUserProvider,
+          semesterYear: _selectedSemesterYear,
+          semesterIndex: _selectedSemesterIndex,
+        );
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +96,15 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("考试时间")),
+      appBar: AppBar(title: Text("考试时间"), actions: [
+        IconButton(
+          onPressed: () async {
+            await _changeSemester();
+          },
+          icon: Icon(Icons.history_outlined),
+          tooltip: '切换查询学期',
+        ),
+      ]),
       body: FutureBuilder(
         future: _future,
         builder: (context, snapshot) {
@@ -95,12 +128,15 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
                 ),
               );
             }
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '${snapshot.error}',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+            return Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
               ),
             );
           }
