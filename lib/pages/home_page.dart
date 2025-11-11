@@ -110,12 +110,6 @@ class HomePage extends StatelessWidget {
       icon: Icons.wifi_protected_setup_outlined,
       link: campusNetworkSelfServiceUrl,
     );
-    OpenLinkListTile jwxt = OpenLinkListTile(
-      title: '教务系统',
-      subtitle: jwxtBaseUrlHttps,
-      icon: Icons.work,
-      link: jwxtBaseUrlHttps,
-    );
     OpenLinkListTile xinXiMenHu = OpenLinkListTile(
       title: '信息门户',
       subtitle: xinXiMenHuBaseUrl,
@@ -130,12 +124,18 @@ class HomePage extends StatelessWidget {
       icon: Icons.public,
       link: newJwxtBaseUrl,
     );
+    OpenLinkListTile jwxt = OpenLinkListTile(
+      title: '旧教务系统',
+      subtitle: jwxtBaseUrlHttps,
+      icon: Icons.work,
+      link: jwxtBaseUrlHttps,
+    );
     List<OpenLinkListTile> openLinkListTileList = [
       campusNetworkAuth,
       campusNetworkSelfService,
-      jwxt,
       xinXiMenHu,
       newJwxt,
+      jwxt,
     ];
 
     return PopScope(
