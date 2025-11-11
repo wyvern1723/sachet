@@ -18,6 +18,9 @@ class ExamTimePageZF extends StatefulWidget {
 class _ExamTimePageZFState extends State<ExamTimePageZF> {
   late Future _future;
 
+  Map semestersYears = {};
+  final Map semesterIndexes = {"全部": "", "1": "3", "2": "12", "3": "16"};
+
   /// 当前查询的学年
   String _selectedSemesterYear = '';
 
@@ -42,6 +45,8 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
     _selectedSemesterYear = result.currentSemesterYear ?? '';
     _selectedSemesterIndex = result.currentSemesterIndex ?? '';
+
+    semestersYears = result.semestersYears;
   }
 
   Future _getExamTimeData(ZhengFangUserProvider? zhengFangUserProvider) async {
@@ -103,7 +108,15 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           final examTimeData = snapshot.data;
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
-            child: _ExamTimeViewZF(examTimeData: examTimeData),
+            child: _ExamTimeViewZF(
+              examTimeData: examTimeData,
+              queryingSemesterYear: semestersYears.keys.firstWhere(
+                  (key) => semestersYears[key] == _selectedSemesterYear,
+                  orElse: () => _selectedSemesterYear),
+              queryingSemesterIndex: semesterIndexes.keys.firstWhere(
+                  (key) => semesterIndexes[key] == _selectedSemesterIndex,
+                  orElse: () => _selectedSemesterIndex),
+            ),
           );
         },
       ),
@@ -113,12 +126,20 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
 /// 考试时间结果 View
 class _ExamTimeViewZF extends StatelessWidget {
-  const _ExamTimeViewZF({super.key, required this.examTimeData});
+  const _ExamTimeViewZF({
+    super.key,
+    required this.examTimeData,
+    required this.queryingSemesterYear,
+    required this.queryingSemesterIndex,
+  });
   final List<ExamTimeZF> examTimeData;
+  final String queryingSemesterYear;
+  final String queryingSemesterIndex;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...examTimeData.map((e) {
           return Padding(
@@ -126,6 +147,16 @@ class _ExamTimeViewZF extends StatelessWidget {
             child: ExamTimeCardZF(examTime: e),
           );
         }),
+        SizedBox(height: 4),
+
+        // Footer, 显示当前查询的学期
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+          child: Text(
+            '查询学期: $queryingSemesterYear-$queryingSemesterIndex',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
       ],
     );
   }
