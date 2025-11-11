@@ -61,7 +61,7 @@ class FreeClassPageProvider extends ChangeNotifier {
   List<int> _selectedSessionFilters = [];
   List<int> get selectedSessionFilters => _selectedSessionFilters;
 
-  SessionFilterMode _sessionFilterMode = SessionFilterMode.or;
+  SessionFilterMode _sessionFilterMode = SessionFilterMode.and;
   SessionFilterMode get sessionFilterMode => _sessionFilterMode;
 
   /// 教室是否全选
