@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:html/parser.dart';
-import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/login_response_status.dart';
 
 class QiangZhiLoginService {
@@ -248,32 +247,26 @@ class QiangZhiLoginService {
             if (kDebugMode) {
               print(redirectUrl);
             }
-            if (redirectUrl == jwxtMainPageUrl ||
-                redirectUrl == jwxtMainPageUrlHttps) {
-              List returnList = [];
-              await confirmLogin(cookie).then((List userInfo) {
-                if (kDebugMode) {
-                  print(userInfo);
-                }
-                returnList = [
-                  LoginResponseStatus.success,
-                  userInfo[0],
-                  userInfo[1]
-                ];
-              }, onError: (Object error) {
-                if (kDebugMode) {
-                  print(error);
-                }
-                returnList = [LoginResponseStatus.unknowError];
-              });
-              // 成功： 返回 [LoginResponseStatus.success, 姓名，学号]
-              // 错误： 返回 [LoginResponseStatus.unknowError]
-              return returnList;
-            } else {
-              //  如果 redirectURL 不是上面的，说明是用初始密码登录，需要修改密码
-              // （应该是这样，没有这类账号能拿来测试）
-              return [LoginResponseStatus.needResetPassword];
-            }
+
+            List returnList = [];
+            await confirmLogin(cookie).then((List userInfo) {
+              if (kDebugMode) {
+                print(userInfo);
+              }
+              returnList = [
+                LoginResponseStatus.success,
+                userInfo[0],
+                userInfo[1]
+              ];
+            }, onError: (Object error) {
+              if (kDebugMode) {
+                print(error);
+              }
+              returnList = [LoginResponseStatus.unknowError];
+            });
+            // 成功： 返回 [LoginResponseStatus.success, 姓名，学号]
+            // 错误： 返回 [LoginResponseStatus.unknowError]
+            return returnList;
           }
         default:
           {

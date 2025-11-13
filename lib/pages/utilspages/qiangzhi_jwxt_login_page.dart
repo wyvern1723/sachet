@@ -173,20 +173,6 @@ class _QiangZhiJwxtLoginPageViewState extends State<QiangZhiJwxtLoginPageView> {
                   LoginSuccessfulDialog(userName: name),
             );
           }
-        case LoginResponseStatus.needResetPassword:
-          {
-            if (kDebugMode) {
-              print('登录成功，但被重定向到非主页。可能是因为初次登录，需要重设密码');
-              print('LoginResponseStatus.needResetPassword');
-              print(loginResponseList);
-            }
-            // 隐藏正在登录 SnackBar
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            showDialog(
-              context: context,
-              builder: (BuildContext context) => NeedToResetPasswordDialog(),
-            );
-          }
         case LoginResponseStatus.otherStatusCode:
           {
             if (kDebugMode) {
