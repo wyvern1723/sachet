@@ -122,11 +122,12 @@ class ExamTimeCardZF extends StatelessWidget {
                         color:
                             Theme.of(context).colorScheme.onSecondaryContainer),
                   ),
-                  // Text(
-                  //   '教师信息: ${examTime.instructorInfo}',
-                  //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  //       color: Theme.of(context).colorScheme.onSecondaryContainer),
-                  // ),
+                  Text(
+                    '教师信息: ${examTime.instructorInfo}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer),
+                  ),
                 ],
               ),
             ),
