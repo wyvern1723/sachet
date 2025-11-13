@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/models/exam_time_zf.dart';
+import 'package:sachet/utils/transform.dart';
 
 class ExamTimeCardZF extends StatelessWidget {
   /// 考试时间查询页面（正方教务）的每门课程的考试时间信息 Card
@@ -63,7 +64,7 @@ class ExamTimeCardZF extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  // 时间
+                  // 时间，例如 "2025-11-25(10:30-12:30) 星期二"
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,7 +79,7 @@ class ExamTimeCardZF extends StatelessWidget {
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          examTime.time,
+                          '${examTime.time} ${_getWeekdayFromDateStr(examTime.time) ?? ''}',
                           maxLines: 3,
                           style: TextStyle(
                             fontSize: 16,
@@ -209,7 +210,7 @@ class ExamTimeCardZF extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            examTime.time,
+                            '${examTime.time} ${_getWeekdayFromDateStr(examTime.time) ?? ''}',
                             maxLines: 3,
                             style: TextStyle(
                               fontSize: 16,
@@ -258,4 +259,25 @@ class ExamTimeCardZF extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 从新正方教务系统获取的考试时间得到星期几
+///
+/// e.g. "2025-11-25(10:30-12:30)" => "星期二"
+String? _getWeekdayFromDateStr(String dateStr) {
+  final DateTime? dateTime = _extractDate(dateStr);
+  if (dateTime != null) {
+    return weekdayToXingQiJi[dateTime.weekday];
+  }
+  return null;
+}
+
+/// 从字符串中提取第一个日期
+DateTime? _extractDate(String dateStr) {
+  RegExp datePattern = RegExp(r'\d{4}-\d{2}-\d{2}');
+  Match? match = datePattern.firstMatch(dateStr);
+  if (match != null) {
+    return DateTime.tryParse(match.group(0)!);
+  }
+  return null;
 }
