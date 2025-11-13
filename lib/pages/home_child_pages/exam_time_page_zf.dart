@@ -29,7 +29,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   String _selectedSemesterIndex = '';
 
   // true => 显示详细信息, false => 显示精简信息
-  bool _isDetailedView = true;
+  bool _isDetailedView = false;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
