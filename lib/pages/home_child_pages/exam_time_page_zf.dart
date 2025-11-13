@@ -157,18 +157,15 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           }
 
           final examTimeData = snapshot.data;
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: _ExamTimeViewZF(
-              examTimeData: examTimeData,
-              queryingSemesterYear: semestersYears.keys.firstWhere(
-                  (key) => semestersYears[key] == _selectedSemesterYear,
-                  orElse: () => _selectedSemesterYear),
-              queryingSemesterIndex: semesterIndexes.keys.firstWhere(
-                  (key) => semesterIndexes[key] == _selectedSemesterIndex,
-                  orElse: () => _selectedSemesterIndex),
-              isDetailedView: _isDetailedView,
-            ),
+          return _ExamTimeViewZF(
+            examTimeData: examTimeData,
+            queryingSemesterYear: semestersYears.keys.firstWhere(
+                (key) => semestersYears[key] == _selectedSemesterYear,
+                orElse: () => _selectedSemesterYear),
+            queryingSemesterIndex: semesterIndexes.keys.firstWhere(
+                (key) => semesterIndexes[key] == _selectedSemesterIndex,
+                orElse: () => _selectedSemesterIndex),
+            isDetailedView: _isDetailedView,
           );
         },
       ),
@@ -192,29 +189,32 @@ class _ExamTimeViewZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...examTimeData.map((e) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ExamTimeCardZF(
-              examTime: e,
-              isDetailedView: isDetailedView,
-            ),
-          );
-        }),
-        SizedBox(height: 4),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...examTimeData.map((e) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ExamTimeCardZF(
+                examTime: e,
+                isDetailedView: isDetailedView,
+              ),
+            );
+          }),
+          SizedBox(height: 4),
 
-        // Footer, 显示当前查询的学期
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
-          child: Text(
-            '查询学期: $queryingSemesterYear-$queryingSemesterIndex',
-            style: Theme.of(context).textTheme.bodySmall,
+          // Footer, 显示当前查询的学期
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+            child: Text(
+              '查询学期: $queryingSemesterYear-$queryingSemesterIndex',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
