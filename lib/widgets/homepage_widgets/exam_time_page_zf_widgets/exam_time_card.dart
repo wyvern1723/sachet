@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sachet/models/exam_time_zf.dart';
 
 class ExamTimeCardZF extends StatelessWidget {
@@ -37,6 +38,16 @@ class ExamTimeCardZF extends StatelessWidget {
           ),
           InkWell(
             onTap: () {},
+            onLongPress: () {
+              Clipboard.setData(
+                ClipboardData(
+                    text:
+                        "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("考试信息已复制到剪贴板")),
+              );
+            },
             child: Container(
               padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
               child: Column(
@@ -155,6 +166,16 @@ class ExamTimeCardZF extends StatelessWidget {
           ),
           InkWell(
             onTap: () {},
+            onLongPress: () {
+              Clipboard.setData(
+                ClipboardData(
+                    text:
+                        "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("考试信息已复制到剪贴板")),
+              );
+            },
             child: Container(
               padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
               child: Column(
