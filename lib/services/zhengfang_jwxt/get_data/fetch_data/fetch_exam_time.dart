@@ -69,7 +69,7 @@ Future<Map> fetchExamTimeZF({
       "nd": nd,
       "queryModel.showCount": "99", // 每页最多条数
       "queryModel.currentPage": "1",
-      "queryModel.sortName": "",
+      "queryModel.sortName": "kssj+", // 按考试时间正序
       "queryModel.sortOrder": "asc",
       "time": "0", // 查询次数
     };
