@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/app_folder.dart';
-import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
@@ -10,9 +9,7 @@ import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
-import 'package:sachet/widgets/classpage_widgets/select_jwxt_as_schedule_source_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
-import 'package:sachet/widgets/classpage_widgets/update_class_schedule_qz_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
 
@@ -53,32 +50,10 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final String oldClassScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
 
-    final jwxtType = await showDialog(
+    bool? result = await showDialog(
       context: context,
-      builder: (BuildContext context) =>
-          const SelectJwxtAsScheduleSourceDialog(),
+      builder: (BuildContext context) => const UpdateClassScheduleZFDialog(),
     );
-
-    if (!context.mounted) return;
-
-    bool? result;
-    switch (jwxtType) {
-      case JwxtType.qiangzhi:
-        result = await showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              const UpdateClassScheduleQZDialog(),
-        );
-        break;
-      case JwxtType.zhengfang:
-        result = await showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              const UpdateClassScheduleZFDialog(),
-        );
-        break;
-    }
-
     if (!context.mounted) return;
 
     if (result == true) {

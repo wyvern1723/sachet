@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/models/jwxt_type.dart';
 import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
-import 'package:sachet/pages/home_child_pages/exam_time_page_qz.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
-import 'package:sachet/pages/home_child_pages/grade_page_qz.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
-import 'package:sachet/widgets/homepage_widgets/select_jwxt_as_source_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';
@@ -35,64 +31,6 @@ class OpenLinkListTile {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  Future _openExamTimePage(BuildContext context) async {
-    final jwxtType = await showDialog(
-      context: context,
-      builder: (BuildContext context) =>
-          const SelectJwxtAsSourceDialog(title: "选择考试时间数据来源"),
-    );
-
-    if (!context.mounted) return;
-
-    switch (jwxtType) {
-      case JwxtType.qiangzhi:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ExamTimePageQZ(),
-          ),
-        );
-        break;
-      case JwxtType.zhengfang:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ExamTimePageZF(),
-          ),
-        );
-        break;
-    }
-  }
-
-  Future _openGradePage(BuildContext context) async {
-    final jwxtType = await showDialog(
-      context: context,
-      builder: (BuildContext context) =>
-          const SelectJwxtAsSourceDialog(title: "选择成绩数据来源"),
-    );
-
-    if (!context.mounted) return;
-
-    switch (jwxtType) {
-      case JwxtType.qiangzhi:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GradePageQZ(),
-          ),
-        );
-        break;
-      case JwxtType.zhengfang:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GradePageZF(),
-          ),
-        );
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +119,7 @@ class HomePage extends StatelessWidget {
                       child: CardWidget(
                         title: '考试时间',
                         icon: Icons.alarm,
-                        onTap: () => _openExamTimePage(context),
+                        page: ExamTimePageZF(),
                       ),
                     ),
                     Expanded(
@@ -189,8 +127,7 @@ class HomePage extends StatelessWidget {
                         title: '成绩查询',
                         // icon: Icons.emoji_events_outlined,
                         icon: Icons.history_edu_outlined,
-                        page: GradePageQZ(),
-                        onTap: () => _openGradePage(context),
+                        page: GradePageZF(),
                       ),
                     ),
                   ],

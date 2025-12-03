@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/nav_destination.dart';
 import 'package:sachet/models/user.dart';
-import 'package:sachet/providers/qiangzhi_user_provider.dart';
+import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/widgets/utils_widgets/select_jwxt_login_dialog.dart';
 
 import 'nav_drawer_md2.dart';
 import 'nav_drawer_md3.dart';
@@ -58,25 +57,22 @@ class MyUserAccountDrawerHeader extends StatelessWidget {
     /// 展示的用户信息（激活的用户信息）
     User activeUser = User(name: '未登录', studentID: '点击登录');
 
-    final qiangzhiUser = context.select<QiangZhiUserProvider, User>(
-      (provider) => provider.user,
-    );
     final zhengfangUser = context.select<ZhengFangUserProvider, User>(
       (provider) => provider.user,
     );
 
-    // 优先使用强智教务系统的用户信息，如果没有再使用正方教务系统的用户信息
-    if (qiangzhiUser.name != null) {
-      activeUser = qiangzhiUser;
-    } else if (zhengfangUser.name != null) {
+    if (zhengfangUser.name != null) {
       activeUser = zhengfangUser;
     }
 
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => SelectJwxtLoginDialog(),
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return ZhengFangJwxtLoginPage();
+            },
+          ),
         );
       },
       child: UserAccountsDrawerHeader(
