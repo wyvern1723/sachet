@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/models/exam_time_zf.dart';
@@ -16,25 +18,35 @@ class ExamTimeCardZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime? startDateTime = _extractDate(examTime.time).startDateTime;
+    final DateTime? endDateTime = _extractDate(examTime.time).endDateTime;
+    final bool isFinished = endDateTime?.isBefore(DateTime.now()) ?? false;
+
     return isDetailedView
-        ? _buildDetailedCard(context)
-        : _buildSimpleCard(context);
+        ? _buildDetailedCard(context, isFinished, startDateTime, endDateTime)
+        : _buildSimpleCard(context, isFinished, startDateTime, endDateTime);
   }
 
-  Widget _buildDetailedCard(BuildContext context) {
+  Widget _buildDetailedCard(BuildContext context, bool isFinished,
+      DateTime? startDateTime, DateTime? endDateTime) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
     return Card(
       clipBehavior: Clip.hardEdge,
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: isFinished
+          ? colorScheme.surfaceContainerHighest
+          : colorScheme.secondaryContainer,
       child: Stack(
         children: [
-          // 在卡片右上角显示学期
+          // 在卡片右上角显示倒计时
           Positioned(
-            top: 8,
-            right: 16,
-            child: Text(
-              '${examTime.semesterYear}-${examTime.semesterIndex}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer),
+            top: 4,
+            right: 12,
+            child: _CountDown(
+              isFinished: isFinished,
+              startDateTime: startDateTime,
+              endDateTime: endDateTime,
             ),
           ),
           InkWell(
@@ -50,7 +62,7 @@ class ExamTimeCardZF extends StatelessWidget {
               );
             },
             child: Container(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -60,10 +72,12 @@ class ExamTimeCardZF extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      color: isFinished
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSecondaryContainer,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  SizedBox(height: 4.0),
                   // 时间，例如 "2025-11-25(10:30-12:30) 星期二"
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -73,26 +87,26 @@ class ExamTimeCardZF extends StatelessWidget {
                       Icon(
                         Icons.access_time_rounded,
                         size: 16,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
                       ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          '${examTime.time} ${_getWeekdayFromDateStr(examTime.time) ?? ''}',
+                          '${examTime.time} ${_getWeekday(startDateTime) ?? ''}',
                           maxLines: 3,
                           style: TextStyle(
                             fontSize: 16,
                             height: 1,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSecondaryContainer,
+                            color: isFinished
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSecondaryContainer,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.0),
                   // 地点
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -102,8 +116,9 @@ class ExamTimeCardZF extends StatelessWidget {
                       Icon(
                         Icons.place_outlined,
                         size: 16,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -112,33 +127,38 @@ class ExamTimeCardZF extends StatelessWidget {
                           maxLines: 3,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSecondaryContainer,
+                            color: isFinished
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSecondaryContainer,
                             height: 1.2,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 6.0),
                   Text(
                     '考试名称: ${examTime.examName}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: isFinished
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSecondaryContainer,
+                    ),
                   ),
                   Text(
                     '场地简称: ${examTime.placeShort}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: isFinished
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSecondaryContainer,
+                    ),
                   ),
                   Text(
                     '教师信息: ${examTime.instructorInfo}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: isFinished
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSecondaryContainer,
+                    ),
                   ),
                 ],
               ),
@@ -149,20 +169,25 @@ class ExamTimeCardZF extends StatelessWidget {
     );
   }
 
-  Widget _buildSimpleCard(BuildContext context) {
+  Widget _buildSimpleCard(BuildContext context, bool isFinished,
+      DateTime? startDateTime, DateTime? endDateTime) {
+    final theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
     return Card(
       clipBehavior: Clip.hardEdge,
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: isFinished
+          ? colorScheme.surfaceContainerHighest
+          : colorScheme.secondaryContainer,
       child: Stack(
         children: [
-          // 在卡片右上角显示学期
+          // 在卡片右上角显示倒计时
           Positioned(
-            top: 8,
-            right: 16,
-            child: Text(
-              '${examTime.semesterYear}-${examTime.semesterIndex}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer),
+            top: 4,
+            right: 12,
+            child: _CountDown(
+              isFinished: isFinished,
+              startDateTime: startDateTime,
+              endDateTime: endDateTime,
             ),
           ),
           InkWell(
@@ -178,7 +203,7 @@ class ExamTimeCardZF extends StatelessWidget {
               );
             },
             child: Container(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -188,14 +213,15 @@ class ExamTimeCardZF extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      color: isFinished
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSecondaryContainer,
                     ),
                   ),
-                  SizedBox(height: 8.0),
                   Wrap(
                     alignment: WrapAlignment.spaceBetween,
                     spacing: 4.0,
-                    runSpacing: 4.0,
+                    runSpacing: 0.0,
                     children: [
                       // 考试时间
                       Row(
@@ -204,25 +230,24 @@ class ExamTimeCardZF extends StatelessWidget {
                           Icon(
                             Icons.access_time_rounded,
                             size: 16,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSecondaryContainer,
+                            color: isFinished
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSecondaryContainer,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${examTime.time} ${_getWeekdayFromDateStr(examTime.time) ?? ''}',
+                            '${examTime.time} ${_getWeekday(startDateTime) ?? ''}',
                             maxLines: 3,
                             style: TextStyle(
                               fontSize: 16,
                               // height: 1,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer,
+                              color: isFinished
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onSecondaryContainer,
                             ),
                           ),
                         ],
                       ),
-
                       // 考试地点
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -230,9 +255,9 @@ class ExamTimeCardZF extends StatelessWidget {
                           Icon(
                             Icons.place_outlined,
                             size: 16,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSecondaryContainer,
+                            color: isFinished
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSecondaryContainer,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -240,9 +265,9 @@ class ExamTimeCardZF extends StatelessWidget {
                             maxLines: 3,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer,
+                              color: isFinished
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onSecondaryContainer,
                               height: 1.2,
                             ),
                           ),
@@ -250,7 +275,6 @@ class ExamTimeCardZF extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.0),
                 ],
               ),
             ),
@@ -261,23 +285,161 @@ class ExamTimeCardZF extends StatelessWidget {
   }
 }
 
-/// 从新正方教务系统获取的考试时间得到星期几
+/// 从考试(开始)时间得到星期几
 ///
-/// e.g. "2025-11-25(10:30-12:30)" => "星期二"
-String? _getWeekdayFromDateStr(String dateStr) {
-  final DateTime? dateTime = _extractDate(dateStr);
-  if (dateTime != null) {
-    return weekdayToXingQiJi[dateTime.weekday];
+/// e.g. 2025-11-25 10:30:00 => "星期二"
+String? _getWeekday(DateTime? startDateTime) {
+  if (startDateTime != null) {
+    return weekdayToXingQiJi[startDateTime.weekday];
   }
   return null;
 }
 
 /// 从字符串中提取第一个日期
-DateTime? _extractDate(String dateStr) {
-  RegExp datePattern = RegExp(r'\d{4}-\d{2}-\d{2}');
+({DateTime? startDateTime, DateTime? endDateTime}) _extractDate(
+    String dateStr) {
+  RegExp datePattern = RegExp(
+      r"(\d{4}-\d{2}-\d{2})\s*\(\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*\)");
+
   Match? match = datePattern.firstMatch(dateStr);
   if (match != null) {
-    return DateTime.tryParse(match.group(0)!);
+    String datePart = match.group(1)!;
+    String startTimePart = match.group(2)!;
+    String endTimePart = match.group(3)!;
+    DateTime? startDateTime = DateTime.tryParse("$datePart $startTimePart:00");
+    DateTime? endDateTime = DateTime.tryParse("$datePart $endTimePart:00");
+    return (startDateTime: startDateTime, endDateTime: endDateTime);
   }
-  return null;
+  return (startDateTime: null, endDateTime: null);
+}
+
+class _CountDown extends StatefulWidget {
+  final DateTime? startDateTime;
+  final DateTime? endDateTime;
+
+  final bool isFinished;
+  const _CountDown({
+    required this.startDateTime,
+    required this.isFinished,
+    required this.endDateTime,
+  });
+
+  @override
+  State<_CountDown> createState() => __CountDownState();
+}
+
+class __CountDownState extends State<_CountDown> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // 只有当考试未结束且有开始时间时，才有倒计时且需要刷新倒计时
+    if (!widget.isFinished && widget.startDateTime != null) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+    final startDateTime = widget.startDateTime;
+    if (startDateTime == null) {
+      return Text("");
+    }
+
+    if (widget.isFinished) {
+      return Text(
+        "已结束",
+        style: textTheme.bodyLarge?.copyWith(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurfaceVariant),
+      );
+    } else {
+      final now = DateTime.now();
+      // 二次检查：虽然父组件传了 isFinished，但定时器跑的时候可能会过结束时间
+      // 这里做个动态判断，能让文字即时变成“已结束”
+      if (widget.endDateTime != null && now.isAfter(widget.endDateTime!)) {
+        _timer?.cancel();
+        return Text(
+          "已结束",
+          style: textTheme.bodyLarge?.copyWith(
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurfaceVariant),
+        );
+      }
+
+      if (DateUtils.isSameDay(startDateTime, now)) {
+        final difference = startDateTime.difference(now);
+        final dHours = difference.inHours;
+
+        if (startDateTime.isBefore(now)) {
+          return Text(
+            "正在考试",
+            style: textTheme.bodyLarge?.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.primary,
+            ),
+          );
+        }
+        if (dHours == 0) {
+          final dMinutes = difference.inMinutes;
+          return _buildRichText(textTheme, colorScheme, "$dMinutes", " 分钟");
+        }
+        return _buildRichText(textTheme, colorScheme, "$dHours", " 小时");
+      } else {
+        final dDays = DateUtils.dateOnly(startDateTime)
+            .difference(DateUtils.dateOnly(now))
+            .inDays;
+        if (dDays == 1) {
+          // 明天考试
+          final difference = startDateTime.difference(now);
+          final dHours = difference.inHours;
+          return _buildRichText(textTheme, colorScheme, "$dHours", " 小时");
+        } else {
+          return _buildRichText(textTheme, colorScheme, "$dDays", " 天");
+        }
+      }
+    }
+  }
+
+  Widget _buildRichText(TextTheme textTheme, ColorScheme colorScheme,
+      String number, String suffix) {
+    return RichText(
+      text: TextSpan(
+        style: textTheme.bodyLarge?.copyWith(
+          fontSize: 17,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSecondaryContainer,
+        ),
+        children: <TextSpan>[
+          const TextSpan(text: '还有 '),
+          TextSpan(
+            text: number,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.primary,
+            ),
+          ),
+          TextSpan(text: suffix),
+        ],
+      ),
+    );
+  }
 }
