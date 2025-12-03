@@ -218,6 +218,7 @@ class ExamTimeCardZF extends StatelessWidget {
                           : colorScheme.onSecondaryContainer,
                     ),
                   ),
+                  if (theme.useMaterial3 == false) SizedBox(height: 4.0),
                   Wrap(
                     alignment: WrapAlignment.spaceBetween,
                     spacing: 4.0,
