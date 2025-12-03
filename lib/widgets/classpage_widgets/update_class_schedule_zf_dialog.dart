@@ -112,6 +112,7 @@ class _UpdateClassScheduleZFDialogState
             currentState = UpdateClassScheduleState.updateClassScheduleFailed;
           });
         }
+        return;
       }
 
       // 获取开学日期
