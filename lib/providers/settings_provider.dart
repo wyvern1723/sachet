@@ -297,7 +297,7 @@ class SettingsProvider extends ChangeNotifier {
             courseWeeks.isNotEmpty &&
             courseItem != null) {
           for (var courseWeek in courseWeeks) {
-            final result = _getWeekdayAndSessionFromItem(courseItem);
+            final result = getWeekdayAndSessionFromItem(courseItem);
             final int courseWeekday = result.weekday;
 
             // 课程开始节次，有 1/3/5/7/9
@@ -369,31 +369,4 @@ class SettingsProvider extends ChangeNotifier {
     }
     return reminders;
   }
-}
-
-/// 从 item 得到 weekday 和 开始 session
-///
-/// 如 0 => weekday: 1, session: 1
-///
-/// 如 1 => weekday: 1, session: 3
-///
-/// 如 17 => weekday: 4, session: 5
-///
-/// 如 23 => weekday: 5, session: 7
-///
-/// 如 34 => weekday: 7, session: 9
-///
-/// ```
-/// item:
-///
-///       Mon Tue Wed Thu Fri Sat Sun
-/// 12      0   5  10  15  20  25  30
-/// 34      1   6  11  16  21  26  31
-/// 56      2   7  12  17  22  27  32
-/// 78      3   8  13  18  23  28  33
-/// 91011   4   9  14  19  24  29  34
-/// ```
-({int weekday, int session}) _getWeekdayAndSessionFromItem(int item) {
-  final int session = [1, 3, 5, 7, 9][item % 5];
-  return (weekday: (item ~/ 5) + 1, session: session);
 }
