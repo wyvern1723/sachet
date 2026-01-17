@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:sachet/constants/app_info_constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sachet/models/app_folder.dart';
+import 'package:path/path.dart' as path;
 
 class CachedDataStorage {
   Future<String> get _localPath async {
@@ -31,12 +32,11 @@ class CachedDataStorage {
   /// 返回 ApplicationSupportDirectory/pathInAppDir 下的所有 .json 文件
   Future<List<FileSystemEntity>> ls(String pathInAppDir) async {
     final dirPath = await _localPath;
-    bool isExist = Directory('$dirPath${Platform.pathSeparator}$pathInAppDir')
-        .existsSync();
+    bool isExist = Directory(path.join(dirPath, pathInAppDir)).existsSync();
     if (!isExist) {
       return [];
     }
-    Directory dir = Directory('$dirPath${Platform.pathSeparator}$pathInAppDir');
+    Directory dir = Directory(path.join(dirPath, pathInAppDir));
     // var filesList = dir.listSync().toList()
     //   ..sort((a, b) =>
     //       a.toString().toLowerCase().compareTo(b.toString().toLowerCase()));
@@ -73,12 +73,11 @@ class CachedDataStorage {
   /// 按上次修改时间（从新到旧）返回 ApplicationSupportDirectory/folder 下的所有 .json 文件
   Future<List<FileSystemEntity>> lsByModifiedTime(String folder) async {
     final dirPath = await _localPath;
-    bool isExist =
-        Directory('$dirPath${Platform.pathSeparator}$folder').existsSync();
+    bool isExist = Directory(path.join(dirPath, folder)).existsSync();
     if (!isExist) {
       return [];
     }
-    Directory dir = Directory('$dirPath${Platform.pathSeparator}$folder');
+    Directory dir = Directory(path.join(dirPath, folder));
 
     // 按修改时间排序(正序，从旧到新)
     List<FileSystemEntity> filesList = dir
@@ -93,14 +92,13 @@ class CachedDataStorage {
   }
 
   Future<File> _localFile(String filename) async {
-    final path = await _localPath;
-    return File('$path${Platform.pathSeparator}$filename');
+    final localPath = await _localPath;
+    return File(path.join(localPath, filename));
   }
 
   Future<File> getFile(String folder, String filename) async {
-    final path = await _localPath;
-    return File(
-        '$path${Platform.pathSeparator}$folder${Platform.pathSeparator}$filename');
+    final localPath = await _localPath;
+    return File(path.join(localPath, folder, filename));
   }
 
   Future<String> readDataViaFileName(String fileName) async {
@@ -183,9 +181,8 @@ class CachedDataStorage {
     required String folder,
     required String value,
   }) async {
-    final path = await _localPath;
-    final file = await File(
-            '$path${Platform.pathSeparator}$folder${Platform.pathSeparator}$fileName')
+    final localPath = await _localPath;
+    final file = await File(path.join(localPath, folder, fileName))
         .create(recursive: true);
     // Write the file
     return file.writeAsString(

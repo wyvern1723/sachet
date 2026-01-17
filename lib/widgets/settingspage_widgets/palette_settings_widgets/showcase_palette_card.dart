@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 
 class ShowcasePaletteCard extends StatelessWidget {
   // 展示应用随机分配颜色的 palette 的 Card
@@ -23,7 +22,7 @@ class ShowcasePaletteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              paletteTitle.split(Platform.pathSeparator).last,
+              path.basename(paletteTitle),
               style: TextStyle(fontSize: 19),
             ),
             const SizedBox(height: 16.0),

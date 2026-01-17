@@ -9,6 +9,7 @@ import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/class_schedule_data_listview_widgets/import_json_data_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 class ClassScheduleDataListviewPage extends StatefulWidget {
   const ClassScheduleDataListviewPage({super.key});
@@ -145,8 +146,7 @@ class _ClassScheduleDataListviewPageState
           ...List.generate(
             filesPathList.length,
             (index) => ListTile(
-              title: Text(
-                  '${filesPathList[index].path.split(Platform.pathSeparator).last}'),
+              title: Text(path.basename(filesPathList[index].path)),
               subtitle: Text('${filesPathList[index].path}'
                   '\n'
                   '更新时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(File(filesPathList[index].path).lastModifiedSync())}'),

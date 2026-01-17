@@ -6,6 +6,7 @@ import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/classpage_widgets/rename_app_file_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 /// 切换使用的文件的 Dialog(切换课表文件，切换配色方案)
 class SwitchActivedAppFileDialog extends StatefulWidget {
@@ -50,7 +51,7 @@ class _SwitchActivedAppFileDialogState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text('确定要删除该文件?'),
-                  Text('> ${filePath.split(Platform.pathSeparator).last}'),
+                  Text('> ${path.basename(filePath)}'),
                 ],
               ),
               actions: [
@@ -73,8 +74,7 @@ class _SwitchActivedAppFileDialogState
   }
 
   void _renameFile(String filePath) async {
-    String fileName =
-        filePath.split(Platform.pathSeparator).last.split('.json').first;
+    String fileName = path.basenameWithoutExtension(filePath);
     var newName = await showDialog(
         context: context,
         builder: (context) => RenameAppFileDialog(fileName: fileName));
@@ -130,8 +130,7 @@ class _SwitchActivedAppFileDialogState
                     // 把选择的 filePath(value) 作为 result 从这个 Dialog 返回
                     Navigator.pop(context, value);
                   },
-                  title: Text(
-                      '${filesPathList[index].path.split(Platform.pathSeparator).last}'),
+                  title: Text(path.basename(filesPathList[index].path)),
                   subtitle: Text(
                     '更新时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(File(filesPathList[index].path).lastModifiedSync())}',
                     style: Theme.of(context).textTheme.bodySmall,

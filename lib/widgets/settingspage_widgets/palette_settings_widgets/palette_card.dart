@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sachet/pages/settings_child_pages/palette_adjust_page.dart';
 import 'package:sachet/utils/custom_route.dart';
+import 'package:path/path.dart' as path;
 
 class PaletteCard extends StatelessWidget {
   const PaletteCard({
@@ -32,7 +31,7 @@ class PaletteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              filePath.split(Platform.pathSeparator).last,
+              path.basename(filePath),
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16.0),

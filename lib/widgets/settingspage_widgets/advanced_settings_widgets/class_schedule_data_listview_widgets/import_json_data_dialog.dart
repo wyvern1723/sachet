@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 class ImportJsonDataDialog extends StatefulWidget {
   const ImportJsonDataDialog({super.key, required this.file});
@@ -19,11 +20,7 @@ class _ImportJsonDataDialogState extends State<ImportJsonDataDialog> {
     super.initState();
     setState(() {
       textEditingController = TextEditingController(
-          text: widget.file.path
-              .split(Platform.pathSeparator)
-              .last
-              .split('.')
-              .first);
+          text: path.basenameWithoutExtension(widget.file.path));
     });
   }
 
@@ -44,7 +41,7 @@ class _ImportJsonDataDialogState extends State<ImportJsonDataDialog> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('文件名: ${widget.file.path.split(Platform.pathSeparator).last}'),
+          Text('文件名: ${path.basename(widget.file.path)}'),
           Text('文件路径: ${widget.file.path}'),
           Text(
               '修改时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(widget.file.lastModifiedSync())}'),

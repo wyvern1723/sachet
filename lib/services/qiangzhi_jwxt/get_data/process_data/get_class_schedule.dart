@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:sachet/models/app_folder.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/course_schedule_raw_data.dart';
@@ -9,6 +7,7 @@ import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 /// 获取课程表文件（是一个庞大复杂的函数）
 ///
@@ -257,7 +256,7 @@ Future<String> storeClassScheduleFile(
   );
 
   var localPath = await CachedDataStorage().getPath();
-  var filePath =
-      '$localPath${Platform.pathSeparator}${AppFolder.classSchedule.name}${Platform.pathSeparator}$fileName';
+  var filePath = path.join(localPath, AppFolder.classSchedule.name, fileName);
+
   return filePath;
 }

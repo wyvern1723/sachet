@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sachet/constants/app_constants.dart';
@@ -8,6 +6,7 @@ import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 /// 获取课程名称
 ///
@@ -94,7 +93,6 @@ Future<String> storeRandomizationCourseColorFile({
   );
 
   var localPath = await CachedDataStorage().getPath();
-  var filePath =
-      '$localPath${Platform.pathSeparator}${AppFolder.courseColor.name}${Platform.pathSeparator}$fileName';
+  var filePath = path.join(localPath, AppFolder.courseColor.name, fileName);
   return filePath;
 }

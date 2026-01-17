@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:sachet/models/app_folder.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -11,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/add_new_color_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/change_color_dialog.dart';
+import 'package:path/path.dart' as path;
 
 class ColorSettingsPage extends StatefulWidget {
   const ColorSettingsPage({super.key});
@@ -30,9 +29,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         path: context.read<SettingsProvider>().courseColorFilePath,
         type: Map,
       );
-      setState(() {
-        _courseColorData = Map.of(courseColorData);
-      });
+      setState(() => _courseColorData = Map.of(courseColorData));
     }
   }
 
@@ -123,7 +120,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         );
         String appDir = await CachedDataStorage().getPath();
         String filePath =
-            '$appDir${Platform.pathSeparator}${AppFolder.courseColor.name}${Platform.pathSeparator}$fileName.json';
+            path.join(appDir, AppFolder.courseColor.name, '$fileName.json');
         await context.read<SettingsProvider>().setCourseColorFilePath(filePath);
         isCurrentCourseColorFileExist = true;
       }
@@ -160,7 +157,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
             title: const Text('当前配色方案'),
             subtitle: Text(
               isCurrentCourseColorFileExist
-                  ? courseColorFilePath.split(Platform.pathSeparator).last
+                  ? path.basename(courseColorFilePath)
                   : '无',
             ),
             onTap: () {

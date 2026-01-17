@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
+import 'package:path/path.dart' as path;
 
 class ViewCachedDataPage extends StatefulWidget {
   const ViewCachedDataPage({super.key, required this.filePath});
@@ -87,8 +86,8 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(changed
-              ? '* ${widget.filePath.split(Platform.pathSeparator).last}'
-              : widget.filePath.split(Platform.pathSeparator).last),
+              ? '* ${path.basename(widget.filePath)}'
+              : path.basename(widget.filePath)),
           actions: editMode == false
               ? [
                   IconButton(
