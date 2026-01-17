@@ -102,11 +102,9 @@ class _ClassScheduleDataListviewPageState
 
   /// 获取课程表数据文件列表并刷新界面
   Future<void> _getClassScheduleFileList() async {
-    await CachedDataStorage().ls(AppFolder.classSchedule.name).then((value) {
-      setState(() {
-        filesPathList = value;
-      });
-    });
+    await CachedDataStorage()
+        .lsByModifiedTime(AppFolder.classSchedule.name)
+        .then((value) => setState(() => filesPathList = value));
   }
 
   @override
