@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:sachet/providers/grade_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade_semesters.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade_semesters_and_alert_text.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/alert_text.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_table.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_index_selector.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_year_selector.dart';
@@ -45,7 +46,7 @@ class _QueryViewState extends State<_QueryView> {
   late Future getDataFuture;
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getGradeSemestersZF(
+    final result = await getGradeSemestersAndAlertTextZF(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -65,6 +66,7 @@ class _QueryViewState extends State<_QueryView> {
     context
         .read<GradePageZFProvider>()
         .setSemestersYears(result.semestersYears);
+    context.read<GradePageZFProvider>().setAlertText(result.alertTexts);
   }
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -222,10 +224,13 @@ class _ResultView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        padding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // 成绩查询页面的红色提醒文字（如未完成评教的信息等）
+            AlertTextZF(),
+
             Wrap(
               spacing: 8,
               runSpacing: 10,
@@ -238,6 +243,7 @@ class _ResultView extends StatelessWidget {
                 _FilterButton(),
               ],
             ),
+
             Selector<GradePageZFProvider, (String, String)>(
                 selector: (_, provider) => (
                       provider.selectedSemesterYear,
@@ -250,7 +256,6 @@ class _ResultView extends StatelessWidget {
                     semesterIndex: data.$2,
                   );
                 }),
-            SizedBox(height: 4),
           ],
         ),
       ),

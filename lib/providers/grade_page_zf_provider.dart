@@ -20,6 +20,9 @@ class GradePageZFProvider extends ChangeNotifier {
   List<String> _selectedItems = ['课程名称', '学分', '成绩'];
   List<String> get selectedItems => _selectedItems;
 
+  List<String> _alertTexts = [];
+  List<String> get alertTexts => _alertTexts;
+
   void changeSemesterYear(String value) {
     _selectedSemesterYear = value;
     notifyListeners();
@@ -47,6 +50,11 @@ class GradePageZFProvider extends ChangeNotifier {
 
   void updateItems(List<String> value) {
     _items = value;
+    notifyListeners();
+  }
+
+  void setAlertText(List<String> value) {
+    _alertTexts = value;
     notifyListeners();
   }
 }

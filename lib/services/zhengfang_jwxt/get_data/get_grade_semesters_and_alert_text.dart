@@ -1,15 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/fetch_data/fetch_grade_semesters.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/parse_data/parse_grade_semesters.dart';
+import 'package:sachet/services/zhengfang_jwxt/get_data/parse_data/parse_grade_semesters_and_alert_text.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
 
-/// 从正方教务系统获取成绩查询页面当前学年，可选学年和当前学期
+/// 从正方教务系统获取成绩查询页面当前学年，可选学年，当前学期和页面显示的红色提醒文字(Danger Text)
 ///
 /// Return (
 /// String 当前学年(如 "2025"),
 /// Map<学年标签: 对应的值>,
 /// String 当前学期的 Value (如 "3"=>第一学期，"12"=>第二学期)
+/// List<String> 提醒文字的 List（每一行为一项）
 /// )
 ///
 /// e.g.
@@ -50,21 +51,23 @@ import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dar
 ///   "2002-2003": "2002",
 ///   "2001-2002": "2001"
 /// },
-/// "3"
+/// "3",
+/// ["【2025-2026学年1学期 未完全评价】","【2025-2026学年1学期正常考成绩】和【2025-2026学年1学期补考成绩】未开放查询!"]
 /// )
 /// ```
 Future<
     ({
       String? currentSemesterYear,
       Map<String, String> semestersYears,
-      String? currentSemesterIndex
-    })> getGradeSemestersZF({
+      String? currentSemesterIndex,
+      List<String> alertTexts,
+    })> getGradeSemestersAndAlertTextZF({
   required String cookie,
   required ZhengFangUserProvider? zhengFangUserProvider,
 }) async {
   try {
     final html = await fetchGradeSemetersZF(cookie: cookie);
-    return parseGradeSemestersFromHtmlZF(html);
+    return parseGradeSemestersAndDangerTextFromHtmlZF(html);
   } catch (e) {
     if (e == '获取可查询学期数据失败: Http status code = 302, 可能需要重新登录') {
       if (zhengFangUserProvider == null) {
@@ -101,7 +104,7 @@ Future<
       final newCookie = ZhengFangUserProvider.cookie;
       // 重新加载数据
       final html = await fetchGradeSemetersZF(cookie: newCookie);
-      return parseGradeSemestersFromHtmlZF(html);
+      return parseGradeSemestersAndDangerTextFromHtmlZF(html);
     } else {
       rethrow;
     }
