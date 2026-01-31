@@ -83,7 +83,7 @@ class ThemeProvider extends ChangeNotifier {
 }
 
 const intAndThemeMode = {
-  0: "系统",
+  0: "跟随系统",
   1: '明亮',
   2: '黑暗',
 };
