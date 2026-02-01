@@ -88,7 +88,7 @@ const defaultAppSettingsConfig = {
   "courseColorFilePath": "", // 当前使用的课程配色文件路径
   "semesterStartDate": "2025-09-01", // 学期开始日期
   "curveDuration ": 1500, // 课表翻页动画时长
-  "curveType": "Easing.standard", // 课表翻页动画类型
+  "curveType": "Easing.standard", // 课表翻页动画类型（动画曲线）
   "isEnableDevMode": false, // 是否启用开发者模式
   "hasReadDisclaimer": false, // 是否阅读过声明
   "isEnableCaptchaRecognizer": true, // 是否启用图片验证码自动识别

@@ -138,7 +138,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     alignment: Alignment.centerLeft,
                     child: Icon(Icons.view_array_outlined),
                   ),
-                  title: const Text('翻页动画类型'),
+                  title: const Text('翻页动画曲线'),
                   subtitle: Text(curveType),
                   onTap: () async {
                     await showDialog(
