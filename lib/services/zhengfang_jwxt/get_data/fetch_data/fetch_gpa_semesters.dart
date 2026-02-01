@@ -10,7 +10,7 @@ Future fetchGPASemetersZF({required String cookie}) async {
   ));
   try {
     Response response = await dio.get(
-      'https://jw.xtu.edu.cn/jwglxt/cjcx/cjcx_cxDgXscj.html?gnmkdm=N305005&layout=default',
+      'https://jw.xtu.edu.cn/jwglxt/cjpmtj/cjpmtj_cxPjxfjdpmtjIndex.html?gnmkdm=N309104&layout=default',
       options: Options(headers: {
         'User-Agent':
             'Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0',
