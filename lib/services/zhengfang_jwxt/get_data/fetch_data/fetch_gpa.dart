@@ -57,7 +57,8 @@ Future<Map> fetchGPAZF({
           'Pragma': 'no-cache',
           'Cache-Control': 'no-cache',
         },
-        receiveTimeout: Duration(seconds: 20),
+        receiveTimeout:
+            Duration(seconds: 25), // 教务系统获取绩点排名数据很慢，8s~20s 不等。Dio 超时默认 5s 是不够的。
       ),
     );
 

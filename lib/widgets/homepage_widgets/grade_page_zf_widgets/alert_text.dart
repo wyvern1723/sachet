@@ -12,25 +12,22 @@ class AlertTextZF extends StatelessWidget {
     if (alertTexts.isEmpty) {
       return const SizedBox.shrink();
     }
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: alertTexts
-            .map(
-              (alertText) => Text(
-                alertText,
-                style: TextStyle(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Color(0xFFC26664)
-                      : Color(0xFFA94442),
-                  fontSize: 12,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: alertTexts
+          .map(
+            (alertText) => Text(
+              alertText,
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Color(0xFFC26664)
+                    : Color(0xFFA94442),
+                fontSize: 12,
               ),
-            )
-            .toList(),
-      ),
+            ),
+          )
+          .toList(),
     );
   }
 }

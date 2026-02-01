@@ -6,6 +6,7 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade_semesters_and_alert_text.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/alert_text.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/gpa_card.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_table.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_index_selector.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_year_selector.dart';
@@ -224,12 +225,55 @@ class _ResultView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 20.0),
+        padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 成绩查询页面的红色提醒文字（如未完成评教的信息等）
-            AlertTextZF(),
+            Selector<GradePageZFProvider,
+                ({String semesterYear, String semesterIndex})>(
+              selector: (_, provider) => (
+                semesterYear: provider.selectedSemesterYear,
+                semesterIndex: provider.selectedSemesterIndex,
+              ),
+              builder: (_, data, ___) {
+                String startSemester = '';
+                String endSemester = '';
+
+                // 如果选择的学年和学期都为「全部」
+                if (data.semesterIndex == '' && data.semesterYear == '') {
+                  startSemester = '';
+                  endSemester = '';
+                }
+                // 如果选择的学期为「全部」，学年不为「全部」
+                else if (data.semesterIndex == '' && data.semesterYear != '') {
+                  startSemester = "${data.semesterYear}03";
+                  endSemester = "${data.semesterYear}12";
+                }
+                // 如果选择的学年为「全部」，学期不为「全部」
+                else if (data.semesterYear == '' && data.semesterIndex != '') {
+                  return Text(
+                    '不支持的查询方式',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
+                  );
+                }
+                // 选择的学年或学期都不为「全部」
+                else {
+                  String semester =
+                      "${data.semesterYear}${data.semesterIndex.padLeft(2, '0')}";
+                  startSemester = semester;
+                  endSemester = semester;
+                }
+                return GPACardZF(
+                  key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
+                  startSemester: startSemester,
+                  endSemester: endSemester,
+                  courseType: '',
+                );
+              },
+            ),
+
+            SizedBox(height: 12),
 
             Wrap(
               spacing: 8,
@@ -244,18 +288,27 @@ class _ResultView extends StatelessWidget {
               ],
             ),
 
-            Selector<GradePageZFProvider, (String, String)>(
-                selector: (_, provider) => (
-                      provider.selectedSemesterYear,
-                      provider.selectedSemesterIndex,
-                    ),
-                builder: (_, data, ___) {
-                  return _GradeView(
-                    key: ValueKey("${data.$1}_${data.$2}"),
-                    semesterYear: data.$1,
-                    semesterIndex: data.$2,
-                  );
-                }),
+            SizedBox(height: 6),
+
+            // 成绩查询页面的红色提醒文字（如未完成评教的信息等）
+            AlertTextZF(),
+
+            SizedBox(height: 6),
+
+            Selector<GradePageZFProvider,
+                ({String semesterYear, String semesterIndex})>(
+              selector: (_, provider) => (
+                semesterYear: provider.selectedSemesterYear,
+                semesterIndex: provider.selectedSemesterIndex,
+              ),
+              builder: (_, data, ___) {
+                return _GradeView(
+                  key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
+                  semesterYear: data.semesterYear,
+                  semesterIndex: data.semesterIndex,
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -349,12 +402,7 @@ class _GradeViewState extends State<_GradeView> {
         }
 
         final gradeData = snapshot.data;
-        return Column(
-          children: [
-            SizedBox(height: 20),
-            GradeTableZF(gradeData: gradeData),
-          ],
-        );
+        return GradeTableZF(gradeData: gradeData);
       },
     );
   }
