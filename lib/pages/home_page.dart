@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
+import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
@@ -128,6 +129,13 @@ class HomePage extends StatelessWidget {
                         // icon: Icons.emoji_events_outlined,
                         icon: Icons.history_edu_outlined,
                         page: GradePageZF(),
+                      ),
+                    ),
+                    Expanded(
+                      child: CardWidget(
+                        title: '绩点排名',
+                        icon: Icons.emoji_events_outlined,
+                        page: GPAPageZF(),
                       ),
                     ),
                   ],

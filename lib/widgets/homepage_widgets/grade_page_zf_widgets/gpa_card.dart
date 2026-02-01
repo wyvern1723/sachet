@@ -71,7 +71,7 @@ class _GPACardZFState extends State<GPACardZF> {
                   CircularProgressIndicator(),
                   SizedBox(height: 8),
                   Text(
-                    '加载绩点排名数据中...',
+                    '获取绩点排名数据中...',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.primary),
                   )
