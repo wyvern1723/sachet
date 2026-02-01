@@ -12,10 +12,10 @@ import 'package:uuid/uuid.dart';
 /// - savefileName: 保存文件名
 ///
 /// return:
-/// - 成功: true
-/// - 用户取消保存: false
-/// - 课程信息为空/课程表格式错误: throw String
-Future<bool> exportClassScheduleToIcs(
+/// - 成功: String filePath
+/// - 用户取消保存: null
+/// - 课程信息为空/课程表格式错误: throw String msg
+Future<String?> exportClassScheduleToIcs(
   String rawfilePath,
   String savefileName,
 ) async {
@@ -46,9 +46,9 @@ Future<bool> exportClassScheduleToIcs(
       bytes: utf8.encode(ics));
 
   if (filePath != null) {
-    return true;
+    return filePath;
   } else {
-    return false;
+    return null;
   }
 }
 

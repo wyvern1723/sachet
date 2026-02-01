@@ -48,15 +48,30 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
 
   Future _exportToIcs(BuildContext context) async {
     try {
-      final result = await exportClassScheduleToIcs(_selectedFilePath!,
+      final filePath = await exportClassScheduleToIcs(_selectedFilePath!,
           path.basenameWithoutExtension(_selectedFilePath!));
 
       if (!context.mounted) {
         return;
       }
-      if (result == true) {
+      if (filePath != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导出成功')),
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.done, color: Colors.green),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    '成功导出到: $filePath',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onInverseSurface),
+                  ),
+                ),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
       Navigator.pop(context);
