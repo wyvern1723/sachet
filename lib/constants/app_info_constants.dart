@@ -1,3 +1,7 @@
+import 'dart:ffi';
+
+import 'package:sachet/utils/abi_utils.dart';
+
 /// 作者名称
 const String authorName = "wyvern1723";
 
@@ -20,15 +24,5 @@ const String checkAppUpdateAPI =
 /// App 包名
 const String appPackageName = "io.github.wyvern1723.sachet";
 
-/// 当前安装包的 abi。用于检查更新时判断应该下载哪个 apk（因为按 abi 拆分了安装包，以减小体积），发现通过函数动态获取当前设备的 abi 比较麻烦，就用了这种「宏定义」的方法。
-///
-/// 使用 `--dart-define="abi=$ABI"` 定义，如：
-///
-/// `flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
-///
-/// `flutter build apk --release --target-platform android-arm --dart-define="abi=armeabi-v7a"`
-///
-/// `flutter build apk --release --target-platform android-x64 --dart-define="abi=x86_64"`
-///
-/// 默认为 arm64-v8a
-const String abi = String.fromEnvironment('abi', defaultValue: "arm64-v8a");
+/// 当前安装包的 abi。用于检查更新时判断应该下载哪个 abi 的 apk（因为按 abi 拆分了安装包，以减小体积）
+final String abi = Abi.current().architectureName;
