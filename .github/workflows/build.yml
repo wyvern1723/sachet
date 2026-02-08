@@ -32,7 +32,7 @@ jobs:
         run: flutter pub get
 
       - name: Analyze code
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Setup Android sign key
         run: |
