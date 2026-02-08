@@ -21,7 +21,7 @@ Future<Map> fetchGPAZF({
     final Map<String, String> data = {
       "qsXnxq": startSemester, // 起始学年学期
       "zzXnxq": endSemester, // 终止学年学期
-      "xbx": "bx", // 课程属性  全部: "", 必修: "bx", 选修: "xx"
+      "xbx": courseType, // 课程属性  全部: "", 必修: "bx", 选修: "xx"
       "_search": "false",
       "nd": nd,
       "queryModel.showCount": "50", // 每页最多条数
