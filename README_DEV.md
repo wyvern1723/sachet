@@ -26,9 +26,13 @@
 
 #### Windows 上的环境参考
 
-`flutter doctor -v` 输出：
+<details>
+
+<summary>`flutter doctor -v` 输出：</summary>
 
 ```txt
+$ flutter doctor -v
+
 [√] Flutter (Channel stable, 3.24.5, on Microsoft Windows [版本 10.0.19044.5487], locale zh-CN)
     • Flutter version 3.24.5 on channel stable at C:\Users\You\fvm\versions\3.24.5
     • Upstream repository https://github.com/flutter/flutter.git
@@ -78,6 +82,8 @@
 • No issues found!
 ```
 
+</details>
+
 #### Build Android APK on Windows
 
 1. 克隆项目：
@@ -94,7 +100,7 @@
 
 4. 编译 apk：
 
-    `flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
+    `flutter build apk --release --target-platform android-arm64`
 
 #### Build Windows on Windows
 
@@ -171,11 +177,16 @@
 
 ### Linux
 
+> [!TIP]
+> 可以参考 [.github/workflows/build.yml](.github/workflows/build.yml)
+
 #### Linux 上的环境参考
 
-`flutter doctor -v` 输出：
+<details>
 
-```bash
+<summary>`flutter doctor -v` 输出：</summary>
+
+```txt
 $ flutter doctor -v
 
 [✓] Flutter (Channel stable, 3.24.5, on Debian GNU/Linux 12 (bookworm) 6.1.0-32-amd64, locale en_US.UTF-8)
@@ -217,6 +228,8 @@ $ flutter doctor -v
     • All expected network resources are available.
 ```
 
+</details>
+
 #### Build Android APK on Linux
 
 1. 克隆项目：
@@ -233,7 +246,7 @@ $ flutter doctor -v
 
 4. 编译 apk：
 
-    `flutter build apk --release --target-platform android-arm64 --dart-define="abi=arm64-v8a"`
+    `flutter build apk --release --target-platform android-arm64`
 
 #### Build Linux on Linux
 
