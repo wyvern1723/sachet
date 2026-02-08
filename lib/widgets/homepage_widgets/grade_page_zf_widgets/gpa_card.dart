@@ -81,7 +81,8 @@ class _GPACardZFState extends State<GPACardZF> {
           );
         }
         if (snapshot.hasError) {
-          if (snapshot.error == "获取成绩数据失败: Http status code = 302, 可能需要重新登录") {
+          if (snapshot.error ==
+              "获取绩点排名数据失败: Http status code = 302, 可能需要重新登录") {
             return Align(
               alignment: Alignment.topCenter,
               child: Padding(

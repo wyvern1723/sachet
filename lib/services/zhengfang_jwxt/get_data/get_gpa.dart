@@ -28,7 +28,7 @@ Future<GpaResponseZF> getGPAZF({
     );
     return parseGPAZF(result);
   } catch (e) {
-    if (e == '获取成绩数据失败: Http status code = 302, 可能需要重新登录') {
+    if (e == '获取绩点排名数据失败: Http status code = 901, 验证身份信息失败') {
       if (zhengFangUserProvider == null) {
         rethrow;
       }
