@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/models/exam_time_zf.dart';
+import 'package:sachet/services/time_manager.dart';
 import 'package:sachet/utils/transform.dart';
 
 class ExamTimeCardZF extends StatelessWidget {
@@ -18,8 +19,10 @@ class ExamTimeCardZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime? startDateTime = _extractDate(examTime.time).startDateTime;
-    final DateTime? endDateTime = _extractDate(examTime.time).endDateTime;
+    final DateTime? startDateTime =
+        extractExamDateTime(examTime.time).startDateTime;
+    final DateTime? endDateTime =
+        extractExamDateTime(examTime.time).endDateTime;
     final bool isFinished = endDateTime?.isBefore(DateTime.now()) ?? false;
 
     return isDetailedView
@@ -294,24 +297,6 @@ String? _getWeekday(DateTime? startDateTime) {
     return weekdayToXingQiJi[startDateTime.weekday];
   }
   return null;
-}
-
-/// 从字符串中提取第一个日期
-({DateTime? startDateTime, DateTime? endDateTime}) _extractDate(
-    String dateStr) {
-  RegExp datePattern = RegExp(
-      r"(\d{4}-\d{2}-\d{2})\s*\(\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*\)");
-
-  Match? match = datePattern.firstMatch(dateStr);
-  if (match != null) {
-    String datePart = match.group(1)!;
-    String startTimePart = match.group(2)!;
-    String endTimePart = match.group(3)!;
-    DateTime? startDateTime = DateTime.tryParse("$datePart $startTimePart:00");
-    DateTime? endDateTime = DateTime.tryParse("$datePart $endTimePart:00");
-    return (startDateTime: startDateTime, endDateTime: endDateTime);
-  }
-  return (startDateTime: null, endDateTime: null);
 }
 
 class _CountDown extends StatefulWidget {

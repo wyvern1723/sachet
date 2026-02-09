@@ -2,6 +2,8 @@
 
 // 从周数推这一周第一天时间
 // 第 n 周的第一天（周一） = 学期第一周的第一天 + (n-1) * 7
+import 'package:sachet/constants/app_constants.dart';
+
 DateTime getTheMondayDateOfTheWeek(DateTime semesterStartDate, int weekCount) {
   final weekMonday = semesterStartDate.add(Duration(
       days:
@@ -59,4 +61,101 @@ bool isToday(DateTime thatDay) {
   } else {
     return false;
   }
+}
+
+/// 从 item 得到 weekday 和 开始 session
+///
+/// 如 0 => weekday: 1, session: 1
+///
+/// 如 1 => weekday: 1, session: 3
+///
+/// 如 17 => weekday: 4, session: 5
+///
+/// 如 23 => weekday: 5, session: 7
+///
+/// 如 34 => weekday: 7, session: 9
+///
+/// ```
+/// item:
+///
+///       Mon Tue Wed Thu Fri Sat Sun
+/// 12      0   5  10  15  20  25  30
+/// 34      1   6  11  16  21  26  31
+/// 56      2   7  12  17  22  27  32
+/// 78      3   8  13  18  23  28  33
+/// 91011   4   9  14  19  24  29  34
+/// ```
+({int weekday, int session}) getWeekdayAndSessionFromItem(int item) {
+  final int session = [1, 3, 5, 7, 9][item % 5];
+  return (weekday: (item ~/ 5) + 1, session: session);
+}
+
+/// 获取课程的开始和结束时间
+({DateTime startTime, DateTime endTime}) getStartAndEndTime(
+    {required int item, required int week, required int courseLength}) {
+  final result = getWeekdayAndSessionFromItem(item);
+  final int courseWeekday = result.weekday;
+
+  // 课程开始节次，有 1/3/5/7/9
+  final int courseStartSession = result.session;
+
+  /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
+  final DateTime courseDate = getDateFromWeekCountAndWeekday(
+    semesterStartDate: DateTime(2025, 9, 1),
+    weekCount: week,
+    weekday: courseWeekday,
+  );
+
+  String courseStartTimeStr = '';
+  String courseEndTimeStr = '';
+
+  /// 是否是夏令时
+  final bool isSummerRountine = courseDate.month > 4 && courseDate.month < 10;
+  if (isSummerRountine) {
+    courseStartTimeStr =
+        classSessionSummerRoutineStartTime[courseStartSession - 1];
+    courseEndTimeStr = classSessionSummerRoutineEndTime[
+        courseStartSession - 1 + courseLength - 1];
+  } else {
+    courseStartTimeStr =
+        classSessionWinterRoutineStartTime[courseStartSession - 1];
+    courseEndTimeStr = classSessionWinterRoutineEndTime[
+        courseStartSession - 1 + courseLength - 1];
+  }
+
+  /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）
+  final DateTime courseStartDateTime = courseDate.add(
+    Duration(
+      hours: int.parse(courseStartTimeStr.split(':')[0]),
+      minutes: int.parse(courseStartTimeStr.split(':')[1]),
+    ),
+  );
+
+  final DateTime courseEndDateTime = courseDate.add(
+    Duration(
+      hours: int.parse(courseEndTimeStr.split(':')[0]),
+      minutes: int.parse(courseEndTimeStr.split(':')[1]),
+    ),
+  );
+  return (startTime: courseStartDateTime, endTime: courseEndDateTime);
+}
+
+/// 从字符串得到 DateTime 类型的考试开始和结束时间
+///
+/// - dateStr 格式: "2025-11-20(16:30-18:30)"、"2025-11-27(16:30-18:30)"
+({DateTime? startDateTime, DateTime? endDateTime}) extractExamDateTime(
+    String dateStr) {
+  RegExp datePattern = RegExp(
+      r"(\d{4}-\d{2}-\d{2})\s*\(\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*\)");
+
+  Match? match = datePattern.firstMatch(dateStr);
+  if (match != null) {
+    String datePart = match.group(1)!;
+    String startTimePart = match.group(2)!;
+    String endTimePart = match.group(3)!;
+    DateTime? startDateTime = DateTime.tryParse("$datePart $startTimePart:00");
+    DateTime? endDateTime = DateTime.tryParse("$datePart $endTimePart:00");
+    return (startDateTime: startDateTime, endDateTime: endDateTime);
+  }
+  return (startDateTime: null, endDateTime: null);
 }

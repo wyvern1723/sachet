@@ -9,6 +9,7 @@ import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
@@ -234,6 +235,21 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('课表设置')
+              ]),
+            ),
+            PopupMenuItem(
+              onTap: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      ExportClassScheduleDialog(),
+                );
+              },
+              child: Row(children: [
+                Icon(Icons.share_outlined,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                const SizedBox(width: 8),
+                const Text('导出课表')
               ]),
             ),
           ],

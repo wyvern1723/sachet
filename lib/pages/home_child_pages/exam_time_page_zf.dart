@@ -1,12 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/exam_time_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time_semesters.dart';
+import 'package:sachet/utils/export_to_ics.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/exam_time_card.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
+import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 
 class ExamTimePageZF extends StatefulWidget {
   /// 考试时间查询页面（正方教务）
@@ -30,6 +33,8 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
   // true => 显示详细信息, false => 显示精简信息
   bool _isDetailedView = false;
+
+  List<ExamTimeZF>? _examTimeData;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
@@ -62,6 +67,11 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
       semesterYear: _selectedSemesterYear,
       semesterIndex: _selectedSemesterIndex,
     );
+
+    if (mounted) {
+      setState(() => _examTimeData = result);
+    }
+
     return result;
   }
 
@@ -79,13 +89,73 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
       _selectedSemesterIndex = result[1];
       final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
       setState(() {
+        _examTimeData = null;
+
         _future = getExamTimeZF(
           cookie: ZhengFangUserProvider.cookie,
           zhengFangUserProvider: zhengFangUserProvider,
           semesterYear: _selectedSemesterYear,
           semesterIndex: _selectedSemesterIndex,
-        );
+        ).then((data) {
+          if (mounted) {
+            setState(() => _examTimeData = data);
+          }
+          return data;
+        }).catchError((error) {
+          if (mounted) {
+            setState(() => _examTimeData = null);
+          }
+          throw error;
+        });
       });
+    }
+  }
+
+  /// 导出考试时间数据到 .ics 文件
+  Future _exportExamTimeToIcs(BuildContext context) async {
+    try {
+      final semestersYear = semestersYears.keys.firstWhere(
+          (key) => semestersYears[key] == _selectedSemesterYear,
+          orElse: () => _selectedSemesterYear);
+      final semesterIndex = semesterIndexes.keys.firstWhere(
+          (key) => semesterIndexes[key] == _selectedSemesterIndex,
+          orElse: () => _selectedSemesterIndex);
+      final filePath = await exportExamTimeToIcs(
+        exams: _examTimeData!,
+        savefileName: '考试安排_$semestersYear-$semesterIndex',
+      );
+
+      if (!context.mounted) {
+        return;
+      }
+
+      if (filePath != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.done, color: Colors.green),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    '成功导出到: $filePath',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onInverseSurface),
+                  ),
+                ),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(errorInfoSnackBar(context, '导出考试安排失败：$e'));
     }
   }
 
@@ -107,6 +177,12 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           icon: Icon(Icons.history_outlined),
           tooltip: '切换查询学期',
         ),
+        if (_examTimeData != null && _examTimeData!.isNotEmpty)
+          IconButton(
+            onPressed: () => _exportExamTimeToIcs(context),
+            icon: Icon(Icons.share_outlined),
+            tooltip: '导出考试安排',
+          ),
         // 切换显示详细信息/显示精简信息
         IconButton(
           onPressed: () {
@@ -157,6 +233,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           }
 
           final examTimeData = snapshot.data;
+
           return _ExamTimeViewZF(
             examTimeData: examTimeData,
             queryingSemesterYear: semestersYears.keys.firstWhere(
