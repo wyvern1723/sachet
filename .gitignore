@@ -47,5 +47,4 @@ app.*.map.json
 .fvm/
 
 # User Defines
-/COMMIT_NOTES.txt
-generate_signed_apk.sh
+/scripts/local.signing.env
