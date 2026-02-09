@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 
 class ClassPageProvider extends ChangeNotifier {
   // 转到 Class_Page 页面中的数字时需要转化, pageList 的 list 是 [0,1,2...19]

@@ -8,7 +8,7 @@ import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/pages/class_single_page.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 

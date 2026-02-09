@@ -6,7 +6,7 @@ import 'package:sachet/models/free_classroom_filter_options.dart';
 import 'package:sachet/models/free_classroom_request_data.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart';
 
 List<int> weekCountOptions = List.generate(20, (i) => (i + 1));

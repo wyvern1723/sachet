@@ -7,7 +7,7 @@ import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_full_day.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';

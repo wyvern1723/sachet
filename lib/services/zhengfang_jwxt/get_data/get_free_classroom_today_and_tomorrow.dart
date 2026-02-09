@@ -4,7 +4,7 @@ import 'package:sachet/models/free_classroom_request_data.dart';
 import 'package:sachet/providers/free_class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart';
 
 /// 获取今日或明日的空闲教室数据（正方教务）

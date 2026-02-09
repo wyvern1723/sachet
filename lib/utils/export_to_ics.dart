@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/exam_time_zf.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:uuid/uuid.dart';
 

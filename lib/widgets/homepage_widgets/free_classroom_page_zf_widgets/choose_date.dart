@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/rounded_rectangle_container.dart';
 
 class ChooseDate extends StatefulWidget {

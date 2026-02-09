@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/app_folder.dart';
-import 'package:sachet/services/time_manager.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
