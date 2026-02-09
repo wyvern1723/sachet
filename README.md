@@ -37,17 +37,17 @@ Sachet 是一款使用 Flutter 构建的应用，旨在为湘潭大学学生提�
 ## 应用截图
 
 <p align='center'>
-  <img src='screenshots/class_schedule.png' alt='课程表页面截图' width='24%'/>
-  <img src='screenshots/cultivate_plan.png' alt='培养方案页面截图' width='24%'/>
-  <img src='screenshots/free_classroom_page.png' alt='空闲教室页面截图' width='24%'/>
-  <img src='screenshots/free_classroom_filter.png' alt='空闲教室页面（筛选功能展示）截图' width='24%'/>
+  <img src='docs/app-screenshots/class_schedule.png' alt='课程表页面截图' width='24%'/>
+  <img src='docs/app-screenshots/cultivate_plan.png' alt='培养方案页面截图' width='24%'/>
+  <img src='docs/app-screenshots/free_classroom_page.png' alt='空闲教室页面截图' width='24%'/>
+  <img src='docs/app-screenshots/free_classroom_filter.png' alt='空闲教室页面（筛选功能展示）截图' width='24%'/>
 </p>
 
 <p align='center'>
-  <img src='screenshots/grade_page.png' alt='成绩查询页面截图' width='24%'/>
-  <img src='screenshots/grade_page_details.png' alt='成绩查询页面（显示详细信息）截图' width='24%'/>
-  <img src='screenshots/exam_time_page.png' alt='考试时间页面截图' width='24%'/>
-  <img src='screenshots/login_page.png' alt='登录页面截图' width='24%'/>
+  <img src='docs/app-screenshots/grade_page.png' alt='成绩查询页面截图' width='24%'/>
+  <img src='docs/app-screenshots/grade_page_details.png' alt='成绩查询页面（显示详细信息）截图' width='24%'/>
+  <img src='docs/app-screenshots/exam_time_page.png' alt='考试时间页面截图' width='24%'/>
+  <img src='docs/app-screenshots/login_page.png' alt='登录页面截图' width='24%'/>
 </p>
 
 ## 下载
