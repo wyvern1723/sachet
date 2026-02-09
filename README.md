@@ -4,7 +4,15 @@
   <img alt='Sachet app icon' src='./assets/icon/icon.png' width='25%' style="border-radius:14%;"/>
 </p>
 
-[简体中文](./README.md) | [English](./README_EN.md)
+<div align="center">
+  <a href="https://github.com/wyvern1723/sachet/actions"><img src="https://github.com/wyvern1723/sachet/actions/workflows/build.yml/badge.svg?branch=main" alt="GitHub Workflow Status" /></a>
+  <a href="https://github.com/wyvern1723/sachet/releases"><img src="https://img.shields.io/github/release/wyvern1723/sachet.svg?label=release" alt="Release" /></a>
+  <a href="https://flutter.dev/"><img src="https://img.shields.io/badge/Flutter-3.24.5-027DFD?logo=flutter" alt="Flutter Version 3.24.5" /></a>
+</div>
+
+<p align="center">
+  <a href="./README.md">简体中文</a> | <a href="./README_EN.md">English</a>
+</p>
 
 ## 介绍
 
@@ -22,7 +30,7 @@ Sachet 是一款使用 Flutter 构建的应用，旨在为湘潭大学学生提�
 
 - 聚合校内常用链接
 
-**优点：**
+**特性：**
 
 - 启动速度快，秒开看课表
 
@@ -32,7 +40,7 @@ Sachet 是一款使用 Flutter 构建的应用，旨在为湘潭大学学生提�
 
 - 用户信息只发送到教务系统的服务器，严格保护隐私
 
-- ~~跨平台~~ （🚧）
+- 跨平台（支持 Android、Windows、Linux，目前仅发布 Android 版本，如需 Windows 或 Linux 版本欢迎 [联系我](#contact) 或提交 [Issue](https://github.com/wyvern1723/sachet/issues) 反馈。开发者也可参考 [README_DEV.md](./README_DEV.md) 自行构建）
 
 ## 应用截图
 
@@ -52,9 +60,9 @@ Sachet 是一款使用 Flutter 构建的应用，旨在为湘潭大学学生提�
 
 ## 下载
 
-|     平台     | 安装包 |
-|--------------|----------|
-| Android（安卓）| [APK(arm64-v8a)](https://github.com/wyvern1723/sachet/releases/download/v0.7.2/sachet-v0.7.2-arm64-v8a.apk) |
+| 平台 | 安装包 |
+| --- | --- |
+| Android（安卓） | [APK(arm64-v8a)](https://github.com/wyvern1723/sachet/releases/download/v0.7.2/sachet-v0.7.2-arm64-v8a.apk) |
 
 [所有发布](https://github.com/wyvern1723/sachet/releases/latest)
 
@@ -68,7 +76,7 @@ Flutter version: 3.24.5
 
 - 强智教务系统，相关文件见: [lib/services/qiangzhi_jwxt/](./lib/services/qiangzhi_jwxt/) (实现登录，获取个人课表、培养方案、空闲教室、考试成绩、考试时间)
 
-- 正方教务系统，相关文件见: [lib/services/zhengfang_jwxt/](./lib/services/zhengfang_jwxt/) (🚧 正在施工，目前已实现登录、获取个人课表、空闲教室、考试成绩、考试时间)
+- 正方教务系统，相关文件见: [lib/services/zhengfang_jwxt/](./lib/services/zhengfang_jwxt/) (🚧 正在施工，目前已实现登录、获取个人课表、空闲教室、考试成绩、考试时间、绩点排名)
 
 - 强智教务系统的图片验证码自动识别
   - 模型文件: [assets/models/captcha_model.tflite](./assets/models/captcha_model.tflite) (使用 TensorFlow v2.15.0 训练生成，基于 1748 张验证码图片数据集。在 80%/20% 划分的训练/测试集上，测试准确率达到 100%。最终模型使用全部数据集重新训练生成)
@@ -79,7 +87,7 @@ Flutter version: 3.24.5
 
 - [README_DEV](./README_DEV.md)
 
-## 联系
+## Contact
 
 maiI: `wyvern1723(AT)outlook[dot]com`
 
