@@ -196,7 +196,7 @@ class _ResultView extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: CourseTypeSelectorZF(),
+                    child: CourseTypeSelectorZF(width: 100),
                   ),
                 ],
               ),
