@@ -5,6 +5,7 @@ import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
+import 'package:sachet/pages/home_child_pages/score_pdf_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
@@ -123,6 +124,10 @@ class HomePage extends StatelessWidget {
                         page: ExamTimePageZF(),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
                     Expanded(
                       child: CardWidget(
                         title: '成绩查询',
@@ -136,6 +141,13 @@ class HomePage extends StatelessWidget {
                         title: '绩点排名',
                         icon: Icons.emoji_events_outlined,
                         page: GPAPageZF(),
+                      ),
+                    ),
+                    Expanded(
+                      child: CardWidget(
+                        title: '成绩单',
+                        icon: Icons.picture_as_pdf,
+                        page: ScorePdfPageZF(),
                       ),
                     ),
                   ],
