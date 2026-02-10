@@ -16,27 +16,36 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: onTap ??
             () {
               if (page != null) {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return page!;
-                    },
-                  ),
-                );
+                    context, MaterialPageRoute(builder: (context) => page!));
               }
             },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
+          padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 8.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon),
-              Text(title),
+              Icon(
+                icon,
+                size: 30,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 3),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ),

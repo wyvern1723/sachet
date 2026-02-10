@@ -32,8 +32,16 @@ class CardLinkWidget extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 16,
             children: [
-              Icon(icon),
-              Text(title),
+              Icon(
+                icon,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ),
