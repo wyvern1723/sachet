@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pdfrx/pdfrx.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:sachet/widgets/utils_widgets/success_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 
@@ -25,6 +25,7 @@ class PdfViewPage extends StatefulWidget {
 
 class _PdfViewPageState extends State<PdfViewPage> {
   bool _isPortrait = true;
+  late PdfControllerPinch _pdfControllerPinch;
 
   void _toggleOrientation() {
     if (_isPortrait) {
@@ -66,7 +67,17 @@ class _PdfViewPageState extends State<PdfViewPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _pdfControllerPinch = PdfControllerPinch(
+      document: PdfDocument.openData(widget.file.readAsBytes()),
+      initialPage: 1,
+    );
+  }
+
+  @override
   void dispose() {
+    _pdfControllerPinch.dispose();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -94,9 +105,16 @@ class _PdfViewPageState extends State<PdfViewPage> {
           ),
         ],
       ),
-      body: PdfViewer.data(
-        widget.file.readAsBytesSync(),
-        sourceName: widget.fileName,
+      body: PdfViewPinch(
+        builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
+          options: const DefaultBuilderOptions(),
+          documentLoaderBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          pageLoaderBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          errorBuilder: (_, error) => Center(child: Text(error.toString())),
+        ),
+        controller: _pdfControllerPinch,
       ),
     );
   }
