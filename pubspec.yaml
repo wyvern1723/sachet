@@ -42,6 +42,12 @@ dependencies:
   # 验证码图片自动识别(TensorFlow)
   tflite_flutter: ^0.11.0         # TensorFlow Lite(TFlite、LiteRT) 库
   image: ^4.1.0                   # 对验证码图片进行预先处理（灰度化、二值化）
+  
+  # 本地通知
+  flutter_local_notifications: ^19.4.2  # 本地通知,用于发送课程通知(上课提醒)
+  app_settings: ^6.1.1                  # 用于打开系统设置中的应用设置页面
+  timezone: ^0.10.1                     # flutter_local_notifications 用到的
+  disable_battery_optimization: ^1.1.2  # 打开自启动/电池优化设置 (Android)
 
   # 辅助生成项目文件的 package，应用代码中没有依赖它们(生成后删除以下两行无影响)
   flutter_native_splash: ^2.4.4   # 生成 splash screen (应用启动时的界面)
@@ -56,12 +62,7 @@ dependencies:
   dynamic_color: 1.7.0            # 动态取色 [动态配色](https://developer.android.com/develop/ui/views/theming/dynamic-colors?hl=zh-cn)
   pointycastle: ^4.0.0            # RSA 加密，用于正方教务系统登录时对用户密码的加密
   uuid: ^4.5.2                    # 生成 UUID，用于导出课程表到 .ics 文件时，为每个 VEVENT 生成 UID
-  
-  # 本地通知
-  flutter_local_notifications: ^19.4.2  # 本地通知,用于发送课程通知(上课提醒)
-  app_settings: ^6.1.1                  # 用于打开系统设置中的应用设置页面
-  timezone: ^0.10.1                     # flutter_local_notifications 用到的
-  disable_battery_optimization: ^1.1.2  # 打开自启动/电池优化设置 (Android)
+  pdfx: 2.8.0                     # 应用内查看成绩单pdf
 
 dev_dependencies:
   flutter_test:
