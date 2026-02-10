@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/pages/utilspages/pdf_view_page.dart';
 import 'package:sachet/providers/score_pdf_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/download_score_pdf.dart';
@@ -13,7 +13,6 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_score_pdf_types.dart
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/downloading_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/score_pdf_types_selector.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
-import 'package:sachet/widgets/utils_widgets/success_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 import 'package:path/path.dart' as path;
 
@@ -128,24 +127,22 @@ class _QueryViewState extends State<_QueryView> {
         throw Exception('下载文件无效');
       }
 
-      final String? filePath = await FilePicker.platform.saveFile(
-        dialogTitle: '保存成绩单文件到...',
-        fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        bytes: file.readAsBytesSync(),
-      );
-
       if (!context.mounted) return;
 
       // 关闭 DownloadingDialog
       Navigator.of(context).pop();
 
-      if (filePath != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          successSnackBar(context, '成功保存到: $filePath'),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfViewPage(
+            tmpfilePath: tmpfilePath,
+            fileName: fileName,
+            file: file,
+          ),
+        ),
+      );
+      return;
     } catch (e) {
       // 只有当不是“用户主动取消”且弹窗还显示时，才去关闭弹窗
       // 如果是用户点击取消按钮，弹窗已经在 onPressed 里关闭了，这里不需要再 pop
