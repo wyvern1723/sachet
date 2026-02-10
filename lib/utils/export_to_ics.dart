@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/exam_time_zf.dart';
 import 'package:sachet/utils/time_manager.dart';
@@ -40,11 +41,15 @@ Future<String?> exportClassScheduleToIcs(
       generateIcsFromSchedule(courseScheduleItemsList: courseScheduleItemsList);
 
   final String? filePath = await FilePicker.platform.saveFile(
-      dialogTitle: '保存课程表日历文件到...',
-      fileName: '$savefileName.ics',
-      type: FileType.custom,
-      allowedExtensions: ['ics'],
-      bytes: utf8.encode(ics));
+    dialogTitle: '保存课程表日历文件到...',
+    fileName: '$savefileName.ics',
+    type: defaultTargetPlatform == TargetPlatform.linux
+        ? FileType.any
+        : FileType.custom,
+    allowedExtensions:
+        defaultTargetPlatform == TargetPlatform.linux ? null : ['ics'],
+    bytes: utf8.encode(ics),
+  );
 
   if (filePath != null) {
     return filePath;
@@ -151,11 +156,15 @@ Future<String?> exportExamTimeToIcs({
   final String ics = generateIcsFromExamTime(exams: exams);
 
   final String? filePath = await FilePicker.platform.saveFile(
-      dialogTitle: '保存考试时间日历文件到...',
-      fileName: '$savefileName.ics',
-      type: FileType.custom,
-      allowedExtensions: ['ics'],
-      bytes: utf8.encode(ics));
+    dialogTitle: '保存考试时间日历文件到...',
+    fileName: '$savefileName.ics',
+    type: defaultTargetPlatform == TargetPlatform.linux
+        ? FileType.any
+        : FileType.custom,
+    allowedExtensions:
+        defaultTargetPlatform == TargetPlatform.linux ? null : ['ics'],
+    bytes: utf8.encode(ics),
+  );
 
   if (filePath != null) {
     return filePath;

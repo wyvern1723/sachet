@@ -139,8 +139,11 @@ class _QueryViewState extends State<_QueryView> {
         final String? filePath = await FilePicker.platform.saveFile(
           dialogTitle: '保存成绩单文件到...',
           fileName: fileName,
-          type: FileType.custom,
-          allowedExtensions: ['pdf'],
+          type: defaultTargetPlatform == TargetPlatform.linux
+              ? FileType.any
+              : FileType.custom,
+          allowedExtensions:
+              defaultTargetPlatform == TargetPlatform.linux ? null : ['pdf'],
           bytes: file.readAsBytesSync(),
         );
 

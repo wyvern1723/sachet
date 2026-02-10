@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdfx/pdfx.dart';
@@ -47,8 +48,11 @@ class _PdfViewPageState extends State<PdfViewPage> {
       final String? filePath = await FilePicker.platform.saveFile(
         dialogTitle: '保存成绩单文件到...',
         fileName: widget.fileName,
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
+        type: defaultTargetPlatform == TargetPlatform.linux
+            ? FileType.any
+            : FileType.custom,
+        allowedExtensions:
+            defaultTargetPlatform == TargetPlatform.linux ? null : ['pdf'],
         bytes: widget.file.readAsBytesSync(),
       );
 
