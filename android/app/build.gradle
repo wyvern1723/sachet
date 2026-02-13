@@ -99,6 +99,18 @@ android {
             }
         }
     }
+
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def unifiedVersionCode = flutterVersionCode.toInteger()
+
+            // 覆盖 Flutter 默认的 ABI 分包策略（移除 1000/2000 等架构前缀）
+            // [Build multiple APKs  |  Android Studio  |  Android Developers](https://developer.android.com/build/configure-apk-splits#configure-APK-versions)
+            // 强制让所有 CPU 架构的 APK 保持一致的 VersionCode
+            output.versionCodeOverride = unifiedVersionCode
+        }
+    }
 }
 
 flutter {
