@@ -60,17 +60,19 @@ class MyApp extends StatelessWidget {
             if (themeProvider.isUsingDynamicColors) {
               return DynamicColorBuilder(
                 builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-                  // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
                   ColorScheme lightColorScheme;
                   ColorScheme darkColorScheme;
 
                   if (lightDynamic != null && darkDynamic != null) {
                     // On Android S+ devices, use the provided dynamic color scheme.
-                    // (Recommended) Harmonize the dynamic color scheme' built-in semantic colors.
-                    lightColorScheme = lightDynamic.harmonized();
-
-                    // Repeat for the dark color scheme.
-                    darkColorScheme = darkDynamic.harmonized();
+                    lightColorScheme = ColorScheme.fromSeed(
+                      seedColor: lightDynamic.primary,
+                      brightness: Brightness.light,
+                    ).harmonized();
+                    darkColorScheme = ColorScheme.fromSeed(
+                      seedColor: darkDynamic.primary,
+                      brightness: Brightness.dark,
+                    ).harmonized();
                   } else {
                     // Otherwise, use fallback schemes.
                     lightColorScheme = ColorScheme.fromSeed(
@@ -82,16 +84,13 @@ class MyApp extends StatelessWidget {
                       brightness: Brightness.dark,
                     );
                   }
-                  // **********从 dynamic_color-1.7.0/example/lib/complete_example.dart 复制的代码**********
 
                   final ThemeData theme = _buildThemeDataFromColorScheme(
                     colorScheme: lightColorScheme,
-                    brightness: Brightness.light,
                     themeProvider: themeProvider,
                   );
                   final ThemeData darkTheme = _buildThemeDataFromColorScheme(
                     colorScheme: darkColorScheme,
-                    brightness: Brightness.dark,
                     themeProvider: themeProvider,
                   );
                   return _buildMaterialApp(
@@ -187,7 +186,6 @@ class MyApp extends StatelessWidget {
 
   ThemeData _buildThemeDataFromColorScheme({
     required ColorScheme colorScheme,
-    required Brightness brightness,
     required ThemeProvider themeProvider,
   }) {
     return ThemeData(
