@@ -86,7 +86,7 @@ const defaultAppSettingsConfig = {
   "isShowPageTurnArrow": true, // 是否显示课程表上一周下一周的翻页箭头
   "classScheduleFilePath": "", // 当前使用的课程表文件路径
   "courseColorFilePath": "", // 当前使用的课程配色文件路径
-  "semesterStartDate": "2025-09-01", // 学期开始日期
+  "semesterStartDate": "2026-03-02", // 学期开始日期
   "curveDuration ": 1500, // 课表翻页动画时长
   "curveType": "Easing.standard", // 课表翻页动画类型（动画曲线）
   "isEnableDevMode": false, // 是否启用开发者模式
