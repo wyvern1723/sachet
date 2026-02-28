@@ -159,6 +159,14 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
     }
   }
 
+  String get _displaySemesterYear => semestersYears.keys.firstWhere(
+      (key) => semestersYears[key] == _selectedSemesterYear,
+      orElse: () => _selectedSemesterYear);
+
+  String get _displaySemesterIndex => semesterIndexes.keys.firstWhere(
+      (key) => semesterIndexes[key] == _selectedSemesterIndex,
+      orElse: () => _selectedSemesterIndex);
+
   @override
   void initState() {
     super.initState();
@@ -219,16 +227,29 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
                 ),
               );
             }
-            return Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '${snapshot.error}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${snapshot.error}',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+                  child: Text(
+                    '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
             );
           }
 
@@ -236,12 +257,8 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
           return _ExamTimeViewZF(
             examTimeData: examTimeData,
-            queryingSemesterYear: semestersYears.keys.firstWhere(
-                (key) => semestersYears[key] == _selectedSemesterYear,
-                orElse: () => _selectedSemesterYear),
-            queryingSemesterIndex: semesterIndexes.keys.firstWhere(
-                (key) => semesterIndexes[key] == _selectedSemesterIndex,
-                orElse: () => _selectedSemesterIndex),
+            queryingSemesterYear: _displaySemesterYear,
+            queryingSemesterIndex: _displaySemesterIndex,
             isDetailedView: _isDetailedView,
           );
         },
