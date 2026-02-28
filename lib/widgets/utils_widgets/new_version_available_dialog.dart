@@ -36,6 +36,7 @@ class NewVersionAvailableDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AlertDialog(
       title: const Text('有新版本可用'),
       content: Column(
@@ -43,20 +44,19 @@ class NewVersionAvailableDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "当前版本： v$appVersion ($appBuildNumber)"
-            "\n"
-            "最新版本： $latestTagName"
-            "\n"
-            "更新日期： $publishedDate"
-            "\n"
-            "安装包大小： $apkSizeMB MB",
-            style: Theme.of(context).textTheme.bodyMedium,
+            [
+              '当前版本：v$appVersion ($appBuildNumber)',
+              '最新版本：$latestTagName',
+              '更新日期：$publishedDate',
+              if (apkSizeMB != null) '安装包大小：$apkSizeMB MB',
+            ].join('\n'),
+            style: theme.textTheme.bodyMedium,
           ),
           SizedBox(height: 4),
           Divider(),
           Text(
             '更新日志：',
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 8),
           Flexible(
@@ -73,11 +73,11 @@ class NewVersionAvailableDialog extends StatelessWidget {
                     },
                   ),
                   TextButton(
-                    onPressed: () async {
+                    onPressed: () {
                       Navigator.pop(context);
-                      String? _latestTagUrl = latestTagUrl;
-                      if (_latestTagUrl != null) {
-                        openLink(_latestTagUrl);
+                      String? url = latestTagUrl;
+                      if (url != null) {
+                        openLink(url);
                       }
                     },
                     child: const Text('查看详细信息', style: TextStyle(fontSize: 14)),
@@ -90,25 +90,37 @@ class NewVersionAvailableDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () async {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('下次再说'),
         ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          ),
-          onPressed: () async {
-            Navigator.pop(context);
-            String? _downloadLink = downloadLink;
-            if (_downloadLink != null) {
-              openLink(_downloadLink);
-            }
-          },
-          child: const Text('打开浏览器下载'),
-        )
+
+        /// 如果成功根据当前系统和 abi 获取到对应的下载链接直接打开下载链接，如果没有则打开最新 Release 的链接
+        (downloadLink == null)
+            ? ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  String? url = latestTagUrl;
+                  if (url != null) {
+                    openLink(url);
+                  }
+                },
+                child: const Text('去下载'),
+              )
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  openLink(downloadLink!);
+                },
+                child: const Text('打开浏览器下载'),
+              )
       ],
     );
   }

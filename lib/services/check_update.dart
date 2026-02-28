@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -99,23 +100,48 @@ class NavigatorGlobal {
     String appBuildNumber,
     GithubLatestReleaseApiResponse response,
   ) {
+    /// 最新 Release 的 TagName（我目前使用版本号作为 TagName，例如 v1.0.0）
     String? latestTagName = response.tagName;
+
+    /// 最新 Tag 的 Release 的更新日志
     String? latestReleaseNote = response.body;
-    MapEntry<String?, int?> downloadLinkAndSize = getDownloadLinkAndSize(
-      assetsList: response.assets!,
-      fileExtension: '.apk',
+
+    final fileExtension = switch (defaultTargetPlatform) {
+      TargetPlatform.android => '.apk',
+      TargetPlatform.windows => '.zip',
+      TargetPlatform.iOS => '.ipa',
+      TargetPlatform.linux => '.tar.gz',
+      TargetPlatform.macOS => '.dmg',
+      _ => '',
+    };
+    ({String? downloadUrl, int? packageSize})? downloadLinkAndSize =
+        getDownloadLinkAndSize(
+      assetsList: response.assets,
+      fileExtension: fileExtension,
       abi: abi,
     );
-    String? downloadLink = downloadLinkAndSize.key;
-    int? apkSize = downloadLinkAndSize.value;
-    String? apkSizeMB =
-        apkSize != null ? (apkSize / 1024 / 1024).toStringAsFixed(2) : null;
+
+    /// 安装包下载链接
+    String? downloadLink = downloadLinkAndSize.downloadUrl;
+
+    /// 安装包大小
+    int? packageSize = downloadLinkAndSize.packageSize;
+    String? packageSizeMB = packageSize != null
+        ? (packageSize / 1024 / 1024).toStringAsFixed(2)
+        : null;
+
+    /// 最新 Tag 的 Release 的链接
     String? latestTagUrl = response.htmlUrl;
+
+    /// 最新 Tag 的 Release 的发布时间
     String? latestPublishedTime = response.publishedAt;
+
+    /// 格式化后的最新 Tag 的 Release 的发布时间
     String? publishedDate = latestPublishedTime != null
         ? DateFormat('yyyy-MM-dd HH:mm')
             .format(DateTime.parse(latestPublishedTime).toLocal())
         : null;
+
     final context = NavigatorGlobal.navigatorKey.currentContext!;
     showDialog(
       context: context,
@@ -124,7 +150,7 @@ class NavigatorGlobal {
         appBuildNumber: appBuildNumber,
         latestTagName: latestTagName,
         publishedDate: publishedDate,
-        apkSizeMB: apkSizeMB,
+        apkSizeMB: packageSizeMB,
         latestReleaseNote: latestReleaseNote,
         downloadLink: downloadLink,
         latestTagUrl: latestTagUrl,
@@ -169,30 +195,23 @@ Future<GithubLatestReleaseApiResponse> getGithubReleaseLatest() async {
   }
 }
 
-MapEntry<String?, int?> getDownloadLinkAndSize({
-  required List<Assets> assetsList,
+({String? downloadUrl, int? packageSize}) getDownloadLinkAndSize({
+  required List<Assets>? assetsList,
   required String fileExtension,
   required String abi,
 }) {
-  // 第一步，筛选文件后缀名
-  // 符合文件后缀名的 List
-  List<Assets> extensionList = assetsList
-      .where((element) => element.name!.endsWith(fileExtension))
-      .toList();
-  // 第二步筛选 abi
-  Map<String?, int?> downloadUrlAndSizeMap = {};
-  extensionList.forEach(
-      (e) => downloadUrlAndSizeMap.addAll({e.browserDownloadUrl: e.size}));
+  if (assetsList == null) {
+    return (downloadUrl: null, packageSize: null);
+  }
+  // 第一步，按文件后缀名筛选
+  final filteredByExtension = assetsList
+      .where((element) => element.name?.endsWith(fileExtension) == true);
 
-  MapEntry<String?, int?> downloadLinkAndSize =
-      downloadUrlAndSizeMap.entries.firstWhere(
-    (element) => element.key!.contains(abi),
-    orElse: () {
-      return downloadUrlAndSizeMap.entries.first;
-    },
-  );
+  // 第二步，按 abi 查找
+  final asset = filteredByExtension
+      .firstWhereOrNull((e) => e.browserDownloadUrl?.contains(abi) == true);
 
-  return downloadLinkAndSize;
+  return (downloadUrl: asset?.browserDownloadUrl, packageSize: asset?.size);
 }
 
 Future checkUpdate({bool? isShowDetails = false}) async {
