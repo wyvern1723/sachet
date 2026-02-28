@@ -118,6 +118,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
               const Center(child: CircularProgressIndicator()),
           errorBuilder: (_, error) => Center(child: Text(error.toString())),
         ),
+        minScale: 0.99,
         controller: _pdfControllerPinch,
       ),
     );
