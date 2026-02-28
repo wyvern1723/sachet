@@ -8,7 +8,7 @@ class SemesterIndexSelectorZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map semesterIndexes = {"全部": "", "1": "3", "2": "12", "3": "16"};
+    final Map semesterIndexes = {"全部": "", "1": "3", "2": "12"};
     String selectedSemesterIndex = context.select<GradePageZFProvider, String>(
         (provider) => provider.selectedSemesterIndex);
     return DropdownMenu<String>(

@@ -29,7 +29,7 @@ class _UpdateClassScheduleZFDialogState
       UpdateClassScheduleState.gettingSemester;
   Map semestersYears = {};
   String? _selectedSemesterYear;
-  Map semesterIndexes = {"1": "3", "2": "12", "3": "16"};
+  Map semesterIndexes = {"1": "3", "2": "12"};
   String? _selectedSemesterIndex;
 
   /// 是否在 学年 DropDownMenu 显示 ErrorTexy

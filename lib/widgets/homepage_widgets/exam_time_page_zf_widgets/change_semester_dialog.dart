@@ -18,7 +18,7 @@ class ChangeSemesterDialogZF extends StatefulWidget {
 class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
   String _selectedSemesterYear = '';
   String _selectedSemesterIndex = '';
-  final Map semesterIndexes = {"全部": "", "1": "3", "2": "12", "3": "16"};
+  final Map semesterIndexes = {"全部": "", "1": "3", "2": "12"};
 
   @override
   void initState() {
