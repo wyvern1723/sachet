@@ -49,10 +49,6 @@ dependencies:
   timezone: ^0.10.1                     # flutter_local_notifications 用到的
   disable_battery_optimization: ^1.1.2  # 打开自启动/电池优化设置 (Android)
 
-  # 辅助生成项目文件的 package，应用代码中没有依赖它们(生成后删除以下两行无影响)
-  flutter_native_splash: ^2.4.4   # 生成 splash screen (应用启动时的界面)
-  flutter_launcher_icons: ^0.14.2 # 生成应用图标
-
   # 其他
   url_launcher: ^6.3.1            # (调起浏览器)打开链接
   flutter_gbk2utf8: ^1.0.1        # 解码 GBK
@@ -69,6 +65,10 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+
+  # 辅助生成项目文件的 package，应用代码中没有依赖它们
+  flutter_native_splash: ^2.4.4   # 生成 splash screen (应用启动时的界面)
+  flutter_launcher_icons: ^0.14.2 # 生成应用图标
 
 # app icon (应用图标)
 # 生成有关应用图标的文件
