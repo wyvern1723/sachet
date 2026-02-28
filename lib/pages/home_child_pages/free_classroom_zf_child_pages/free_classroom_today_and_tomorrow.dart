@@ -68,10 +68,13 @@ class _FreeClassroomTodayAndTomorrowViewState
       weekCount: 20,
       weekday: 7,
     );
+    final now = DateTime.now();
     final pickedDate = await showDatePicker(
       context: context,
       locale: const Locale('zh', 'CN'),
-      initialDate: DateTime.now(),
+      initialDate: now.isAfter(firstDate)
+          ? (now.isAfter(lastDate) ? lastDate : now)
+          : firstDate,
       firstDate: firstDate,
       lastDate: lastDate,
       helpText: '选择日期',
