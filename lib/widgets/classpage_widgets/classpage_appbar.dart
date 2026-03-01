@@ -220,6 +220,22 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 const Text('切换课表'),
               ]),
             ),
+            // 导出课表
+            PopupMenuItem(
+              onTap: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      ExportClassScheduleDialog(),
+                );
+              },
+              child: Row(children: [
+                Icon(Icons.share_outlined,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                const SizedBox(width: 8),
+                const Text('导出课表')
+              ]),
+            ),
             // 课表设置
             PopupMenuItem(
               onTap: () async {
@@ -235,21 +251,6 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('课表设置')
-              ]),
-            ),
-            PopupMenuItem(
-              onTap: () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      ExportClassScheduleDialog(),
-                );
-              },
-              child: Row(children: [
-                Icon(Icons.share_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                const Text('导出课表')
               ]),
             ),
           ],

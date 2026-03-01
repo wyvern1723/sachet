@@ -1226,6 +1226,8 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
                 ],
               ),
             ),
+
+            SizedBox(height: 20),
           ],
         ],
       ),

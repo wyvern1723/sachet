@@ -161,6 +161,8 @@ class CustomizeSettingsPage extends StatelessWidget {
 
           // 预览卡片
           PreviewCard(),
+
+          SizedBox(height: 20),
         ],
       ),
     );
