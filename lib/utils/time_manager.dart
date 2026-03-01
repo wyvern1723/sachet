@@ -3,6 +3,7 @@
 // 从周数推这一周第一天时间
 // 第 n 周的第一天（周一） = 学期第一周的第一天 + (n-1) * 7
 import 'package:sachet/constants/app_constants.dart';
+import 'package:sachet/providers/settings_provider.dart';
 
 DateTime getTheMondayDateOfTheWeek(DateTime semesterStartDate, int weekCount) {
   final weekMonday = semesterStartDate.add(Duration(
@@ -101,7 +102,8 @@ bool isToday(DateTime thatDay) {
 
   /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
   final DateTime courseDate = getDateFromWeekCountAndWeekday(
-    semesterStartDate: DateTime(2025, 9, 1),
+    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+        constSemesterStartDate,
     weekCount: week,
     weekday: courseWeekday,
   );
