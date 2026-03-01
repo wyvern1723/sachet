@@ -45,6 +45,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
   Future _savePdf(BuildContext context) async {
     try {
+      final bytes = await widget.file.readAsBytes();
+
       final String? filePath = await FilePicker.platform.saveFile(
         dialogTitle: '保存成绩单文件到...',
         fileName: widget.fileName,
@@ -53,7 +55,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
             : FileType.custom,
         allowedExtensions:
             defaultTargetPlatform == TargetPlatform.linux ? null : ['pdf'],
-        bytes: widget.file.readAsBytesSync(),
+        bytes: bytes,
       );
 
       if (!context.mounted) return;
@@ -70,11 +72,27 @@ class _PdfViewPageState extends State<PdfViewPage> {
     }
   }
 
+  // 删除下载到应用临时目录的 PDF 文件
+  Future<void> _deleteTempFile(File file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        if (kDebugMode) {
+          print('临时 PDF 文件已成功清理: ${file.path}');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('清理临时 PDF 文件失败: $e');
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _pdfControllerPinch = PdfControllerPinch(
-      document: PdfDocument.openData(widget.file.readAsBytes()),
+      document: PdfDocument.openFile(widget.tmpfilePath),
       initialPage: 1,
     );
   }
@@ -82,12 +100,17 @@ class _PdfViewPageState extends State<PdfViewPage> {
   @override
   void dispose() {
     _pdfControllerPinch.dispose();
+
+    // 恢复屏幕方向
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
+    _deleteTempFile(widget.file);
+
     super.dispose();
   }
 

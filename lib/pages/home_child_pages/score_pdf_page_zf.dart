@@ -130,11 +130,13 @@ class _QueryViewState extends State<_QueryView> {
         throw Exception('下载文件无效');
       }
 
-      if (defaultTargetPlatform == TargetPlatform.linux) {
-        if (!context.mounted) return;
+      if (!context.mounted) return;
 
-        // 关闭 DownloadingDialog
-        Navigator.of(context).pop();
+      // 关闭 DownloadingDialog
+      Navigator.of(context).pop();
+
+      if (defaultTargetPlatform == TargetPlatform.linux) {
+        final bytes = await file.readAsBytes();
 
         final String? filePath = await FilePicker.platform.saveFile(
           dialogTitle: '保存成绩单文件到...',
@@ -144,7 +146,7 @@ class _QueryViewState extends State<_QueryView> {
               : FileType.custom,
           allowedExtensions:
               defaultTargetPlatform == TargetPlatform.linux ? null : ['pdf'],
-          bytes: file.readAsBytesSync(),
+          bytes: bytes,
         );
 
         if (!context.mounted) return;
@@ -154,12 +156,15 @@ class _QueryViewState extends State<_QueryView> {
             successSnackBar(context, '成功保存到: $filePath'),
           );
         }
+
+        try {
+          if (await file.exists()) await file.delete();
+        } catch (e) {
+          if (kDebugMode) {
+            print('清理临时文件失败: $e');
+          }
+        }
       } else {
-        if (!context.mounted) return;
-
-        // 关闭 DownloadingDialog
-        Navigator.of(context).pop();
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -176,6 +181,8 @@ class _QueryViewState extends State<_QueryView> {
       // 只有当不是“用户主动取消”且弹窗还显示时，才去关闭弹窗
       // 如果是用户点击取消按钮，弹窗已经在 onPressed 里关闭了，这里不需要再 pop
       bool isUserCancelled = e.toString().contains('取消下载');
+
+      if (!context.mounted) return;
 
       if (!isUserCancelled && Navigator.canPop(context)) {
         Navigator.of(context).pop();
