@@ -92,8 +92,12 @@ bool isToday(DateTime thatDay) {
 }
 
 /// 获取课程的开始和结束时间
-({DateTime startTime, DateTime endTime}) getStartAndEndTime(
-    {required int item, required int week, required int courseLength}) {
+({DateTime startTime, DateTime endTime}) getStartAndEndTime({
+  required int item,
+  required int week,
+  required int courseLength,
+  DateTime? semesterStartDate,
+}) {
   final result = getWeekdayAndSessionFromItem(item);
   final int courseWeekday = result.weekday;
 
@@ -102,7 +106,8 @@ bool isToday(DateTime thatDay) {
 
   /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
   final DateTime courseDate = getDateFromWeekCountAndWeekday(
-    semesterStartDate: DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+    semesterStartDate: semesterStartDate ??
+        DateTime.tryParse(SettingsProvider.semesterStartDate) ??
         constSemesterStartDate,
     weekCount: week,
     weekday: courseWeekday,

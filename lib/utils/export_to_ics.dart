@@ -17,10 +17,11 @@ import 'package:uuid/uuid.dart';
 /// - 成功: String filePath 导出的 .ics 文件保存的位置
 /// - 用户取消保存: null
 /// - 课程信息为空/课程表格式错误: throw String msg
-Future<String?> exportClassScheduleToIcs(
-  String rawfilePath,
-  String savefileName,
-) async {
+Future<String?> exportClassScheduleToIcs({
+  required String rawfilePath,
+  required String savefileName,
+  required DateTime semesterStartDate,
+}) async {
   List courseScheduleItemsList = [];
 
   final rawData = await CachedDataStorage().getDecodedData(
@@ -37,8 +38,10 @@ Future<String?> exportClassScheduleToIcs(
     throw '课程信息为空/课程表文件格式错误';
   }
 
-  final String ics =
-      generateIcsFromSchedule(courseScheduleItemsList: courseScheduleItemsList);
+  final String ics = generateIcsFromSchedule(
+    courseScheduleItemsList: courseScheduleItemsList,
+    semesterStartDate: semesterStartDate,
+  );
 
   final String? filePath = await FilePicker.platform.saveFile(
     dialogTitle: '保存课程表日历文件到...',
@@ -61,6 +64,7 @@ Future<String?> exportClassScheduleToIcs(
 /// 将课程表数据转换为 .ics 字符串
 String generateIcsFromSchedule({
   required List courseScheduleItemsList,
+  required DateTime semesterStartDate,
   String prodId = '-//wyvern1723//Sachet//ZH',
   String domain = 'wyvernlab.com',
 }) {
@@ -92,6 +96,7 @@ String generateIcsFromSchedule({
           item: courseItem,
           week: week,
           courseLength: courseLength,
+          semesterStartDate: semesterStartDate,
         );
 
         final String uid = '${uuid.v4()}@$domain';

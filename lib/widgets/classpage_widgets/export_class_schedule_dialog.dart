@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/app_folder.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/export_to_ics.dart';
@@ -28,6 +30,10 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
   /// 当前 App 使用的课程表文件路径
   String _currentFilePath = '';
 
+  DateTime _currentSemesterStartDate =
+      DateTime.tryParse(SettingsProvider.semesterStartDate) ??
+          constSemesterStartDate;
+
   Future<void> _getClassScheduleFileList() async {
     String classScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
@@ -48,8 +54,11 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
 
   Future _exportToIcs(BuildContext context) async {
     try {
-      final filePath = await exportClassScheduleToIcs(_selectedFilePath!,
-          path.basenameWithoutExtension(_selectedFilePath!));
+      final filePath = await exportClassScheduleToIcs(
+        rawfilePath: _selectedFilePath!,
+        savefileName: path.basenameWithoutExtension(_selectedFilePath!),
+        semesterStartDate: _currentSemesterStartDate,
+      );
 
       if (!context.mounted) {
         return;
@@ -82,6 +91,25 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
     }
   }
 
+  /// 设置导出为 .ics 时使用的开学日期
+  Future _updateSemesterStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      locale: const Locale('zh', 'CN'),
+      initialDate: _currentSemesterStartDate,
+      firstDate: DateTime(1958, 6),
+      lastDate: DateTime(2077, 12),
+      selectableDayPredicate: (DateTime val) => val.weekday == 1 ? true : false,
+      helpText: '选择学期开始日期（第一周/预备周 周一）',
+    );
+
+    if (!context.mounted) return;
+
+    if (picked != null) {
+      setState(() => _currentSemesterStartDate = picked);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,25 +118,60 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return AlertDialog(
-      title: const Text('导出课表到 .ics 文件'),
-      content: DropdownMenu<String>(
-        width: double.infinity,
-        menuHeight: 400,
-        initialSelection: _selectedFilePath,
-        requestFocusOnTap: false,
-        label: const Text('课程表数据文件'),
-        onSelected: (String? filePath) {
-          if (filePath != null) {
-            setState(() => _selectedFilePath = filePath);
-          }
-        },
-        dropdownMenuEntries: _filesPathList
-            .map((e) => DropdownMenuEntry<String>(
-                value: e.path,
-                label:
-                    '${path.basename(e.path)}${_currentFilePath == e.path ? ' (当前)' : ''}'))
-            .toList(),
+      title: Text('导出课表到 .ics 日历文件'),
+      titleTextStyle: textTheme.titleLarge,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownMenu<String>(
+            width: double.infinity,
+            menuHeight: 400,
+            initialSelection: _selectedFilePath,
+            requestFocusOnTap: false,
+            label: const Text('课程表数据文件'),
+            onSelected: (String? filePath) {
+              if (filePath != null) {
+                setState(() => _selectedFilePath = filePath);
+              }
+            },
+            dropdownMenuEntries: _filesPathList
+                .map((e) => DropdownMenuEntry<String>(
+                    value: e.path,
+                    label:
+                        '${path.basename(e.path)}${_currentFilePath == e.path ? ' (当前)' : ''}'))
+                .toList(),
+          ),
+          SizedBox(height: 12),
+          InputDecorator(
+            decoration: InputDecoration(
+              isDense: true,
+              labelText: '学期开始日期（第一周/预备周 周一）',
+              border: OutlineInputBorder(),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  DateFormat('yyyy-MM-dd').format(_currentSemesterStartDate),
+                  style: textTheme.bodyLarge,
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await _updateSemesterStartDate(context);
+                  },
+                  icon: Icon(
+                    Icons.edit_calendar_outlined,
+                    // color: colorScheme.onSurfaceVariant,
+                    color: colorScheme.onSurface,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
       contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 24.0),
       actions: [
@@ -118,8 +181,8 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
         ),
         TextButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
           ),
           onPressed:
               _selectedFilePath == null ? null : () => _exportToIcs(context),
