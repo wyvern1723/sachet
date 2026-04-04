@@ -30,7 +30,7 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
     }
   }
 
-  Future<List<FreeClassroomDataZF>> getFreeClassData() async {
+  Future<List<FreeClassroomDataZF>> getFreeClassroomData() async {
     final result = await context
         .read<FreeClassroomPageZFProvider>()
         .getData(cookie: ZhengFangUserProvider.cookie);
@@ -42,7 +42,7 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
   void onGoBack(dynamic value) {
     if (value == true) {
       setState(() {
-        future = getFreeClassData();
+        future = getFreeClassroomData();
       });
     }
   }
@@ -50,7 +50,7 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
   @override
   void initState() {
     super.initState();
-    future = getFreeClassData();
+    future = getFreeClassroomData();
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {

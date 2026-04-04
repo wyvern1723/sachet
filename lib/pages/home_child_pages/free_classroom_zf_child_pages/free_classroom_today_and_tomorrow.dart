@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:sachet/providers/free_class_page_provider.dart';
+import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
@@ -12,7 +12,7 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filte
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_full_day.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
 import 'package:sachet/utils/utils_funtions.dart';
-import 'package:sachet/widgets/homepage_widgets/free_class_page_widgets/filter_fab.dart';
+import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
@@ -22,7 +22,7 @@ class FreeClassroomTodayAndTomorrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => FreeClassPageProvider(),
+      create: (_) => FreeClassroomPageProvider(),
       child: FreeClassroomTodayAndTomorrowView(),
     );
   }
@@ -331,12 +331,12 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
       );
       if (!mounted) return [];
       context
-          .read<FreeClassPageProvider>()
+          .read<FreeClassroomPageProvider>()
           .setAllClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
       context
-          .read<FreeClassPageProvider>()
+          .read<FreeClassroomPageProvider>()
           .setClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
-      context.read<FreeClassPageProvider>().setHasData();
+      context.read<FreeClassroomPageProvider>().setHasData();
 
       return freeClassroomData;
     } else if (date != null) {
@@ -350,12 +350,12 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
       );
       if (!mounted) return [];
       context
-          .read<FreeClassPageProvider>()
+          .read<FreeClassroomPageProvider>()
           .setAllClassroomsDataForOtherDay(freeClassroomData);
       context
-          .read<FreeClassPageProvider>()
+          .read<FreeClassroomPageProvider>()
           .setClassroomsDataForOtherDay(freeClassroomData);
-      context.read<FreeClassPageProvider>().setHasData();
+      context.read<FreeClassroomPageProvider>().setHasData();
 
       return freeClassroomData;
     } else {
@@ -557,13 +557,12 @@ class _BodyOfTodayOrTomorrow extends StatelessWidget {
     late List freeClassroomsData;
     switch (day) {
       case Day.today:
-        freeClassroomsData = context.select<FreeClassPageProvider, List>(
-            (freeClassPageProvider) => freeClassPageProvider.filteredDataToday);
+        freeClassroomsData = context.select<FreeClassroomPageProvider, List>(
+            (provider) => provider.filteredDataToday);
         break;
       case Day.tomorrow:
-        freeClassroomsData = context.select<FreeClassPageProvider, List>(
-            (freeClassPageProvider) =>
-                freeClassPageProvider.filteredDataTomorrow);
+        freeClassroomsData = context.select<FreeClassroomPageProvider, List>(
+            (provider) => provider.filteredDataTomorrow);
         break;
     }
     return ListView.builder(
@@ -598,9 +597,8 @@ class _BodyOfOtherDay extends StatelessWidget {
 
     late List freeClassroomsData;
 
-    freeClassroomsData = context.select<FreeClassPageProvider, List>(
-        (freeClassPageProvider) =>
-            freeClassPageProvider.filteredDataOtherDays[index]);
+    freeClassroomsData = context.select<FreeClassroomPageProvider, List>(
+        (provider) => provider.filteredDataOtherDays[index]);
 
     return ListView.builder(
       controller: scrollController,

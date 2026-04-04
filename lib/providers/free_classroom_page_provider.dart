@@ -30,7 +30,7 @@ Map<String, String> classRoomFilter = {
   '其他': '其他'
 };
 
-class FreeClassPageProvider extends ChangeNotifier {
+class FreeClassroomPageProvider extends ChangeNotifier {
   /// 完整的(未经筛选的)今日空闲教室数据
   late List<List<String>> _allDataToday;
 
@@ -278,7 +278,7 @@ class FreeClassPageProvider extends ChangeNotifier {
   }
 
   /// 在教室筛选列表添加一项
-  void addClassRoomFilter(String value) {
+  void addClassroomFilter(String value) {
     List<String> newList = List.of(_selectedRoomFilters);
     newList.add(value);
     _selectedRoomFilters = newList;
@@ -286,7 +286,7 @@ class FreeClassPageProvider extends ChangeNotifier {
   }
 
   /// 在教室筛选列表移除一项
-  void removeClassRoomFilter(String value) {
+  void removeClassroomFilter(String value) {
     List<String> newList = List.of(_selectedRoomFilters);
     newList.remove(value);
     _selectedRoomFilters = newList;
@@ -294,14 +294,14 @@ class FreeClassPageProvider extends ChangeNotifier {
   }
 
   /// 把全部教室可筛选数据都加入教室筛选列表
-  void addAllToClassRoomFilters() {
+  void addAllToClassroomFilters() {
     List<String> newList = classRoomFilter.values.toList();
     _selectedRoomFilters = newList;
     notifyListeners();
   }
 
   /// 清除教室筛选列表
-  void clearClassRoomFilters() {
+  void clearClassroomFilters() {
     List<String> newList = [];
     _selectedRoomFilters = newList;
     notifyListeners();

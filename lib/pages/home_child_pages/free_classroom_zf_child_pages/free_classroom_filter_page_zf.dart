@@ -8,7 +8,7 @@ import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/c
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_week_count.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_weekday.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_session.dart';
-// import 'package:sachet/widgets/homepage_widgets/free_class_zf_page_widgets/choose_campus.dart';
+// import 'package:sachet/widgets/homepage_widgets/free_classroom_zf_page_widgets/choose_campus.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_teaching_building.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_place_type.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_seat_amount.dart';

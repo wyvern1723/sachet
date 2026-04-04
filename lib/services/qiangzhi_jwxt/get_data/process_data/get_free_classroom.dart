@@ -1,4 +1,4 @@
-import 'package:sachet/providers/free_class_page_provider.dart';
+import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_free_classroom.dart';
 import 'package:html/parser.dart';
 

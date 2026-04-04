@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/providers/free_class_page_provider.dart';
+import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:provider/provider.dart';
 
 /// 空闲教室页面的筛选 FloatingActionButton
@@ -9,9 +9,10 @@ class FilterFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasData = context.select<FreeClassPageProvider, bool>(
-        (freeClassPageProvider) => freeClassPageProvider.hasData);
-    final freeClassPageProvider = context.watch<FreeClassPageProvider>();
+    bool hasData = context.select<FreeClassroomPageProvider, bool>(
+        (provider) => provider.hasData);
+    final freeClassroomPageProvider =
+        context.watch<FreeClassroomPageProvider>();
     if (hasData) {
       return FloatingActionButton(
         child: Icon(Icons.filter_alt_outlined),
@@ -20,7 +21,7 @@ class FilterFAB extends StatelessWidget {
             context: context,
             isScrollControlled: true,
             builder: (context) => ChangeNotifierProvider.value(
-              value: freeClassPageProvider,
+              value: freeClassroomPageProvider,
               builder: (context, _) {
                 return BottomSheet(
                   onClosing: () {},
@@ -46,46 +47,50 @@ class FilterFAB extends StatelessWidget {
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
-                                child: Selector<FreeClassPageProvider, bool>(
-                                    selector:
-                                        (context, freeClassPageProvider) =>
-                                            freeClassPageProvider
+                                child:
+                                    Selector<FreeClassroomPageProvider, bool>(
+                                        selector: (context, provider) =>
+                                            provider
                                                 .isClassroomFiltersAllSelected,
-                                    builder: (context,
-                                        isClassRoomFlitersAllSelected, __) {
-                                      if (!isClassRoomFlitersAllSelected) {
-                                        return TextButton(
-                                          onPressed: () {
-                                            context
-                                                .read<FreeClassPageProvider>()
-                                                .addAllToClassRoomFilters();
-                                            context
-                                                .read<FreeClassPageProvider>()
-                                                .filter();
-                                          },
-                                          child: Text('全选'),
-                                        );
-                                      } else {
-                                        return TextButton(
-                                          onPressed: () {
-                                            context
-                                                .read<FreeClassPageProvider>()
-                                                .clearClassRoomFilters();
-                                            context
-                                                .read<FreeClassPageProvider>()
-                                                .filter();
-                                          },
-                                          child: Text('取消全选'),
-                                        );
-                                      }
-                                    }),
+                                        builder: (context,
+                                            isClassroomFlitersAllSelected, __) {
+                                          if (!isClassroomFlitersAllSelected) {
+                                            return TextButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<
+                                                        FreeClassroomPageProvider>()
+                                                    .addAllToClassroomFilters();
+                                                context
+                                                    .read<
+                                                        FreeClassroomPageProvider>()
+                                                    .filter();
+                                              },
+                                              child: Text('全选'),
+                                            );
+                                          } else {
+                                            return TextButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<
+                                                        FreeClassroomPageProvider>()
+                                                    .clearClassroomFilters();
+                                                context
+                                                    .read<
+                                                        FreeClassroomPageProvider>()
+                                                    .filter();
+                                              },
+                                              child: Text('取消全选'),
+                                            );
+                                          }
+                                        }),
                               ),
                             ),
                           ],
                         ),
-                        Selector<FreeClassPageProvider, List<String>>(
-                            selector: (context, freeClassPageProvider) =>
-                                freeClassPageProvider.selectedRoomFilters,
+                        Selector<FreeClassroomPageProvider, List<String>>(
+                            selector: (context, provider) =>
+                                provider.selectedRoomFilters,
                             builder: (context, classRoomFilters, __) {
                               return Wrap(
                                 spacing: 4.0,
@@ -97,16 +102,16 @@ class FilterFAB extends StatelessWidget {
                                     onSelected: (bool selected) {
                                       if (selected) {
                                         context
-                                            .read<FreeClassPageProvider>()
-                                            .addClassRoomFilter(filter.value);
+                                            .read<FreeClassroomPageProvider>()
+                                            .addClassroomFilter(filter.value);
                                       } else {
                                         context
-                                            .read<FreeClassPageProvider>()
-                                            .removeClassRoomFilter(
+                                            .read<FreeClassroomPageProvider>()
+                                            .removeClassroomFilter(
                                                 filter.value);
                                       }
                                       context
-                                          .read<FreeClassPageProvider>()
+                                          .read<FreeClassroomPageProvider>()
                                           .filter();
                                     },
                                   );
@@ -129,7 +134,7 @@ class FilterFAB extends StatelessWidget {
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
-                                child: Selector<FreeClassPageProvider,
+                                child: Selector<FreeClassroomPageProvider,
                                         SessionFilterMode>(
                                     selector: (context,
                                             freeClassPageProvider) =>
@@ -153,10 +158,10 @@ class FilterFAB extends StatelessWidget {
                                           // selected at one time, so its value is always the first
                                           // item in the selected set.
                                           context
-                                              .read<FreeClassPageProvider>()
+                                              .read<FreeClassroomPageProvider>()
                                               .setSessionFilterMode(mode.first);
                                           context
-                                              .read<FreeClassPageProvider>()
+                                              .read<FreeClassroomPageProvider>()
                                               .filter();
                                         },
                                         style: const ButtonStyle(
@@ -172,9 +177,9 @@ class FilterFAB extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 4.0),
-                        Selector<FreeClassPageProvider, List<int>>(
-                            selector: (context, freeClassPageProvider) =>
-                                freeClassPageProvider.selectedSessionFilters,
+                        Selector<FreeClassroomPageProvider, List<int>>(
+                            selector: (context, provider) =>
+                                provider.selectedSessionFilters,
                             builder: (context, sessionFilters, __) {
                               return Wrap(
                                 spacing: 4.0,
@@ -186,15 +191,15 @@ class FilterFAB extends StatelessWidget {
                                     onSelected: (bool selected) {
                                       if (selected) {
                                         context
-                                            .read<FreeClassPageProvider>()
+                                            .read<FreeClassroomPageProvider>()
                                             .addSessionFilter(filter.value);
                                       } else {
                                         context
-                                            .read<FreeClassPageProvider>()
+                                            .read<FreeClassroomPageProvider>()
                                             .removeSessionFilter(filter.value);
                                       }
                                       context
-                                          .read<FreeClassPageProvider>()
+                                          .read<FreeClassroomPageProvider>()
                                           .filter();
                                     },
                                   );
@@ -210,7 +215,7 @@ class FilterFAB extends StatelessWidget {
                               child: TextButton(
                                 onPressed: () {
                                   context
-                                      .read<FreeClassPageProvider>()
+                                      .read<FreeClassroomPageProvider>()
                                       .clearFilters();
                                   Navigator.of(context).pop();
                                 },

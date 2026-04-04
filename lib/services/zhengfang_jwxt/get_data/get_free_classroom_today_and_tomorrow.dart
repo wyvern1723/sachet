@@ -1,7 +1,7 @@
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/free_classroom_data_zf.dart';
 import 'package:sachet/models/free_classroom_request_data.dart';
-import 'package:sachet/providers/free_class_page_provider.dart';
+import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
