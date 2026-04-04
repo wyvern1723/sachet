@@ -63,6 +63,41 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                     DateTime.parse(SettingsProvider.semesterStartDate)) -
                 1,
           );
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('注意'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('课表导入后将使用离线数据，课程表数据不会自动更新。'),
+                SizedBox(height: 2),
+                Text('如发生以下情况，请手动重新获取：'),
+                SizedBox(height: 10),
+                Text(
+                  '• 完成选课\n'
+                  '• 完成体育选课\n'
+                  '• 修改选课\n'
+                  '• 教师在教务系统调课\n'
+                  '• 进入新学期',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('我知道了'),
+            )
+          ],
+        ),
+      );
+    }
+
+    if (!context.mounted) {
+      return;
     }
 
     final String newClassScheduleFilePath =
