@@ -9,9 +9,9 @@ import 'package:sachet/widgets/classpage_widgets/class_session_routine_column.da
 import 'package:sachet/widgets/classpage_widgets/course_card.dart';
 import 'package:sachet/widgets/classpage_widgets/day_of_the_week_topbar.dart';
 
-class ClassSinglePage extends StatefulWidget {
-  /// 为每周创建一个 ClassSinglePage
-  const ClassSinglePage({
+class SingleWeekPage extends StatefulWidget {
+  /// 为每周创建一个 SingleWeekPage
+  const SingleWeekPage({
     super.key,
     required this.weekCount,
     required this.courseScheduleItemsList,
@@ -21,14 +21,14 @@ class ClassSinglePage extends StatefulWidget {
   });
   final int weekCount;
   final List? courseScheduleItemsList;
-  final Map courseColorData;
-  final List classSessionSummerDataList;
-  final List classSessionWinterDataList;
+  final Map? courseColorData;
+  final List? classSessionSummerDataList;
+  final List? classSessionWinterDataList;
   @override
-  State<ClassSinglePage> createState() => _ClassSinglePageState();
+  State<SingleWeekPage> createState() => _SingleWeekPageState();
 }
 
-class _ClassSinglePageState extends State<ClassSinglePage> {
+class _SingleWeekPageState extends State<SingleWeekPage> {
   @override
   Widget build(BuildContext context) {
     // 判断日期，如果在 5/1 - 9/30 采用夏季作息时间，其他的采用冬季作息时间

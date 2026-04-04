@@ -10,16 +10,16 @@ class ClassSessionRoutineColumn extends StatelessWidget {
     required this.routinedata,
   });
   final int weekCount;
-  final List routinedata;
+  final List? routinedata;
 
   List<Widget> _getListings() {
     List<Widget> listings = [];
     int i = 0;
     for (i = 0; i < 11; i++) {
       listings.add(ClassSession(
-        session: routinedata[i]["session"],
-        startTime: routinedata[i]["startTime"],
-        endTime: routinedata[i]["endTime"],
+        session: routinedata?[i]["session"],
+        startTime: routinedata?[i]["startTime"],
+        endTime: routinedata?[i]["endTime"],
       ));
     }
     return listings;

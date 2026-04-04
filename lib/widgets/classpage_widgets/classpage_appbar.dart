@@ -10,6 +10,7 @@ import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/month_count_dropdown_menu.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
@@ -150,8 +151,44 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
       //   "第$_currentWeekCount周",
       // ),
       titleSpacing: 16.0,
-      title: WeekCountDropdownMenu(),
+      title: Selector<ClassPageProvider, ClassScheduleViewMode>(
+          selector: (_, provider) => provider.currentViewMode,
+          builder: (_, currentViewMode, __) {
+            switch (currentViewMode) {
+              case ClassScheduleViewMode.week:
+                return WeekCountDropdownMenu();
+              case ClassScheduleViewMode.month:
+                return MonthCountDropdownMenu();
+            }
+          }),
       actions: [
+        /// 切换周/月视图
+        // TODO: 更新设计
+        Selector<ClassPageProvider, ClassScheduleViewMode>(
+            selector: (_, provider) => provider.currentViewMode,
+            builder: (_, currentViewMode, __) {
+              switch (currentViewMode) {
+                case ClassScheduleViewMode.week:
+                  return IconButton(
+                    icon: const Icon(Icons.calendar_view_month),
+                    tooltip: '切换到月视图',
+                    onPressed: () => context
+                        .read<ClassPageProvider>()
+                        .updateClassScheduleViewMode(
+                            ClassScheduleViewMode.month),
+                  );
+                case ClassScheduleViewMode.month:
+                  return IconButton(
+                    icon: const Icon(Icons.calendar_view_week),
+                    tooltip: '切换到周视图',
+                    onPressed: () => context
+                        .read<ClassPageProvider>()
+                        .updateClassScheduleViewMode(
+                            ClassScheduleViewMode.week),
+                  );
+              }
+            }),
+
         // 是否显示翻页箭头
         // 上一周
         Selector<SettingsProvider, bool>(
@@ -239,12 +276,23 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
             // 课表设置
             PopupMenuItem(
               onTap: () async {
-                Navigator.of(context).push(MaterialPageRoute(
+                final semesterStartDate = SettingsProvider.semesterStartDate;
+                await Navigator.of(context).push(MaterialPageRoute(
                   maintainState: false,
                   builder: (BuildContext context) {
                     return const CourseSettingsPage();
                   },
                 ));
+                final newSmesterStartDate = SettingsProvider.semesterStartDate;
+                if (semesterStartDate != newSmesterStartDate) {
+                  if (!context.mounted) {
+                    return;
+                  }
+                  context.read<ClassPageProvider>().updateMonthList();
+                  context
+                      .read<ClassPageProvider>()
+                      .updateCurrentMonth(DateTime.now().month);
+                }
               },
               child: Row(children: [
                 Icon(Icons.tune_outlined,

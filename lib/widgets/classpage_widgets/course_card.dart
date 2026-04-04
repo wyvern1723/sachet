@@ -9,13 +9,17 @@ import 'package:provider/provider.dart';
 import '../../utils/transform.dart';
 import 'course_card_item.dart';
 
+enum CourseCardVariant { normal, compact }
+
 class CourseCard extends StatelessWidget {
   final double cardHeight;
   final int weekCount;
   final int weekday;
   final int classCount; // classCount 节次（ 1~5 ）
   final List<CourseSchedule> courseScheduleItems;
-  final Map courseColorData;
+  final Map? courseColorData;
+  final CourseCardVariant variant;
+
   const CourseCard({
     super.key,
     required this.cardHeight,
@@ -24,7 +28,18 @@ class CourseCard extends StatelessWidget {
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
+    this.variant = CourseCardVariant.normal,
   });
+
+  const CourseCard.compact({
+    super.key,
+    required this.cardHeight,
+    required this.weekCount,
+    required this.weekday,
+    required this.classCount,
+    required this.courseScheduleItems,
+    required this.courseColorData,
+  }) : variant = CourseCardVariant.compact;
 
   void _showCourseDetails({
     required BuildContext context,
@@ -146,23 +161,38 @@ class CourseCard extends StatelessWidget {
         return SizedBox();
       }
 
-      return CourseCardWidget(
-          courseColorData: courseColorData,
-          courseSchedule: courseSchedule,
-          onTap: (_) {
-            _showCourseDetails(
-              context: context,
-              courseTitle: courseSchedule.title ?? '',
-              weekday: weekday,
-              classcount: classCount,
-            );
-          });
+      switch (variant) {
+        case CourseCardVariant.normal:
+          return CourseCardNormal(
+              courseColorData: courseColorData,
+              courseSchedule: courseSchedule,
+              onTap: (_) {
+                _showCourseDetails(
+                  context: context,
+                  courseTitle: courseSchedule.title ?? '',
+                  weekday: weekday,
+                  classcount: classCount,
+                );
+              });
+        case CourseCardVariant.compact:
+          return CourseCardCompact(
+              courseColorData: courseColorData,
+              courseSchedule: courseSchedule,
+              onTap: (_) {
+                _showCourseDetails(
+                  context: context,
+                  courseTitle: courseSchedule.title ?? '',
+                  weekday: weekday,
+                  classcount: classCount,
+                );
+              });
+      }
     }
   }
 }
 
-class CourseCardWidget extends StatelessWidget {
-  const CourseCardWidget({
+class CourseCardNormal extends StatelessWidget {
+  const CourseCardNormal({
     super.key,
     required this.courseSchedule,
     required this.courseColorData,
@@ -170,7 +200,7 @@ class CourseCardWidget extends StatelessWidget {
     this.onTap,
   });
   final CourseSchedule courseSchedule;
-  final Map courseColorData;
+  final Map? courseColorData;
   final double? cardHeight;
   final Function? onTap;
 
@@ -197,7 +227,7 @@ class CourseCardWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(cardBorderRadius),
         ),
-        color: (courseColorData[courseSchedule.title]).toString().toColor() ??
+        color: (courseColorData?[courseSchedule.title]).toString().toColor() ??
             Colors.green.shade400,
         child: InkWell(
           onTap: () {
@@ -232,6 +262,69 @@ class CourseCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CourseCardCompact extends StatelessWidget {
+  const CourseCardCompact({
+    super.key,
+    required this.courseSchedule,
+    required this.courseColorData,
+    this.cardHeight,
+    this.onTap,
+  });
+  final CourseSchedule courseSchedule;
+  final Map? courseColorData;
+  final double? cardHeight;
+  final Function? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    double? _cardHeight = cardHeight;
+    _cardHeight ??= 10;
+    var courseCardSettings = context.watch<CourseCardSettingsProvider>();
+
+    double cardBorderRadius =
+        context.select<CourseCardSettingsProvider, double>(
+            (courseCardSettingsProvider) =>
+                courseCardSettingsProvider.cardBorderRadius);
+    double cardMargin = 1.0;
+    return SizedBox(
+      width: double.infinity,
+      height: _cardHeight * (courseSchedule.length ?? 2),
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        margin: EdgeInsets.all(cardMargin),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(cardBorderRadius),
+        ),
+        color: (courseColorData?[courseSchedule.title]).toString().toColor() ??
+            Colors.green.shade400,
+        child: InkWell(
+          onTap: () {
+            var onTapFunc = onTap;
+            if (onTapFunc != null) {
+              onTapFunc(true);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+            child: Text(
+              courseSchedule.title ?? '',
+              style: TextStyle(
+                fontWeight: intToFontWeight(courseCardSettings.titleFontWeight),
+                fontSize: 10,
+                color: colorFromHex(courseCardSettings.titleTextColor),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
