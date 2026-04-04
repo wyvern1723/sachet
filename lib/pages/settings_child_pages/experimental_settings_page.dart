@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/models/permission_check_item.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/experimental_settings_widgets/check_list_tile.dart';
 import 'package:sachet/widgets/settingspage_widgets/experimental_settings_widgets/compact_error_tile.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
@@ -1073,6 +1074,24 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
       body: ListView(
         children: [
           if (defaultTargetPlatform == TargetPlatform.android) ...[
+            MaterialBanner(
+              content: Text(
+                '部分系统会限制后台通知，导致无法正常发送通知。\n'
+                '建议导出课表为 .ics 文件 → 导入到系统日历软件，享受稳定可靠的系统级提醒',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => ExportClassScheduleDialog(),
+                    );
+                  },
+                  child: Text('去导出'),
+                )
+              ],
+              padding: EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 4.0, 8.0),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
               child: SettingsSectionTitle(
