@@ -28,9 +28,9 @@ class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _ClassPageAppBarState extends State<ClassPageAppBar> {
   Future switchClassSchedules(BuildContext context) async {
-    String classScheduleFilePath =
+    final String classScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
-    var result = await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) => SwitchActivedAppFileDialog(
         dialogTitle: '选择课表',
@@ -38,6 +38,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
         settingsFilePath: classScheduleFilePath,
       ),
     );
+
+    if (!context.mounted) return;
+
     if (result is String) {
       context.read<SettingsProvider>().setClassScheduleFilePath(result);
     } else if (result == true) {
@@ -52,7 +55,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final String oldClassScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
 
-    bool? result = await showDialog(
+    final bool? result = await showDialog(
       context: context,
       builder: (BuildContext context) => const UpdateClassScheduleZFDialog(),
     );
@@ -108,9 +111,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 去上一周
-  void navToLastWeek() {
-    var classPageModel = context.read<ClassPageProvider>();
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToLastWeek(BuildContext context) {
+    final classPageModel = context.read<ClassPageProvider>();
+    final settingsProvider = context.read<SettingsProvider>();
 
     // classPageModel.decrementCurrentWeekCount();
     // 第一个 -1 表示上一周，第二个 -1 是周次到 pagelist 序号的转换（第一周 => 第0页）
@@ -121,9 +124,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 去下一周
-  void navToNextWeek() {
-    var classPageModel = context.read<ClassPageProvider>();
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToNextWeek(BuildContext context) {
+    final classPageModel = context.read<ClassPageProvider>();
+    final settingsProvider = context.read<SettingsProvider>();
 
     // classPageModel.incrementCurrentWeekCount();
     // +1 表示下一周，-1 是周次到 pagelist 序号的转换（第一周 => 第0页）
@@ -134,14 +137,41 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 回到本周
-  void navToThisWeek() {
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToThisWeek(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
     // context.read<ClassPageModel>().resetCurrentWeekCount();
     context.read<ClassPageProvider>().pageController.animateToPage(
         weekCountOfToday(DateTime.parse(SettingsProvider.semesterStartDate)) -
             1,
         duration: Duration(milliseconds: settingsProvider.curveDuration),
         curve: curveTypes[settingsProvider.curveType] ?? Easing.standard);
+  }
+
+  /// 去上个月
+  void navToLastMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToLastMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
+  }
+
+  /// 去下个月
+  void navToNextMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToNextMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
+  }
+
+  /// 回到本月
+  void navToThisMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToTodayMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
   }
 
   @override
@@ -189,46 +219,75 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               }
             }),
 
-        // 是否显示翻页箭头
-        // 上一周
+        // 上一页（上一周/上个月）和下一页（下一周/下个月）的翻页箭头（方便大屏设备/桌面端）
         Selector<SettingsProvider, bool>(
             selector: (_, settingsProvider) =>
                 settingsProvider.isShowPageTurnArrow,
             builder: (_, isShowPageTurnArrow, __) {
+              // 是否显示翻页箭头
               if (isShowPageTurnArrow) {
-                return IconButton(
-                    icon: const Icon(Icons.skip_previous_outlined),
-                    tooltip: '上一周',
-                    onPressed: () {
-                      navToLastWeek();
+                return Selector<ClassPageProvider, ClassScheduleViewMode>(
+                    selector: (_, classPageProvider) =>
+                        classPageProvider.currentViewMode,
+                    builder: (_, currentViewMode, __) {
+                      switch (currentViewMode) {
+                        case ClassScheduleViewMode.week:
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.skip_previous_outlined),
+                                tooltip: '上一周',
+                                onPressed: () => navToLastWeek(context),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.skip_next_outlined),
+                                tooltip: '下一周',
+                                onPressed: () => navToNextWeek(context),
+                              ),
+                            ],
+                          );
+                        case ClassScheduleViewMode.month:
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.skip_previous_outlined),
+                                tooltip: '上个月',
+                                onPressed: () => navToLastMonth(context),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.skip_next_outlined),
+                                tooltip: '下个月',
+                                onPressed: () => navToNextMonth(context),
+                              ),
+                            ],
+                          );
+                      }
                     });
               } else {
                 return SizedBox();
               }
             }),
 
-        // 下一周
-        Selector<SettingsProvider, bool>(
-            selector: (_, settingsProvider) =>
-                settingsProvider.isShowPageTurnArrow,
-            builder: (_, isShowPageTurnArrow, __) {
-              if (isShowPageTurnArrow) {
-                return IconButton(
-                    icon: const Icon(Icons.skip_next_outlined),
-                    tooltip: '下一周',
-                    onPressed: () {
-                      navToNextWeek();
-                    });
-              } else {
-                return SizedBox();
+        // 回到今天（回到本周/回到本月）
+        Selector<ClassPageProvider, ClassScheduleViewMode>(
+            selector: (_, provider) => provider.currentViewMode,
+            builder: (_, currentViewMode, __) {
+              switch (currentViewMode) {
+                case ClassScheduleViewMode.week:
+                  return IconButton(
+                    icon: const Icon(Icons.today),
+                    tooltip: '回到本周',
+                    onPressed: () => navToThisWeek(context),
+                  );
+                case ClassScheduleViewMode.month:
+                  return IconButton(
+                    icon: const Icon(Icons.today),
+                    tooltip: '回到本月',
+                    onPressed: () => navToThisMonth(context),
+                  );
               }
-            }),
-        // 回到今天
-        IconButton(
-            icon: const Icon(Icons.today),
-            tooltip: '回到本周',
-            onPressed: () {
-              navToThisWeek();
             }),
 
         PopupMenuButton(

@@ -140,6 +140,7 @@ class ClassPageProvider extends ChangeNotifier {
     updateCurrentMonth(_currentMonth);
   }
 
+  /// 动画跳到指定月（通过月份）
   void animateToMonth({required int month, Duration? duration, Curve? curve}) {
     final index = monthList.firstWhereOrNull((e) => e.month == month)?.index;
     if (index == null) {
@@ -153,6 +154,48 @@ class ClassPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 动画跳到指定月（通过 Index）
+  void animateToMonthIndex(
+      {required int monthIndex, Duration? duration, Curve? curve}) {
+    pageController.animateToPage(
+      monthIndex,
+      duration: duration ?? Duration(milliseconds: 1500),
+      curve: curve ?? Easing.standard,
+    );
+    notifyListeners();
+  }
+
+  /// 动画跳到上个月
+  void animateToLastMonth({Duration? duration, Curve? curve}) {
+    final currentMonthIndex =
+        monthList.firstWhereOrNull((e) => e.month == _currentMonth)?.index;
+    if (currentMonthIndex == null) {
+      return;
+    }
+    final lastMonthIndex = currentMonthIndex - 1;
+    animateToMonthIndex(
+        monthIndex: lastMonthIndex, duration: duration, curve: curve);
+  }
+
+  /// 动画跳到下个月
+  void animateToNextMonth({Duration? duration, Curve? curve}) {
+    final currentMonthIndex =
+        monthList.firstWhereOrNull((e) => e.month == _currentMonth)?.index;
+    if (currentMonthIndex == null) {
+      return;
+    }
+    final nextMonthIndex = currentMonthIndex + 1;
+    animateToMonthIndex(
+        monthIndex: nextMonthIndex, duration: duration, curve: curve);
+  }
+
+  /// 回到本月（今天所在的月份）
+  void animateToTodayMonth({Duration? duration, Curve? curve}) {
+    final int todayMonth = DateTime.now().month;
+    animateToMonth(month: todayMonth, duration: duration, curve: curve);
+  }
+
+  /// 无动画跳到指定月
   void jumpToMonth({required int month, Duration? duration, Curve? curve}) {
     final newIndex = monthList.firstWhereOrNull((e) => e.month == month)?.index;
     if (newIndex == null) {
