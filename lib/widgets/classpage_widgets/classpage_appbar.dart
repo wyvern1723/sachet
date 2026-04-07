@@ -176,10 +176,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AppBar(
-      // title: Text(
-      //   "第$_currentWeekCount周",
-      // ),
       titleSpacing: 16.0,
       title: Selector<ClassPageProvider, ClassScheduleViewMode>(
           selector: (_, provider) => provider.currentViewMode,
@@ -192,31 +191,16 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
             }
           }),
       actions: [
-        /// 切换周/月视图
-        // TODO: 更新设计
+        // 切换周/月视图
         Selector<ClassPageProvider, ClassScheduleViewMode>(
             selector: (_, provider) => provider.currentViewMode,
             builder: (_, currentViewMode, __) {
-              switch (currentViewMode) {
-                case ClassScheduleViewMode.week:
-                  return IconButton(
-                    icon: const Icon(Icons.calendar_view_month),
-                    tooltip: '切换到月视图',
-                    onPressed: () => context
-                        .read<ClassPageProvider>()
-                        .updateClassScheduleViewMode(
-                            ClassScheduleViewMode.month),
-                  );
-                case ClassScheduleViewMode.month:
-                  return IconButton(
-                    icon: const Icon(Icons.calendar_view_week),
-                    tooltip: '切换到周视图',
-                    onPressed: () => context
-                        .read<ClassPageProvider>()
-                        .updateClassScheduleViewMode(
-                            ClassScheduleViewMode.week),
-                  );
-              }
+              return ViewModeToggle(
+                currentViewMode: currentViewMode,
+                onModeChanged: (mode) => context
+                    .read<ClassPageProvider>()
+                    .updateClassScheduleViewMode(mode),
+              );
             }),
 
         // 上一页（上一周/上个月）和下一页（下一周/下个月）的翻页箭头（方便大屏设备/桌面端）
@@ -291,6 +275,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
             }),
 
         PopupMenuButton(
+          tooltip: '更多操作',
           itemBuilder: (context) => [
             // 更新课表
             PopupMenuItem(
@@ -298,8 +283,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 await showUpdateClassScheduleDialog(context);
               },
               child: Row(children: [
-                Icon(Icons.refresh,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.refresh, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('更新课表')
               ]),
@@ -311,7 +295,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               },
               child: Row(children: [
                 Icon(Icons.swap_horiz_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('切换课表'),
               ]),
@@ -326,8 +310,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 );
               },
               child: Row(children: [
-                Icon(Icons.share_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.share_outlined, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('导出课表')
               ]),
@@ -354,8 +337,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 }
               },
               child: Row(children: [
-                Icon(Icons.tune_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.tune_outlined, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('课表设置')
               ]),
@@ -363,6 +345,100 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class ViewModeToggle extends StatelessWidget {
+  final ClassScheduleViewMode currentViewMode;
+  final ValueChanged<ClassScheduleViewMode> onModeChanged;
+
+  /// 切换周/月视图
+  const ViewModeToggle({
+    super.key,
+    required this.currentViewMode,
+    required this.onModeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isWideScreen = screenWidth >= 600;
+
+        if (isWideScreen) {
+          // 宽屏：使用 SegmentedButton
+          return SegmentedButton<ClassScheduleViewMode>(
+            segments: const [
+              ButtonSegment(
+                value: ClassScheduleViewMode.week,
+                label: Text('周'),
+                icon: Icon(Icons.calendar_view_week),
+                tooltip: '周视图',
+              ),
+              ButtonSegment(
+                value: ClassScheduleViewMode.month,
+                label: Text('月'),
+                icon: Icon(Icons.calendar_view_month),
+                tooltip: '月视图',
+              ),
+            ],
+            selected: {currentViewMode},
+            onSelectionChanged: (selected) {
+              if (selected.isNotEmpty) {
+                onModeChanged(selected.first);
+              }
+            },
+            showSelectedIcon: false,
+            style: ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+          );
+        } else {
+          // 窄屏：使用 PopupMenuButton
+          return PopupMenuButton<ClassScheduleViewMode>(
+            icon: Icon(
+              currentViewMode == ClassScheduleViewMode.week
+                  ? Icons.calendar_view_week
+                  : Icons.calendar_view_month,
+            ),
+            tooltip: '切换视图',
+            itemBuilder: (context) => [
+              // 切换到周视图
+              PopupMenuItem(
+                value: ClassScheduleViewMode.week,
+                child: Row(children: [
+                  Icon(
+                    Icons.calendar_view_week,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('周视图'),
+                ]),
+              ),
+              // 切换到月视图
+              PopupMenuItem(
+                value: ClassScheduleViewMode.month,
+                child: Row(children: [
+                  Icon(
+                    Icons.calendar_view_month,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('月视图'),
+                ]),
+              ),
+            ],
+            onSelected: onModeChanged,
+          );
+        }
+      },
     );
   }
 }
