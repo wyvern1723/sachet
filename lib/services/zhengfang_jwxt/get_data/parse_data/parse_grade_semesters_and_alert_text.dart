@@ -83,6 +83,9 @@ import 'package:html/parser.dart';
       // 跳过
       continue;
     }
+    if (text.isEmpty) {
+      continue;
+    }
     alertTexts.add(text);
   }
 
