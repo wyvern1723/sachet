@@ -46,16 +46,38 @@ class WithNavigationBarView extends StatefulWidget {
 class _WithNavigationBarViewState extends State<WithNavigationBarView> {
   double? _scrollStartOffset;
 
-  bool _onScrollNotification(
-      ScrollNotification notification, bool isWideScreenMode) {
-    if (isWideScreenMode || notification.metrics.axis != Axis.vertical) {
+  bool _onScrollNotification(ScrollNotification notification,
+      bool isWideScreenMode, int currentPageIndex) {
+    if (isWideScreenMode) {
+      return false;
+    }
+
+    // 课程表水平滑动翻页时隐藏 NavBottom, 翻页结束显示 NavBottom
+    if (notification.metrics.axis == Axis.horizontal) {
+      if (currentPageIndex == 0) {
+        if (notification is ScrollStartNotification) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) context.read<ScreenNavProvider>().hideNavBottom();
+          });
+        } else if (notification is ScrollEndNotification) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+          });
+        }
+      }
+      return false;
+    }
+
+    if (notification.metrics.axis != Axis.vertical) {
       return false;
     }
 
     if (notification is UserScrollNotification) {
       if (notification.direction == ScrollDirection.reverse) {
         // 向下滚动立即隐藏 NavBottom
-        context.read<ScreenNavProvider>().hideNavBottom();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.read<ScreenNavProvider>().hideNavBottom();
+        });
         _scrollStartOffset = null;
       } else if (notification.direction == ScrollDirection.forward) {
         // 开始向上滚动，记录起始位置
@@ -64,7 +86,9 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
         // 如果已经滚动到顶部，立即显示 NavBottom
         final bool isAtTop = notification.metrics.pixels <= 0;
         if (isAtTop) {
-          context.read<ScreenNavProvider>().showNavBottom();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+          });
           _scrollStartOffset = null;
         }
       }
@@ -79,7 +103,9 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
         }
 
         if (isAtTop || distance >= 30.0) {
-          context.read<ScreenNavProvider>().showNavBottom();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+          });
           _scrollStartOffset = null;
         }
       }
@@ -117,8 +143,8 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
               ),
             Expanded(
               child: NotificationListener<ScrollNotification>(
-                onNotification: (notification) =>
-                    _onScrollNotification(notification, isWideScreenMode),
+                onNotification: (notification) => _onScrollNotification(
+                    notification, isWideScreenMode, currentPageIndex),
                 child: [
                   ClassPage(),
                   HomePage(),
