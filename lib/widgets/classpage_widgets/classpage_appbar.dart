@@ -14,6 +14,7 @@ import 'package:sachet/widgets/classpage_widgets/month_count_dropdown_menu.dart'
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
+import 'package:path/path.dart' as path;
 
 class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
   ClassPageAppBar({super.key})
@@ -216,6 +217,25 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
         curve: curveTypes[settingsProvider.curveType]);
   }
 
+  /// 从获取课表默认保存的文件名提取当前学期
+  ///
+  /// e.g.
+  ///
+  /// "class_schedule_2025-2026-2_20260404155500" => "2025-2026-2"
+  ///
+  /// "class_schedule_2025-2026-1_20250825111641" => "2025-2026-1"
+  String extractSemester(String filename) {
+    final regex = RegExp(r'class_schedule_(\d{4}-\d{4}-\d+)');
+    final match = regex.firstMatch(filename);
+
+    if (match != null && match.groupCount >= 1) {
+      return match.group(1)!;
+    }
+
+    // throw FormatException('无法从文件名 "$filename" 中提取学期信息');
+    return filename;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -230,6 +250,21 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 return WeekCountDropdownMenu();
               case ClassScheduleViewMode.month:
                 return MonthCountDropdownMenu();
+              case ClassScheduleViewMode.semester:
+                return Selector<SettingsProvider, String>(
+                    selector: (_, provider) => provider.classScheduleFilePath,
+                    builder: (_, classScheduleFilePath, __) {
+                      final String currentSemester = extractSemester(
+                        path.basenameWithoutExtension(classScheduleFilePath),
+                      );
+                      return Text(
+                        currentSemester,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      );
+                    });
             }
           }),
       actions: [
@@ -289,6 +324,8 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                               ),
                             ],
                           );
+                        case ClassScheduleViewMode.semester:
+                          return const SizedBox.shrink();
                       }
                     });
               } else {
@@ -313,6 +350,8 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                     tooltip: '回到本月',
                     onPressed: () => navToThisMonth(context),
                   );
+                case ClassScheduleViewMode.semester:
+                  return const SizedBox.shrink();
               }
             }),
 
@@ -427,6 +466,12 @@ class ViewModeToggle extends StatelessWidget {
                 icon: Icon(Icons.calendar_view_month),
                 tooltip: '月视图',
               ),
+              ButtonSegment(
+                value: ClassScheduleViewMode.semester,
+                label: Text('学期'),
+                icon: Icon(Icons.calendar_view_day),
+                tooltip: '学期视图',
+              ),
             ],
             selected: {currentViewMode},
             onSelectionChanged: (selected) {
@@ -448,7 +493,9 @@ class ViewModeToggle extends StatelessWidget {
             icon: Icon(
               currentViewMode == ClassScheduleViewMode.week
                   ? Icons.calendar_view_week
-                  : Icons.calendar_view_month,
+                  : currentViewMode == ClassScheduleViewMode.month
+                      ? Icons.calendar_view_month
+                      : Icons.view_compact_outlined,
             ),
             tooltip: '切换视图',
             itemBuilder: (context) => [
@@ -474,6 +521,18 @@ class ViewModeToggle extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   const Text('月视图'),
+                ]),
+              ),
+              // 切换到学期视图
+              PopupMenuItem(
+                value: ClassScheduleViewMode.semester,
+                child: Row(children: [
+                  Icon(
+                    Icons.view_compact_outlined,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('学期视图'),
                 ]),
               ),
             ],

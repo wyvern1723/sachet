@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/enums/nav_type.dart';
+import 'package:sachet/pages/class_child_pages/semester_view.dart';
 import 'package:sachet/pages/class_child_pages/single_month_page.dart';
 import 'package:sachet/pages/class_child_pages/single_week_page.dart';
 import 'package:sachet/utils/app_global.dart';
@@ -120,6 +121,10 @@ class ClassPageView extends StatelessWidget {
                 courseColorData: courseColorData,
                 classSessionSummerDataList: classSessionSummerDataList,
                 classSessionWinterDataList: classSessionWinterDataList,
+              );
+            case ClassScheduleViewMode.semester:
+              return SemesterView(
+                courseScheduleItemsList: courseScheduleItemsList,
               );
           }
         });
