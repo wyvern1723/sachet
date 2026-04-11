@@ -124,6 +124,7 @@ class ClassPageView extends StatelessWidget {
             case ClassScheduleViewMode.semester:
               return SemesterView(
                 courseScheduleItemsList: courseScheduleItemsList,
+                courseColorData: courseColorData,
               );
           }
         });

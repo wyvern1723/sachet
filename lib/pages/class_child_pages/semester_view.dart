@@ -4,13 +4,16 @@ import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
+import 'package:sachet/widgets/classpage_widgets/course_card.dart';
 
 class SemesterView extends StatefulWidget {
   final List<List<CourseSchedule>>? courseScheduleItemsList;
+  final Map? courseColorData;
 
   const SemesterView({
     super.key,
     this.courseScheduleItemsList,
+    this.courseColorData,
   });
 
   @override
@@ -33,7 +36,7 @@ class _SemesterViewState extends State<SemesterView> {
       },
       onScaleUpdate: (details) {
         setState(() {
-          _aspectRatio = (_baseAspectRatio / details.scale).clamp(0.4, 2.5);
+          _aspectRatio = (_baseAspectRatio / details.scale).clamp(0.3, 2.5);
         });
       },
       child: Padding(
@@ -114,6 +117,8 @@ class _SemesterViewState extends State<SemesterView> {
                                       courseScheduleItemsList:
                                           widget.courseScheduleItemsList!,
                                       semesterStartDate: semesterStartDate,
+                                      aspectRatio: _aspectRatio,
+                                      courseColorData: widget.courseColorData,
                                     );
                                   }),
                             ),
@@ -136,12 +141,16 @@ class _HeatmapCell extends StatelessWidget {
   final int weekday;
   final List<List<CourseSchedule>> courseScheduleItemsList;
   final String semesterStartDate;
+  final double aspectRatio;
+  final Map? courseColorData;
 
   const _HeatmapCell({
     required this.weekCount,
     required this.weekday,
     required this.courseScheduleItemsList,
     required this.semesterStartDate,
+    required this.aspectRatio,
+    this.courseColorData,
   });
 
   @override
@@ -174,23 +183,71 @@ class _HeatmapCell extends StatelessWidget {
       weekday: weekday,
     );
     final bool today = isToday(date);
+    final bool showCourse = aspectRatio < 0.7;
 
     return Container(
       margin: const EdgeInsets.all(2.0),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(4.0),
+        borderRadius: BorderRadius.circular(5.0),
         border: today ? Border.all(color: colorScheme.primary, width: 2) : null,
       ),
-      child: Center(
-        child: Text(
-          '${date.month}/${date.day}',
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: today ? FontWeight.bold : FontWeight.normal,
-            color: count > 4 ? colorScheme.onPrimary : colorScheme.onSurface,
+      child: Column(
+        mainAxisAlignment:
+            showCourse ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding:
+                showCourse ? const EdgeInsets.only(top: 2.0) : EdgeInsets.zero,
+            child: Text(
+              '${date.month}/${date.day}',
+              style: TextStyle(
+                fontSize: showCourse ? 11 : 10,
+                fontWeight: today ? FontWeight.bold : FontWeight.normal,
+                color:
+                    count > 4 ? colorScheme.onPrimary : colorScheme.onSurface,
+              ),
+            ),
           ),
-        ),
+          if (showCourse)
+            Expanded(
+              child: ClipRect(
+                child: OverflowBox(
+                  alignment: Alignment.topCenter,
+                  minHeight: 0,
+                  maxHeight: double.infinity,
+                  child: Column(
+                    children: [
+                      for (int classCount = 0; classCount < 5; classCount++)
+                        Builder(builder: (context) {
+                          int item = (weekday - 1) * 5 + classCount;
+                          List<CourseSchedule> courseScheduleItems =
+                              courseScheduleItemsList[item];
+                          final cardHeight = 10.0;
+
+                          return SizedBox(
+                            height: (cardHeight) * 2,
+                            child: OverflowBox(
+                              alignment: Alignment.topCenter,
+                              maxHeight: (cardHeight) * 11,
+                              child: CourseCard.compact(
+                                cardHeight: cardHeight,
+                                cardBorderRadius: 4.0,
+                                weekCount: weekCount,
+                                weekday: weekday,
+                                classCount: classCount,
+                                courseScheduleItems: courseScheduleItems,
+                                courseColorData: courseColorData,
+                              ),
+                            ),
+                          );
+                        }),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
