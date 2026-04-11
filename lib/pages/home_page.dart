@@ -100,6 +100,7 @@ class HomePage extends StatelessWidget {
           title: const Text('Home'),
         ),
         body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             child: Column(

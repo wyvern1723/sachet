@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/nav_destination.dart';
 import 'package:sachet/pages/class_page.dart';
@@ -34,13 +35,65 @@ const List<NavDestination> _destinations = <NavDestination>[
       routeName: '/profile'),
 ];
 
-class WithNavigationBarView extends StatelessWidget {
+class WithNavigationBarView extends StatefulWidget {
   /// 使用 NavigationBar 时的 View, 几个一级页面作为 body, 底部 bottomNavigationBar 用于导航
   const WithNavigationBarView({super.key});
 
   @override
+  State<WithNavigationBarView> createState() => _WithNavigationBarViewState();
+}
+
+class _WithNavigationBarViewState extends State<WithNavigationBarView> {
+  double? _scrollStartOffset;
+
+  bool _onScrollNotification(
+      ScrollNotification notification, bool isWideScreenMode) {
+    if (isWideScreenMode || notification.metrics.axis != Axis.vertical) {
+      return false;
+    }
+
+    if (notification is UserScrollNotification) {
+      if (notification.direction == ScrollDirection.reverse) {
+        // 向下滚动立即隐藏 NavBottom
+        context.read<ScreenNavProvider>().hideNavBottom();
+        _scrollStartOffset = null;
+      } else if (notification.direction == ScrollDirection.forward) {
+        // 开始向上滚动，记录起始位置
+        _scrollStartOffset = notification.metrics.pixels;
+
+        // 如果已经滚动到顶部，立即显示 NavBottom
+        final bool isAtTop = notification.metrics.pixels <= 0;
+        if (isAtTop) {
+          context.read<ScreenNavProvider>().showNavBottom();
+          _scrollStartOffset = null;
+        }
+      }
+    } else if (notification is ScrollUpdateNotification) {
+      // 如果正在向上滚动
+      if (notification.scrollDelta != null && notification.scrollDelta! < 0) {
+        // 如果已经滚动到顶部，或者向上滚动距离超过 30px，则显示 NavBottom
+        final bool isAtTop = notification.metrics.pixels <= 0;
+        double distance = 0;
+        if (_scrollStartOffset != null) {
+          distance = _scrollStartOffset! - notification.metrics.pixels;
+        }
+
+        if (isAtTop || distance >= 30.0) {
+          context.read<ScreenNavProvider>().showNavBottom();
+          _scrollStartOffset = null;
+        }
+      }
+    } else if (notification is ScrollEndNotification) {
+      // 滚动结束时清理状态
+      _scrollStartOffset = null;
+    }
+
+    return false;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int currentPageIndex = _routeNames.indexOf(
+    final int currentPageIndex = _routeNames.indexOf(
         context.select<ScreenNavProvider, String>(
             (screenNavProvider) => ScreenNavProvider.currentPage));
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
@@ -63,16 +116,48 @@ class WithNavigationBarView extends StatelessWidget {
                 ),
               ),
             Expanded(
-              child: [ClassPage(), HomePage(), ProfilePage()][currentPageIndex],
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) =>
+                    _onScrollNotification(notification, isWideScreenMode),
+                child: [
+                  ClassPage(),
+                  HomePage(),
+                  ProfilePage(),
+                ][currentPageIndex],
+              ),
             ),
           ],
         ),
         bottomNavigationBar: !isWideScreenMode
-            ? NavBottom(
-                destinations: _destinations,
-                routeNames: _routeNames,
-                currentPageIndex: currentPageIndex,
-              )
+            ? Selector<ScreenNavProvider, bool>(
+                selector: (_, provider) => provider.isNavBottomVisible,
+                builder: (_, isNavBottomVisible, __) {
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween<double>(
+                      begin: 0.0,
+                      end: isNavBottomVisible ? 1.0 : 0.0,
+                    ),
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    child: NavBottom(
+                      destinations: _destinations,
+                      routeNames: _routeNames,
+                      currentPageIndex: currentPageIndex,
+                    ),
+                    builder: (context, value, child) {
+                      return ClipRect(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          heightFactor: value,
+                          child: FractionalTranslation(
+                            translation: Offset(0, 1 - value),
+                            child: child,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                })
             : null,
       );
     });

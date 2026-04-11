@@ -51,6 +51,7 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
         // 下方是课程表主体
         Expanded(
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
