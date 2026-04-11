@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_gbk2utf8/flutter_gbk2utf8.dart';
 import 'package:html/parser.dart';
-import 'package:sachet/models/login_response_status.dart';
+import 'package:sachet/models/enums/login_response_status.dart';
 
 class QiangZhiLoginService {
   // ***********************************

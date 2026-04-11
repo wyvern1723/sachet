@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/models/update_class_schedule_state.dart';
+import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule.dart';

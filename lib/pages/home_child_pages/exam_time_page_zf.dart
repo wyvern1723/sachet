@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/exam_time_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time_semesters.dart';
@@ -34,7 +34,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   // true => 显示详细信息, false => 显示精简信息
   bool _isDetailedView = false;
 
-  List<ExamTimeZF>? _examTimeData;
+  List<ExamTimeResponseZF>? _examTimeData;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
@@ -276,7 +276,7 @@ class _ExamTimeViewZF extends StatelessWidget {
     required this.queryingSemesterIndex,
     required this.isDetailedView,
   });
-  final List<ExamTimeZF> examTimeData;
+  final List<ExamTimeResponseZF> examTimeData;
   final String queryingSemesterYear;
   final String queryingSemesterIndex;
   final bool isDetailedView;

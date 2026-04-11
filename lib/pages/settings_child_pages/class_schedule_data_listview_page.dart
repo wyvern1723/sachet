@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/pages/settings_child_pages/view_data_page.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';

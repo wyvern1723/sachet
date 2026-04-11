@@ -1,6 +1,6 @@
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/models/course_schedule.dart';
-import 'package:sachet/models/course_schedule_raw_data.dart';
+import 'package:sachet/models/qiangzhi_jwxt/course_schedule_raw_data_qz.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/fetch_data_http/fetch_class_schedule.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/generate_course_color.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -13,7 +13,7 @@ import 'package:path/path.dart' as path;
 ///
 /// return [生成的课程表文件路径，随机分配颜色的课程-颜色文件路径]
 Future<List<String>> getClassScheduleDataQZ(String semester) async {
-  List<List<CourseScheduleRawData>> courseses = [];
+  List<List<CourseScheduleRawDataQZ>> courseses = [];
 
   // fetchDataDuration（获取数据的延迟，发现请求太快可能会发生错误，所以加入了一个保险的延迟）
   // TODO: 研究最佳延迟时间。（现在是0.5s,可能太长）
@@ -33,7 +33,7 @@ Future<List<String>> getClassScheduleDataQZ(String semester) async {
     // pathElement 表示在 html DOM 里的位置，减少代码量。
     var pathElement = document.getElementsByClassName('kbcontent');
 
-    List<CourseScheduleRawData> courses = [];
+    List<CourseScheduleRawDataQZ> courses = [];
 
     for (int i = 0; i < listLength; i++) {
       String? courseTitle;
@@ -68,7 +68,7 @@ Future<List<String>> getClassScheduleDataQZ(String semester) async {
         courseTitle = pathElement[i].nodes[0].text;
         courseInstructor = pathElement[i].nodes[2].text;
       } else {}
-      CourseScheduleRawData newCourse = CourseScheduleRawData(
+      CourseScheduleRawDataQZ newCourse = CourseScheduleRawDataQZ(
         courseTitle: courseTitle ?? '',
         courseInstructor: courseInstructor ?? '',
         coursePlace: coursePlace ?? '',
@@ -119,7 +119,7 @@ Future<List<String>> getClassScheduleDataQZ(String semester) async {
 ///
 /// 一个 ScheduleItem：(1 2)节/(3 4)节/ 5 6)节/(7 8)节/(9 10 11) 节…… 共 5(ScheduleItem/天) x 7(天) = 35 ScheduleItems。
 List<CourseSchedule> _getOneScheduleItemCourses({
-  required List<CourseScheduleRawData> courseScheduleData,
+  required List<CourseScheduleRawDataQZ> courseScheduleData,
   required int originItem,
   required int newItem,
 }) {
@@ -196,15 +196,15 @@ List<CourseSchedule> _getOneScheduleItemCourses({
 ///
 /// return allScheduleItemCoursesData
 List<List<CourseSchedule>> _getAllScheduleItemCourse(
-  List<List<CourseScheduleRawData>> classScheduleData,
+  List<List<CourseScheduleRawDataQZ>> classScheduleData,
 ) {
   List<List<CourseSchedule>> allScheduleItemCoursesData = [];
   for (int newItem in List.generate(35, (i) => i)) {
     int originItem = _getReoderIndex(newItem);
     // 一个 scheduleItem 段 在所有周次的 课程信息 List
-    List<CourseScheduleRawData> scheduleItemRawDataInAllWeeks = [];
+    List<CourseScheduleRawDataQZ> scheduleItemRawDataInAllWeeks = [];
     for (int weekCount = 1; weekCount < 21; weekCount++) {
-      CourseScheduleRawData courseScheduleRawData =
+      CourseScheduleRawDataQZ courseScheduleRawData =
           classScheduleData[weekCount - 1][originItem];
       scheduleItemRawDataInAllWeeks.add(courseScheduleRawData);
     }

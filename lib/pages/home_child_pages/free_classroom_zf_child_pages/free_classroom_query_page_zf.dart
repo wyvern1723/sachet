@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/free_classroom_data_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_result_page_zf.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
@@ -16,7 +16,7 @@ class FreeClassroomQueryPageZF extends StatefulWidget {
 }
 
 class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
-  late Future<List<FreeClassroomDataZF>> future;
+  late Future<List<FreeClassroomDataResponseZF>> future;
 
   bool _showFab = true;
 
@@ -30,7 +30,7 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
     }
   }
 
-  Future<List<FreeClassroomDataZF>> getFreeClassroomData() async {
+  Future<List<FreeClassroomDataResponseZF>> getFreeClassroomData() async {
     final result = await context
         .read<FreeClassroomPageZFProvider>()
         .getData(cookie: ZhengFangUserProvider.cookie);

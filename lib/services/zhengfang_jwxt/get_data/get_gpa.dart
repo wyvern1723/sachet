@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:sachet/models/gpa_response_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/gpa_response_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/fetch_data/fetch_gpa.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/parse_data/parse_gpa.dart';

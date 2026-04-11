@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 

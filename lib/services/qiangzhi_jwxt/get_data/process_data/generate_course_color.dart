@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';

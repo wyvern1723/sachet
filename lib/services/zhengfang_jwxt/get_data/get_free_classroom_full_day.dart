@@ -1,6 +1,6 @@
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/free_classroom_data_zf.dart';
-import 'package:sachet/models/free_classroom_request_data.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/request/free_classroom_request_data_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
@@ -91,7 +91,7 @@ Future<List<List<String>>> getFreeClassroomFullDayZF({
     ).toJson();
 
     /// 一个时间段([1, 2]/[3, 4]/[5, 6]/[7, 8]/[9, 10, 11]) 的空闲教室数据(只返回空闲的教室)
-    final List<FreeClassroomDataZF> freeClassroomPerItem =
+    final List<FreeClassroomDataResponseZF> freeClassroomPerItem =
         await getFreeClassroomZF(cookie: cookie, data: data);
 
     for (var classroom in freeClassroomPerItem) {

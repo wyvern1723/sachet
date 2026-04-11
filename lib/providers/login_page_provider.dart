@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/jwxt_type.dart';
+import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 

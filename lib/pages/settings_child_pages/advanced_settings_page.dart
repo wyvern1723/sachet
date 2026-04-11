@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sachet/models/page_transitions_type.dart';
+import 'package:sachet/models/enums/page_transitions_type.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/theme_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';

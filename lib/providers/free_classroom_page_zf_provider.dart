@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/free_classroom_filter_options.dart';
-import 'package:sachet/models/free_classroom_request_data.dart';
-import 'package:sachet/models/free_classroom_data_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/request/free_classroom_request_data_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart';
@@ -317,7 +317,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<FreeClassroomDataZF>> getData({
+  Future<List<FreeClassroomDataResponseZF>> getData({
     required String cookie,
   }) async {
     final String zcd =
@@ -345,7 +345,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
       nd: nd,
     ).toJson();
 
-    final List<FreeClassroomDataZF> result = await getFreeClassroomZF(
+    final List<FreeClassroomDataResponseZF> result = await getFreeClassroomZF(
       cookie: cookie,
       data: data,
     );

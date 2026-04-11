@@ -1,16 +1,17 @@
 import 'dart:math';
 
-import 'package:sachet/models/free_classroom_data_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/fetch_data/fetch_free_classroom.dart';
 
-Future<List<FreeClassroomDataZF>> getFreeClassroomZF({
+Future<List<FreeClassroomDataResponseZF>> getFreeClassroomZF({
   required String cookie,
   required Map data,
 }) async {
   final List result = await fetchFreeClassroomZF(cookie: cookie, data: data);
-  List<FreeClassroomDataZF> dataList = [];
+  List<FreeClassroomDataResponseZF> dataList = [];
   for (var element in result) {
-    FreeClassroomDataZF classroomData = FreeClassroomDataZF.fromJson(element);
+    FreeClassroomDataResponseZF classroomData =
+        FreeClassroomDataResponseZF.fromJson(element);
     dataList.add(classroomData);
   }
   return dataList;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';

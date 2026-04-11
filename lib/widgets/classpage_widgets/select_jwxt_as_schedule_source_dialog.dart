@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/jwxt_type.dart';
+import 'package:sachet/models/enums/jwxt_type.dart';
 
 class SelectJwxtAsScheduleSourceDialog extends StatelessWidget {
   /// 选择哪个教务系统作为课程表数据来源的 Dialog

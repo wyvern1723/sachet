@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/jwxt_type.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/jwxt_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/app_global.dart';

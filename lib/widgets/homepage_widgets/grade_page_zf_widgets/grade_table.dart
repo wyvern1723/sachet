@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/grade_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/grade_response_zf.dart';
 import 'package:sachet/providers/grade_page_zf_provider.dart';
 
 class GradeTableZF extends StatelessWidget {
   /// 成绩查询界面（正方教务）的成绩信息表
   const GradeTableZF({super.key, required this.gradeData});
-  final List<GradeZf> gradeData;
+  final List<GradeResponseZF> gradeData;
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sachet/models/course_schedule.dart';
-import 'package:sachet/models/exam_time_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:uuid/uuid.dart';
@@ -155,7 +155,7 @@ END:VCALENDAR
 /// - 用户取消保存: null
 /// - 考试信息格式错误/解析错误: throw String msg
 Future<String?> exportExamTimeToIcs({
-  required List<ExamTimeZF> exams,
+  required List<ExamTimeResponseZF> exams,
   required String savefileName,
 }) async {
   final String ics = generateIcsFromExamTime(exams: exams);
@@ -180,7 +180,7 @@ Future<String?> exportExamTimeToIcs({
 
 /// 将考试时间数据转换为 .ics 字符串
 String generateIcsFromExamTime({
-  required List<ExamTimeZF> exams,
+  required List<ExamTimeResponseZF> exams,
   String prodId = '-//wyvern1723//Sachet//ZH',
   String domain = 'wyvernlab.com',
 }) {

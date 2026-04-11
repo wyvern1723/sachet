@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/store_item.dart';
+import 'package:sachet/models/enums/store_item.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/utils/storage/secure_storage_util.dart';
 

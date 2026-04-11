@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/app_settings.dart';
 import 'package:sachet/models/course_schedule.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';

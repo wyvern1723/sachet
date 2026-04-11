@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:sachet/models/exam_time_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/fetch_data/fetch_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/parse_data/parse_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
 
 /// 从正方教务系统获取考试时间
-Future<List<ExamTimeZF>> getExamTimeZF({
+Future<List<ExamTimeResponseZF>> getExamTimeZF({
   required String cookie,
 
   /// xnm 学年名，如 '2025'=> 指 2025-2026 学年, ""=> 全部

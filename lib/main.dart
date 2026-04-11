@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/intro_screen/intro_screen.dart';
 import 'package:sachet/pages/profile_page.dart';
 import 'package:sachet/pages/with_navbar_view.dart';

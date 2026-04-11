@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';

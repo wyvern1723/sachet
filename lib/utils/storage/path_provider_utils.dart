@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:sachet/constants/app_info_constants.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:path/path.dart' as path;
 
 class CachedDataStorage {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/app_global.dart';

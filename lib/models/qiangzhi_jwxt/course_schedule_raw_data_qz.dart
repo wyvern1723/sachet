@@ -1,17 +1,17 @@
-// 课程信息的 class,只在初始从服务器获取课程信息时使用
-class CourseScheduleRawData {
+// 课程信息的 class,只在初始从强智教务系统获取课程信息时使用
+class CourseScheduleRawDataQZ {
   String? courseTitle;
   String? courseInstructor;
   String? coursePlace;
   int? courseLength;
 
-  CourseScheduleRawData(
+  CourseScheduleRawDataQZ(
       {this.courseTitle,
       this.courseInstructor,
       this.coursePlace,
       this.courseLength});
 
-  CourseScheduleRawData.fromJson(Map<String, dynamic> json) {
+  CourseScheduleRawDataQZ.fromJson(Map<String, dynamic> json) {
     courseTitle = json['courseTitle'];
     courseInstructor = json['courseInstructor'];
     coursePlace = json['coursePlace'];

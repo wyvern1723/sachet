@@ -1,7 +1,7 @@
 import 'package:sachet/utils/json_safe_parse.dart';
 
-/// 正方教务系统的获取的一门课程的成绩信息
-class ExamTimeZF {
+/// 从正方教务系统获取的一门课程的考试信息
+class ExamTimeResponseZF {
   /// 学年（2024-2025）
   String semesterYear = '';
 
@@ -32,7 +32,7 @@ class ExamTimeZF {
   /// 开课学院
   String college = '';
 
-  ExamTimeZF({
+  ExamTimeResponseZF({
     required this.semesterYear,
     required this.semesterIndex,
     required this.courseTitle,
@@ -60,7 +60,7 @@ class ExamTimeZF {
     return data;
   }
 
-  ExamTimeZF.fromJson(Map<String, dynamic> json) {
+  ExamTimeResponseZF.fromJson(Map<String, dynamic> json) {
     semesterYear = json.safeString('xnmc') ?? '';
     semesterIndex = json.safeString('xqmmc') ?? '';
     courseTitle = json.safeString('kcmc') ?? '';

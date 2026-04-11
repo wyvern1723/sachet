@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/models/jwxt_type.dart';
+import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_manual_login_page.dart';
 import 'package:sachet/providers/login_page_provider.dart';

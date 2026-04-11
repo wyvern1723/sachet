@@ -1,7 +1,7 @@
 import 'package:sachet/utils/json_safe_parse.dart';
 
 /// 从正方教务系统获取的空闲教室中的一个教室的信息
-class FreeClassroomDataZF {
+class FreeClassroomDataResponseZF {
   /// 教室名称
   String classroomName = '';
 
@@ -20,7 +20,7 @@ class FreeClassroomDataZF {
   /// 场地二级类别
   String placeSubType = '';
 
-  FreeClassroomDataZF({
+  FreeClassroomDataResponseZF({
     required this.classroomName,
     required this.seatAmount,
     required this.examSeatAmount,
@@ -28,7 +28,7 @@ class FreeClassroomDataZF {
     required this.placeType,
   });
 
-  FreeClassroomDataZF.fromJson(Map<String, dynamic> json) {
+  FreeClassroomDataResponseZF.fromJson(Map<String, dynamic> json) {
     classroomName = json.safeString('cdmc') ?? '';
     seatAmount = json.safeString('zws') ?? '';
     examSeatAmount = json.safeString('kszws1') ?? '';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/free_classroom_data_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
 
 class FreeClassroomResultPageZF extends StatefulWidget {
@@ -8,7 +8,7 @@ class FreeClassroomResultPageZF extends StatefulWidget {
     required this.listData,
     required this.onFiltering,
   });
-  final List<FreeClassroomDataZF> listData;
+  final List<FreeClassroomDataResponseZF> listData;
   final VoidCallback onFiltering;
 
   @override

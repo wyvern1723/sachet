@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/app_folder.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 // import 'package:sachet/provider/settings_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 // import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';

@@ -1,7 +1,7 @@
 import 'package:sachet/utils/json_safe_parse.dart';
 
 /// 从正方教务系统获取的一门课程的成绩信息
-class GradeZf {
+class GradeResponseZF {
   /// 课程名称
   String courseTitle = '';
 
@@ -26,7 +26,7 @@ class GradeZf {
   /// 学期名（1/2/3）
   String semesterIndex = '';
 
-  GradeZf({
+  GradeResponseZF({
     required this.courseTitle,
     required this.instructor,
     required this.score,
@@ -50,7 +50,7 @@ class GradeZf {
     return data;
   }
 
-  GradeZf.fromJson(Map<String, dynamic> json) {
+  GradeResponseZF.fromJson(Map<String, dynamic> json) {
     courseTitle = json.safeString('kcmc') ?? '';
     instructor = json.safeString('czr') ?? '';
     score = json.safeString('cj') ?? '';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/page_transitions_type.dart';
+import 'package:sachet/models/enums/page_transitions_type.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/providers/theme_provider.dart';
 

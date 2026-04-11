@@ -1,4 +1,4 @@
-import 'package:sachet/models/gpa_response_zf.dart';
+import 'package:sachet/models/zhengfang_jwxt/response/gpa_response_zf.dart';
 
 /// 解析绩点排名数据
 ///
