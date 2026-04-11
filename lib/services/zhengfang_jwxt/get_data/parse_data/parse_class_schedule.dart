@@ -1,4 +1,5 @@
 import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/utils/json_safe_parse.dart';
 
 Future parseClassScheduleZF(Map jsonData) async {
   List courseLength = jsonData['kbList'];
@@ -7,13 +8,16 @@ Future parseClassScheduleZF(Map jsonData) async {
   }
 
   List<List<CourseSchedule>> scheduleList = List.generate(35, (_) => []);
-  for (var e in jsonData['kbList']) {
-    final xqj = e['xqj']; // 星期几
-    final zcd = e['zcd']; // 周次
-    final title = e['kcmc']; // 课程名称
-    final instructor = e['xm']; // 授课教师
-    final place = e['cdmc']; // 上课地点
-    final jc = e['jc']; // 节次
+  for (final e in jsonData['kbList']) {
+    if (e is! Map<String, dynamic>) {
+      throw '$e is not Map<String, dynamic>';
+    }
+    final xqj = e.safeString('xqj'); // 星期几
+    final zcd = e.safeString('zcd'); // 周次
+    final title = e.safeString('kcmc'); // 课程名称
+    final instructor = e.safeString('xm'); // 授课教师
+    final place = e.safeString('cdmc'); // 上课地点
+    final jc = e.safeString('jc'); // 节次
 
     int item = ClassScheduleDataParserZF.parseItemIndex(xqj, jc);
     int length = ClassScheduleDataParserZF.parseSessionLength(jc);
@@ -55,7 +59,11 @@ class ClassScheduleDataParserZF {
   /// input: "1-5周(单),8-12周(双),13周,19-20周", output: [1, 3, 5, 8, 10, 12, 13, 19, 20]
   ///
   /// (?)不知道会不会有这种情况: input: "2周(双),3周(单)", output: [2, 3]
-  static List<int> parseWeeks(String input) {
+  static List<int> parseWeeks(String? input) {
+    if (input == null) {
+      throw '解析周次失败: input 为 null';
+    }
+
     // 移除所有“周”字和空格
     final cleaned = input.replaceAll(RegExp(r'周|\s'), '');
 
@@ -172,7 +180,10 @@ class ClassScheduleDataParserZF {
   /// "1-2节" -> 2
   ///
   /// "3-4节" -> 2
-  static int parseSessionLength(String input) {
+  static int parseSessionLength(String? input) {
+    if (input == null) {
+      throw '解析课程长度失败: input 为 null';
+    }
     // 移除所有“节”字和空格
     final cleaned = input.replaceAll(RegExp(r'节|\s'), '');
 
@@ -224,7 +235,13 @@ class ClassScheduleDataParserZF {
   /// final item4 = ClassScheduleDataParserZF.parseItemIndex("7","9-10节");
   /// print(item4); // 34
   /// ```
-  static int parseItemIndex(String weekdayInput, String sessionInput) {
+  static int parseItemIndex(String? weekdayInput, String? sessionInput) {
+    if (weekdayInput == null) {
+      throw 'weekdayInput 为 null';
+    }
+    if (sessionInput == null) {
+      throw 'sessionInput 为 null';
+    }
     int? weekday = int.tryParse(weekdayInput);
     if (weekday == null) {
       throw '解析星期几失败: $weekdayInput';

@@ -1,4 +1,6 @@
-/// 正方教务系统的获取的一门课程的成绩信息
+import 'package:sachet/utils/json_safe_parse.dart';
+
+/// 从正方教务系统获取的一门课程的成绩信息
 class GradeZf {
   /// 课程名称
   String courseTitle = '';
@@ -49,14 +51,14 @@ class GradeZf {
   }
 
   GradeZf.fromJson(Map<String, dynamic> json) {
-    courseTitle = json['kcmc'] ?? '';
-    instructor = json['czr'] ?? '';
-    score = json['cj'] ?? '';
-    gpa = json['jd'] ?? '';
-    courseType = json['kcxzmc'] ?? '';
-    credit = json['xf'] ?? '';
-    semesterYear = json['xnmmc'] ?? '';
-    semesterIndex = json['xqmmc'] ?? '';
+    courseTitle = json.safeString('kcmc') ?? '';
+    instructor = json.safeString('czr') ?? '';
+    score = json.safeString('cj') ?? '';
+    gpa = json.safeString('jd') ?? '';
+    courseType = json.safeString('kcxzmc') ?? '';
+    credit = json.safeString('xf') ?? '';
+    semesterYear = json.safeString('xnmmc') ?? '';
+    semesterIndex = json.safeString('xqmmc') ?? '';
   }
 
   item(String item) {

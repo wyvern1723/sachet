@@ -1,3 +1,6 @@
+import 'package:sachet/utils/json_safe_parse.dart';
+
+/// 从正方教务系统获取的空闲教室中的一个教室的信息
 class FreeClassroomDataZF {
   /// 教室名称
   String classroomName = '';
@@ -26,30 +29,30 @@ class FreeClassroomDataZF {
   });
 
   FreeClassroomDataZF.fromJson(Map<String, dynamic> json) {
-    classroomName = json['cdmc'] ?? '';
-    seatAmount = json['zws'] ?? '';
-    examSeatAmount = json['kszws1'] ?? '';
-    teachingBuilding = json['jxlmc'] ?? '';
-    placeType = json['cdlbmc'] ?? '';
-    placeSubType = json['cdejlbmc'] ?? '';
+    classroomName = json.safeString('cdmc') ?? '';
+    seatAmount = json.safeString('zws') ?? '';
+    examSeatAmount = json.safeString('kszws1') ?? '';
+    teachingBuilding = json.safeString('jxlmc') ?? '';
+    placeType = json.safeString('cdlbmc') ?? '';
+    placeSubType = json.safeString('cdejlbmc') ?? '';
   }
 
   item(String item) {
     switch (item) {
       case '场地名称':
-        return this.classroomName;
+        return classroomName;
       case '座位数':
-        return this.seatAmount;
+        return seatAmount;
       case '考试座位数':
-        return this.examSeatAmount;
+        return examSeatAmount;
       case '楼号':
-        return this.teachingBuilding;
+        return teachingBuilding;
       case '场地类别':
-        return this.placeType;
+        return placeType;
       case '场地二级类别':
-        return this.placeSubType;
+        return placeSubType;
       default:
-        return this.classroomName;
+        return classroomName;
     }
   }
 }

@@ -1,3 +1,6 @@
+import 'package:sachet/utils/json_safe_parse.dart';
+
+/// 从正方教务系统获取的平均学分绩点排名信息
 class GpaResponseZF {
   /// 学号
   String? xhId;
@@ -62,44 +65,44 @@ class GpaResponseZF {
   });
 
   GpaResponseZF.fromJson(Map<String, dynamic> json) {
-    xhId = json['xh_id'];
-    bhId = json['bh_id'];
-    njmc = json['njmc'];
-    jgmc = json['jgmc'];
-    bj = json['bj'];
-    zymc = json['zymc'];
-    pjxfjd = json['pjxfjd'];
-    jdbjpm = json['jdbjpm'];
-    xh = json['xh'];
-    xm = json['xm'];
-    pjcj = json['pjcj'];
-    njdmId = json['njdm_id'];
-    jgId = json['jg_id'];
-    zyhId = json['zyh_id'];
-    rowId = json['row_id'];
-    jdnjzypm = json['jdnjzypm'];
-    totalresult = json['totalresult'];
+    xhId = json.safeString('xh_id');
+    bhId = json.safeString('bh_id');
+    njmc = json.safeString('njmc');
+    jgmc = json.safeString('jgmc');
+    bj = json.safeString('bj');
+    zymc = json.safeString('zymc');
+    pjxfjd = json.safeString('pjxfjd');
+    jdbjpm = json.safeInt('jdbjpm');
+    xh = json.safeString('xh');
+    xm = json.safeString('xm');
+    pjcj = json.safeString('pjcj');
+    njdmId = json.safeString('njdm_id');
+    jgId = json.safeString('jg_id');
+    zyhId = json.safeString('zyh_id');
+    rowId = json.safeInt('row_id');
+    jdnjzypm = json.safeInt('jdnjzypm');
+    totalresult = json.safeInt('totalresult');
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['xh_id'] = this.xhId;
-    data['bh_id'] = this.bhId;
-    data['njmc'] = this.njmc;
-    data['jgmc'] = this.jgmc;
-    data['bj'] = this.bj;
-    data['zymc'] = this.zymc;
-    data['pjxfjd'] = this.pjxfjd;
-    data['jdbjpm'] = this.jdbjpm;
-    data['xh'] = this.xh;
-    data['xm'] = this.xm;
-    data['pjcj'] = this.pjcj;
-    data['njdm_id'] = this.njdmId;
-    data['jg_id'] = this.jgId;
-    data['zyh_id'] = this.zyhId;
-    data['row_id'] = this.rowId;
-    data['jdnjzypm'] = this.jdnjzypm;
-    data['totalresult'] = this.totalresult;
-    return data;
+    return <String, dynamic>{
+      'xh_id': xhId,
+      'bh_id': bhId,
+      'njmc': njmc,
+      'jgmc': jgmc,
+      'bj': bj,
+      'zymc': zymc,
+      'pjxfjd': pjxfjd,
+      'jdbjpm': jdbjpm,
+      'xh': xh,
+      'xm': xm,
+      'pjcj': pjcj,
+      'njdm_id': njdmId,
+      'jg_id': jgId,
+      'zyh_id': zyhId,
+      'row_id': rowId,
+      'jdnjzypm': jdnjzypm,
+      'totalresult': totalresult,
+    };
   }
 }
