@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
@@ -229,30 +230,39 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<
       ({
-        List? courseScheduleItemsList,
+        List<List<CourseSchedule>>? courseScheduleItemsList,
         Map courseColorData,
         List classSessionSummerDataList,
         List classSessionWinterDataList
       })> loadCourseScheduleData() async {
-    List? courseScheduleItemsList;
-    var rawData = await CachedDataStorage().getDecodedData(
+    List<List<CourseSchedule>>? courseScheduleItemsList;
+    final rawData = await CachedDataStorage().getDecodedData(
       path: classScheduleFilePath,
       type: List,
     );
 
     if (rawData is List && rawData.isNotEmpty) {
-      courseScheduleItemsList = rawData;
-
-      if (courseScheduleItemsList.length != 35) {
-        courseScheduleItemsList = null;
+      if (rawData.length == 35) {
+        courseScheduleItemsList = rawData.map((e) {
+          if (e is List) {
+            return e.map((item) {
+              if (item is Map<String, dynamic>) {
+                return CourseSchedule.fromJson(item);
+              } else if (item is Map) {
+                return CourseSchedule.fromJson(Map<String, dynamic>.from(item));
+              }
+              return CourseSchedule();
+            }).toList();
+          }
+          return <CourseSchedule>[];
+        }).toList();
       }
     }
-    if (courseColorData == null) {
-      courseColorData = await CachedDataStorage().getDecodedData(
-        path: courseColorFilePath,
-        type: Map,
-      );
-    }
+
+    courseColorData ??= await CachedDataStorage().getDecodedData(
+      path: courseColorFilePath,
+      type: Map,
+    );
     List classSessionSummerDataList = await loadClassSessionSummerAsset();
     List classSessionWinterDataList = await loadClassSessionWinterAsset();
 

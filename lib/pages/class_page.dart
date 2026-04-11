@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/pages/class_child_pages/single_month_page.dart';
 import 'package:sachet/pages/class_child_pages/single_week_page.dart';
@@ -53,7 +54,15 @@ class ClassPage extends StatelessWidget {
                           if (kDebugMode) {
                             print(snapshot.error);
                           }
-                          return Text('${snapshot.error}');
+                          return Center(
+                            child: Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          );
                         } else {
                           final data = snapshot.data;
 
@@ -79,7 +88,7 @@ class ClassPage extends StatelessWidget {
 }
 
 class ClassPageView extends StatelessWidget {
-  final List? courseScheduleItemsList;
+  final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
@@ -118,7 +127,7 @@ class ClassPageView extends StatelessWidget {
 }
 
 class WeekView extends StatefulWidget {
-  final List? courseScheduleItemsList;
+  final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
@@ -169,7 +178,7 @@ class _WeekViewState extends State<WeekView> {
 }
 
 class MonthView extends StatefulWidget {
-  final List? courseScheduleItemsList;
+  final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;

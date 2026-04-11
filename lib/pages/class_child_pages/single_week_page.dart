@@ -20,7 +20,7 @@ class SingleWeekPage extends StatefulWidget {
     required this.courseColorData,
   });
   final int weekCount;
-  final List? courseScheduleItemsList;
+  final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
@@ -95,13 +95,8 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                                         courseCardSettingsProvider.cardHeight,
                                     builder: (context, cardHeight, __) {
                                       int item = (weekday - 1) * 5 + classCount;
-                                      List list =
-                                          widget.courseScheduleItemsList![item];
                                       List<CourseSchedule> courseScheduleItems =
-                                          list
-                                              .map((data) =>
-                                                  CourseSchedule.fromJson(data))
-                                              .toList();
+                                          widget.courseScheduleItemsList![item];
                                       return SizedBox(
                                         height: (cardHeight) * 2,
                                         child: OverflowBox(

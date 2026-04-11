@@ -19,7 +19,7 @@ class SingleMonthPage extends StatefulWidget {
   });
   final int month;
   final DateTime monthDate;
-  final List? courseScheduleItemsList;
+  final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
@@ -200,10 +200,8 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
               for (int classCount = 0; classCount < 5; classCount++)
                 Builder(builder: (context) {
                   int item = (date.weekday - 1) * 5 + classCount;
-                  List list = widget.courseScheduleItemsList![item];
-                  List<CourseSchedule> courseScheduleItems = list
-                      .map((data) => CourseSchedule.fromJson(data))
-                      .toList();
+                  List<CourseSchedule> courseScheduleItems =
+                      widget.courseScheduleItemsList![item];
                   final cardHeight = 10.0;
 
                   // 如果这一周完全没有晚课，不显示这一周所有的晚课的空白占位
@@ -259,13 +257,12 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
 /// false: 这一周至少有一天有晚课
 bool _thisWeekHasNoNightCourses({
   required int weekCount,
-  required List courseScheduleItemsList,
+  required List<List<CourseSchedule>> courseScheduleItemsList,
   required List nightCourseItemIndexs,
 }) {
   for (final nightCourseItemIndex in nightCourseItemIndexs) {
-    final List courses = courseScheduleItemsList[nightCourseItemIndex];
-    List<CourseSchedule> courseScheduleItems =
-        courses.map((data) => CourseSchedule.fromJson(data)).toList();
+    final List<CourseSchedule> courseScheduleItems =
+        courseScheduleItemsList[nightCourseItemIndex];
     if (courseScheduleItems.isEmpty) {
       continue;
     }
