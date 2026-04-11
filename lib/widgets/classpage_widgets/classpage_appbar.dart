@@ -76,9 +76,15 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('课表导入后将使用离线数据，课程表数据不会自动更新。'),
+                Text(
+                  '课表导入后将使用离线数据，课程表数据不会自动更新。',
+                  style: TextStyle(fontSize: 16),
+                ),
                 SizedBox(height: 2),
-                Text('如发生以下情况，请手动重新获取：'),
+                Text(
+                  '如发生以下情况，请手动重新获取：',
+                  style: TextStyle(fontSize: 16),
+                ),
                 SizedBox(height: 10),
                 Text(
                   '• 完成选课\n'
@@ -86,6 +92,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                   '• 修改选课\n'
                   '• 教师在教务系统调课\n'
                   '• 进入新学期',
+                  style: TextStyle(fontSize: 15),
                 ),
               ],
             ),
