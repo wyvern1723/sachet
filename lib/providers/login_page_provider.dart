@@ -10,7 +10,7 @@ class LoginPageProvider extends ChangeNotifier {
   bool get isLoggingIn => _isLoggingIn;
 
   /// 是否记住密码
-  bool _isRememberPassword = false;
+  bool _isRememberPassword = true;
   bool get isRememberPassword => _isRememberPassword;
 
   void setIsLoggingIn(bool value) {
