@@ -10,6 +10,7 @@ import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
+import 'package:sachet/widgets/classpage_widgets/month_count_dropdown_menu.dart';
 import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
@@ -27,9 +28,9 @@ class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _ClassPageAppBarState extends State<ClassPageAppBar> {
   Future switchClassSchedules(BuildContext context) async {
-    String classScheduleFilePath =
+    final String classScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
-    var result = await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) => SwitchActivedAppFileDialog(
         dialogTitle: '选择课表',
@@ -37,6 +38,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
         settingsFilePath: classScheduleFilePath,
       ),
     );
+
+    if (!context.mounted) return;
+
     if (result is String) {
       context.read<SettingsProvider>().setClassScheduleFilePath(result);
     } else if (result == true) {
@@ -51,7 +55,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final String oldClassScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
 
-    bool? result = await showDialog(
+    final bool? result = await showDialog(
       context: context,
       builder: (BuildContext context) => const UpdateClassScheduleZFDialog(),
     );
@@ -142,9 +146,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 去上一周
-  void navToLastWeek() {
-    var classPageModel = context.read<ClassPageProvider>();
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToLastWeek(BuildContext context) {
+    final classPageModel = context.read<ClassPageProvider>();
+    final settingsProvider = context.read<SettingsProvider>();
 
     // classPageModel.decrementCurrentWeekCount();
     // 第一个 -1 表示上一周，第二个 -1 是周次到 pagelist 序号的转换（第一周 => 第0页）
@@ -155,9 +159,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 去下一周
-  void navToNextWeek() {
-    var classPageModel = context.read<ClassPageProvider>();
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToNextWeek(BuildContext context) {
+    final classPageModel = context.read<ClassPageProvider>();
+    final settingsProvider = context.read<SettingsProvider>();
 
     // classPageModel.incrementCurrentWeekCount();
     // +1 表示下一周，-1 是周次到 pagelist 序号的转换（第一周 => 第0页）
@@ -168,8 +172,8 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
   }
 
   /// 回到本周
-  void navToThisWeek() {
-    var settingsProvider = context.read<SettingsProvider>();
+  void navToThisWeek(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
     // context.read<ClassPageModel>().resetCurrentWeekCount();
     context.read<ClassPageProvider>().pageController.animateToPage(
         weekCountOfToday(DateTime.parse(SettingsProvider.semesterStartDate)) -
@@ -178,58 +182,135 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
         curve: curveTypes[settingsProvider.curveType] ?? Easing.standard);
   }
 
+  /// 去上个月
+  void navToLastMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToLastMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
+  }
+
+  /// 去下个月
+  void navToNextMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToNextMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
+  }
+
+  /// 回到本月
+  void navToThisMonth(BuildContext context) {
+    final settingsProvider = context.read<SettingsProvider>();
+
+    context.read<ClassPageProvider>().animateToTodayMonth(
+        duration: Duration(milliseconds: settingsProvider.curveDuration),
+        curve: curveTypes[settingsProvider.curveType]);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AppBar(
-      // title: Text(
-      //   "第$_currentWeekCount周",
-      // ),
       titleSpacing: 16.0,
-      title: WeekCountDropdownMenu(),
+      title: Selector<ClassPageProvider, ClassScheduleViewMode>(
+          selector: (_, provider) => provider.currentViewMode,
+          builder: (_, currentViewMode, __) {
+            switch (currentViewMode) {
+              case ClassScheduleViewMode.week:
+                return WeekCountDropdownMenu();
+              case ClassScheduleViewMode.month:
+                return MonthCountDropdownMenu();
+            }
+          }),
       actions: [
-        // 是否显示翻页箭头
-        // 上一周
+        // 切换周/月视图
+        Selector<ClassPageProvider, ClassScheduleViewMode>(
+            selector: (_, provider) => provider.currentViewMode,
+            builder: (_, currentViewMode, __) {
+              return ViewModeToggle(
+                currentViewMode: currentViewMode,
+                onModeChanged: (mode) => context
+                    .read<ClassPageProvider>()
+                    .updateClassScheduleViewMode(mode),
+              );
+            }),
+
+        // 上一页（上一周/上个月）和下一页（下一周/下个月）的翻页箭头（方便大屏设备/桌面端）
         Selector<SettingsProvider, bool>(
             selector: (_, settingsProvider) =>
                 settingsProvider.isShowPageTurnArrow,
             builder: (_, isShowPageTurnArrow, __) {
+              // 是否显示翻页箭头
               if (isShowPageTurnArrow) {
-                return IconButton(
-                    icon: const Icon(Icons.skip_previous_outlined),
-                    tooltip: '上一周',
-                    onPressed: () {
-                      navToLastWeek();
+                return Selector<ClassPageProvider, ClassScheduleViewMode>(
+                    selector: (_, classPageProvider) =>
+                        classPageProvider.currentViewMode,
+                    builder: (_, currentViewMode, __) {
+                      switch (currentViewMode) {
+                        case ClassScheduleViewMode.week:
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.skip_previous_outlined),
+                                tooltip: '上一周',
+                                onPressed: () => navToLastWeek(context),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.skip_next_outlined),
+                                tooltip: '下一周',
+                                onPressed: () => navToNextWeek(context),
+                              ),
+                            ],
+                          );
+                        case ClassScheduleViewMode.month:
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.skip_previous_outlined),
+                                tooltip: '上个月',
+                                onPressed: () => navToLastMonth(context),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.skip_next_outlined),
+                                tooltip: '下个月',
+                                onPressed: () => navToNextMonth(context),
+                              ),
+                            ],
+                          );
+                      }
                     });
               } else {
                 return SizedBox();
               }
             }),
 
-        // 下一周
-        Selector<SettingsProvider, bool>(
-            selector: (_, settingsProvider) =>
-                settingsProvider.isShowPageTurnArrow,
-            builder: (_, isShowPageTurnArrow, __) {
-              if (isShowPageTurnArrow) {
-                return IconButton(
-                    icon: const Icon(Icons.skip_next_outlined),
-                    tooltip: '下一周',
-                    onPressed: () {
-                      navToNextWeek();
-                    });
-              } else {
-                return SizedBox();
+        // 回到今天（回到本周/回到本月）
+        Selector<ClassPageProvider, ClassScheduleViewMode>(
+            selector: (_, provider) => provider.currentViewMode,
+            builder: (_, currentViewMode, __) {
+              switch (currentViewMode) {
+                case ClassScheduleViewMode.week:
+                  return IconButton(
+                    icon: const Icon(Icons.today),
+                    tooltip: '回到本周',
+                    onPressed: () => navToThisWeek(context),
+                  );
+                case ClassScheduleViewMode.month:
+                  return IconButton(
+                    icon: const Icon(Icons.today),
+                    tooltip: '回到本月',
+                    onPressed: () => navToThisMonth(context),
+                  );
               }
-            }),
-        // 回到今天
-        IconButton(
-            icon: const Icon(Icons.today),
-            tooltip: '回到本周',
-            onPressed: () {
-              navToThisWeek();
             }),
 
         PopupMenuButton(
+          tooltip: '更多操作',
           itemBuilder: (context) => [
             // 更新课表
             PopupMenuItem(
@@ -237,8 +318,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 await showUpdateClassScheduleDialog(context);
               },
               child: Row(children: [
-                Icon(Icons.refresh,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.refresh, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('更新课表')
               ]),
@@ -250,7 +330,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               },
               child: Row(children: [
                 Icon(Icons.swap_horiz_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('切换课表'),
               ]),
@@ -265,8 +345,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 );
               },
               child: Row(children: [
-                Icon(Icons.share_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.share_outlined, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('导出课表')
               ]),
@@ -274,16 +353,26 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
             // 课表设置
             PopupMenuItem(
               onTap: () async {
-                Navigator.of(context).push(MaterialPageRoute(
+                final semesterStartDate = SettingsProvider.semesterStartDate;
+                await Navigator.of(context).push(MaterialPageRoute(
                   maintainState: false,
                   builder: (BuildContext context) {
                     return const CourseSettingsPage();
                   },
                 ));
+                final newSmesterStartDate = SettingsProvider.semesterStartDate;
+                if (semesterStartDate != newSmesterStartDate) {
+                  if (!context.mounted) {
+                    return;
+                  }
+                  context.read<ClassPageProvider>().updateMonthList();
+                  context
+                      .read<ClassPageProvider>()
+                      .updateCurrentMonth(DateTime.now().month);
+                }
               },
               child: Row(children: [
-                Icon(Icons.tune_outlined,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.tune_outlined, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 8),
                 const Text('课表设置')
               ]),
@@ -291,6 +380,100 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class ViewModeToggle extends StatelessWidget {
+  final ClassScheduleViewMode currentViewMode;
+  final ValueChanged<ClassScheduleViewMode> onModeChanged;
+
+  /// 切换周/月视图
+  const ViewModeToggle({
+    super.key,
+    required this.currentViewMode,
+    required this.onModeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isWideScreen = screenWidth >= 600;
+
+        if (isWideScreen) {
+          // 宽屏：使用 SegmentedButton
+          return SegmentedButton<ClassScheduleViewMode>(
+            segments: const [
+              ButtonSegment(
+                value: ClassScheduleViewMode.week,
+                label: Text('周'),
+                icon: Icon(Icons.calendar_view_week),
+                tooltip: '周视图',
+              ),
+              ButtonSegment(
+                value: ClassScheduleViewMode.month,
+                label: Text('月'),
+                icon: Icon(Icons.calendar_view_month),
+                tooltip: '月视图',
+              ),
+            ],
+            selected: {currentViewMode},
+            onSelectionChanged: (selected) {
+              if (selected.isNotEmpty) {
+                onModeChanged(selected.first);
+              }
+            },
+            showSelectedIcon: false,
+            style: ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+          );
+        } else {
+          // 窄屏：使用 PopupMenuButton
+          return PopupMenuButton<ClassScheduleViewMode>(
+            icon: Icon(
+              currentViewMode == ClassScheduleViewMode.week
+                  ? Icons.calendar_view_week
+                  : Icons.calendar_view_month,
+            ),
+            tooltip: '切换视图',
+            itemBuilder: (context) => [
+              // 切换到周视图
+              PopupMenuItem(
+                value: ClassScheduleViewMode.week,
+                child: Row(children: [
+                  Icon(
+                    Icons.calendar_view_week,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('周视图'),
+                ]),
+              ),
+              // 切换到月视图
+              PopupMenuItem(
+                value: ClassScheduleViewMode.month,
+                child: Row(children: [
+                  Icon(
+                    Icons.calendar_view_month,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('月视图'),
+                ]),
+              ),
+            ],
+            onSelected: onModeChanged,
+          );
+        }
+      },
     );
   }
 }

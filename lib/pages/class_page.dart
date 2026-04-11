@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/models/nav_type.dart';
+import 'package:sachet/pages/class_child_pages/single_month_page.dart';
+import 'package:sachet/pages/class_child_pages/single_week_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/class_page_provider.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/widgets/classpage_widgets/classpage_appbar.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +44,9 @@ class ClassPage extends StatelessWidget {
                   ),
               builder: (_, __, ___) {
                 return FutureBuilder(
-                    future: context.read<SettingsProvider>().generatePageList(),
+                    future: context
+                        .read<SettingsProvider>()
+                        .loadCourseScheduleData(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasError) {
@@ -50,9 +55,16 @@ class ClassPage extends StatelessWidget {
                           }
                           return Text('${snapshot.error}');
                         } else {
-                          final pageListData = snapshot.data;
+                          final data = snapshot.data;
+
                           return ClassPageView(
-                            pageList: pageListData ?? <Widget>[],
+                            courseScheduleItemsList:
+                                data?.courseScheduleItemsList,
+                            courseColorData: data?.courseColorData,
+                            classSessionSummerDataList:
+                                data?.classSessionSummerDataList,
+                            classSessionWinterDataList:
+                                data?.classSessionWinterDataList,
                           );
                         }
                       } else {
@@ -66,18 +78,64 @@ class ClassPage extends StatelessWidget {
   }
 }
 
-class ClassPageView extends StatefulWidget {
+class ClassPageView extends StatelessWidget {
+  final List? courseScheduleItemsList;
+  final Map? courseColorData;
+  final List? classSessionSummerDataList;
+  final List? classSessionWinterDataList;
+
   const ClassPageView({
     super.key,
-    required this.pageList,
+    required this.courseScheduleItemsList,
+    required this.courseColorData,
+    required this.classSessionSummerDataList,
+    required this.classSessionWinterDataList,
   });
-  final List<Widget> pageList;
 
   @override
-  State<ClassPageView> createState() => _ClassPageViewState();
+  Widget build(BuildContext context) {
+    return Selector<ClassPageProvider, ClassScheduleViewMode>(
+        selector: (_, provider) => provider.currentViewMode,
+        builder: (_, currentViewMode, __) {
+          switch (currentViewMode) {
+            case ClassScheduleViewMode.week:
+              return WeekView(
+                courseScheduleItemsList: courseScheduleItemsList,
+                courseColorData: courseColorData,
+                classSessionSummerDataList: classSessionSummerDataList,
+                classSessionWinterDataList: classSessionWinterDataList,
+              );
+            case ClassScheduleViewMode.month:
+              return MonthView(
+                courseScheduleItemsList: courseScheduleItemsList,
+                courseColorData: courseColorData,
+                classSessionSummerDataList: classSessionSummerDataList,
+                classSessionWinterDataList: classSessionWinterDataList,
+              );
+          }
+        });
+  }
 }
 
-class _ClassPageViewState extends State<ClassPageView> {
+class WeekView extends StatefulWidget {
+  final List? courseScheduleItemsList;
+  final Map? courseColorData;
+  final List? classSessionSummerDataList;
+  final List? classSessionWinterDataList;
+
+  const WeekView({
+    super.key,
+    this.courseScheduleItemsList,
+    this.courseColorData,
+    this.classSessionSummerDataList,
+    this.classSessionWinterDataList,
+  });
+
+  @override
+  State<WeekView> createState() => _WeekViewState();
+}
+
+class _WeekViewState extends State<WeekView> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -92,12 +150,82 @@ class _ClassPageViewState extends State<ClassPageView> {
   @override
   Widget build(BuildContext context) {
     return PageView(
+        controller: context.read<ClassPageProvider>().pageController,
+        onPageChanged: (value) {
+          context.read<ClassPageProvider>().updateCurrentWeekCount(value + 1);
+        },
+        allowImplicitScrolling: true,
+        children: [
+          for (int i = 1; i < 21; i++)
+            SingleWeekPage(
+              weekCount: i,
+              courseScheduleItemsList: widget.courseScheduleItemsList,
+              courseColorData: widget.courseColorData,
+              classSessionSummerDataList: widget.classSessionSummerDataList,
+              classSessionWinterDataList: widget.classSessionWinterDataList,
+            ),
+        ]);
+  }
+}
+
+class MonthView extends StatefulWidget {
+  final List? courseScheduleItemsList;
+  final Map? courseColorData;
+  final List? classSessionSummerDataList;
+  final List? classSessionWinterDataList;
+
+  const MonthView({
+    super.key,
+    this.courseScheduleItemsList,
+    this.courseColorData,
+    this.classSessionSummerDataList,
+    this.classSessionWinterDataList,
+  });
+
+  @override
+  State<MonthView> createState() => _MonthViewState();
+}
+
+class _MonthViewState extends State<MonthView> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentWeekCount =
+          context.read<ClassPageProvider>().currentWeekCount;
+
+      final currentMonth = getDateFromWeekCountAndWeekday(
+        semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+        weekCount: currentWeekCount,
+        weekday: 7,
+      ).month;
+      context.read<ClassPageProvider>().jumpToMonth(month: currentMonth);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<MonthData> monthList =
+        context.select<ClassPageProvider, List<MonthData>>(
+            (provider) => provider.monthList);
+
+    return PageView(
       controller: context.read<ClassPageProvider>().pageController,
       onPageChanged: (value) {
-        context.read<ClassPageProvider>().updateCurrentWeekCount(value + 1);
+        context.read<ClassPageProvider>().updateCurrentMonthByIndex(value);
       },
       allowImplicitScrolling: true,
-      children: widget.pageList,
+      children: [
+        for (final monthData in monthList)
+          SingleMonthPage(
+            month: monthData.month,
+            monthDate: monthData.monthDate,
+            courseScheduleItemsList: widget.courseScheduleItemsList,
+            courseColorData: widget.courseColorData,
+            classSessionSummerDataList: widget.classSessionSummerDataList,
+            classSessionWinterDataList: widget.classSessionWinterDataList,
+          ),
+      ],
     );
   }
 }

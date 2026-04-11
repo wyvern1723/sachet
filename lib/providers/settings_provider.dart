@@ -7,7 +7,6 @@ import 'package:sachet/models/app_settings.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/nav_type.dart';
 import 'package:sachet/models/course_reminder.dart';
-import 'package:sachet/pages/class_single_page.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -228,7 +227,13 @@ class SettingsProvider extends ChangeNotifier {
     return listData;
   }
 
-  Future<List<Widget>> generatePageList() async {
+  Future<
+      ({
+        List? courseScheduleItemsList,
+        Map courseColorData,
+        List classSessionSummerDataList,
+        List classSessionWinterDataList
+      })> loadCourseScheduleData() async {
     List? courseScheduleItemsList;
     var rawData = await CachedDataStorage().getDecodedData(
       path: classScheduleFilePath,
@@ -250,17 +255,13 @@ class SettingsProvider extends ChangeNotifier {
     }
     List classSessionSummerDataList = await loadClassSessionSummerAsset();
     List classSessionWinterDataList = await loadClassSessionWinterAsset();
-    List<Widget> pageList = [];
-    for (int i = 1; i < 21; i++) {
-      pageList.add(ClassSinglePage(
-        weekCount: i,
-        courseScheduleItemsList: courseScheduleItemsList,
-        courseColorData: courseColorData ?? {},
-        classSessionSummerDataList: classSessionSummerDataList,
-        classSessionWinterDataList: classSessionWinterDataList,
-      ));
-    }
-    return pageList;
+
+    return (
+      courseScheduleItemsList: courseScheduleItemsList,
+      courseColorData: courseColorData ?? {},
+      classSessionSummerDataList: classSessionSummerDataList,
+      classSessionWinterDataList: classSessionWinterDataList,
+    );
   }
 
   /// 生成课程通知的信息 (CourseReminders)
