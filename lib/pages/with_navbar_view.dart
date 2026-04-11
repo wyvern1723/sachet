@@ -46,6 +46,9 @@ class WithNavigationBarView extends StatefulWidget {
 class _WithNavigationBarViewState extends State<WithNavigationBarView> {
   double? _scrollStartOffset;
 
+  /// 水平滑动前，NavBottom 是否是可见的状态
+  bool _wasNavBottomVisibleBeforeHorizontalScroll = true;
+
   bool _onScrollNotification(ScrollNotification notification,
       bool isWideScreenMode, int currentPageIndex) {
     if (isWideScreenMode) {
@@ -60,9 +63,11 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
             if (mounted) context.read<ScreenNavProvider>().hideNavBottom();
           });
         } else if (notification is ScrollEndNotification) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) context.read<ScreenNavProvider>().showNavBottom();
-          });
+          if (_wasNavBottomVisibleBeforeHorizontalScroll) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+            });
+          }
         }
       }
       return false;
@@ -77,6 +82,7 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
         // 向下滚动立即隐藏 NavBottom
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) context.read<ScreenNavProvider>().hideNavBottom();
+          _wasNavBottomVisibleBeforeHorizontalScroll = false;
         });
         _scrollStartOffset = null;
       } else if (notification.direction == ScrollDirection.forward) {
@@ -88,6 +94,7 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
         if (isAtTop) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+            _wasNavBottomVisibleBeforeHorizontalScroll = true;
           });
           _scrollStartOffset = null;
         }
@@ -105,6 +112,7 @@ class _WithNavigationBarViewState extends State<WithNavigationBarView> {
         if (isAtTop || distance >= 30.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) context.read<ScreenNavProvider>().showNavBottom();
+            _wasNavBottomVisibleBeforeHorizontalScroll = true;
           });
           _scrollStartOffset = null;
         }
