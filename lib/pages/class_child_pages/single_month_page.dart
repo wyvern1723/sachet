@@ -117,6 +117,7 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
         ),
         Expanded(
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
                 for (int i = 0; i < _calendarDays.length; i += 7)
