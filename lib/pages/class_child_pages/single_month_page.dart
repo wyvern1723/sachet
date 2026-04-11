@@ -103,31 +103,37 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // 周一 周二 周三 周四 周五 周六 周日
-        Row(
-          children: [
-            for (int weekday = 1; weekday <= DateTime.daysPerWeek; weekday++)
-              Expanded(
-                flex: 5,
-                child: Text(
-                  weekdayToZhouJi[weekday].toString(),
-                  textAlign: TextAlign.center,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
+          child: Row(
+            children: [
+              for (int weekday = 1; weekday <= DateTime.daysPerWeek; weekday++)
+                Expanded(
+                  flex: 5,
+                  child: Text(
+                    weekdayToZhouJi[weekday].toString(),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         Expanded(
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                for (int i = 0; i < _calendarDays.length; i += 7)
-                  _buildWeekRow(
-                    _calendarDays.sublist(i, i + 7),
-                    widget.month,
-                    context,
-                    colorScheme,
-                  )
-              ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 20.0),
+              child: Column(
+                children: [
+                  for (int i = 0; i < _calendarDays.length; i += 7)
+                    _buildWeekRow(
+                      _calendarDays.sublist(i, i + 7),
+                      widget.month,
+                      context,
+                      colorScheme,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -185,7 +191,7 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
               child: Text(
                 "${date.day}",
                 style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: 13,
                   height: 1.0,
                   color: !isInCurrentMonth
                       ? colorScheme.outline
