@@ -23,6 +23,7 @@ class SemesterView extends StatefulWidget {
 class _SemesterViewState extends State<SemesterView> {
   double _aspectRatio = 1.5;
   double _baseAspectRatio = 1.5;
+  int _pointerCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -30,106 +31,115 @@ class _SemesterViewState extends State<SemesterView> {
 
     final colorScheme = Theme.of(context).colorScheme;
 
-    return GestureDetector(
-      onScaleStart: (details) {
-        _baseAspectRatio = _aspectRatio;
-      },
-      onScaleUpdate: (details) {
-        setState(() {
-          _aspectRatio = (_baseAspectRatio / details.scale).clamp(0.3, 2.5);
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 0.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: FittedBox(
-                    child: Center(
-                      child: Text(
-                        '周次',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                for (final day in ['一', '二', '三', '四', '五', '六', '日'])
+    return Listener(
+      onPointerDown: (event) => setState(() => _pointerCount++),
+      onPointerUp: (event) => setState(() => _pointerCount--),
+      onPointerCancel: (event) => setState(() => _pointerCount--),
+      child: GestureDetector(
+        onScaleStart: (details) {
+          _baseAspectRatio = _aspectRatio;
+        },
+        onScaleUpdate: (details) {
+          if (details.pointerCount < 2) return;
+          setState(() {
+            _aspectRatio = (_baseAspectRatio / details.scale).clamp(0.3, 2.5);
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 0.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
                   Expanded(
-                    flex: 5,
-                    child: Center(
-                      child: Text(
-                        day,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                    flex: 3,
+                    child: FittedBox(
+                      child: Center(
+                        child: Text(
+                          '周次',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 20,
-                padding: EdgeInsets.only(bottom: 40),
-                itemBuilder: (context, index) {
-                  final weekCount = index + 1;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 2.0),
-                            child: Text(
-                              '$weekCount',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.onSurfaceVariant,
+                  for (final day in ['一', '二', '三', '四', '五', '六', '日'])
+                    Expanded(
+                      flex: 5,
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView.builder(
+                  physics: _pointerCount >= 2
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  itemCount: 20,
+                  padding: const EdgeInsets.only(bottom: 40),
+                  itemBuilder: (context, index) {
+                    final weekCount = index + 1;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: Text(
+                                '$weekCount',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        for (int weekday = 1; weekday <= 7; weekday++)
-                          Expanded(
-                            flex: 5,
-                            child: AspectRatio(
-                              aspectRatio: _aspectRatio,
-                              child: Selector<SettingsProvider, String>(
-                                  selector: (_, settingsProvider) =>
-                                      SettingsProvider.semesterStartDate,
-                                  builder: (_, semesterStartDate, __) {
-                                    return _HeatmapCell(
-                                      weekCount: weekCount,
-                                      weekday: weekday,
-                                      courseScheduleItemsList:
-                                          widget.courseScheduleItemsList!,
-                                      semesterStartDate: semesterStartDate,
-                                      aspectRatio: _aspectRatio,
-                                      courseColorData: widget.courseColorData,
-                                    );
-                                  }),
+                          for (int weekday = 1; weekday <= 7; weekday++)
+                            Expanded(
+                              flex: 5,
+                              child: AspectRatio(
+                                aspectRatio: _aspectRatio,
+                                child: Selector<SettingsProvider, String>(
+                                    selector: (_, settingsProvider) =>
+                                        SettingsProvider.semesterStartDate,
+                                    builder: (_, semesterStartDate, __) {
+                                      return _HeatmapCell(
+                                        weekCount: weekCount,
+                                        weekday: weekday,
+                                        courseScheduleItemsList:
+                                            widget.courseScheduleItemsList!,
+                                        semesterStartDate: semesterStartDate,
+                                        aspectRatio: _aspectRatio,
+                                        courseColorData: widget.courseColorData,
+                                      );
+                                    }),
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
