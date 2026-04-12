@@ -21,6 +21,9 @@ class SemesterView extends StatefulWidget {
 }
 
 class _SemesterViewState extends State<SemesterView> {
+  static const double _minAspectRatio = 0.3;
+  static const double _maxAspectRatio = 2.5;
+
   double _aspectRatio = 1.5;
   double _baseAspectRatio = 1.5;
   int _pointerCount = 0;
@@ -42,7 +45,8 @@ class _SemesterViewState extends State<SemesterView> {
         onScaleUpdate: (details) {
           if (details.pointerCount < 2) return;
           setState(() {
-            _aspectRatio = (_baseAspectRatio / details.scale).clamp(0.3, 2.5);
+            _aspectRatio = (_baseAspectRatio / details.scale)
+                .clamp(_minAspectRatio, _maxAspectRatio);
           });
         },
         child: Padding(

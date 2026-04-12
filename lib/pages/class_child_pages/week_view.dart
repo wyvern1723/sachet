@@ -24,6 +24,9 @@ class WeekView extends StatefulWidget {
 }
 
 class _WeekViewState extends State<WeekView> {
+  static const double _minCardHeight = 36.0;
+  static const double _maxCardHeight = 100.0;
+
   double _cardHeight = 65.0;
   double _baseCardHeight = 65.0;
   int _pointerCount = 0;
@@ -67,7 +70,8 @@ class _WeekViewState extends State<WeekView> {
         onScaleUpdate: (details) {
           if (details.pointerCount < 2) return;
           setState(() {
-            _cardHeight = (_baseCardHeight * details.scale).clamp(36.0, 100.0);
+            _cardHeight = (_baseCardHeight * details.scale)
+                .clamp(_minCardHeight, _maxCardHeight);
           });
         },
         onScaleEnd: (details) {

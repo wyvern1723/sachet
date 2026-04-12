@@ -25,6 +25,9 @@ class MonthView extends StatefulWidget {
 }
 
 class _MonthViewState extends State<MonthView> {
+  static const double _minCardHeight = 5.0;
+  static const double _maxCardHeight = 50.0;
+
   double _cardHeight = 10.0;
   double _baseCardHeight = 10.0;
   int _pointerCount = 0;
@@ -62,7 +65,8 @@ class _MonthViewState extends State<MonthView> {
         onScaleUpdate: (details) {
           if (details.pointerCount < 2) return;
           setState(() {
-            _cardHeight = (_baseCardHeight * details.scale).clamp(5.0, 30.0);
+            _cardHeight = (_baseCardHeight * details.scale)
+                .clamp(_minCardHeight, _maxCardHeight);
           });
         },
         child: PageView(
