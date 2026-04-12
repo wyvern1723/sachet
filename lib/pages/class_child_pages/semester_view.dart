@@ -54,6 +54,7 @@ class _SemesterViewState extends State<SemesterView> {
                   Expanded(
                     flex: 3,
                     child: FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: Center(
                         child: Text(
                           '周次',
