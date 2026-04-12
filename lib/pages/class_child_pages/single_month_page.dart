@@ -108,7 +108,7 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
       children: [
         // 周一 周二 周三 周四 周五 周六 周日
         Padding(
-          padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
+          padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0),
           child: Row(
             children: [
               for (int weekday = 1; weekday <= DateTime.daysPerWeek; weekday++)
