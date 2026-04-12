@@ -169,6 +169,7 @@ class CourseCard extends StatelessWidget {
           return CourseCardNormal(
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
+              cardHeight: cardHeight,
               cardBorderRadius: cardBorderRadius,
               onTap: (_) {
                 _showCourseDetails(
@@ -182,6 +183,7 @@ class CourseCard extends StatelessWidget {
           return CourseCardCompact(
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
+              cardHeight: cardHeight,
               cardBorderRadius: cardBorderRadius,
               onTap: (_) {
                 _showCourseDetails(
@@ -296,12 +298,11 @@ class CourseCardCompact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
-    double? _cardHeight = cardHeight;
-    _cardHeight ??= 10;
-    var courseCardSettings = context.watch<CourseCardSettingsProvider>();
+    final double _cardHeight = cardHeight ?? 10;
+    final courseCardSettings = context.watch<CourseCardSettingsProvider>();
 
     // ignore: no_leading_underscores_for_local_identifiers
-    double _cardBorderRadius = cardBorderRadius ??
+    final double _cardBorderRadius = cardBorderRadius ??
         context.select<CourseCardSettingsProvider, double>(
             (courseCardSettingsProvider) =>
                 courseCardSettingsProvider.cardBorderRadius);
@@ -319,25 +320,31 @@ class CourseCardCompact extends StatelessWidget {
             Colors.green.shade400,
         child: InkWell(
           onTap: () {
-            var onTapFunc = onTap;
+            final onTapFunc = onTap;
             if (onTapFunc != null) {
               onTapFunc(true);
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-            child: Text(
-              courseSchedule.title ?? '',
-              style: TextStyle(
-                fontWeight: intToFontWeight(courseCardSettings.titleFontWeight),
-                fontSize: 10,
-                color: colorFromHex(courseCardSettings.titleTextColor),
+          child: Builder(builder: (context) {
+            final maxLines = (_cardHeight * (courseSchedule.length ?? 2) / 11)
+                .floor()
+                .clamp(1, 100);
+            return Padding(
+              padding: EdgeInsets.only(top: maxLines > 1 ? 2.0 : 0.0),
+              child: Text(
+                courseSchedule.title ?? '',
+                style: TextStyle(
+                  fontWeight:
+                      intToFontWeight(courseCardSettings.titleFontWeight),
+                  fontSize: 10,
+                  color: colorFromHex(courseCardSettings.titleTextColor),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: maxLines,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+            );
+          }),
         ),
       ),
     );

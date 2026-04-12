@@ -25,6 +25,10 @@ class MonthView extends StatefulWidget {
 }
 
 class _MonthViewState extends State<MonthView> {
+  double _cardHeight = 10.0;
+  double _baseCardHeight = 10.0;
+  int _pointerCount = 0;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -47,23 +51,44 @@ class _MonthViewState extends State<MonthView> {
         context.select<ClassPageProvider, List<MonthData>>(
             (provider) => provider.monthList);
 
-    return PageView(
-      controller: context.read<ClassPageProvider>().pageController,
-      onPageChanged: (value) {
-        context.read<ClassPageProvider>().updateCurrentMonthByIndex(value);
-      },
-      allowImplicitScrolling: true,
-      children: [
-        for (final monthData in monthList)
-          SingleMonthPage(
-            month: monthData.month,
-            monthDate: monthData.monthDate,
-            courseScheduleItemsList: widget.courseScheduleItemsList,
-            courseColorData: widget.courseColorData,
-            classSessionSummerDataList: widget.classSessionSummerDataList,
-            classSessionWinterDataList: widget.classSessionWinterDataList,
-          ),
-      ],
+    return Listener(
+      onPointerDown: (event) => setState(() => _pointerCount++),
+      onPointerUp: (event) => setState(() => _pointerCount--),
+      onPointerCancel: (event) => setState(() => _pointerCount--),
+      child: GestureDetector(
+        onScaleStart: (details) {
+          _baseCardHeight = _cardHeight;
+        },
+        onScaleUpdate: (details) {
+          if (details.pointerCount < 2) return;
+          setState(() {
+            _cardHeight = (_baseCardHeight * details.scale).clamp(5.0, 30.0);
+          });
+        },
+        child: PageView(
+          controller: context.read<ClassPageProvider>().pageController,
+          onPageChanged: (value) {
+            context.read<ClassPageProvider>().updateCurrentMonthByIndex(value);
+          },
+          physics: _pointerCount >= 2
+              ? const NeverScrollableScrollPhysics()
+              : const AlwaysScrollableScrollPhysics(),
+          allowImplicitScrolling: true,
+          children: [
+            for (final monthData in monthList)
+              SingleMonthPage(
+                month: monthData.month,
+                monthDate: monthData.monthDate,
+                courseScheduleItemsList: widget.courseScheduleItemsList,
+                courseColorData: widget.courseColorData,
+                classSessionSummerDataList: widget.classSessionSummerDataList,
+                classSessionWinterDataList: widget.classSessionWinterDataList,
+                cardHeight: _cardHeight,
+                pointerCount: _pointerCount,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

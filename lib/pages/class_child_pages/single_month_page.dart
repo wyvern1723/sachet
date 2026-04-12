@@ -16,6 +16,8 @@ class SingleMonthPage extends StatefulWidget {
     required this.classSessionSummerDataList,
     required this.classSessionWinterDataList,
     required this.courseColorData,
+    required this.cardHeight,
+    required this.pointerCount,
   });
   final int month;
   final DateTime monthDate;
@@ -23,6 +25,8 @@ class SingleMonthPage extends StatefulWidget {
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
+  final double cardHeight;
+  final int pointerCount;
   @override
   State<SingleMonthPage> createState() => _SingleMonthPageState();
 }
@@ -121,7 +125,9 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: widget.pointerCount >= 2
+                ? const NeverScrollableScrollPhysics()
+                : const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 20.0),
               child: Column(
@@ -209,7 +215,13 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
                   int item = (date.weekday - 1) * 5 + classCount;
                   List<CourseSchedule> courseScheduleItems =
                       widget.courseScheduleItemsList![item];
-                  final cardHeight = 10.0;
+
+                  int courseLength = 2;
+                  int index = courseScheduleItems.indexWhere(
+                      (element) => element.weeks!.contains(weekCount) == true);
+                  if (index != -1) {
+                    courseLength = courseScheduleItems[index].length ?? 2;
+                  }
 
                   // 如果这一周完全没有晚课，不显示这一周所有的晚课的空白占位
                   // 其他课，即使没有课，也会有占位的空白，以保证剩下的课在正确的位置上
@@ -234,12 +246,14 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
                     }
                   }
                   return SizedBox(
-                    height: (cardHeight) * 2,
+                    height: isNightCourse
+                        ? (widget.cardHeight * courseLength)
+                        : (widget.cardHeight * 2),
                     child: OverflowBox(
                       alignment: Alignment.topCenter,
-                      maxHeight: (cardHeight) * 11,
+                      maxHeight: (widget.cardHeight) * 11,
                       child: CourseCard.compact(
-                        cardHeight: cardHeight,
+                        cardHeight: widget.cardHeight,
                         weekCount: weekCount,
                         weekday: date.weekday,
                         classCount: classCount,
