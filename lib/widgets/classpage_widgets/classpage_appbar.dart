@@ -413,32 +413,35 @@ class ViewModeToggle extends StatelessWidget {
 
         if (isWideScreen) {
           // 宽屏：使用 SegmentedButton
-          return SegmentedButton<ClassScheduleViewMode>(
-            segments: const [
-              ButtonSegment(
-                value: ClassScheduleViewMode.week,
-                label: Text('周'),
-                icon: Icon(Icons.calendar_view_week),
-                tooltip: '周视图',
-              ),
-              ButtonSegment(
-                value: ClassScheduleViewMode.month,
-                label: Text('月'),
-                icon: Icon(Icons.calendar_view_month),
-                tooltip: '月视图',
-              ),
-            ],
-            selected: {currentViewMode},
-            onSelectionChanged: (selected) {
-              if (selected.isNotEmpty) {
-                onModeChanged(selected.first);
-              }
-            },
-            showSelectedIcon: false,
-            style: ButtonStyle(
-              visualDensity: VisualDensity.compact,
-              padding: WidgetStateProperty.all(
-                const EdgeInsets.symmetric(horizontal: 12),
+          return Center(
+            child: SegmentedButton<ClassScheduleViewMode>(
+              segments: const [
+                ButtonSegment(
+                  value: ClassScheduleViewMode.week,
+                  label: Text('周'),
+                  icon: Icon(Icons.calendar_view_week),
+                  tooltip: '周视图',
+                ),
+                ButtonSegment(
+                  value: ClassScheduleViewMode.month,
+                  label: Text('月'),
+                  icon: Icon(Icons.calendar_view_month),
+                  tooltip: '月视图',
+                ),
+              ],
+              selected: {currentViewMode},
+              onSelectionChanged: (selected) {
+                if (selected.isNotEmpty) {
+                  onModeChanged(selected.first);
+                }
+              },
+              showSelectedIcon: false,
+              style: ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity(horizontal: 0, vertical: 1),
+                padding: WidgetStateProperty.all(
+                  const EdgeInsets.symmetric(horizontal: 12),
+                ),
               ),
             ),
           );
