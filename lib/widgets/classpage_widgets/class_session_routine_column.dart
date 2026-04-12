@@ -8,9 +8,11 @@ class ClassSessionRoutineColumn extends StatelessWidget {
     super.key,
     required this.weekCount,
     required this.routinedata,
+    this.cardHeight,
   });
   final int weekCount;
   final List? routinedata;
+  final double? cardHeight;
 
   List<Widget> _getListings() {
     List<Widget> listings = [];
@@ -20,6 +22,7 @@ class ClassSessionRoutineColumn extends StatelessWidget {
         session: routinedata?[i]["session"],
         startTime: routinedata?[i]["startTime"],
         endTime: routinedata?[i]["endTime"],
+        cardHeight: cardHeight,
       ));
     }
     return listings;

@@ -9,17 +9,22 @@ class ClassSession extends StatelessWidget {
     required this.session,
     required this.startTime,
     required this.endTime,
+    this.cardHeight,
   });
   final String session; // 课程节次，1、2、3、4、5、6、7、8、9、10、11
   final String startTime; // 开始时间 08:00
   final String endTime; // 结束时间 08:45
+  final double? cardHeight;
 
   @override
   Widget build(BuildContext context) {
-    double cardHeight = context.select<CourseCardSettingsProvider, double>(
-        (courseCardSettingsProvider) => courseCardSettingsProvider.cardHeight);
+    // ignore: no_leading_underscores_for_local_identifiers
+    double _cardHeight = cardHeight ??
+        context.select<CourseCardSettingsProvider, double>(
+            (courseCardSettingsProvider) =>
+                courseCardSettingsProvider.cardHeight);
     return SizedBox(
-      height: cardHeight,
+      height: _cardHeight,
       child: Center(
         child: SingleChildScrollView(
           child: Padding(

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/utils/time_manager.dart';
-import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/class_session_routine_column.dart';
 import 'package:sachet/widgets/classpage_widgets/course_card.dart';
@@ -18,12 +17,16 @@ class SingleWeekPage extends StatefulWidget {
     required this.classSessionSummerDataList,
     required this.classSessionWinterDataList,
     required this.courseColorData,
+    required this.cardHeight,
+    required this.pointerCount,
   });
   final int weekCount;
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
   final List? classSessionSummerDataList;
   final List? classSessionWinterDataList;
+  final double cardHeight;
+  final int pointerCount;
   @override
   State<SingleWeekPage> createState() => _SingleWeekPageState();
 }
@@ -51,7 +54,9 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
         // 下方是课程表主体
         Expanded(
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: widget.pointerCount >= 2
+                ? const NeverScrollableScrollPhysics()
+                : const AlwaysScrollableScrollPhysics(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,6 +78,7 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                           routinedata: isSummerRountine
                               ? widget.classSessionSummerDataList
                               : widget.classSessionWinterDataList,
+                          cardHeight: widget.cardHeight,
                         );
                       }),
                 ),
@@ -90,31 +96,27 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                               for (int classCount = 0;
                                   classCount < 5;
                                   classCount++)
-                                Selector<CourseCardSettingsProvider, double>(
-                                    selector: (_, courseCardSettingsProvider) =>
-                                        courseCardSettingsProvider.cardHeight,
-                                    builder: (context, cardHeight, __) {
-                                      int item = (weekday - 1) * 5 + classCount;
-                                      List<CourseSchedule> courseScheduleItems =
-                                          widget.courseScheduleItemsList![item];
-                                      return SizedBox(
-                                        height: (cardHeight) * 2,
-                                        child: OverflowBox(
-                                          alignment: Alignment.topCenter,
-                                          maxHeight: (cardHeight) * 11,
-                                          child: CourseCard(
-                                            cardHeight: cardHeight,
-                                            weekCount: widget.weekCount,
-                                            weekday: weekday,
-                                            classCount: classCount,
-                                            courseScheduleItems:
-                                                courseScheduleItems,
-                                            courseColorData:
-                                                widget.courseColorData,
-                                          ),
-                                        ),
-                                      );
-                                    }),
+                                Builder(builder: (context) {
+                                  int item = (weekday - 1) * 5 + classCount;
+                                  List<CourseSchedule> courseScheduleItems =
+                                      widget.courseScheduleItemsList![item];
+                                  return SizedBox(
+                                    height: (widget.cardHeight) * 2,
+                                    child: OverflowBox(
+                                      alignment: Alignment.topCenter,
+                                      maxHeight: (widget.cardHeight) * 11,
+                                      child: CourseCard(
+                                        cardHeight: widget.cardHeight,
+                                        weekCount: widget.weekCount,
+                                        weekday: weekday,
+                                        classCount: classCount,
+                                        courseScheduleItems:
+                                            courseScheduleItems,
+                                        courseColorData: widget.courseColorData,
+                                      ),
+                                    ),
+                                  );
+                                }),
                             ],
                           )
                         : SizedBox(),
