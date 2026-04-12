@@ -96,259 +96,264 @@ class HomePage extends StatelessWidget {
         drawer: SettingsProvider.navigationType == NavType.navigationDrawer.type
             ? myNavDrawer
             : null,
-        appBar: AppBar(
-          title: const Text('Home'),
-        ),
-        body: SingleChildScrollView(
+        body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Card(
-                  elevation: 4,
-                  shadowColor: primaryColor.withOpacity(0.4),
-                  clipBehavior: Clip.hardEdge,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FreeClassroomPageZF(),
+          slivers: [
+            SliverAppBar(
+              title: const Text('Home'),
+              // floating: true, // 上滑隐藏，下滑立即出现
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(
+                      elevation: 4,
+                      shadowColor: primaryColor.withOpacity(0.4),
+                      clipBehavior: Clip.hardEdge,
+                      color: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      child: InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FreeClassroomPageZF(),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '空闲教室',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onPrimary,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '空闲教室',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '快速查询自习室',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                '快速查询自习室',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: colorScheme.onPrimary,
-                                ),
+                              Icon(
+                                Icons.meeting_room_rounded,
+                                size: 44,
+                                color: colorScheme.onPrimary,
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.meeting_room_rounded,
-                            size: 44,
-                            color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CardWidget(
+                            title: '培养方案',
+                            icon: Icons.school_rounded,
+                            page: CultivatePage(),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CardWidget(
-                        title: '培养方案',
-                        icon: Icons.school_rounded,
-                        page: CultivatePage(),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: CardWidget(
-                        title: '考试时间',
-                        icon: Icons.schedule_rounded,
-                        page: ExamTimePageZF(),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CardWidget(
-                        title: '成绩查询',
-                        // icon: Icons.emoji_events_outlined,
-                        icon: Icons.history_edu_outlined,
-                        // icon: Icons.analytics_rounded,
-                        page: GradePageZF(),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: CardWidget(
-                        title: '绩点排名',
-                        icon: Icons.leaderboard_rounded,
-                        page: GPAPageZF(),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: CardWidget(
-                        title: '成绩单',
-                        // icon: Icons.picture_as_pdf,
-                        icon: Icons.description_rounded,
-                        page: ScorePdfPageZF(),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 24.0, 4.0, 12.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 4,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(2),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '打开外部网站',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: CardWidget(
+                            title: '考试时间',
+                            icon: Icons.schedule_rounded,
+                            page: ExamTimePageZF(),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(children: [
-                  Expanded(
-                    child: CardLinkWidget(
-                      title: '大物实验',
-                      icon: Icons.science,
-                      link: collegePhysicsExperimentUrl,
+                      ],
                     ),
-                  ),
-                  Expanded(
-                      child: CardLinkWidget(
-                    title: '湘大邮箱',
-                    icon: Icons.email,
-                    // icon: Icons.email_outlined,
-                    link: xtuMailUrl,
-                  ))
-                ]),
-                Row(children: [
-                  Expanded(
-                    child: CardLinkWidget(
-                      title: '馆藏检索',
-                      icon: Icons.book,
-                      link: libraryLookUpUrl,
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CardWidget(
+                            title: '成绩查询',
+                            // icon: Icons.emoji_events_outlined,
+                            icon: Icons.history_edu_outlined,
+                            // icon: Icons.analytics_rounded,
+                            page: GradePageZF(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CardWidget(
+                            title: '绩点排名',
+                            icon: Icons.leaderboard_rounded,
+                            page: GPAPageZF(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CardWidget(
+                            title: '成绩单',
+                            // icon: Icons.picture_as_pdf,
+                            icon: Icons.description_rounded,
+                            page: ScorePdfPageZF(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    child: CardLinkWidget(
-                      title: '体测网站',
-                      // icon: Icons.directions_run_outlined,
-                      icon: Icons.fitness_center_outlined,
-                      link: ticeyunUrl,
-                    ),
-                  ),
-                ]),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CardLinkWidget(
-                        title: '湘大校历',
-                        icon: Icons.date_range,
-                        link: xtuSchoolCalendarUrl,
-                      ),
-                    ),
-                    Expanded(
-                      child: CardLinkWidget(
-                        title: '湘大新闻',
-                        icon: Icons.newspaper,
-                        link: xtuNewsUrl,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: Column(
-                    children:
-                        List.generate(openLinkListTileList.length, (index) {
-                      return Column(
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4.0, 24.0, 4.0, 12.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 4,
+                          Container(
+                            width: 4,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(2),
                             ),
-                            leading: Align(
-                              widthFactor: 1,
-                              alignment: Alignment.centerLeft,
-                              child: Icon(
-                                openLinkListTileList[index].icon,
-                                color: primaryColor,
-                              ),
-                            ),
-                            title: Text(
-                              openLinkListTileList[index].title,
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            subtitle: Text(
-                              openLinkListTileList[index].subtitle,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.outline,
-                              ),
-                            ),
-                            trailing: Icon(
-                              // Icons.chevron_right,
-                              Icons.launch_outlined,
-                              color: colorScheme.outline,
-                            ),
-                            onTap: () =>
-                                openLink(openLinkListTileList[index].link),
-                            onLongPress: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: openLinkListTileList[index].link));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("链接已复制到剪贴板")),
-                              );
-                            },
                           ),
-                          // 添加分割线，除了最后一个
-                          if (index != openLinkListTileList.length - 1)
-                            Divider(
-                              height: 1,
-                              thickness: 1,
-                              indent: 60,
-                              endIndent: 40,
+                          const SizedBox(width: 8),
+                          const Text(
+                            '打开外部网站',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
+                          ),
                         ],
-                      );
-                    }),
-                  ),
+                      ),
+                    ),
+                    Row(children: [
+                      Expanded(
+                        child: CardLinkWidget(
+                          title: '大物实验',
+                          icon: Icons.science,
+                          link: collegePhysicsExperimentUrl,
+                        ),
+                      ),
+                      Expanded(
+                          child: CardLinkWidget(
+                        title: '湘大邮箱',
+                        icon: Icons.email,
+                        // icon: Icons.email_outlined,
+                        link: xtuMailUrl,
+                      ))
+                    ]),
+                    Row(children: [
+                      Expanded(
+                        child: CardLinkWidget(
+                          title: '馆藏检索',
+                          icon: Icons.book,
+                          link: libraryLookUpUrl,
+                        ),
+                      ),
+                      Expanded(
+                        child: CardLinkWidget(
+                          title: '体测网站',
+                          // icon: Icons.directions_run_outlined,
+                          icon: Icons.fitness_center_outlined,
+                          link: ticeyunUrl,
+                        ),
+                      ),
+                    ]),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CardLinkWidget(
+                            title: '湘大校历',
+                            icon: Icons.date_range,
+                            link: xtuSchoolCalendarUrl,
+                          ),
+                        ),
+                        Expanded(
+                          child: CardLinkWidget(
+                            title: '湘大新闻',
+                            icon: Icons.newspaper,
+                            link: xtuNewsUrl,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: Column(
+                        children:
+                            List.generate(openLinkListTileList.length, (index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 4,
+                                ),
+                                leading: Align(
+                                  widthFactor: 1,
+                                  alignment: Alignment.centerLeft,
+                                  child: Icon(
+                                    openLinkListTileList[index].icon,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                                title: Text(
+                                  openLinkListTileList[index].title,
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                subtitle: Text(
+                                  openLinkListTileList[index].subtitle,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colorScheme.outline,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  // Icons.chevron_right,
+                                  Icons.launch_outlined,
+                                  color: colorScheme.outline,
+                                ),
+                                onTap: () =>
+                                    openLink(openLinkListTileList[index].link),
+                                onLongPress: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text: openLinkListTileList[index].link));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("链接已复制到剪贴板")),
+                                  );
+                                },
+                              ),
+                              // 添加分割线，除了最后一个
+                              if (index != openLinkListTileList.length - 1)
+                                Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  indent: 60,
+                                  endIndent: 40,
+                                ),
+                            ],
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
