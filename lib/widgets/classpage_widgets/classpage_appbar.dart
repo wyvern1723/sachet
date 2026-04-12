@@ -442,6 +442,19 @@ class ViewModeToggle extends StatelessWidget {
                 padding: WidgetStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 12),
                 ),
+                foregroundColor: (!Theme.of(context).useMaterial3 &&
+                        Theme.of(context).brightness == Brightness.light)
+                    ? WidgetStateProperty.resolveWith<Color>(
+                        (Set<WidgetState> states) {
+                          if (states.contains(WidgetState.selected)) {
+                            // 选中时的文字和图标颜色
+                            return colorScheme.onSecondaryContainer;
+                          }
+                          // 未选中时的文字和图标颜色
+                          return colorScheme.onPrimary;
+                        },
+                      )
+                    : null,
               ),
             ),
           );
