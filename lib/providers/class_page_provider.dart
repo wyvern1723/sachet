@@ -15,7 +15,7 @@ class MonthData {
   MonthData(this.index, this.month, this.monthDate, this.label);
 }
 
-enum ClassScheduleViewMode { week, month }
+enum ClassScheduleViewMode { week, month, semester }
 
 class ClassPageProvider extends ChangeNotifier {
   // 转到 Class_Page 页面中的数字时需要转化, pageList 的 list 是 [0,1,2...19]

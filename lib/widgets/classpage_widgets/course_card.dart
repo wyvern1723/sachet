@@ -13,6 +13,7 @@ enum CourseCardVariant { normal, compact }
 
 class CourseCard extends StatelessWidget {
   final double cardHeight;
+  final double? cardBorderRadius;
   final int weekCount;
   final int weekday;
   final int classCount; // classCount 节次（ 1~5 ）
@@ -28,6 +29,7 @@ class CourseCard extends StatelessWidget {
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
+    this.cardBorderRadius,
     this.variant = CourseCardVariant.normal,
   });
 
@@ -39,6 +41,7 @@ class CourseCard extends StatelessWidget {
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
+    this.cardBorderRadius,
   }) : variant = CourseCardVariant.compact;
 
   void _showCourseDetails({
@@ -166,6 +169,7 @@ class CourseCard extends StatelessWidget {
           return CourseCardNormal(
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
+              cardBorderRadius: cardBorderRadius,
               onTap: (_) {
                 _showCourseDetails(
                   context: context,
@@ -178,6 +182,7 @@ class CourseCard extends StatelessWidget {
           return CourseCardCompact(
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
+              cardBorderRadius: cardBorderRadius,
               onTap: (_) {
                 _showCourseDetails(
                   context: context,
@@ -197,11 +202,13 @@ class CourseCardNormal extends StatelessWidget {
     required this.courseSchedule,
     required this.courseColorData,
     this.cardHeight,
+    this.cardBorderRadius,
     this.onTap,
   });
   final CourseSchedule courseSchedule;
   final Map? courseColorData;
   final double? cardHeight;
+  final double? cardBorderRadius;
   final Function? onTap;
 
   @override
@@ -211,7 +218,8 @@ class CourseCardNormal extends StatelessWidget {
     _cardHeight ??= context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardHeight);
 
-    double cardBorderRadius =
+    // ignore: no_leading_underscores_for_local_identifiers
+    double _cardBorderRadius = cardBorderRadius ??
         context.select<CourseCardSettingsProvider, double>(
             (courseCardSettingsProvider) =>
                 courseCardSettingsProvider.cardBorderRadius);
@@ -225,7 +233,7 @@ class CourseCardNormal extends StatelessWidget {
         // Card 在 Container 里的边距（在整体上表现为各个卡片间的间隙、间距）
         margin: EdgeInsets.all(cardMargin),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(cardBorderRadius),
+          borderRadius: BorderRadius.circular(_cardBorderRadius),
         ),
         color: (courseColorData?[courseSchedule.title]).toString().toColor() ??
             Colors.green.shade400,
@@ -276,11 +284,13 @@ class CourseCardCompact extends StatelessWidget {
     required this.courseSchedule,
     required this.courseColorData,
     this.cardHeight,
+    this.cardBorderRadius,
     this.onTap,
   });
   final CourseSchedule courseSchedule;
   final Map? courseColorData;
   final double? cardHeight;
+  final double? cardBorderRadius;
   final Function? onTap;
 
   @override
@@ -290,7 +300,8 @@ class CourseCardCompact extends StatelessWidget {
     _cardHeight ??= 10;
     var courseCardSettings = context.watch<CourseCardSettingsProvider>();
 
-    double cardBorderRadius =
+    // ignore: no_leading_underscores_for_local_identifiers
+    double _cardBorderRadius = cardBorderRadius ??
         context.select<CourseCardSettingsProvider, double>(
             (courseCardSettingsProvider) =>
                 courseCardSettingsProvider.cardBorderRadius);
@@ -302,7 +313,7 @@ class CourseCardCompact extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         margin: EdgeInsets.all(cardMargin),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(cardBorderRadius),
+          borderRadius: BorderRadius.circular(_cardBorderRadius),
         ),
         color: (courseColorData?[courseSchedule.title]).toString().toColor() ??
             Colors.green.shade400,
