@@ -46,7 +46,7 @@ class _SemesterViewState extends State<SemesterView> {
           });
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 0.0),
+          padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
           child: Column(
             children: [
               Row(

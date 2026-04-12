@@ -241,7 +241,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppBar(
-      titleSpacing: 16.0,
+      titleSpacing: 12.0,
       title: Selector<ClassPageProvider, ClassScheduleViewMode>(
           selector: (_, provider) => provider.currentViewMode,
           builder: (_, currentViewMode, __) {
@@ -524,7 +524,7 @@ class ViewModeToggle extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
-                  const Text('周视图'),
+                  const Text('周'),
                 ]),
               ),
               // 切换到月视图
@@ -536,7 +536,7 @@ class ViewModeToggle extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
-                  const Text('月视图'),
+                  const Text('月'),
                 ]),
               ),
               // 切换到学期视图
@@ -548,7 +548,7 @@ class ViewModeToggle extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
-                  const Text('学期视图'),
+                  const Text('学期'),
                 ]),
               ),
             ],
