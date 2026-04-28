@@ -57,6 +57,7 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
             physics: widget.pointerCount >= 2
                 ? const NeverScrollableScrollPhysics()
                 : const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.only(bottom: 40),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
