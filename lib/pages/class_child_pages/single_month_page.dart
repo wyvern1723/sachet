@@ -200,11 +200,11 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.0,
-                  color: !isInCurrentMonth
-                      ? colorScheme.outline
-                      : _isToday
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurface,
+                  color: _isToday
+                      ? colorScheme.onPrimary
+                      : isInCurrentMonth
+                          ? colorScheme.onSurface
+                          : colorScheme.outline,
                   fontWeight: FontWeight.w500,
                 ),
               ),
