@@ -34,6 +34,9 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   // true => 显示详细信息, false => 显示精简信息
   bool _isDetailedView = false;
 
+  /// 是否显示考试时间倒计时
+  bool _isShowCountDown = true;
+
   List<ExamTimeResponseZF>? _examTimeData;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -185,24 +188,34 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           icon: Icon(Icons.history_outlined),
           tooltip: '切换查询学期',
         ),
-        if (_examTimeData != null && _examTimeData!.isNotEmpty)
+        if (_examTimeData != null && _examTimeData!.isNotEmpty) ...[
+          // 导出考试安排
           IconButton(
             onPressed: () => _exportExamTimeToIcs(context),
             icon: Icon(Icons.share_outlined),
             tooltip: '导出考试安排',
           ),
-        // 切换显示详细信息/显示精简信息
-        IconButton(
-          onPressed: () {
-            setState(() {
-              _isDetailedView = !_isDetailedView;
-            });
-          },
-          icon: _isDetailedView
-              ? Icon(Icons.notes_outlined)
-              : Icon(Icons.subject_outlined),
-          tooltip: _isDetailedView ? "显示精简信息" : "显示详细信息",
-        ),
+          // 切换是否显示考试时间倒计时
+          IconButton(
+            onPressed: () {
+              setState(() => _isShowCountDown = !_isShowCountDown);
+            },
+            icon: Icon(_isShowCountDown
+                ? Icons.hourglass_empty
+                : Icons.hourglass_disabled),
+            tooltip: _isShowCountDown ? '隐藏倒计时' : '显示倒计时',
+          ),
+          // 切换显示详细信息/显示精简信息
+          IconButton(
+            onPressed: () {
+              setState(() => _isDetailedView = !_isDetailedView);
+            },
+            icon: _isDetailedView
+                ? Icon(Icons.notes_outlined)
+                : Icon(Icons.subject_outlined),
+            tooltip: _isDetailedView ? "显示精简信息" : "显示详细信息",
+          ),
+        ]
       ]),
       body: FutureBuilder(
         future: _future,
@@ -260,6 +273,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
             queryingSemesterYear: _displaySemesterYear,
             queryingSemesterIndex: _displaySemesterIndex,
             isDetailedView: _isDetailedView,
+            isShowCountDown: _isShowCountDown,
           );
         },
       ),
@@ -275,11 +289,13 @@ class _ExamTimeViewZF extends StatelessWidget {
     required this.queryingSemesterYear,
     required this.queryingSemesterIndex,
     required this.isDetailedView,
+    required this.isShowCountDown,
   });
   final List<ExamTimeResponseZF> examTimeData;
   final String queryingSemesterYear;
   final String queryingSemesterIndex;
   final bool isDetailedView;
+  final bool isShowCountDown;
 
   @override
   Widget build(BuildContext context) {
@@ -294,6 +310,7 @@ class _ExamTimeViewZF extends StatelessWidget {
               child: ExamTimeCardZF(
                 examTime: e,
                 isDetailedView: isDetailedView,
+                isShowCountDown: isShowCountDown,
               ),
             );
           }),
