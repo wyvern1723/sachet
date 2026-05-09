@@ -40,52 +40,210 @@ class ExamTimeCardZF extends StatelessWidget {
       color: isFinished
           ? colorScheme.surfaceContainerHighest
           : colorScheme.secondaryContainer,
-      child: Stack(
-        children: [
-          // 在卡片右上角显示倒计时
-          Positioned(
-            top: 4,
-            right: 12,
-            child: _CountDown(
-              isFinished: isFinished,
-              startDateTime: startDateTime,
-              endDateTime: endDateTime,
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            onLongPress: () {
-              Clipboard.setData(
-                ClipboardData(
-                    text:
-                        "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("考试信息已复制到剪贴板")),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
-              child: Column(
+      child: InkWell(
+        onTap: () {},
+        onLongPress: () {
+          Clipboard.setData(
+            ClipboardData(
+                text:
+                    "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("考试信息已复制到剪贴板")),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // 课程名称
-                  Text(
-                    examTime.courseTitle,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isFinished
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSecondaryContainer,
+                  Flexible(
+                    child: Text(
+                      examTime.courseTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 4.0),
-                  // 时间，例如 "2025-11-25(10:30-12:30) 星期二"
+                  // 在卡片右上角显示倒计时
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Transform.translate(
+                      offset: Offset(4, -4),
+                      child: _CountDown(
+                        isFinished: isFinished,
+                        startDateTime: startDateTime,
+                        endDateTime: endDateTime,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4.0),
+              // 时间，例如 "2025-11-25(10:30-12:30) 星期二"
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 16,
+                    color: isFinished
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.onSecondaryContainer,
+                  ),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      '${examTime.time} ${_getWeekday(startDateTime) ?? ''}',
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // 地点
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.place_outlined,
+                    size: 16,
+                    color: isFinished
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.onSecondaryContainer,
+                  ),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      examTime.place,
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '考试名称: ${examTime.examName}',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: isFinished
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onSecondaryContainer,
+                ),
+              ),
+              Text(
+                '场地简称: ${examTime.placeShort}',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: isFinished
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onSecondaryContainer,
+                ),
+              ),
+              Text(
+                '教师信息: ${examTime.instructorInfo}',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: isFinished
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleCard(BuildContext context, bool isFinished,
+      DateTime? startDateTime, DateTime? endDateTime) {
+    final theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      color: isFinished
+          ? colorScheme.surfaceContainerHighest
+          : colorScheme.secondaryContainer,
+      child: InkWell(
+        onTap: () {},
+        onLongPress: () {
+          Clipboard.setData(
+            ClipboardData(
+                text:
+                    "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("考试信息已复制到剪贴板")),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 课程名称
+                  Flexible(
+                    child: Text(
+                      examTime.courseTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isFinished
+                            ? colorScheme.onSurfaceVariant
+                            : colorScheme.onSecondaryContainer,
+                      ),
+                    ),
+                  ),
+                  // 在卡片右上角显示倒计时
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Transform.translate(
+                      offset: Offset(4, -4),
+                      child: _CountDown(
+                        isFinished: isFinished,
+                        startDateTime: startDateTime,
+                        endDateTime: endDateTime,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (theme.useMaterial3 == false) SizedBox(height: 4.0),
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                spacing: 4.0,
+                runSpacing: 0.0,
+                children: [
+                  // 考试时间
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.access_time_rounded,
@@ -94,14 +252,14 @@ class ExamTimeCardZF extends StatelessWidget {
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onSecondaryContainer,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           '${examTime.time} ${_getWeekday(startDateTime) ?? ''}',
                           maxLines: 3,
                           style: TextStyle(
                             fontSize: 16,
-                            height: 1,
+                            // height: 1,
                             color: isFinished
                                 ? colorScheme.onSurfaceVariant
                                 : colorScheme.onSecondaryContainer,
@@ -110,10 +268,8 @@ class ExamTimeCardZF extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // 地点
+                  // 考试地点
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -123,8 +279,8 @@ class ExamTimeCardZF extends StatelessWidget {
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onSecondaryContainer,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
+                      const SizedBox(width: 4),
+                      Flexible(
                         child: Text(
                           examTime.place,
                           maxLines: 3,
@@ -139,151 +295,11 @@ class ExamTimeCardZF extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(
-                    '考试名称: ${examTime.examName}',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: isFinished
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                  Text(
-                    '场地简称: ${examTime.placeShort}',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: isFinished
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                  Text(
-                    '教师信息: ${examTime.instructorInfo}',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: isFinished
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSecondaryContainer,
-                    ),
-                  ),
                 ],
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSimpleCard(BuildContext context, bool isFinished,
-      DateTime? startDateTime, DateTime? endDateTime) {
-    final theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    return Card(
-      clipBehavior: Clip.hardEdge,
-      color: isFinished
-          ? colorScheme.surfaceContainerHighest
-          : colorScheme.secondaryContainer,
-      child: Stack(
-        children: [
-          // 在卡片右上角显示倒计时
-          Positioned(
-            top: 4,
-            right: 12,
-            child: _CountDown(
-              isFinished: isFinished,
-              startDateTime: startDateTime,
-              endDateTime: endDateTime,
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            onLongPress: () {
-              Clipboard.setData(
-                ClipboardData(
-                    text:
-                        "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("考试信息已复制到剪贴板")),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // 课程名称
-                  Text(
-                    examTime.courseTitle,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isFinished
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                  if (theme.useMaterial3 == false) SizedBox(height: 4.0),
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    spacing: 4.0,
-                    runSpacing: 0.0,
-                    children: [
-                      // 考试时间
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            size: 16,
-                            color: isFinished
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSecondaryContainer,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${examTime.time} ${_getWeekday(startDateTime) ?? ''}',
-                            maxLines: 3,
-                            style: TextStyle(
-                              fontSize: 16,
-                              // height: 1,
-                              color: isFinished
-                                  ? colorScheme.onSurfaceVariant
-                                  : colorScheme.onSecondaryContainer,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // 考试地点
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.place_outlined,
-                            size: 16,
-                            color: isFinished
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSecondaryContainer,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            examTime.place,
-                            maxLines: 3,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: isFinished
-                                  ? colorScheme.onSurfaceVariant
-                                  : colorScheme.onSecondaryContainer,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
