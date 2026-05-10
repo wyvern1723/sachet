@@ -23,6 +23,7 @@ class AppSettings {
   bool? isEnableCourseNotification;
   bool? isSilentNotification;
   List? freeClassroomSections;
+  bool? isShowExamTimeCountdown;
 
   AppSettings({
     this.isMD3,
@@ -49,6 +50,7 @@ class AppSettings {
     this.isEnableCourseNotification,
     this.isSilentNotification,
     this.freeClassroomSections,
+    this.isShowExamTimeCountdown,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -76,6 +78,7 @@ class AppSettings {
     isEnableCourseNotification = json['isEnableCourseNotification'];
     isSilentNotification = json['isSilentNotification'];
     freeClassroomSections = json['freeClassroomSections'];
+    isShowExamTimeCountdown = json['isShowExamTimeCountdown'];
   }
 
   Map<String, dynamic> toJson() {
@@ -104,6 +107,7 @@ class AppSettings {
     data['isEnableCourseNotification'] = this.isEnableCourseNotification;
     data['isSilentNotification'] = this.isSilentNotification;
     data['freeClassroomSections'] = this.freeClassroomSections;
+    data['isShowExamTimeCountdown'] = this.isShowExamTimeCountdown;
     return data;
   }
 }

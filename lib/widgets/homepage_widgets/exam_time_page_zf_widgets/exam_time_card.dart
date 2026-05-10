@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/transform.dart';
 
@@ -12,12 +14,10 @@ class ExamTimeCardZF extends StatelessWidget {
     super.key,
     required this.examTime,
     required this.isDetailedView,
-    required this.isShowCountDown,
   });
 
   final ExamTimeResponseZF examTime;
   final bool isDetailedView;
-  final bool isShowCountDown;
 
   @override
   Widget build(BuildContext context) {
@@ -77,18 +77,24 @@ class ExamTimeCardZF extends StatelessWidget {
                     ),
                   ),
                   // 在卡片右上角显示倒计时
-                  if (isShowCountDown)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Transform.translate(
-                        offset: Offset(4, -4),
-                        child: _CountDown(
-                          isFinished: isFinished,
-                          startDateTime: startDateTime,
-                          endDateTime: endDateTime,
-                        ),
-                      ),
-                    ),
+                  Selector<SettingsProvider, bool>(
+                      selector: (_, provider) =>
+                          provider.isShowExamTimeCountdown,
+                      builder: (_, isShowCountDown, __) {
+                        return isShowCountDown
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Transform.translate(
+                                  offset: Offset(4, -4),
+                                  child: _CountDown(
+                                    isFinished: isFinished,
+                                    startDateTime: startDateTime,
+                                    endDateTime: endDateTime,
+                                  ),
+                                ),
+                              )
+                            : SizedBox.shrink();
+                      }),
                 ],
               ),
               SizedBox(height: 4.0),
@@ -225,18 +231,24 @@ class ExamTimeCardZF extends StatelessWidget {
                     ),
                   ),
                   // 在卡片右上角显示倒计时
-                  if (isShowCountDown)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Transform.translate(
-                        offset: Offset(4, -4),
-                        child: _CountDown(
-                          isFinished: isFinished,
-                          startDateTime: startDateTime,
-                          endDateTime: endDateTime,
-                        ),
-                      ),
-                    ),
+                  Selector<SettingsProvider, bool>(
+                      selector: (_, provider) =>
+                          provider.isShowExamTimeCountdown,
+                      builder: (_, isShowCountDown, __) {
+                        return isShowCountDown
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Transform.translate(
+                                  offset: Offset(4, -4),
+                                  child: _CountDown(
+                                    isFinished: isFinished,
+                                    startDateTime: startDateTime,
+                                    endDateTime: endDateTime,
+                                  ),
+                                ),
+                              )
+                            : SizedBox.shrink();
+                      }),
                 ],
               ),
               if (theme.useMaterial3 == false) SizedBox(height: 4.0),

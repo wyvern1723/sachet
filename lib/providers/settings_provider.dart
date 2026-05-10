@@ -51,6 +51,8 @@ class SettingsProvider extends ChangeNotifier {
         [7, 8],
         [9, 10, 11],
       ];
+  bool get isShowExamTimeCountdown =>
+      _appSettings.isShowExamTimeCountdown ?? true;
 
   void setStartupPage(String value) {
     if (value != startupPage) {
@@ -200,6 +202,13 @@ class SettingsProvider extends ChangeNotifier {
       AppGlobal.saveAppSettings();
       notifyListeners();
     }
+  }
+
+  void toggleIsShowExamTimeCountdown() {
+    final oldValue = isShowExamTimeCountdown;
+    _appSettings.isShowExamTimeCountdown = !oldValue;
+    AppGlobal.saveAppSettings();
+    notifyListeners();
   }
 
   Map? courseColorData;

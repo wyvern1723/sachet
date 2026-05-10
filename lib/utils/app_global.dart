@@ -118,7 +118,8 @@ const defaultAppSettingsConfig = {
     [5, 6],
     [7, 8],
     [9, 10, 11],
-  ] // 空闲教室查询的节次分段
+  ], // 空闲教室查询的节次分段
+  "isShowExamTimeCountdown": true // 是否显示考试时间倒计时
 };
 
 // 默认课程卡片外观设置
