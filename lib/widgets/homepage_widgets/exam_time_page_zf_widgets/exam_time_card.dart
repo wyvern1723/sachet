@@ -81,7 +81,7 @@ class ExamTimeCardZF extends StatelessWidget {
                       selector: (_, provider) =>
                           provider.isShowExamTimeCountdown,
                       builder: (_, isShowCountDown, __) {
-                        return isShowCountDown
+                        return (isShowCountDown || isFinished)
                             ? Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
                                 child: Transform.translate(
@@ -235,7 +235,7 @@ class ExamTimeCardZF extends StatelessWidget {
                       selector: (_, provider) =>
                           provider.isShowExamTimeCountdown,
                       builder: (_, isShowCountDown, __) {
-                        return isShowCountDown
+                        return (isShowCountDown || isFinished)
                             ? Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
                                 child: Transform.translate(
