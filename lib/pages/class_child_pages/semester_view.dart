@@ -200,10 +200,14 @@ class _HeatmapCell extends StatelessWidget {
     final bool today = isToday(date);
     final bool showCourse = aspectRatio < 0.7;
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.all(2.0),
       decoration: BoxDecoration(
-        color: color,
+        color: showCourse
+            ? colorScheme.surfaceContainerHighest.withOpacity(0.35)
+            : color,
         borderRadius: BorderRadius.circular(5.0),
         border: today ? Border.all(color: colorScheme.primary, width: 2) : null,
       ),
@@ -214,14 +218,18 @@ class _HeatmapCell extends StatelessWidget {
           Padding(
             padding:
                 showCourse ? const EdgeInsets.only(top: 2.0) : EdgeInsets.zero,
-            child: Text(
-              '${date.month}/${date.day}',
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
               style: TextStyle(
                 fontSize: showCourse ? 11 : 10,
                 fontWeight: today ? FontWeight.bold : FontWeight.normal,
-                color:
-                    count > 4 ? colorScheme.onPrimary : colorScheme.onSurface,
+                color: showCourse
+                    ? colorScheme.onSurface
+                    : count > 4
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurface,
               ),
+              child: Text('${date.month}/${date.day}'),
             ),
           ),
           if (showCourse)
