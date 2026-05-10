@@ -427,6 +427,7 @@ class __CountDownState extends State<_CountDown> {
   Widget _buildRichText(TextTheme textTheme, ColorScheme colorScheme,
       String number, String suffix) {
     return RichText(
+      textScaler: MediaQuery.of(context).textScaler,
       text: TextSpan(
         style: textTheme.bodyLarge?.copyWith(
           fontSize: 17,

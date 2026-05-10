@@ -186,6 +186,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
             await _changeSemester();
           },
           icon: Icon(Icons.history_outlined),
+          visualDensity: VisualDensity.comfortable,
           tooltip: '切换查询学期',
         ),
         if (_examTimeData != null && _examTimeData!.isNotEmpty) ...[
@@ -193,6 +194,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           IconButton(
             onPressed: () => _exportExamTimeToIcs(context),
             icon: Icon(Icons.share_outlined),
+            visualDensity: VisualDensity.comfortable,
             tooltip: '导出考试安排',
           ),
           // 切换是否显示考试时间倒计时
@@ -203,6 +205,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
             icon: Icon(_isShowCountDown
                 ? Icons.hourglass_empty
                 : Icons.hourglass_disabled),
+            visualDensity: VisualDensity.comfortable,
             tooltip: _isShowCountDown ? '隐藏倒计时' : '显示倒计时',
           ),
           // 切换显示详细信息/显示精简信息
@@ -213,6 +216,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
             icon: _isDetailedView
                 ? Icon(Icons.notes_outlined)
                 : Icon(Icons.subject_outlined),
+            visualDensity: VisualDensity.comfortable,
             tooltip: _isDetailedView ? "显示精简信息" : "显示详细信息",
           ),
         ]
