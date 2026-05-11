@@ -131,89 +131,92 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            title: const Text('教材预订'),
-            // floating: true, // 上滑隐藏，下滑立即出现
-            actions: [
-              IconButton(
-                onPressed: () async {
-                  await _changeSemester(context);
-                },
-                icon: Icon(Icons.history_outlined),
-                visualDensity: VisualDensity.comfortable,
-                tooltip: '切换查询学期',
-              ),
-            ],
-          ),
-          FutureBuilder(
-            future: _future,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return SliverToBoxAdapter(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                );
-              }
-
-              if (snapshot.hasError) {
-                if (snapshot.error ==
-                    "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              title: const Text('教材预订'),
+              // floating: true, // 上滑隐藏，下滑立即出现
+              actions: [
+                IconButton(
+                  onPressed: () async {
+                    await _changeSemester(context);
+                  },
+                  icon: Icon(Icons.history_outlined),
+                  visualDensity: VisualDensity.comfortable,
+                  tooltip: '切换查询学期',
+                ),
+              ],
+            ),
+            FutureBuilder(
+              future: _future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(
-                    child: Align(
-                      alignment: Alignment.topCenter,
+                    child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: LoginExpiredZF(
-                            onGoBack: (value) => onGoBack(value)),
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: CircularProgressIndicator(),
                       ),
                     ),
                   );
                 }
-                return SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
+
+                if (snapshot.hasError) {
+                  if (snapshot.error ==
+                      "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
+                    return SliverToBoxAdapter(
+                      child: Align(
                         alignment: Alignment.topCenter,
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '${snapshot.error}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.error),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: LoginExpiredZF(
+                              onGoBack: (value) => onGoBack(value)),
+                        ),
+                      ),
+                    );
+                  }
+                  return SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
-                        child: Text(
-                          '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
-                          style: Theme.of(context).textTheme.bodySmall,
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+                          child: Text(
+                            '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  );
+                }
+
+                final bookData = snapshot.data;
+
+                return _BookInfoViewZF(
+                  bookData: bookData,
+                  queryingSemesterYear: _displaySemesterYear,
+                  queryingSemesterIndex: _displaySemesterIndex,
                 );
-              }
-
-              final bookData = snapshot.data;
-
-              return _BookInfoViewZF(
-                bookData: bookData,
-                queryingSemesterYear: _displaySemesterYear,
-                queryingSemesterIndex: _displaySemesterIndex,
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -236,26 +239,24 @@ class _BookInfoViewZF extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return SliverToBoxAdapter(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-              child: _DataTable(bookData: bookData),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-              child: _SearchFriendlyFormat(bookData: bookData),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-              child: _ReferencesFormat(bookData: bookData),
-            ),
-            // Footer
-            _footer(textTheme, context),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+            child: _DataTable(bookData: bookData),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+            child: _SearchFriendlyFormat(bookData: bookData),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+            child: _ReferencesFormat(bookData: bookData),
+          ),
+          // Footer
+          _footer(textTheme, context),
+        ],
       ),
     );
   }
