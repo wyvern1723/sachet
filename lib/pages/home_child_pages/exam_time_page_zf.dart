@@ -7,8 +7,8 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_exam_time_semesters.dart';
 import 'package:sachet/utils/export_to_ics.dart';
-import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/exam_time_card.dart';
+import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 

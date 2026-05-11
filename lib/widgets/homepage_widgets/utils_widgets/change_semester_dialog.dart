@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChangeSemesterDialogZF extends StatefulWidget {
-  /// 考试时间查询页面（正方教务），改变当前要查询学期 Dialog
+  /// 改变当前要查询学期的 Dialog
   const ChangeSemesterDialogZF({
     super.key,
     required this.semestersYears,
