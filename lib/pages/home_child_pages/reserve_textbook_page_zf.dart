@@ -32,6 +32,7 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
   /// 当前查询的学期
   String _selectedSemesterIndex = '';
 
+  // ignore: unused_field
   List<ReserveTextbookResponseZF>? _bookData;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
@@ -130,75 +131,89 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("教材预订"), actions: [
-        if (_bookData != null && _bookData!.isNotEmpty) ...[
-          IconButton(
-            onPressed: () async {
-              await _changeSemester(context);
-            },
-            icon: Icon(Icons.history_outlined),
-            visualDensity: VisualDensity.comfortable,
-            tooltip: '切换查询学期',
-          ),
-        ]
-      ]),
-      body: FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0),
-                child: CircularProgressIndicator(),
+      body: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            title: const Text('教材预订'),
+            // floating: true, // 上滑隐藏，下滑立即出现
+            actions: [
+              IconButton(
+                onPressed: () async {
+                  await _changeSemester(context);
+                },
+                icon: Icon(Icons.history_outlined),
+                visualDensity: VisualDensity.comfortable,
+                tooltip: '切换查询学期',
               ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            if (snapshot.error ==
-                "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
-                ),
-              );
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
+            ],
+          ),
+          FutureBuilder(
+            future: _future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: CircularProgressIndicator(),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
-                  child: Text(
-                    '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
-                    style: Theme.of(context).textTheme.bodySmall,
+                );
+              }
+
+              if (snapshot.hasError) {
+                if (snapshot.error ==
+                    "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
+                  return SliverToBoxAdapter(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: LoginExpiredZF(
+                            onGoBack: (value) => onGoBack(value)),
+                      ),
+                    ),
+                  );
+                }
+                return SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${snapshot.error}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+                        child: Text(
+                          '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            );
-          }
+                );
+              }
 
-          final bookData = snapshot.data;
+              final bookData = snapshot.data;
 
-          return _BookInfoViewZF(
-            bookData: bookData,
-            queryingSemesterYear: _displaySemesterYear,
-            queryingSemesterIndex: _displaySemesterIndex,
-          );
-        },
+              return _BookInfoViewZF(
+                bookData: bookData,
+                queryingSemesterYear: _displaySemesterYear,
+                queryingSemesterIndex: _displaySemesterIndex,
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -220,9 +235,8 @@ class _BookInfoViewZF extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 4.0),
+    return SliverToBoxAdapter(
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -329,9 +343,9 @@ class _DataTableState extends State<_DataTable> {
         scrollDirection: Axis.horizontal,
         child: SelectionArea(
           child: DataTable(
-            sortColumnIndex: 1,
             columns: [
               ...[
+                '',
                 '课程名称',
                 '教材名称',
                 'ISBN',
@@ -347,9 +361,11 @@ class _DataTableState extends State<_DataTable> {
               )
             ],
             rows: <DataRow>[
-              ...widget.bookData.map(
-                (e) => DataRow(
+              ...List.generate(widget.bookData.length, (index) {
+                final e = widget.bookData[index];
+                return DataRow(
                   cells: <DataCell>[
+                    DataCell(Text(' ${(index + 1)} ')),
                     copyableDataCell(e.kcmc.toString(), context),
                     copyableDataCell(e.jcmc.toString(), context),
                     copyableDataCell(e.isbn.toString(), context),
@@ -361,11 +377,12 @@ class _DataTableState extends State<_DataTable> {
                     DataCell(Text(e.kcxzmc.toString())),
                     DataCell(Text(e.rkjsxx.toString())),
                   ],
-                ),
-              )
+                );
+              })
             ],
             horizontalMargin: 4,
             columnSpacing: 8,
+            dataRowMaxHeight: double.infinity,
           ),
         ),
       ),
@@ -374,11 +391,17 @@ class _DataTableState extends State<_DataTable> {
 
   DataCell copyableDataCell(String text, BuildContext context,
       {bool tapToCopy = false}) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double maxWidth = screenWidth > 500 ? 200.0 : screenWidth * 0.4;
     return DataCell(
       Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(text),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: Text(text),
+          ),
           IconButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: text));
@@ -790,10 +813,12 @@ class _ReferencesFormat extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('📚 参考文献格式：', style: Theme.of(context).textTheme.titleMedium),
-            ...bookData.map(
-              (e) => Text(
-                  '[${e.rowId}] ${e.jczz}. ${e.jcmc}[M]. ${e.bbh}. ${e.cbs}, ${e.cbrq}'),
-            ),
+            ...List.generate(bookData.length, (index) {
+              final e = bookData[index];
+              return Text(
+                '[${index + 1}] ${e.jczz}. ${e.jcmc}[M]. ${e.bbh}. ${e.cbs}, ${e.cbrq}',
+              );
+            })
           ]),
     );
   }
