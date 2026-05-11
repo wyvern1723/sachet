@@ -8,6 +8,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_reserve_textbook_semesters.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_reverve_book_info.dart';
 import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,6 +35,34 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
 
   // ignore: unused_field
   List<ReserveTextbookResponseZF>? _bookData;
+
+  List<String> _items = [
+    '课程名称',
+    '教材名称',
+    'ISBN',
+    '教材作者',
+    '出版社',
+    '版本号',
+    '出版日期',
+    '单价',
+    '课程性质',
+    '任课教师',
+    '学年',
+    '学期',
+  ];
+
+  List<String> _selectedItems = [
+    '课程名称',
+    '教材名称',
+    'ISBN',
+    '教材作者',
+    '出版社',
+    '版本号',
+    '出版日期',
+    '单价',
+    '课程性质',
+    '任课教师',
+  ];
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
@@ -121,6 +150,41 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
       (key) => semesterIndexes[key] == _selectedSemesterIndex,
       orElse: () => _selectedSemesterIndex);
 
+  Future showFilterDialog(BuildContext context) async {
+    List<List<String>>? results = await showDialog(
+      context: context,
+      builder: (BuildContext context) => ItemFilterDialog(
+        items: _items,
+        selectedItems: _selectedItems,
+      ),
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (results != null) {
+      // 新选择的要显示的 selectedItems，（经过 List.add、List.remove,顺序会乱）
+      List<String> newSelectedItems = results[0];
+
+      // （可能）经过重新排序的 items
+      List<String> reorderedItems = results[1];
+
+      // 对 newSelectedItems 根据 reorderedItems 的顺序排序
+      // e.g.
+      // newSelectedItems = [[课程名称, 学分, 平时成绩, 总成绩, 考核方式, 期末成绩],
+      // reorderedItems = [开课学期, 课程名称, 学分, 平时成绩, 期末成绩, 总成绩, 总学时, 考核方式, 课程属性, 课程性质]]
+      // 经过下面的处理 ==>
+      // newSelectedItems = [课程名称, 学分, 平时成绩, 期末成绩, 总成绩, 考核方式]
+      newSelectedItems.sort((a, b) =>
+          reorderedItems.indexOf(a).compareTo(reorderedItems.indexOf(b)));
+      setState(() {
+        _selectedItems = newSelectedItems;
+        _items = reorderedItems;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -141,10 +205,16 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
               actions: [
                 IconButton(
                   onPressed: () async {
+                    await showFilterDialog(context);
+                  },
+                  icon: Icon(Icons.filter_list_outlined),
+                  tooltip: '筛选',
+                ),
+                IconButton(
+                  onPressed: () async {
                     await _changeSemester(context);
                   },
                   icon: Icon(Icons.history_outlined),
-                  visualDensity: VisualDensity.comfortable,
                   tooltip: '切换查询学期',
                 ),
               ],
@@ -212,6 +282,7 @@ class _ReserveTextbookPageZfState extends State<ReserveTextbookPageZf> {
                   bookData: bookData,
                   queryingSemesterYear: _displaySemesterYear,
                   queryingSemesterIndex: _displaySemesterIndex,
+                  selectedItems: _selectedItems,
                 );
               },
             ),
@@ -229,10 +300,12 @@ class _BookInfoViewZF extends StatelessWidget {
     required this.bookData,
     required this.queryingSemesterYear,
     required this.queryingSemesterIndex,
+    required this.selectedItems,
   });
   final List<ReserveTextbookResponseZF> bookData;
   final String queryingSemesterYear;
   final String queryingSemesterIndex;
+  final List<String> selectedItems;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +317,7 @@ class _BookInfoViewZF extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-            child: _DataTable(bookData: bookData),
+            child: _DataTable(bookData: bookData, selectedItems: selectedItems),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
@@ -310,8 +383,13 @@ class _BookInfoViewZF extends StatelessWidget {
 }
 
 class _DataTable extends StatefulWidget {
-  const _DataTable({super.key, required this.bookData});
+  const _DataTable({
+    super.key,
+    required this.bookData,
+    required this.selectedItems,
+  });
   final List<ReserveTextbookResponseZF> bookData;
+  final List<String> selectedItems;
 
   @override
   State<_DataTable> createState() => _DataTableState();
@@ -320,6 +398,14 @@ class _DataTable extends StatefulWidget {
 class _DataTableState extends State<_DataTable> {
   late final ScrollController _horizontalController;
 
+  List<String> copyableItems = [
+    '课程名称',
+    '教材名称',
+    'ISBN',
+    '教材作者',
+    '出版社',
+    '版本号',
+  ];
   @override
   void initState() {
     super.initState();
@@ -346,17 +432,8 @@ class _DataTableState extends State<_DataTable> {
           child: DataTable(
             columns: [
               ...[
-                '',
-                '课程名称',
-                '教材名称',
-                'ISBN',
-                '教材作者',
-                '出版社',
-                '版本号',
-                '出版日期',
-                '单价',
-                '课程性质',
-                '任课教师',
+                '', // 第一列：序号
+                ...widget.selectedItems // 其他选择展示信息的列
               ].map(
                 (e) => DataColumn(label: Expanded(child: Text(e))),
               )
@@ -366,17 +443,11 @@ class _DataTableState extends State<_DataTable> {
                 final e = widget.bookData[index];
                 return DataRow(
                   cells: <DataCell>[
-                    DataCell(Text(' ${(index + 1)} ')),
-                    copyableDataCell(e.kcmc.toString(), context),
-                    copyableDataCell(e.jcmc.toString(), context),
-                    copyableDataCell(e.isbn.toString(), context),
-                    copyableDataCell(e.jczz.toString(), context),
-                    copyableDataCell(e.cbs.toString(), context),
-                    copyableDataCell(e.bbh.toString(), context),
-                    DataCell(Text(e.cbrq.toString())),
-                    DataCell(Text(e.price.toString())),
-                    DataCell(Text(e.kcxzmc.toString())),
-                    DataCell(Text(e.rkjsxx.toString())),
+                    DataCell(Text(' ${(index + 1)} ')), // 第一列：序号
+                    for (final item in widget.selectedItems)
+                      copyableItems.contains(item)
+                          ? copyableDataCell(e.item(item).toString(), context)
+                          : DataCell(Text(e.item(item).toString())),
                   ],
                 );
               })

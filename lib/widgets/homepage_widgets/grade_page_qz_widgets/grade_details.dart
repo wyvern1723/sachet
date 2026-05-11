@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../providers/grade_page_qz_provider.dart';
 import '../../utils_widgets/login_expired_qz.dart';
-import 'item_filter_dialog.dart';
+import '../utils_widgets/item_filter_dialog.dart';
 
 class GradeDetailsQZ extends StatefulWidget {
   /// 成绩信息详细表（强智教务）
@@ -172,7 +172,7 @@ class _GradeDetailsTableQZState extends State<GradeDetailsTableQZ> {
   void showFilterDialog() async {
     List<List<String>>? results = await showDialog(
       context: context,
-      builder: (BuildContext context) => ItemFilterDialogQZ(
+      builder: (BuildContext context) => ItemFilterDialog(
         items: _items,
         selectedItems: _selectedItems,
       ),

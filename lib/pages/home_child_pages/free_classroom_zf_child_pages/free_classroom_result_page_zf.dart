@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 
 class FreeClassroomResultPageZF extends StatefulWidget {
   const FreeClassroomResultPageZF({
@@ -31,14 +31,19 @@ class _FreeClassroomResultPageZFState extends State<FreeClassroomResultPageZF> {
     '场地名称',
   ];
 
-  Future showFilterDialog() async {
+  Future showFilterDialog(BuildContext context) async {
     List<List<String>>? results = await showDialog(
       context: context,
-      builder: (BuildContext context) => ItemFilterDialogQZ(
+      builder: (BuildContext context) => ItemFilterDialog(
         items: _items,
         selectedItems: _selectedItems,
       ),
     );
+
+    if (!context.mounted) {
+      return;
+    }
+
     if (results != null) {
       // 新选择要展示的 SelectedItems，（经过 List.add、List.remove,顺序会很乱）
       List<String> newSelectedItems = results[0];
@@ -77,7 +82,7 @@ class _FreeClassroomResultPageZFState extends State<FreeClassroomResultPageZF> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 onPressed: () async {
-                  await showFilterDialog();
+                  await showFilterDialog(context);
                 },
                 icon: Icon(Icons.filter_list_outlined),
                 label: Text('显示字段'),

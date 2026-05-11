@@ -3,7 +3,10 @@ import 'package:sachet/utils/json_safe_parse.dart';
 class ReserveTextbookResponseZF {
   String? xhId;
   String? sfmgcjcmc;
+
+  /// 学年名名称，例如 "2025-2026"
   String? xnmmc;
+
   String? sfmgckc;
   String? discountPrice;
 
@@ -12,6 +15,7 @@ class ReserveTextbookResponseZF {
 
   /// 教材作者
   String? jczz;
+
   String? jxbId;
   String? kchId;
   String? kch;
@@ -20,6 +24,7 @@ class ReserveTextbookResponseZF {
 
   /// 单价
   String? price;
+
   String? xssfxyyd;
   int? yyds;
   String? kc;
@@ -29,10 +34,12 @@ class ReserveTextbookResponseZF {
 
   /// 课程名称
   String? kcmc;
+
   String? sfxkbj;
 
-  /// 任课教师姓名
+  /// 任课教师信息
   String? rkjsxx;
+
   int? totalresult;
   String? sfmgckcmc;
   String? sfmgcjc;
@@ -43,24 +50,39 @@ class ReserveTextbookResponseZF {
 
   /// 教材预订状态名称
   String? jcydztmc;
+
+  /// 学号
   String? xh;
 
   /// 出版日期
   String? cbrq;
+
+  /// 折扣？
   int? zk;
+
+  /// 选课时间
   String? xksj;
 
   /// 课程性质名称
   String? kcxzmc;
+
   String? jcydzt;
   String? jfztmc;
 
   /// 出版社
   String? cbs;
+
+  /// （学生）姓名
   String? xm;
+
   String? xnm;
+
+  /// 教师信息
   String? jsxx;
+
+  /// 学期名名称，例如 "1", "2"
   String? xqmmc;
+
   int? rowId;
 
   /// 教材名称
@@ -201,5 +223,36 @@ class ReserveTextbookResponseZF {
     data['jcmc'] = jcmc;
     data['jxdd'] = jxdd;
     return data;
+  }
+
+  item(String item) {
+    switch (item) {
+      case '课程名称':
+        return kcmc;
+      case '教材名称':
+        return jcmc;
+      case '教材作者':
+        return jczz;
+      case '出版社':
+        return cbs;
+      case '版本号':
+        return bbh;
+      case '出版日期':
+        return cbrq;
+      case 'ISBN':
+        return isbn;
+      case '单价':
+        return price;
+      case '任课教师':
+        return rkjsxx;
+      case '课程性质':
+        return kcxzmc;
+      case '学年':
+        return xnmmc;
+      case '学期':
+        return xqmmc;
+      default:
+        return '-';
+    }
   }
 }
