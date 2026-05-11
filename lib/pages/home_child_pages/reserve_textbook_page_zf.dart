@@ -420,7 +420,11 @@ class _SearchFriendlyFormat extends StatefulWidget {
 }
 
 class _SearchFriendlyFormatState extends State<_SearchFriendlyFormat> {
-  Set<DisplayFormat> selection = <DisplayFormat>{DisplayFormat.text};
+  Set<DisplayFormat> selection = <DisplayFormat>{
+    DisplayFormat.text,
+    DisplayFormat.isbn
+  };
+  bool _isShowOpenShopApp = true;
 
   @override
   Widget build(BuildContext context) {
@@ -464,6 +468,45 @@ class _SearchFriendlyFormatState extends State<_SearchFriendlyFormat> {
                       const EdgeInsets.symmetric(horizontal: 8),
                     ),
                   ),
+                ),
+                Spacer(),
+                IconButton(
+                  tooltip: '复制所有教材信息',
+                  onPressed: () {
+                    final buffer = StringBuffer();
+                    for (final e in widget.bookData) {
+                      String text = '《${e.jcmc}》 ${e.jczz} ${e.cbs} ${e.bbh}';
+                      String isbn = 'ISBN: ${e.isbn}';
+                      buffer.write(text);
+                      buffer.write('\n');
+                      buffer.write(isbn);
+                      buffer.write('\n');
+                    }
+                    final text = buffer.toString();
+                    Clipboard.setData(ClipboardData(text: text));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('已复制到剪贴板')),
+                    );
+                  },
+                  icon: Icon(Icons.copy),
+                  iconSize: 18,
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  tooltip: (_isShowOpenShopApp == true) ? '隐藏第三方软件' : '显示第三方软件',
+                  onPressed: () {
+                    setState(() => _isShowOpenShopApp = !_isShowOpenShopApp);
+                  },
+                  icon: Icon(
+                    (_isShowOpenShopApp == true)
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  color: (_isShowOpenShopApp == true)
+                      ? colorScheme.primary
+                      : colorScheme.outline,
+                  iconSize: 20,
+                  visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
@@ -528,18 +571,19 @@ class _SearchFriendlyFormatState extends State<_SearchFriendlyFormat> {
                 ],
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                VerticalDivider(
-                  indent: 6.0,
-                  endIndent: 6.0,
-                  width: 1.0,
-                ),
-                SizedBox(width: 4.0),
-                _openShopAppRow(searchText, colorScheme, textTheme),
-              ],
-            ),
+            if (_isShowOpenShopApp == true)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  VerticalDivider(
+                    indent: 6.0,
+                    endIndent: 6.0,
+                    width: 1.0,
+                  ),
+                  SizedBox(width: 4.0),
+                  _openShopAppRow(searchText, colorScheme, textTheme),
+                ],
+              ),
           ],
         ),
       ),
