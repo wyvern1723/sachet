@@ -250,7 +250,7 @@ class _FreeClassroomTodayAndTomorrowViewState
         children: _tabViews,
       ),
       floatingActionButton: AnimatedSlide(
-        offset: _showFab ? Offset(0, 0) : Offset(0, 2),
+        offset: _showFab ? Offset(0, 0) : Offset(0, 3),
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         child: FilterFAB(sessionFilter: _sessionFilter()),
@@ -307,6 +307,9 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
       );
+
+      if (!mounted) return [];
+
       context.read<FreeClassroomPageZFProvider>().setFilterOptions(result);
     }
 
@@ -320,8 +323,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     List sections =
         List.from(context.read<SettingsProvider>().freeClassroomSections);
     if (day != null) {
-      List<List<String>> freeClassroomData =
-          await getFreeClassroomTodayAndTomorrowZF(
+      final result = await getFreeClassroomTodayAndTomorrowZF(
         cookie: ZhengFangUserProvider.cookie,
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,
@@ -329,7 +331,12 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
         itemList: sections,
         zhengFangUserProvider: zhengFangUserProvider,
       );
+
       if (!mounted) return [];
+
+      List<List<String>> freeClassroomData = result.classroomDataGrid;
+      Set<String> listeningClassrooms = result.listeningClassrooms;
+
       context
           .read<FreeClassroomPageProvider>()
           .setAllClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
@@ -337,10 +344,13 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
           .read<FreeClassroomPageProvider>()
           .setClassroomsDataForTodayOrTomorrow(freeClassroomData, day);
       context.read<FreeClassroomPageProvider>().setHasData();
+      context
+          .read<FreeClassroomPageProvider>()
+          .setListeningClassroom(listeningClassrooms);
 
       return freeClassroomData;
     } else if (date != null) {
-      List<List<String>> freeClassroomData = await getFreeClassroomFullDayZF(
+      final result = await getFreeClassroomFullDayZF(
         cookie: ZhengFangUserProvider.cookie,
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,
@@ -348,7 +358,11 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
         itemList: sections,
         zhengFangUserProvider: zhengFangUserProvider,
       );
+      List<List<String>> freeClassroomData = result.classroomDataGrid;
+      Set<String> listeningClassrooms = result.listeningClassrooms;
+
       if (!mounted) return [];
+
       context
           .read<FreeClassroomPageProvider>()
           .setAllClassroomsDataForOtherDay(freeClassroomData);
@@ -356,6 +370,9 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
           .read<FreeClassroomPageProvider>()
           .setClassroomsDataForOtherDay(freeClassroomData);
       context.read<FreeClassroomPageProvider>().setHasData();
+      context
+          .read<FreeClassroomPageProvider>()
+          .setListeningClassroom(listeningClassrooms);
 
       return freeClassroomData;
     } else {

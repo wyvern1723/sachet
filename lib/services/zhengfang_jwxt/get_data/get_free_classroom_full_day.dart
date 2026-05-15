@@ -8,9 +8,9 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart'
 
 /// 获取一天的所有空闲教室的数据（正方教务）
 ///
-/// Return 空闲教室二维列表
+/// Return （空闲教室二维列表, 听力教室 Set）
 ///
-/// e.g.
+/// List<List<String>> 空闲教室二维列表 e.g.
 ///
 /// itemList = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10, 11]];
 ///
@@ -33,7 +33,11 @@ import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart'
 ///   ["逸夫楼-104","空","满","空","满","满","满"]
 /// ]
 /// ```
-Future<List<List<String>>> getFreeClassroomFullDayZF({
+Future<
+    ({
+      List<List<String>> classroomDataGrid,
+      Set<String> listeningClassrooms
+    })> getFreeClassroomFullDayZF({
   required String cookie,
   required String semesterYear,
   required String semesterIndex,
@@ -73,7 +77,10 @@ Future<List<List<String>>> getFreeClassroomFullDayZF({
   /// ]
   List<List<String>> classroomDataGrid = [];
 
-  for (var item in itemList) {
+  /// 听力教室（语音教室）
+  Set<String> listeningClassrooms = {};
+
+  for (final item in itemList) {
     final String jcd = calculateZcdOrJcd(item).toString();
     final String nd = DateTime.now().millisecondsSinceEpoch.toString();
     final Map data = FreeClassroomRequestDataZF(
@@ -94,8 +101,13 @@ Future<List<List<String>>> getFreeClassroomFullDayZF({
     final List<FreeClassroomDataResponseZF> freeClassroomPerItem =
         await getFreeClassroomZF(cookie: cookie, data: data);
 
-    for (var classroom in freeClassroomPerItem) {
+    for (final classroom in freeClassroomPerItem) {
       final classroomName = classroom.classroomName;
+
+      if (classroom.placeSubType == '语音教室') {
+        listeningClassrooms.add(classroomName);
+      }
+
       final int index =
           classroomDataGrid.indexWhere((e) => e[0] == classroomName);
 
@@ -115,5 +127,9 @@ Future<List<List<String>>> getFreeClassroomFullDayZF({
   }
   // 根据每个子列表的第一个元素（教室名称）排序
   classroomDataGrid.sort((a, b) => a[0].compareTo(b[0]));
-  return classroomDataGrid;
+
+  return (
+    classroomDataGrid: classroomDataGrid,
+    listeningClassrooms: listeningClassrooms
+  );
 }

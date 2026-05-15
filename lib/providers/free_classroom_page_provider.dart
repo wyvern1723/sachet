@@ -55,6 +55,7 @@ class FreeClassroomPageProvider extends ChangeNotifier {
   bool _hasData = false;
   bool get hasData => _hasData;
 
+  /// 教室筛选
   List<String> _selectedRoomFilters = [];
   List<String> get selectedRoomFilters => _selectedRoomFilters;
 
@@ -62,12 +63,38 @@ class FreeClassroomPageProvider extends ChangeNotifier {
   List<int> _selectedSessionFilters = [];
   List<int> get selectedSessionFilters => _selectedSessionFilters;
 
+  /// 节次筛选模式：
+  /// - SessionFilterMode.and(与): 选择的节次都空闲
+  /// - SessionFilterMode.or(或): 选择的节次至少有一个节次是空闲的
   SessionFilterMode _sessionFilterMode = SessionFilterMode.and;
   SessionFilterMode get sessionFilterMode => _sessionFilterMode;
 
   /// 教室是否全选
   bool get isClassroomFiltersAllSelected =>
       listEquals(_selectedRoomFilters, classRoomFilter.values.toList());
+
+  /// 是否显示听力教室
+  bool _isShowListeningClassroom = false;
+  bool get isShowListeningClassroom => _isShowListeningClassroom;
+
+  /// 教室筛选是否显示逸夫楼的教室
+  bool get isContainYifuBuilding =>
+      _selectedRoomFilters.contains('逸夫楼') || _selectedRoomFilters.isEmpty;
+
+  /// 听力教室（语音教室）
+  ///
+  /// 专指逸夫楼的用于《大学英语》上听力课的听力教室，
+  /// 有：
+  /// 逸夫楼-104, 逸夫楼-105, 逸夫楼-106, 逸夫楼-107,
+  /// 逸夫楼-204, 逸夫楼-205, 逸夫楼-206, 逸夫楼-207,
+  /// 逸夫楼-304, 逸夫楼-305, 逸夫楼-306, 逸夫楼-307,
+  /// 逸夫楼-404, 逸夫楼-405, 逸夫楼-406, 逸夫楼-407,
+  /// 逸夫楼-504, 逸夫楼-505, 逸夫楼-506。
+  ///
+  /// 在正方教务系统中此类教室的二级类别为“语音教室”，
+  ///
+  /// 一般来说逸夫楼的听力教室不允许自习，所以提供隐藏听力教室的功能
+  Set<String> _listeningClassrooms = {};
 
   /// 设置 _hasData (是否有空闲教室数据) 为 true
   void setHasData() {
@@ -134,6 +161,12 @@ class FreeClassroomPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 设置听力教室数据
+  void setListeningClassroom(Set<String> rooms) {
+    _listeningClassrooms.addAll(rooms);
+    notifyListeners();
+  }
+
   /// 输入 原始列表、教室筛选列表、节次筛选列表，输出 筛选后列表
   List<List<String>> getFilteredClassrooms(
     List<List<String>> originList, {
@@ -148,40 +181,60 @@ class FreeClassroomPageProvider extends ChangeNotifier {
           case SessionFilterMode.or:
             filteredClassrooms = originList
                 .where((i) =>
-                    roomFilterList
-                        .any((roomFilter) => i[0].contains(roomFilter)) &&
-                    sessionFilterList
-                        .any((sessionFilter) => i[sessionFilter] == '空'))
+                    roomFilterList.any(
+                      (roomFilter) => i[0].contains(roomFilter),
+                    ) &&
+                    sessionFilterList.any(
+                      (sessionFilter) => i[sessionFilter] == '空',
+                    ) &&
+                    (_isShowListeningClassroom ||
+                        !_listeningClassrooms.contains(i[0])))
                 .toList();
             break;
           case SessionFilterMode.and:
             filteredClassrooms = originList
                 .where((i) =>
-                    roomFilterList
-                        .any((roomFilter) => i[0].contains(roomFilter)) &&
-                    sessionFilterList
-                        .every((sessionFilter) => i[sessionFilter] == '空'))
+                    roomFilterList.any(
+                      (roomFilter) => i[0].contains(roomFilter),
+                    ) &&
+                    sessionFilterList.every(
+                      (sessionFilter) => i[sessionFilter] == '空',
+                    ) &&
+                    (_isShowListeningClassroom ||
+                        !_listeningClassrooms.contains(i[0])))
                 .toList();
             break;
         }
       } else {
         filteredClassrooms = originList
             .where((i) =>
-                roomFilterList.any((roomFilter) => i[0].contains(roomFilter)))
+                roomFilterList.any(
+                  (roomFilter) => i[0].contains(roomFilter),
+                ) &&
+                (_isShowListeningClassroom ||
+                    !_listeningClassrooms.contains(i[0])))
             .toList();
       }
     } else if (sessionFilterList != null && sessionFilterList.isNotEmpty) {
       switch (_sessionFilterMode) {
         case SessionFilterMode.or:
           filteredClassrooms = originList
-              .where((i) => sessionFilterList
-                  .any((sessionFilter) => i[sessionFilter] == '空'))
+              .where((i) =>
+                  sessionFilterList.any(
+                    (sessionFilter) => i[sessionFilter] == '空',
+                  ) &&
+                  (_isShowListeningClassroom ||
+                      !_listeningClassrooms.contains(i[0])))
               .toList();
           break;
         case SessionFilterMode.and:
           filteredClassrooms = originList
-              .where((i) => sessionFilterList
-                  .every((sessionFilter) => i[sessionFilter] == '空'))
+              .where((i) =>
+                  sessionFilterList.every(
+                    (sessionFilter) => i[sessionFilter] == '空',
+                  ) &&
+                  (_isShowListeningClassroom ||
+                      !_listeningClassrooms.contains(i[0])))
               .toList();
           break;
       }
@@ -339,6 +392,12 @@ class FreeClassroomPageProvider extends ChangeNotifier {
   /// 设置节次筛选模式（与/或）
   void setSessionFilterMode(SessionFilterMode mode) {
     _sessionFilterMode = mode;
+    notifyListeners();
+  }
+
+  /// 设置是否显示听力教室
+  void setIsShowListeningClassroom(bool value) {
+    _isShowListeningClassroom = value;
     notifyListeners();
   }
 }
