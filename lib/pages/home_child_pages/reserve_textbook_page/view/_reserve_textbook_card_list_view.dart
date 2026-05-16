@@ -30,6 +30,7 @@ class _ReserveTextbookCardListViewState
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -44,13 +45,16 @@ class _ReserveTextbookCardListViewState
                   tooltip: '复制所有教材信息',
                   onPressed: () {
                     final buffer = StringBuffer();
-                    for (final e in widget.bookData) {
+                    for (final (index, e) in widget.bookData.indexed) {
                       String text = '《${e.jcmc}》 ${e.jczz} ${e.cbs} ${e.bbh}';
                       String isbn = 'ISBN: ${e.isbn}';
                       buffer.write(text);
                       buffer.write('\n');
                       buffer.write(isbn);
                       buffer.write('\n');
+                      if (index != widget.bookData.length - 1) {
+                        buffer.write('\n');
+                      }
                     }
                     final text = buffer.toString();
                     Clipboard.setData(ClipboardData(text: text));
@@ -127,7 +131,7 @@ class _ReserveTextbookCardListViewState
         child: SizedBox(
           width: double.infinity,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 10.0),
+            padding: const EdgeInsets.fromLTRB(14.0, 12.0, 12.0, 10.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

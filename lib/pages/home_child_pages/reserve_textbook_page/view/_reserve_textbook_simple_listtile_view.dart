@@ -15,6 +15,7 @@ class ReserveTextbookSimpleListTileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SelectionArea(
       child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

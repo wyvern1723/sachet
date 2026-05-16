@@ -108,6 +108,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,15 +117,6 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
             children: [
               Text('教材信息：', style: Theme.of(context).textTheme.titleMedium),
               Spacer(),
-              IconButton(
-                onPressed: () async {
-                  await showFilterDialog(context);
-                },
-                icon: Icon(Icons.filter_list_outlined),
-                tooltip: '筛选',
-                splashRadius: 24,
-                visualDensity: VisualDensity.compact,
-              ),
               IconButton(
                 tooltip: '复制为 Markdown 表格',
                 onPressed: () {
@@ -137,7 +129,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
                   List dashList = [];
                   for (final item in _selectedItems) {
                     dashList
-                        .add(copyableItems.contains(item) ? ':--' : ':---:');
+                        .add(copyableItems.contains(item) ? ':---' : ':---:');
                   }
                   String tableSecondLine = '| --- | ${dashList.join(' | ')} |';
                   buffer.write(tableSecondLine);
@@ -145,7 +137,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
 
                   for (final (index, book) in widget.bookData.indexed) {
                     final singleBookStringBuffer = StringBuffer();
-                    singleBookStringBuffer.write('| $index ');
+                    singleBookStringBuffer.write('| ${index + 1} ');
                     List text = [];
                     for (final item in _selectedItems) {
                       text.add(book.item(item).toString());
@@ -164,6 +156,15 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
                 },
                 icon: Icon(Icons.copy),
                 iconSize: 20,
+                splashRadius: 24,
+                visualDensity: VisualDensity.compact,
+              ),
+              IconButton(
+                onPressed: () async {
+                  await showFilterDialog(context);
+                },
+                icon: Icon(Icons.filter_list_outlined),
+                tooltip: '筛选',
                 splashRadius: 24,
                 visualDensity: VisualDensity.compact,
               ),

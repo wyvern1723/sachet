@@ -37,6 +37,7 @@ class _ReserveTextbookSearchFriendlyViewState
 
     return SelectionArea(
       child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -79,13 +80,16 @@ class _ReserveTextbookSearchFriendlyViewState
                     tooltip: '复制所有教材信息',
                     onPressed: () {
                       final buffer = StringBuffer();
-                      for (final e in widget.bookData) {
+                      for (final (index, e) in widget.bookData.indexed) {
                         String text = '《${e.jcmc}》 ${e.jczz} ${e.cbs} ${e.bbh}';
                         String isbn = 'ISBN: ${e.isbn}';
                         buffer.write(text);
                         buffer.write('\n');
                         buffer.write(isbn);
                         buffer.write('\n');
+                        if (index != widget.bookData.length - 1) {
+                          buffer.write('\n');
+                        }
                       }
                       final text = buffer.toString();
                       Clipboard.setData(ClipboardData(text: text));

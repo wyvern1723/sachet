@@ -268,6 +268,7 @@ class _BookInfoViewZFState extends State<_BookInfoViewZF>
     const CapsuleTabItem(icon: Text('📃'), label: '列表'),
     const CapsuleTabItem(icon: Text('📚'), label: '学术'),
   ];
+
   @override
   void initState() {
     super.initState();
@@ -312,35 +313,32 @@ class _BookInfoViewZFState extends State<_BookInfoViewZF>
           ),
         ),
       ],
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            ReserveTextbookTableView(
-              bookData: widget.bookData,
-              footer: footer,
-            ),
-            ReserveTextbookSearchFriendlyView(
-              bookData: widget.bookData,
-              channelList: channelList,
-              footer: footer,
-            ),
-            ReserveTextbookCardListView(
-              bookData: widget.bookData,
-              channelList: channelList,
-              footer: footer,
-            ),
-            ReserveTextbookSimpleListTileView(
-              bookData: widget.bookData,
-              footer: footer,
-            ),
-            ReserveTextbookReferencesView(
-              bookData: widget.bookData,
-              footer: footer,
-            ),
-          ],
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          ReserveTextbookTableView(
+            bookData: widget.bookData,
+            footer: footer,
+          ),
+          ReserveTextbookSearchFriendlyView(
+            bookData: widget.bookData,
+            channelList: channelList,
+            footer: footer,
+          ),
+          ReserveTextbookCardListView(
+            bookData: widget.bookData,
+            channelList: channelList,
+            footer: footer,
+          ),
+          ReserveTextbookSimpleListTileView(
+            bookData: widget.bookData,
+            footer: footer,
+          ),
+          ReserveTextbookReferencesView(
+            bookData: widget.bookData,
+            footer: footer,
+          ),
+        ],
       ),
     );
   }
