@@ -171,7 +171,15 @@ class HomePage extends StatelessWidget {
                             page: CultivatePage(),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CardWidget(
+                            title: '教材预订',
+                            icon: Icons.book,
+                            page: ReserveTextbookPageZF(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: CardWidget(
                             title: '考试时间',
@@ -210,13 +218,6 @@ class HomePage extends StatelessWidget {
                               // icon: Icons.picture_as_pdf,
                               icon: Icons.description_rounded,
                               page: ScorePdfPageZF(),
-                            ),
-                          ),
-                          Expanded(
-                            child: CardWidget(
-                              title: '教材预订',
-                              icon: Icons.book,
-                              page: ReserveTextbookPageZF(),
                             ),
                           ),
                         ],
@@ -354,6 +355,7 @@ class HomePage extends StatelessWidget {
                                   thickness: 1,
                                   indent: 60,
                                   endIndent: 40,
+                                  color: colorScheme.outlineVariant,
                                 ),
                             ],
                           );
