@@ -304,6 +304,7 @@ class _BookInfoViewZFState extends State<_BookInfoViewZF>
             child: CapsuleTabBar(
               tabs: _myTabs,
               selectedIndex: _pageIndex,
+              controller: _tabController,
               onTabSelected: (index) {
                 _tabController.animateTo(index);
               },
