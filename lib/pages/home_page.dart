@@ -5,7 +5,7 @@ import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
-import 'package:sachet/pages/home_child_pages/reserve_textbook_page_zf.dart';
+import 'package:sachet/pages/home_child_pages/reserve_textbook_page/reserve_textbook_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/score_pdf_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
@@ -216,7 +216,7 @@ class HomePage extends StatelessWidget {
                             child: CardWidget(
                               title: '教材预订',
                               icon: Icons.book,
-                              page: ReserveTextbookPageZf(),
+                              page: ReserveTextbookPageZF(),
                             ),
                           ),
                         ],
