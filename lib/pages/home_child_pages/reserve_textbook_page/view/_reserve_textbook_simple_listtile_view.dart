@@ -33,7 +33,7 @@ class ReserveTextbookSimpleListTileView extends StatelessWidget {
                         Theme.of(context).colorScheme.onPrimaryContainer,
                     child: Text('${index + 1}'),
                   ),
-                  title: Text('${e.jcmc}'),
+                  title: Text('《${e.jcmc}》'),
                   subtitle: Text(
                     '${e.jczz} | ${e.cbs} | ${e.bbh} | ${e.cbrq}'
                     '\n'

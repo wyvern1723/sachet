@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/reserve_textbook_response_zf.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 
 class ReserveTextbookTableView extends StatefulWidget {
@@ -107,6 +107,8 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
       child: Column(
@@ -149,10 +151,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
 
                   final text = buffer.toString();
 
-                  Clipboard.setData(ClipboardData(text: text));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('已复制到剪贴板')),
-                  );
+                  copyToClipboard(context, text);
                 },
                 icon: Icon(Icons.copy),
                 iconSize: 20,
@@ -182,43 +181,78 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
                 controller: _horizontalController,
                 scrollDirection: Axis.horizontal,
                 child: SelectionArea(
-                  child: DataTable(
-                    columns: [
-                      ...[
-                        '', // 第一列：序号
-                        ..._selectedItems // 其他选择展示信息的列
-                      ].map(
-                        (e) => DataColumn(
-                          label: Expanded(
-                            child: Align(
-                              alignment: copyableItems.contains(e)
-                                  ? Alignment.centerLeft
-                                  : Alignment.center,
-                              child: Text(e),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: colorScheme.outlineVariant),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: DataTable(
+                        headingRowColor: WidgetStateProperty.all(
+                          colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                        ),
+                        columns: [
+                          // 第一列：序号
+                          DataColumn(
+                            label: Expanded(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  '#',
+                                  style: TextStyle(color: colorScheme.outline),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                    rows: <DataRow>[
-                      ...List.generate(widget.bookData.length, (index) {
-                        final e = widget.bookData[index];
-                        return DataRow(
-                          cells: <DataCell>[
-                            DataCell(Text(' ${(index + 1)} ')), // 第一列：序号
-                            for (final item in _selectedItems)
-                              copyableItems.contains(item)
-                                  ? copyableDataCell(
-                                      e.item(item).toString(), context)
-                                  : DataCell(Center(
-                                      child: Text(e.item(item).toString()))),
-                          ],
-                        );
-                      })
-                    ],
-                    horizontalMargin: 4,
-                    columnSpacing: 8,
-                    dataRowMaxHeight: double.infinity,
+                          // 其他选择展示信息的列
+                          ..._selectedItems.map(
+                            (e) => DataColumn(
+                              label: Expanded(
+                                child: Align(
+                                  alignment: copyableItems.contains(e)
+                                      ? Alignment.centerLeft
+                                      : Alignment.center,
+                                  child: Text(
+                                    e,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                        rows: <DataRow>[
+                          ...List.generate(widget.bookData.length, (index) {
+                            final e = widget.bookData[index];
+                            return DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Text(
+                                    ' ${(index + 1)} ',
+                                    style:
+                                        TextStyle(color: colorScheme.outline),
+                                  ),
+                                ), // 第一列：序号
+                                for (final item in _selectedItems)
+                                  copyableItems.contains(item)
+                                      ? copyableDataCell(
+                                          e.item(item).toString(), context)
+                                      : DataCell(
+                                          Center(
+                                            child:
+                                                Text(e.item(item).toString()),
+                                          ),
+                                        ),
+                              ],
+                            );
+                          })
+                        ],
+                        horizontalMargin: 4,
+                        columnSpacing: 8,
+                        dataRowMaxHeight: double.infinity,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -245,12 +279,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
             child: Text(text),
           ),
           IconButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: text));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('已复制到剪贴板')),
-              );
-            },
+            onPressed: () => copyToClipboard(context, text),
             icon: Icon(Icons.content_copy),
             iconSize: 14,
             padding: EdgeInsets.all(0),
@@ -262,14 +291,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
           ),
         ],
       ),
-      onTap: tapToCopy
-          ? () {
-              Clipboard.setData(ClipboardData(text: text));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('已复制到剪贴板')),
-              );
-            }
-          : null,
+      onTap: tapToCopy ? () => copyToClipboard(context, text) : null,
     );
   }
 }

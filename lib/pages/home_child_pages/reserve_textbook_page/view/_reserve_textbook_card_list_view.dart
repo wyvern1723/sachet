@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/models/purchase_channel.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/reserve_textbook_response_zf.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 class ReserveTextbookCardListView extends StatefulWidget {
   /// 卡片格式
@@ -46,8 +46,12 @@ class _ReserveTextbookCardListViewState
                   onPressed: () {
                     final buffer = StringBuffer();
                     for (final (index, e) in widget.bookData.indexed) {
-                      String text = '《${e.jcmc}》 ${e.jczz} ${e.cbs} ${e.bbh}';
+                      String bookTitle = '《${e.jcmc}》';
+                      String text =
+                          '${e.jczz} | ${e.cbs} | ${e.bbh} | ${e.cbrq}';
                       String isbn = 'ISBN: ${e.isbn}';
+                      buffer.write(bookTitle);
+                      buffer.write('\n');
                       buffer.write(text);
                       buffer.write('\n');
                       buffer.write(isbn);
@@ -57,10 +61,7 @@ class _ReserveTextbookCardListViewState
                       }
                     }
                     final text = buffer.toString();
-                    Clipboard.setData(ClipboardData(text: text));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('已复制到剪贴板')),
-                    );
+                    copyToClipboard(context, text);
                   },
                   icon: Icon(Icons.copy),
                   iconSize: 18,
@@ -122,12 +123,7 @@ class _ReserveTextbookCardListViewState
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () {},
-        onLongPress: () {
-          Clipboard.setData(ClipboardData(text: queryText));
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已复制到剪贴板')),
-          );
-        },
+        onLongPress: () => copyToClipboard(context, queryText),
         child: SizedBox(
           width: double.infinity,
           child: Padding(
@@ -141,19 +137,14 @@ class _ReserveTextbookCardListViewState
                   children: [
                     Flexible(
                       child: Text(
-                        bookTitle,
+                        '《$bookTitle》',
                         style: textTheme.titleMedium?.copyWith(
                           color: colorScheme.onSurface,
                         ),
                       ),
                     ),
                     IconButton(
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: queryText));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('已复制到剪贴板')),
-                        );
-                      },
+                      onPressed: () => copyToClipboard(context, queryText),
                       icon: Icon(Icons.copy, color: colorScheme.primary),
                       iconSize: 18,
                       splashRadius: 24,
@@ -183,12 +174,7 @@ class _ReserveTextbookCardListViewState
                         color: colorScheme.primary,
                         size: 16,
                       ),
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: isbn));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('已复制到剪贴板')),
-                        );
-                      },
+                      onPressed: () => copyToClipboard(context, isbn),
                       visualDensity: VisualDensity(
                         vertical: VisualDensity.compact.vertical,
                         horizontal: VisualDensity.minimumDensity,

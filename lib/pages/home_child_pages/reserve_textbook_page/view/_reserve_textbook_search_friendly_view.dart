@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/models/purchase_channel.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/reserve_textbook_response_zf.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 enum DisplayFormat { text, isbn }
 
@@ -92,10 +92,7 @@ class _ReserveTextbookSearchFriendlyViewState
                         }
                       }
                       final text = buffer.toString();
-                      Clipboard.setData(ClipboardData(text: text));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('已复制到剪贴板')),
-                      );
+                      copyToClipboard(context, text);
                     },
                     icon: Icon(Icons.copy),
                     iconSize: 18,
@@ -176,12 +173,7 @@ class _ReserveTextbookSearchFriendlyViewState
                   style: textStyle,
                 )),
                 IconButton(
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: text));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('已复制到剪贴板')),
-                    );
-                  },
+                  onPressed: () => copyToClipboard(context, text),
                   color: colorScheme.secondary,
                   icon: Icon(Icons.content_copy),
                   iconSize: 14,
