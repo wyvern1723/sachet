@@ -5,6 +5,7 @@ import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
+import 'package:sachet/pages/home_child_pages/reserve_textbook_page/reserve_textbook_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/score_pdf_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
@@ -170,7 +171,15 @@ class HomePage extends StatelessWidget {
                             page: CultivatePage(),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CardWidget(
+                            title: '教材预订',
+                            icon: Icons.book,
+                            page: ReserveTextbookPageZF(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: CardWidget(
                             title: '考试时间',
@@ -181,35 +190,38 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CardWidget(
-                            title: '成绩查询',
-                            // icon: Icons.emoji_events_outlined,
-                            icon: Icons.history_edu_outlined,
-                            // icon: Icons.analytics_rounded,
-                            page: GradePageZF(),
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: CardWidget(
+                              title: '成绩查询',
+                              // icon: Icons.emoji_events_outlined,
+                              icon: Icons.history_edu_outlined,
+                              // icon: Icons.analytics_rounded,
+                              page: GradePageZF(),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: CardWidget(
-                            title: '绩点排名',
-                            icon: Icons.leaderboard_rounded,
-                            page: GPAPageZF(),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: CardWidget(
+                              title: '绩点排名',
+                              icon: Icons.leaderboard_rounded,
+                              page: GPAPageZF(),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: CardWidget(
-                            title: '成绩单',
-                            // icon: Icons.picture_as_pdf,
-                            icon: Icons.description_rounded,
-                            page: ScorePdfPageZF(),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: CardWidget(
+                              title: '成绩单',
+                              // icon: Icons.picture_as_pdf,
+                              icon: Icons.description_rounded,
+                              page: ScorePdfPageZF(),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(4.0, 24.0, 4.0, 12.0),
@@ -255,7 +267,7 @@ class HomePage extends StatelessWidget {
                       Expanded(
                         child: CardLinkWidget(
                           title: '馆藏检索',
-                          icon: Icons.book,
+                          icon: Icons.local_library,
                           link: libraryLookUpUrl,
                         ),
                       ),
@@ -343,6 +355,7 @@ class HomePage extends StatelessWidget {
                                   thickness: 1,
                                   indent: 60,
                                   endIndent: 40,
+                                  color: colorScheme.outlineVariant,
                                 ),
                             ],
                           );

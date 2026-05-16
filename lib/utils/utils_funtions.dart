@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/providers/qiangzhi_user_provider.dart';
@@ -59,4 +60,14 @@ Future openLink(String link) async {
       ? LaunchMode.externalApplication
       : LaunchMode.inAppBrowserView;
   await launchUrl(Uri.parse(link), mode: launchMode);
+}
+
+void copyToClipboard(BuildContext context, String text) {
+  Clipboard.setData(ClipboardData(text: text));
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('已复制到剪贴板'),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
 }

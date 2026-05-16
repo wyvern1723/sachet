@@ -4,7 +4,7 @@ import 'package:sachet/providers/grade_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade_semesters_and_alert_text.dart';
-import 'package:sachet/widgets/homepage_widgets/grade_page_qz_widgets/item_filter_dialog.dart';
+import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/alert_text.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/gpa_card.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_table.dart';
@@ -171,18 +171,23 @@ class _FilterButton extends StatefulWidget {
 }
 
 class __FilterButtonState extends State<_FilterButton> {
-  void showFilterDialog() async {
+  Future showFilterDialog(BuildContext context) async {
     List<String> items = context.read<GradePageZFProvider>().items;
     List<String> selectedItems =
         context.read<GradePageZFProvider>().selectedItems;
 
     List<List<String>>? results = await showDialog(
       context: context,
-      builder: (BuildContext context) => ItemFilterDialogQZ(
+      builder: (BuildContext context) => ItemFilterDialog(
         items: items,
         selectedItems: selectedItems,
       ),
     );
+
+    if (!context.mounted) {
+      return;
+    }
+
     if (results != null) {
       // 新选择的要显示的 selectedItems，（经过 List.add、List.remove,顺序会乱）
       List<String> newSelectedItems = results[0];
@@ -210,7 +215,9 @@ class __FilterButtonState extends State<_FilterButton> {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       ),
-      onPressed: showFilterDialog,
+      onPressed: () async {
+        await showFilterDialog(context);
+      },
       icon: Icon(Icons.filter_list_outlined),
       label: Text('筛选'),
     );
