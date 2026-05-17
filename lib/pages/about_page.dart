@@ -156,6 +156,21 @@ class _AboutPageState extends State<AboutPage> {
             leading: const Align(
               widthFactor: 1,
               alignment: Alignment.centerLeft,
+              child: Icon(
+                // Icons.web,
+                Icons.web_asset,
+                // Icons.attachment,
+                // Icons.link,
+              ),
+            ),
+            title: const Text('官网'),
+            subtitle: const Text(appOfficialWebsiteUrl),
+            onTap: () => openLink(appOfficialWebsiteUrl),
+          ),
+          ListTile(
+            leading: const Align(
+              widthFactor: 1,
+              alignment: Alignment.centerLeft,
               child: Icon(Icons.person),
             ),
             title: const Text('开发者'),
@@ -166,7 +181,7 @@ class _AboutPageState extends State<AboutPage> {
             leading: Align(
               widthFactor: 1,
               alignment: Alignment.centerLeft,
-              child: Icon(Icons.link),
+              child: Icon(Icons.code),
             ),
             title: Text('源代码'),
             subtitle: Text(appRepoUrl),

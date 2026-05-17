@@ -2,6 +2,9 @@ import 'dart:ffi';
 
 import 'package:sachet/utils/abi_utils.dart';
 
+/// App 官网
+const String appOfficialWebsiteUrl = "https://sachet.wyvernlab.com";
+
 /// 作者名称
 const String authorName = "wyvern1723";
 
