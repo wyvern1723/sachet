@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_info_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -166,6 +165,8 @@ class _AboutPageState extends State<AboutPage> {
             title: const Text('官网'),
             subtitle: const Text(appOfficialWebsiteUrl),
             onTap: () => openLink(appOfficialWebsiteUrl),
+            onLongPress: () =>
+                copyToClipboard(context, appOfficialWebsiteUrl, prefix: '链接'),
           ),
           ListTile(
             leading: const Align(
@@ -186,12 +187,8 @@ class _AboutPageState extends State<AboutPage> {
             title: Text('源代码'),
             subtitle: Text(appRepoUrl),
             onTap: () => openLink(appRepoUrl),
-            onLongPress: () {
-              Clipboard.setData(ClipboardData(text: appRepoUrl));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("链接已复制到剪贴板")),
-              );
-            },
+            onLongPress: () =>
+                copyToClipboard(context, appRepoUrl, prefix: '链接'),
           ),
           ListTile(
             leading: Align(
@@ -217,12 +214,8 @@ class _AboutPageState extends State<AboutPage> {
             title: Text('最新版下载'),
             subtitle: Text(appReleaseUrl),
             onTap: () => openLink(appReleaseUrl),
-            onLongPress: () {
-              Clipboard.setData(ClipboardData(text: appReleaseUrl));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("链接已复制到剪贴板")),
-              );
-            },
+            onLongPress: () =>
+                copyToClipboard(context, appReleaseUrl, prefix: '链接'),
           ),
           ListTile(
             leading: Align(
@@ -233,12 +226,8 @@ class _AboutPageState extends State<AboutPage> {
             title: Text('反馈'),
             subtitle: Text(authorMail),
             onTap: () => launchUrl(Uri.parse("mailto:$authorMail")),
-            onLongPress: () {
-              Clipboard.setData(ClipboardData(text: authorMail));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("邮箱地址已复制到剪贴板")),
-              );
-            },
+            onLongPress: () =>
+                copyToClipboard(context, authorMail, prefix: '邮箱地址'),
           ),
         ],
       ),

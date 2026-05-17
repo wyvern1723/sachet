@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 
@@ -35,12 +34,8 @@ class ReserveTextbookFooter extends StatelessWidget {
           Text('如需预订教材，请在', style: textStyle),
           GestureDetector(
             onTap: () => openLink(newJwxtBaseUrl),
-            onLongPress: () {
-              Clipboard.setData(ClipboardData(text: newJwxtBaseUrl));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("链接已复制到剪贴板")),
-              );
-            },
+            onLongPress: () =>
+                copyToClipboard(context, newJwxtBaseUrl, prefix: '链接'),
             child: Text(
               '教务系统官网',
               style: TextStyle(

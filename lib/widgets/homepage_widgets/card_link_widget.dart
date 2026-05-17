@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/utils/utils_funtions.dart';
 
 class CardLinkWidget extends StatelessWidget {
@@ -19,12 +18,7 @@ class CardLinkWidget extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () => openLink(link),
-        onLongPress: () {
-          Clipboard.setData(ClipboardData(text: link));
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("链接已复制到剪贴板")),
-          );
-        },
+        onLongPress: () => copyToClipboard(context, link, prefix: '链接'),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
           child: Wrap(

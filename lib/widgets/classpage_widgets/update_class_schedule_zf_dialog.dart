@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/update_class_schedule_state.dart';
@@ -293,13 +292,11 @@ class _UpdateClassScheduleZFDialogState
                   onTap: () {
                     openLink(xtuSchoolCalendarUrl);
                   },
-                  onLongPress: () {
-                    Clipboard.setData(
-                        ClipboardData(text: xtuSchoolCalendarUrl));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("链接已复制到剪贴板")),
-                    );
-                  },
+                  onLongPress: () => copyToClipboard(
+                    context,
+                    xtuSchoolCalendarUrl,
+                    prefix: '链接',
+                  ),
                   child: Text(
                     '校历',
                     style: TextStyle(

@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/transform.dart';
+import 'package:sachet/utils/utils_funtions.dart';
 
 class ExamTimeCardZF extends StatelessWidget {
   /// 考试时间查询页面（正方教务）的每门课程的考试时间信息 Card
@@ -44,16 +44,11 @@ class ExamTimeCardZF extends StatelessWidget {
           : colorScheme.secondaryContainer,
       child: InkWell(
         onTap: () {},
-        onLongPress: () {
-          Clipboard.setData(
-            ClipboardData(
-                text:
-                    "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("考试信息已复制到剪贴板")),
-          );
-        },
+        onLongPress: () => copyToClipboard(
+          context,
+          '课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}',
+          prefix: '考试信息',
+        ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
           child: Column(
@@ -198,16 +193,11 @@ class ExamTimeCardZF extends StatelessWidget {
           : colorScheme.secondaryContainer,
       child: InkWell(
         onTap: () {},
-        onLongPress: () {
-          Clipboard.setData(
-            ClipboardData(
-                text:
-                    "课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}"),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("考试信息已复制到剪贴板")),
-          );
-        },
+        onLongPress: () => copyToClipboard(
+          context,
+          '课程名称：${examTime.courseTitle}\n考试时间：${examTime.time}\n考试地点：${examTime.place}',
+          prefix: '考试信息',
+        ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 12.0),
           child: Column(

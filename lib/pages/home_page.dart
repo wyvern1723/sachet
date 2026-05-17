@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
@@ -340,13 +339,11 @@ class HomePage extends StatelessWidget {
                                 ),
                                 onTap: () =>
                                     openLink(openLinkListTileList[index].link),
-                                onLongPress: () {
-                                  Clipboard.setData(ClipboardData(
-                                      text: openLinkListTileList[index].link));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("链接已复制到剪贴板")),
-                                  );
-                                },
+                                onLongPress: () => copyToClipboard(
+                                  context,
+                                  openLinkListTileList[index].link,
+                                  prefix: '链接',
+                                ),
                               ),
                               // 添加分割线，除了最后一个
                               if (index != openLinkListTileList.length - 1)

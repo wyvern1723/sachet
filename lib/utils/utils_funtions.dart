@@ -62,11 +62,11 @@ Future openLink(String link) async {
   await launchUrl(Uri.parse(link), mode: launchMode);
 }
 
-void copyToClipboard(BuildContext context, String text) {
+void copyToClipboard(BuildContext context, String text, {String prefix = ''}) {
   Clipboard.setData(ClipboardData(text: text));
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text('已复制到剪贴板'),
+      content: Text('$prefix已复制到剪贴板'),
       behavior: SnackBarBehavior.floating,
     ),
   );
