@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/curriculum_response_zf.dart';
+import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_card_view_zf.dart';
+import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_table_view_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_queryable_majors.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_query_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_curriculum.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/change_query_option_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/cultivation_page_footer.dart';
-import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/curriculum_data_table.dart';
+import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/capsule_tabbar.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class CultivationPlanPageZF extends StatefulWidget {
@@ -400,8 +402,8 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
   }
 }
 
-/// 课程信息（培养方案） View
-class _CurriculumViewZF extends StatelessWidget {
+class _CurriculumViewZF extends StatefulWidget {
+  /// 课程信息（培养方案） View
   const _CurriculumViewZF({
     super.key,
     required this.curriculums,
@@ -419,33 +421,87 @@ class _CurriculumViewZF extends StatelessWidget {
   final Widget appBar;
 
   @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        appBar,
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CurriculumDataTable(curriculums: curriculums),
+  State<_CurriculumViewZF> createState() => _CurriculumViewZFState();
+}
 
-                // Footer, 显示当前查询的专业
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
-                  child: CultivationPageFooter(
-                    queryingGrade: queryingGrade,
-                    queryingSchool: queryingSchool,
-                    queryingMajor: queryingMajor,
-                    queryingQueryMajor: queryingQueryMajor,
-                  ),
-                ),
-              ],
+class _CurriculumViewZFState extends State<_CurriculumViewZF>
+    with TickerProviderStateMixin {
+  int _pageIndex = 0;
+  late TabController _tabController;
+
+  final List<CapsuleTabItem> _tabs = [
+    CapsuleTabItem(icon: Icon(Icons.table_view), label: '表格'),
+    CapsuleTabItem(
+      // icon: Icon(Icons.table_rows_rounded),
+      // icon: Icon(Icons.window_rounded),
+      icon: Icon(Icons.auto_awesome_motion_outlined),
+      label: '卡片',
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.index != _pageIndex &&
+          !_tabController.indexIsChanging) {
+        setState(() {
+          _pageIndex = _tabController.index;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Footer, 显示当前查询的专业
+    final footer = Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
+      child: CultivationPageFooter(
+        queryingGrade: widget.queryingGrade,
+        queryingSchool: widget.queryingSchool,
+        queryingMajor: widget.queryingMajor,
+        queryingQueryMajor: widget.queryingQueryMajor,
+      ),
+    );
+
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        widget.appBar,
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+            child: CapsuleTabBar(
+              tabs: _tabs,
+              selectedIndex: _pageIndex,
+              controller: _tabController,
+              onTabSelected: (index) {
+                _tabController.animateTo(index);
+              },
             ),
           ),
         ),
       ],
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          CurriculumTableViewZF(
+            curriculums: widget.curriculums,
+            footer: footer,
+          ),
+          CurriculumCardViewZF(
+            curriculums: widget.curriculums,
+            footer: footer,
+          ),
+        ],
+      ),
     );
   }
 }
