@@ -200,145 +200,184 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
     _future = _getCultivationData(zhengFangUserProvider);
   }
 
+  Widget _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      title: const Text('培养方案'),
+      floating: false,
+      pinned: false,
+      snap: false,
+      actions: [
+        IconButton(
+          onPressed: () async {
+            await _changeQueryData(context);
+          },
+          icon: const Icon(Icons.history_outlined),
+          visualDensity: VisualDensity.comfortable,
+          tooltip: '切换专业',
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('培养方案'),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await _changeQueryData(context);
-            },
-            icon: Icon(Icons.history_outlined),
-            visualDensity: VisualDensity.comfortable,
-            tooltip: '切换专业',
-          ),
-        ],
-      ),
       body: FutureBuilder(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0),
-                child: CircularProgressIndicator(),
-              ),
+            return CustomScrollView(
+              slivers: [
+                _buildAppBar(context),
+                const SliverFillRemaining(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+              ],
             );
           }
 
           if (snapshot.hasError) {
             if (snapshot.error ==
                 '获取培养方案可选数据失败: Http status code = 302, 可能需要重新登录') {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
-                ),
+              return CustomScrollView(
+                slivers: [
+                  _buildAppBar(context),
+                  SliverToBoxAdapter(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: LoginExpiredZF(
+                            onGoBack: (value) => onGoBack(value)),
+                      ),
+                    ),
+                  ),
+                ],
               );
             }
             if (snapshot.error == '含有多个可查询专业结果，请选择一项') {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '含有多个可查询专业结果，请选择一项',
-                      style: TextStyle(color: colorScheme.error),
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: _selectedQueryMajor,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: '查询专业',
-                        border: OutlineInputBorder(),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      selectedItemBuilder: (context) => _queryableMajors.entries
-                          .map<Widget>(
-                            (e) => Text(
-                              e.key,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+              return CustomScrollView(
+                slivers: [
+                  _buildAppBar(context),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '含有多个可查询专业结果，请选择一项',
+                            style: TextStyle(color: colorScheme.error),
+                          ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            value: _selectedQueryMajor,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: '查询专业',
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                             ),
-                          )
-                          .toList(),
-                      items: _queryableMajors.entries
-                          .map(
-                            (e) => DropdownMenuItem<String>(
-                              value: e.value,
-                              child: Text(e.key),
+                            selectedItemBuilder: (context) =>
+                                _queryableMajors.entries
+                                    .map<Widget>(
+                                      (e) => Text(
+                                        e.key,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    )
+                                    .toList(),
+                            items: _queryableMajors.entries
+                                .map(
+                                  (e) => DropdownMenuItem<String>(
+                                    value: e.value,
+                                    child: Text(e.key),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                setState(() {
+                                  _selectedQueryMajor = value;
+                                  final zhengFangUserProvider =
+                                      context.read<ZhengFangUserProvider>();
+                                  _future = getCurriculumZF(
+                                    cookie: ZhengFangUserProvider.cookie,
+                                    zhengFangUserProvider:
+                                        zhengFangUserProvider,
+                                    queryMajorId: value,
+                                  ).then((data) {
+                                    if (mounted) {
+                                      setState(() => _curriculumData = data);
+                                    }
+                                    return data;
+                                  }).catchError((error) {
+                                    if (mounted) {
+                                      setState(() => _curriculumData = null);
+                                    }
+                                    throw error;
+                                  });
+                                });
+                              }
+                            },
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(0.0, 12.0, 8.0, 20.0),
+                            child: CultivationPageFooter(
+                              queryingGrade: _displayGrade,
+                              queryingSchool: _displaySchool,
+                              queryingMajor: _displayMajor,
+                              queryingQueryMajor: _displayQueryMajor,
                             ),
-                          )
-                          .toList(),
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedQueryMajor = value;
-                            final zhengFangUserProvider =
-                                context.read<ZhengFangUserProvider>();
-                            _future = getCurriculumZF(
-                              cookie: ZhengFangUserProvider.cookie,
-                              zhengFangUserProvider: zhengFangUserProvider,
-                              queryMajorId: value,
-                            ).then((data) {
-                              if (mounted) {
-                                setState(() => _curriculumData = data);
-                              }
-                              return data;
-                            }).catchError((error) {
-                              if (mounted) {
-                                setState(() => _curriculumData = null);
-                              }
-                              throw error;
-                            });
-                          });
-                        }
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0.0, 12.0, 8.0, 20.0),
-                      child: CultivationPageFooter(
-                        queryingGrade: _displayGrade,
-                        queryingSchool: _displaySchool,
-                        queryingMajor: _displayMajor,
-                        queryingQueryMajor: _displayQueryMajor,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: colorScheme.error),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
-                  child: CultivationPageFooter(
-                    queryingGrade: _displayGrade,
-                    queryingSchool: _displaySchool,
-                    queryingMajor: _displayMajor,
-                    queryingQueryMajor: _displayQueryMajor,
+                ],
+              );
+            }
+            return CustomScrollView(
+              slivers: [
+                _buildAppBar(context),
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${snapshot.error}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: colorScheme.error),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
+                        child: CultivationPageFooter(
+                          queryingGrade: _displayGrade,
+                          queryingSchool: _displaySchool,
+                          queryingMajor: _displayMajor,
+                          queryingQueryMajor: _displayQueryMajor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -353,6 +392,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
             queryingSchool: _displaySchool,
             queryingMajor: _displayMajor,
             queryingQueryMajor: _displayQueryMajor,
+            appBar: _buildAppBar(context),
           );
         },
       ),
@@ -369,34 +409,43 @@ class _CurriculumViewZF extends StatelessWidget {
     required this.queryingSchool,
     required this.queryingMajor,
     required this.queryingQueryMajor,
+    required this.appBar,
   });
   final List<CurriculumResponseZF> curriculums;
   final String queryingGrade;
   final String queryingSchool;
   final String queryingMajor;
   final String queryingQueryMajor;
+  final Widget appBar;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CurriculumDataTable(curriculums: curriculums),
+    return CustomScrollView(
+      slivers: [
+        appBar,
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CurriculumDataTable(curriculums: curriculums),
 
-          // Footer, 显示当前查询的专业
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
-            child: CultivationPageFooter(
-              queryingGrade: queryingGrade,
-              queryingSchool: queryingSchool,
-              queryingMajor: queryingMajor,
-              queryingQueryMajor: queryingQueryMajor,
+                // Footer, 显示当前查询的专业
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
+                  child: CultivationPageFooter(
+                    queryingGrade: queryingGrade,
+                    queryingSchool: queryingSchool,
+                    queryingMajor: queryingMajor,
+                    queryingQueryMajor: queryingQueryMajor,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
