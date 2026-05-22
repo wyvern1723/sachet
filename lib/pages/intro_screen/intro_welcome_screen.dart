@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class IntroWelcomeScreen extends StatefulWidget {
   /// 欢迎页/声明页

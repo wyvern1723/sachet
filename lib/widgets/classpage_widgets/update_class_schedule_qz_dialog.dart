@@ -5,7 +5,7 @@ import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_schedule.dart';
 import 'package:sachet/services/qiangzhi_jwxt/get_data/process_data/get_class_shedule_semesters.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_qz.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

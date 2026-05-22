@@ -6,7 +6,7 @@ import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class ProfilePage extends StatefulWidget {

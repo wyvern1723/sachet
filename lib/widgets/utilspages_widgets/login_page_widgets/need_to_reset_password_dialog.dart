@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class NeedToResetPasswordDialog extends StatelessWidget {
   const NeedToResetPasswordDialog({super.key});

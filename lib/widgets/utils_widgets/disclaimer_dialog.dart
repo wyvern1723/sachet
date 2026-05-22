@@ -3,7 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class DisclaimerDialog extends StatelessWidget {
   /// 声明 Dialog

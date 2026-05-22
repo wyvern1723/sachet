@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/pages/settings_child_pages/palette_settings_page.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:intl/intl.dart';
 import '../settings_child_pages/customize_settings_page.dart';
 import '../settings_child_pages/color_settings_page.dart';

@@ -4,7 +4,7 @@ import 'package:sachet/constants/app_info_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/services/check_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {

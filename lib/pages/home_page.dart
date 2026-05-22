@@ -11,7 +11,7 @@ import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/card_widget.dart';
 import 'package:sachet/widgets/utils_widgets/nav_drawer.dart';
 import 'package:sachet/widgets/homepage_widgets/card_link_widget.dart';

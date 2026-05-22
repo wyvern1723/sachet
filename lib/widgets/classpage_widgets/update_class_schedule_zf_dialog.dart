@@ -8,7 +8,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_class_schedule_semesters.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_semester_start_date.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

@@ -6,7 +6,7 @@ import 'package:sachet/models/zhengfang_jwxt/response/exam_time_response_zf.dart
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/transform.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class ExamTimeCardZF extends StatelessWidget {
   /// 考试时间查询页面（正方教务）的每门课程的考试时间信息 Card

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class CardLinkWidget extends StatelessWidget {
   const CardLinkWidget({

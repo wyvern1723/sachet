@@ -11,7 +11,7 @@ import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_full_day.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom_today_and_tomorrow.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';

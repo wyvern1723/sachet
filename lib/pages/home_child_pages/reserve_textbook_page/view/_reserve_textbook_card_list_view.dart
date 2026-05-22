@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/purchase_channel.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/reserve_textbook_response_zf.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 class ReserveTextbookCardListView extends StatefulWidget {
   /// 卡片格式

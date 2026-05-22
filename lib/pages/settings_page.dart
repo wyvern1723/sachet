@@ -14,7 +14,7 @@ import 'package:sachet/pages/settings_child_pages/experimental_settings_page.dar
 import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
-import 'package:sachet/utils/utils_funtions.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/settingspage_widgets/nav_type_dropdownmenu.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 import 'package:sachet/widgets/settingspage_widgets/startup_page_dropdownmenu.dart';
