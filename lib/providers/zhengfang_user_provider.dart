@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/enums/store_item.dart';
 import 'package:sachet/models/user.dart';
+import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/utils/storage/secure_storage_util.dart';
 
 /// 正方教务系统的用户信息 Provider
@@ -16,6 +17,13 @@ class ZhengFangUserProvider extends ChangeNotifier {
 
   /// 从 SecureStorage 获取储存的 学号和密码
   Future init() async {
+    // 如果还没有删除过强智教务系统的用户信息，则删除强智教务系统的用户信息
+    if (AppGlobal.appSettings.isDeleteQZJwxtUserInfo != true) {
+      await deleteQiangZhiUserInfo();
+      AppGlobal.appSettings.isDeleteQZJwxtUserInfo = true;
+      AppGlobal.saveAppSettings();
+    }
+
     String? name = await _secureStorageUtil.read(key: StoreItem.nameZF.keyName);
     String? studentID =
         await _secureStorageUtil.read(key: StoreItem.studentIDZF.keyName);
@@ -101,10 +109,10 @@ class ZhengFangUserProvider extends ChangeNotifier {
   }
 
   /// 删除旧教务系统（强智教务系统）的用户信息
-  void deleteQiangZhiUser() {
-    _secureStorageUtil.delete(key: StoreItem.nameQZ.keyName);
-    _secureStorageUtil.delete(key: StoreItem.studentIDQZ.keyName);
-    _secureStorageUtil.delete(key: StoreItem.passwordQZ.keyName);
-    _secureStorageUtil.delete(key: StoreItem.cookieQZ.keyName);
+  static Future<void> deleteQiangZhiUserInfo() async {
+    await _secureStorageUtil.delete(key: StoreItem.nameQZ.keyName);
+    await _secureStorageUtil.delete(key: StoreItem.studentIDQZ.keyName);
+    await _secureStorageUtil.delete(key: StoreItem.passwordQZ.keyName);
+    await _secureStorageUtil.delete(key: StoreItem.cookieQZ.keyName);
   }
 }
