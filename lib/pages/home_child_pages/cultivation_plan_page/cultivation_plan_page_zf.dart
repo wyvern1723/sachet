@@ -1,12 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/models/zhengfang_jwxt/response/curriculum_response_zf.dart';
+import 'package:sachet/pages/home_child_pages/cultivation_plan_child_pages/cultivation_plan_old_data_page.dart';
 import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_card_view_zf.dart';
 import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_table_view_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_queryable_majors.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_query_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_curriculum.dart';
+import 'package:sachet/utils/custom_route.dart';
+import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/change_query_option_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/cultivation_page_footer.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/capsule_tabbar.dart';
@@ -49,6 +56,15 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
 
   // ignore: unused_field
   List<CurriculumResponseZF>? _curriculumData;
+
+  /// 是否有旧教务系统（强智教务系统）的培养方案的缓存数据
+  bool hasOldJwxtData = false;
+
+  /// 旧教务系统（强智教务系统）的培养方案的缓存数据
+  List? oldJwxtData;
+
+  /// 旧教务系统（强智教务系统）的培养方案的缓存数据的更新时间
+  String? oldJwxtDataUpdateTime;
 
   /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
   void onGoBack(dynamic value) {
@@ -179,6 +195,37 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
     }
   }
 
+  /// 获取培养方案数据
+  Future<({List data, String updateTime})?> _getCacheCultivatePlanData() async {
+    final file = await CachedDataStorage()
+        .getFile(AppFolder.cachedData.name, 'cultivate_plan.json');
+    String checkData = await CachedDataStorage().readDataViaFile(file);
+
+    if (checkData != '') {
+      List returnData = await jsonDecode(checkData);
+      // 该文件的上次修改时间
+      final lastModifiedTime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(file.lastModifiedSync());
+      return (data: returnData, updateTime: lastModifiedTime);
+    } else {
+      return null;
+    }
+  }
+
+  Future _checkHasOldJwxtData() async {
+    final result = await _getCacheCultivatePlanData();
+    if (result == null) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        hasOldJwxtData = true;
+        oldJwxtData = result.data;
+        oldJwxtDataUpdateTime = result.updateTime;
+      });
+    });
+  }
+
   String get _displayGrade =>
       _grades.keys.firstWhere((key) => _grades[key] == _selectedGrade,
           orElse: () => _selectedGrade);
@@ -200,6 +247,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
     super.initState();
     final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
     _future = _getCultivationData(zhengFangUserProvider);
+    _checkHasOldJwxtData();
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -209,14 +257,62 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
       pinned: false,
       snap: false,
       actions: [
-        IconButton(
-          onPressed: () async {
-            await _changeQueryData(context);
-          },
-          icon: const Icon(Icons.history_outlined),
-          visualDensity: VisualDensity.comfortable,
-          tooltip: '切换专业',
-        ),
+        hasOldJwxtData
+            ? PopupMenuButton(
+                tooltip: '切换视图',
+                itemBuilder: (context) => [
+                  // 切换专业
+                  PopupMenuItem(
+                    padding: EdgeInsets.fromLTRB(8.0, 0.0, 4.0, 0.0),
+                    onTap: () async {
+                      await _changeQueryData(context);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.history_outlined,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text('切换专业'),
+                      ],
+                    ),
+                  ),
+                  // 查看旧教务系统缓存数据
+                  PopupMenuItem(
+                    padding: EdgeInsets.fromLTRB(8.0, 0.0, 4.0, 0.0),
+                    onTap: () => Navigator.push(
+                      context,
+                      slideTransitionPageRoute(
+                        CultivationPlanOldDataPage(
+                          data: oldJwxtData!,
+                          updateTime: oldJwxtDataUpdateTime!,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.cloud_download_outlined,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text('查看旧教务系统缓存数据'),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : IconButton(
+                onPressed: () async {
+                  await _changeQueryData(context);
+                },
+                icon: const Icon(Icons.history_outlined),
+                visualDensity: VisualDensity.comfortable,
+                tooltip: '切换专业',
+              ),
       ],
     );
   }
@@ -224,6 +320,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final appBar = _buildAppBar(context);
 
     return Scaffold(
       body: FutureBuilder(
@@ -232,7 +329,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CustomScrollView(
               slivers: [
-                _buildAppBar(context),
+                appBar,
                 const SliverFillRemaining(
                   child: Center(
                     child: Padding(
@@ -250,7 +347,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
                 '获取培养方案可选数据失败: Http status code = 302, 可能需要重新登录') {
               return CustomScrollView(
                 slivers: [
-                  _buildAppBar(context),
+                  appBar,
                   SliverToBoxAdapter(
                     child: Align(
                       alignment: Alignment.topCenter,
@@ -267,7 +364,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
             if (snapshot.error == '含有多个可查询专业结果，请选择一项') {
               return CustomScrollView(
                 slivers: [
-                  _buildAppBar(context),
+                  appBar,
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -353,7 +450,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
             }
             return CustomScrollView(
               slivers: [
-                _buildAppBar(context),
+                appBar,
                 SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +491,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
             queryingSchool: _displaySchool,
             queryingMajor: _displayMajor,
             queryingQueryMajor: _displayQueryMajor,
-            appBar: _buildAppBar(context),
+            appBar: appBar,
           );
         },
       ),
