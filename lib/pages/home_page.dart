@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/nav_type.dart';
+import 'package:sachet/pages/home_child_pages/cultivation_plan_page/cultivation_plan_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/exam_time_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/gpa_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/grade_page_zf.dart';
@@ -8,7 +9,6 @@ import 'package:sachet/pages/home_child_pages/reserve_textbook_page/reserve_text
 import 'package:sachet/pages/home_child_pages/score_pdf_page_zf.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
-import 'package:sachet/pages/home_child_pages/cultivate_page.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_page_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/utils_functions.dart';
@@ -167,7 +167,7 @@ class HomePage extends StatelessWidget {
                           child: CardWidget(
                             title: '培养方案',
                             icon: Icons.school_rounded,
-                            page: CultivatePage(),
+                            page: CultivationPlanPageZF(),
                           ),
                         ),
                         const SizedBox(width: 8),
