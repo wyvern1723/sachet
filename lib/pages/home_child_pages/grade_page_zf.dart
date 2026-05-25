@@ -4,6 +4,7 @@ import 'package:sachet/providers/grade_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade.dart';
 import 'package:sachet/services/zhengfang_jwxt/get_data/get_grade_semesters_and_alert_text.dart';
+import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_help_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/alert_text.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/gpa_card.dart';
@@ -20,7 +21,21 @@ class GradePageZF extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => GradePageZFProvider(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('成绩查询')),
+        appBar: AppBar(
+          title: const Text('成绩查询'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.help_outline),
+              tooltip: '帮助',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => GradeHelpDialog(),
+                );
+              },
+            )
+          ],
+        ),
         body: Selector<GradePageZFProvider, bool>(
             selector: (_, provider) => provider.isSelectingSemester,
             builder: (context, isSelectingSemester, __) {

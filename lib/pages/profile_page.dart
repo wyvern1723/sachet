@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/pages/settings_page.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
@@ -54,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     subtitle: Text(data.id),
                     trailing: IconButton(
                       onPressed: () async {
-                        await showLogoutDialog(context, JwxtType.zhengfang);
+                        await showLogoutDialog(context);
                       },
                       tooltip: '退出登录',
                       icon: Icon(Icons.logout_outlined),

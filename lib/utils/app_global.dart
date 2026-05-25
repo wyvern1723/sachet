@@ -91,7 +91,6 @@ const defaultAppSettingsConfig = {
   "curveType": "Easing.standard", // 课表翻页动画类型（动画曲线）
   "isEnableDevMode": false, // 是否启用开发者模式
   "hasReadDisclaimer": false, // 是否阅读过声明
-  "isEnableCaptchaRecognizer": true, // 是否启用图片验证码自动识别
   /*
   navigationType 可用的值：
   1. navigationDrawer

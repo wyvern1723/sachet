@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/enums/jwxt_type.dart';
-import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,24 +27,17 @@ Future selectSemesterStartDate(BuildContext context) async {
   }
 }
 
-Future showLogoutDialog(BuildContext context, JwxtType jwxtType) async {
+Future showLogoutDialog(BuildContext context) async {
   var result = await showDialog(
     context: context,
     builder: (BuildContext context) => LogoutDialog(),
   );
+
+  if (!context.mounted) return;
+
   if (result != null) {
-    switch (jwxtType) {
-      case JwxtType.qiangzhi:
-        {
-          context.read<QiangZhiUserProvider>().deleteUser();
-          break;
-        }
-      case JwxtType.zhengfang:
-        {
-          context.read<ZhengFangUserProvider>().deleteUser();
-          break;
-        }
-    }
+    context.read<ZhengFangUserProvider>().deleteUser();
+
     // 如果返回 true,同时删除缓存数据
     if (result == true) {
       await CachedDataStorage().deleteAllCachedData();

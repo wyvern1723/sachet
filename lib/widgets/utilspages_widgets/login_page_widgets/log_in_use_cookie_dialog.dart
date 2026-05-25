@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/enums/jwxt_type.dart';
 
 class LogInUseCookieDialog extends StatefulWidget {
-  final JwxtType jwxtType;
-
   /// 填入 cookie 登录 Dialog
-  const LogInUseCookieDialog({super.key, required this.jwxtType});
+  const LogInUseCookieDialog({super.key});
 
   @override
   State<LogInUseCookieDialog> createState() => _LogInUseCookieDialogState();
@@ -34,9 +31,7 @@ class _LogInUseCookieDialogState extends State<LogInUseCookieDialog> {
             decoration: InputDecoration(
               isDense: true,
               labelText: '请填入 Cookie',
-              hintText: widget.jwxtType == JwxtType.qiangzhi
-                  ? 'JSESSIONID=XXXXXX......'
-                  : 'JSESSIONID=XX...; route=xx...',
+              hintText: 'JSESSIONID=XX...; route=xx...',
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.visiblePassword,

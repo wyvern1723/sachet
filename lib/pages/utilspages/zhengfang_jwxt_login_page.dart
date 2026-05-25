@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
-import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_manual_login_page.dart';
 import 'package:sachet/providers/login_page_provider.dart';
@@ -56,9 +55,7 @@ class _ZhengFangJwxtLoginPageViewState
 
     // 如果存在保存的数据，更改 是否记住 的状态 = true
     if (passwordText != null) {
-      context
-          .read<LoginPageProvider>()
-          .setIsRememberPassword(true, JwxtType.zhengfang);
+      context.read<LoginPageProvider>().setIsRememberPassword(true);
     }
   }
 
@@ -126,8 +123,7 @@ class _ZhengFangJwxtLoginPageViewState
   Future _loginUseCookie(BuildContext context) async {
     String? cookie = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) =>
-          LogInUseCookieDialog(jwxtType: JwxtType.zhengfang),
+      builder: (BuildContext context) => LogInUseCookieDialog(),
     );
     if (cookie != null && cookie != '') {
       try {
@@ -280,8 +276,7 @@ class _ZhengFangJwxtLoginPageViewState
                               if (value != null) {
                                 context
                                     .read<LoginPageProvider>()
-                                    .setIsRememberPassword(
-                                        value, JwxtType.zhengfang);
+                                    .setIsRememberPassword(value);
                               }
                             },
                             semanticLabel: '记住密码',

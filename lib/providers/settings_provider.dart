@@ -29,8 +29,6 @@ class SettingsProvider extends ChangeNotifier {
   String get curveType => _appSettings.curveType ?? 'Easing.standard';
   bool get isEnableDevMode => _appSettings.isEnableDevMode ?? false;
   bool get hasReadDisclaimer => _appSettings.hasReadDisclaimer ?? false;
-  static bool get isEnableCaptchaRecognizer =>
-      _appSettings.isEnableCaptchaRecognizer ?? true;
   static String get navigationType =>
       _appSettings.navigationType ?? NavType.bottomNavigationBar.type;
   static bool get isOpenLinkInExternalBrowser =>
@@ -146,14 +144,6 @@ class SettingsProvider extends ChangeNotifier {
     _appSettings.hasReadDisclaimer = true;
     AppGlobal.saveAppSettings();
     notifyListeners();
-  }
-
-  void setIsEnableCaptchaRecognizer(bool value) {
-    if (value != isEnableCaptchaRecognizer) {
-      _appSettings.isEnableCaptchaRecognizer = value;
-      AppGlobal.saveAppSettings();
-      notifyListeners();
-    }
   }
 
   void setNavigationType(String value) {

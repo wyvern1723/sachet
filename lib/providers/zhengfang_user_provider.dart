@@ -93,7 +93,18 @@ class ZhengFangUserProvider extends ChangeNotifier {
   /// 删除用户信息
   void deleteUser() {
     _user = User();
-    _secureStorageUtil.deleteAll();
+    _secureStorageUtil.delete(key: StoreItem.nameZF.keyName);
+    _secureStorageUtil.delete(key: StoreItem.studentIDZF.keyName);
+    _secureStorageUtil.delete(key: StoreItem.passwordZF.keyName);
+    _secureStorageUtil.delete(key: StoreItem.cookieZF.keyName);
     notifyListeners();
+  }
+
+  /// 删除旧教务系统（强智教务系统）的用户信息
+  void deleteQiangZhiUser() {
+    _secureStorageUtil.delete(key: StoreItem.nameQZ.keyName);
+    _secureStorageUtil.delete(key: StoreItem.studentIDQZ.keyName);
+    _secureStorageUtil.delete(key: StoreItem.passwordQZ.keyName);
+    _secureStorageUtil.delete(key: StoreItem.cookieQZ.keyName);
   }
 }

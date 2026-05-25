@@ -13,7 +13,6 @@ class AppSettings {
   String? curveType;
   bool? isEnableDevMode;
   bool? hasReadDisclaimer;
-  bool? isEnableCaptchaRecognizer;
   String? navigationType;
   bool? isOpenLinkInExternalBrowser;
   bool? isUsingDynamicColors;
@@ -40,7 +39,6 @@ class AppSettings {
     this.curveType,
     this.isEnableDevMode,
     this.hasReadDisclaimer,
-    this.isEnableCaptchaRecognizer,
     this.navigationType,
     this.isOpenLinkInExternalBrowser,
     this.isUsingDynamicColors,
@@ -68,7 +66,6 @@ class AppSettings {
     curveType = json['curveType'];
     isEnableDevMode = json['isEnableDevMode'];
     hasReadDisclaimer = json['hasReadDisclaimer'];
-    isEnableCaptchaRecognizer = json['isEnableCaptchaRecognizer'];
     navigationType = json['navigationType'];
     isOpenLinkInExternalBrowser = json['isOpenLinkInExternalBrowser'];
     isUsingDynamicColors = json['isUsingDynamicColors'];
@@ -97,7 +94,6 @@ class AppSettings {
     data['curveType'] = this.curveType;
     data['isEnableDevMode'] = this.isEnableDevMode;
     data['hasReadDisclaimer'] = this.hasReadDisclaimer;
-    data['isEnableCaptchaRecognizer'] = this.isEnableCaptchaRecognizer;
     data['navigationType'] = this.navigationType;
     data['isOpenLinkInExternalBrowser'] = this.isOpenLinkInExternalBrowser;
     data['isUsingDynamicColors'] = this.isUsingDynamicColors;

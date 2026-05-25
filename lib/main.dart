@@ -10,12 +10,10 @@ import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/theme_provider.dart';
-import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/pages/class_page.dart';
 import 'package:sachet/pages/home_page.dart';
 import 'package:sachet/pages/settings_page.dart';
-import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/about_page.dart';
 import 'package:sachet/services/check_update.dart';
 import 'package:provider/provider.dart';
@@ -45,14 +43,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => QiangZhiUserProvider()..init()),
         ChangeNotifierProvider(create: (_) => ZhengFangUserProvider()..init()),
         ChangeNotifierProvider(create: (_) => CourseCardSettingsProvider()),
         ChangeNotifierProvider(create: (_) => ScreenNavProvider()),
       ],
       child: Builder(builder: (context) {
         // 强制初始化所有需要提前加载的 Provider
-        context.read<QiangZhiUserProvider>();
         context.read<ZhengFangUserProvider>();
         return Consumer<ThemeProvider>(
           builder: (context, themeProvider, child) {
@@ -155,7 +151,6 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/settings': (context) => SettingsPage(),
         '/about': (context) => AboutPage(),
-        '/login': (context) => QiangZhiJwxtLoginPage(),
         '/profile': (context) => ProfilePage(),
         '/navBarView': (context) => WithNavigationBarView(),
         '/intro': (context) => IntroScreen(),

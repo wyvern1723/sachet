@@ -12,16 +12,6 @@ const String newJwxtBaseUrl = 'https://jw.xtu.edu.cn/jwglxt/';
 /// 信息门户网址
 const String xinXiMenHuBaseUrl = 'https://portal2020.xtu.edu.cn/cas/login';
 
-/// 教务系统主页（登录成功后跳转的网址）， **仅用于判断是否登录成功** 。直接访问会跳转到登录网址。
-const String jwxtMainPageUrl =
-    'http://jwxt.xtu.edu.cn/jsxsd/framework/xsMain.jsp';
-const String jwxtMainPageUrlHttps =
-    'https://jwxt.xtu.edu.cn/jsxsd/framework/xsMain.jsp';
-
-/// 新的登录旧教务系统成功后(status code = 302，被重定向)跳转的网址
-const String jwxtMainPageUrl2 =
-    'https://jwxt.xtu.edu.cn:443/jsxsd/framework/xsMain.jsp';
-
 /// 湘大校历网址
 const String xtuSchoolCalendarUrl = 'https://www.xtu.edu.cn/xysh/ggfw/xl.htm';
 

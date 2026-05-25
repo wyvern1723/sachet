@@ -2,46 +2,35 @@ import 'package:flutter/material.dart';
 
 import 'gpa_table.dart';
 
-class HelpDialogQZ extends StatelessWidget {
-  const HelpDialogQZ({super.key});
+class GradeHelpDialog extends StatelessWidget {
+  const GradeHelpDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      clipBehavior: Clip.antiAlias,
       title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [Icon(Icons.help), SizedBox(width: 8), Text('说明')]),
+        mainAxisSize: MainAxisSize.min,
+        children: [Icon(Icons.help_outline), SizedBox(width: 8), Text('帮助')],
+      ),
       children: [
         ListTile(
           title: Text('关于湘大绩点'),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {
             showDialog(
-                context: context,
-                builder: (BuildContext context) => GPAInfoDialog(context));
+              context: context,
+              builder: (BuildContext context) => _GPAInfoDialog(context),
+            );
           },
         ),
-        ExpansionTile(
-          title: Text('为什么卷面成绩有多个值？'),
-          childrenPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          children: [
-            Text(
-              '在教务系统网站查询成绩只能查到平时成绩、平时成绩占比和总成绩，无法直接获取到期末成绩。\n'
-              '根据公式：总成绩 = 平时成绩×平时成绩占比 + 期末成绩×期末成绩占比。\n'
-              '这个公式中只有期末成绩是不确定的。\n'
-              '穷举 0 - 100 的整数，代入公式中，保留使等式成立的值。\n'
-              '有时存在多个值满足条件，因为计算总成绩时通过四舍五入得到整数，信息被「压缩」了，所以存在无法还原原始数值的情况。',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        )
       ],
     );
   }
 
   /// 关于湘大绩点 Dialog
   // ignore: non_constant_identifier_names
-  Widget GPAInfoDialog(context) {
+  Widget _GPAInfoDialog(context) {
     return Dialog(
       child: SingleChildScrollView(
         child: Padding(

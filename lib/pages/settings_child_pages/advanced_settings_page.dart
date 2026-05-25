@@ -367,30 +367,6 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   );
                 }),
 
-          // 自动识别图片验证码开关
-          Selector<SettingsProvider, bool>(
-              selector: (_, settingsProvider) =>
-                  SettingsProvider.isEnableCaptchaRecognizer,
-              builder: (_, isEnableCaptchaRecognizer, __) {
-                return ListTile(
-                  leading: Align(
-                    widthFactor: 1,
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.filter_center_focus_outlined),
-                  ),
-                  title: const Text('自动识别图片验证码'),
-                  subtitle: const Text('Powered by TensorFlow'),
-                  trailing: Switch(
-                    value: isEnableCaptchaRecognizer,
-                    onChanged: (bool value) {
-                      context
-                          .read<SettingsProvider>()
-                          .setIsEnableCaptchaRecognizer(value);
-                    },
-                  ),
-                );
-              }),
-
           // 删除缓存数据
           ListTile(
             leading: Align(

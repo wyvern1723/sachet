@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/enums/jwxt_type.dart';
 import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/screen_nav_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/providers/qiangzhi_user_provider.dart';
 import 'package:sachet/pages/settings_child_pages/dev_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/theme_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/advanced_settings_page.dart';
 import 'package:sachet/pages/settings_child_pages/experimental_settings_page.dart';
-import 'package:sachet/pages/utilspages/qiangzhi_jwxt_login_page.dart';
 import 'package:sachet/pages/settings_child_pages/customize_settings_page.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/utils_functions.dart';
@@ -101,73 +98,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
                     child: Text(
-                      '旧教务系统',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Selector<QiangZhiUserProvider, bool>(
-                      selector: (_, qiangzhiUserProvider) =>
-                          qiangzhiUserProvider.isLogin,
-                      builder: (_, isLogin, __) {
-                        return ListTile(
-                          leading: const Align(
-                            widthFactor: 1,
-                            alignment: Alignment.centerLeft,
-                            child: Icon(Icons.login_outlined),
-                          ),
-                          title:
-                              Text('登录账号' + (isLogin == true ? '（重新登录）' : '')),
-                          subtitle: Text('登录到教务系统'),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return const QiangZhiJwxtLoginPage();
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                  Selector<QiangZhiUserProvider, bool>(
-                      selector: (_, qiangzhiUserProvider) =>
-                          qiangzhiUserProvider.isLogin,
-                      builder: (_, isLogin, __) {
-                        if (isLogin) {
-                          return ListTile(
-                            leading: const Align(
-                              widthFactor: 1,
-                              alignment: Alignment.centerLeft,
-                              child: Icon(Icons.logout_outlined),
-                            ),
-                            title: const Text('退出登录'),
-                            subtitle: const Text('登出此账号，删除应用中关于此账号的记录'),
-                            onTap: () async {
-                              await showLogoutDialog(
-                                  context, JwxtType.qiangzhi);
-                            },
-                          );
-                        } else {
-                          return SizedBox();
-                        }
-                      }),
-                  SizedBox(height: 8),
-                ],
-              ),
-            ),
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              elevation: 2,
-              clipBehavior: Clip.hardEdge,
-              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                    child: Text(
                       '新教务系统',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
@@ -211,8 +141,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             title: const Text('退出登录'),
                             subtitle: const Text('登出此账号，删除应用中关于此账号的记录'),
                             onTap: () async {
-                              await showLogoutDialog(
-                                  context, JwxtType.zhengfang);
+                              await showLogoutDialog(context);
                             },
                           );
                         } else {
