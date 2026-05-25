@@ -13,46 +13,76 @@ class CurriculumCardViewZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int i = 1;
+    // Group curriculums by semester
+    final Map<String, List<CurriculumResponseZF>> groupedCurriculums = {};
+    for (final curriculum in curriculums) {
+      final key = curriculum.yyxdxnxqmc ?? '';
+      groupedCurriculums.putIfAbsent(key, () => []).add(curriculum);
+    }
+
     return CustomScrollView(
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           sliver: SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
-              child: SelectionArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...List.generate(curriculums.length, (index) {
-                      if (index == 0 ||
-                          curriculums[index].yyxdxnxqmc !=
-                              curriculums[index - 1].yyxdxnxqmc) {
-                        i = 1;
-                        return Column(
-                          children: [
-                            _semesterTitle(
-                              context,
-                              '${curriculums[index].jyxdxnm} 学年 · 第${curriculums[index].jyxdxqm == '1' ? '一' : curriculums[index].jyxdxqm == '2' ? '二' : curriculums[index].jyxdxqm}学期',
-                            ),
-                            CurriculumCard(
-                              curriculum: curriculums[index],
-                              indexInSemester: i,
-                            ),
-                          ],
-                        );
-                      }
-                      i = i + 1;
-                      return CurriculumCard(
-                        curriculum: curriculums[index],
-                        indexInSemester: i,
-                      );
-                    }),
-                    footer,
-                  ],
-                ),
+            child: SelectionArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...groupedCurriculums.entries.map((entry) {
+                    // final semesterName = entry.key;
+                    final semesterCurriculums = entry.value;
+
+                    if (semesterCurriculums.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final academicYear =
+                        semesterCurriculums.first.jyxdxnm ?? '';
+                    final rawTerm = semesterCurriculums.first.jyxdxqm ?? '';
+                    final displayTerm = rawTerm == '1'
+                        ? '一'
+                        : rawTerm == '2'
+                            ? '二'
+                            : rawTerm;
+
+                    final String titleText =
+                        '$academicYear 学年 · 第$displayTerm学期';
+
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: Colors.transparent,
+                      ),
+                      child: ExpansionTile(
+                        initiallyExpanded: true,
+                        title: _semesterTitle(
+                          titleText,
+                          semesterCurriculums.length,
+                          context,
+                        ),
+                        tilePadding:
+                            const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+                        childrenPadding: const EdgeInsets.symmetric(
+                          vertical: 0.0,
+                          horizontal: 8.0,
+                        ),
+                        expandedAlignment: Alignment.topLeft,
+                        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          semesterCurriculums.length,
+                          (index) => CurriculumCard(
+                            curriculum: semesterCurriculums[index],
+                            indexInSemester: index + 1,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(6.0, 8.0, 6.0, 20.0),
+                    child: footer,
+                  ),
+                ],
               ),
             ),
           ),
@@ -61,27 +91,41 @@ class CurriculumCardViewZF extends StatelessWidget {
     );
   }
 
-  Widget _semesterTitle(BuildContext context, String text) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 4.0),
-      child: Row(
-        children: [
-          Icon(
-            Icons.calendar_month_outlined,
-            size: 14,
-            color: Theme.of(context).colorScheme.primary,
-            applyTextScaling: true,
-          ),
-          SizedBox(width: 8.0),
-          Text(
+  Widget _semesterTitle(
+    String text,
+    int semesterCurriculumsLength,
+    BuildContext context,
+  ) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Icon(
+          Icons.calendar_month_outlined,
+          size: 14,
+          color: colorScheme.primary,
+          applyTextScaling: true,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Text(
             text,
-            style: Theme.of(context)
-                .textTheme
-                .labelLarge
-                ?.copyWith(color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
+            style: textTheme.labelLarge?.copyWith(color: colorScheme.primary),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 6.0),
+          child: Text(
+            '($semesterCurriculumsLength门课程)',
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.outline,
+              fontSize: 11,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
