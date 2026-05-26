@@ -14,12 +14,7 @@ class NavDrawerMD2 extends StatefulWidget {
 }
 
 class _NavDrawerMD2State extends State<NavDrawerMD2> {
-  // void _onItemTapped(int itemIndex) {
-
-  // 是否在 Drawer 显示编辑账号
-  bool showUserDetails = false;
-
-  Future _handleScreenChanged(String routeName) async {
+  Future _handleScreenChanged(BuildContext context, String routeName) async {
     if (ScreenNavProvider.currentPage == routeName) {
       Navigator.pop(context);
       return;
@@ -29,11 +24,16 @@ class _NavDrawerMD2State extends State<NavDrawerMD2> {
 
       Navigator.pop(context);
       await Future.delayed(Duration(milliseconds: 200));
-      Navigator.of(context).pushReplacementNamed(routeName);
+
+      if (!context.mounted) return;
+
+      Navigator.pushReplacementNamed(context, routeName);
     } else {
       Navigator.pop(context);
       await Future.delayed(Duration(milliseconds: 200));
-      Navigator.of(context).pushNamed(routeName);
+
+      if (!context.mounted) return;
+      Navigator.pushNamed(context, routeName);
     }
   }
 
@@ -50,7 +50,7 @@ class _NavDrawerMD2State extends State<NavDrawerMD2> {
               selectedTileColor:
                   Theme.of(context).colorScheme.secondaryContainer,
               onTap: () async {
-                await _handleScreenChanged(destination.routeName);
+                await _handleScreenChanged(context, destination.routeName);
               },
             );
           },

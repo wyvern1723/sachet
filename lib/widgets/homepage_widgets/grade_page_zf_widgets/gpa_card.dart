@@ -124,7 +124,7 @@ class _GPACardZFState extends State<GPACardZF> {
 class _ResultGPACard extends StatelessWidget {
   final GpaResponseZF gpaResponseZF;
 
-  const _ResultGPACard({super.key, required this.gpaResponseZF});
+  const _ResultGPACard({required this.gpaResponseZF});
 
   @override
   Widget build(BuildContext context) {

@@ -241,7 +241,6 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
 class _BookInfoViewZF extends StatefulWidget {
   /// 教材信息 View
   const _BookInfoViewZF({
-    super.key,
     required this.bookData,
     required this.queryingSemesterYear,
     required this.queryingSemesterIndex,

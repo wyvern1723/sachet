@@ -64,11 +64,11 @@ class _SetCurveTypeDialogState extends State<SetCurveTypeDialog> {
                         (entry) => RadioListTile(
                           value: entry.key,
                           groupValue: curveType,
-                          onChanged: (_value) {
-                            Navigator.pop(context);
+                          onChanged: (_) {
                             context
                                 .read<SettingsProvider>()
                                 .setCurveType(entry.key);
+                            Navigator.pop(context);
                           },
                           title: Text(entry.key),
                           selected: curveType == entry.key,
@@ -84,11 +84,11 @@ class _SetCurveTypeDialogState extends State<SetCurveTypeDialog> {
                         (entry) => RadioListTile(
                           value: entry.key,
                           groupValue: curveType,
-                          onChanged: (_value) {
-                            Navigator.pop(context);
+                          onChanged: (_) {
                             context
                                 .read<SettingsProvider>()
                                 .setCurveType(entry.key);
+                            Navigator.pop(context);
                           },
                           title: Text(entry.key),
                           selected: curveType == entry.key,

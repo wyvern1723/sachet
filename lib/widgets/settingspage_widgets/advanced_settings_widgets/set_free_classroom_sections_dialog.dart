@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
-List<int> items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
 class SetFreeClassroomSectionsDialog extends StatefulWidget {
   const SetFreeClassroomSectionsDialog({super.key});
 
@@ -14,11 +12,12 @@ class SetFreeClassroomSectionsDialog extends StatefulWidget {
 
 class _SetFreeClassroomSectionsDialogState
     extends State<SetFreeClassroomSectionsDialog> {
+// final List<int> _items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   final List<int> _items = List.generate(11, (i) => i + 1);
 
   List _splitedSections = [];
 
-  List<bool> _isClip = List.filled(10, false);
+  final List<bool> _isClip = List.filled(10, false);
 
   /// 根据 _isClip 生成 _splitedSections
   void _split() {
@@ -60,12 +59,7 @@ class _SetFreeClassroomSectionsDialogState
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('设置查询节次分段'),
-      contentPadding: EdgeInsets.only(
-        left: 16.0,
-        top: 16.0,
-        right: 16.0,
-        bottom: 12.0,
-      ),
+      contentPadding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 12.0),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +81,7 @@ class _SetFreeClassroomSectionsDialogState
                       width: 140,
                       height: 36,
                       child: _buildItemContainer(e))),
-                  for (var i = 0; i < _isClip.length; i++)
+                  for (int i = 0; i < _isClip.length; i++)
                     _isClip[i] == true
                         ?
                         // 实线
@@ -96,9 +90,7 @@ class _SetFreeClassroomSectionsDialogState
                             left: 10,
                             width: 186,
                             height: 3,
-                            child: Container(
-                              color: Colors.grey.shade600,
-                            ),
+                            child: Container(color: Colors.grey.shade600),
                           )
                         :
                         // 虚线
@@ -112,7 +104,7 @@ class _SetFreeClassroomSectionsDialogState
                               painter: DashedLinePainter(),
                             ),
                           ),
-                  for (var i = 0; i < _isClip.length; i++)
+                  for (int i = 0; i < _isClip.length; i++)
                     Positioned(
                       top: ((i + 1) * 54 - 9 - (24)).toDouble(),
                       left: 204,
@@ -123,8 +115,9 @@ class _SetFreeClassroomSectionsDialogState
                             _split();
                           });
                         },
-                        icon:
-                            Icon(_isClip[i] == true ? Icons.remove : Icons.add),
+                        icon: Icon(
+                          _isClip[i] == true ? Icons.remove : Icons.add,
+                        ),
                       ),
                     ),
                 ],
@@ -135,9 +128,7 @@ class _SetFreeClassroomSectionsDialogState
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
         TextButton(

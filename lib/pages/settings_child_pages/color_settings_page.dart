@@ -34,8 +34,8 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
   }
 
   /// 切换课程配色方案
-  Future switchCourseColorFile() async {
-    var result = await showDialog(
+  Future switchCourseColorFile(BuildContext context) async {
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) => SwitchActivedAppFileDialog(
         dialogTitle: '选择课程配色方案',
@@ -43,6 +43,9 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         settingsFilePath: context.read<SettingsProvider>().courseColorFilePath,
       ),
     );
+
+    if (!context.mounted) return;
+
     if (result is String) {
       // 返回结果为 String: 配色文件路径改变，需要更新配色文件路径。
       await context.read<SettingsProvider>().setCourseColorFilePath(result);
@@ -54,7 +57,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
     }
   }
 
-  void showChangeColorDialog(String courseTitle) async {
+  Future showChangeColorDialog(BuildContext context, String courseTitle) async {
     Color? result = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -65,6 +68,9 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         );
       },
     );
+
+    if (!context.mounted) return;
+
     if (result != null) {
       _courseColorData[courseTitle] = colorToHex(
         result,
@@ -77,19 +83,24 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         formatJsonEncode(_courseColorData),
         context.read<SettingsProvider>().courseColorFilePath,
       );
+
+      if (!context.mounted) return;
+
       // 刷新
       await context.read<SettingsProvider>().refreshCourseColorData();
       setState(() {});
     }
   }
 
-  Future addNewColor() async {
+  Future addNewColor(BuildContext context) async {
     if (isCurrentCourseColorFileExist) {
       Map<String, String>? courseAndColor = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AddNewColorDialog();
-          });
+        context: context,
+        builder: (BuildContext context) => AddNewColorDialog(),
+      );
+
+      if (!context.mounted) return;
+
       if (courseAndColor != null) {
         // 添加一项
         _courseColorData.addAll(courseAndColor);
@@ -99,15 +110,17 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
           context.read<SettingsProvider>().courseColorFilePath,
         );
       }
+
+      if (!context.mounted) return;
+
       // 刷新
       await context.read<SettingsProvider>().refreshCourseColorData();
       setState(() {});
     } else {
       String? fileName = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CreateNewCourseColorFileDialog();
-          });
+        context: context,
+        builder: (BuildContext context) => CreateNewCourseColorFileDialog(),
+      );
 
       if (fileName != null) {
         // 写入配色文件到 ApplicationSupportDirectory
@@ -121,6 +134,9 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         String appDir = await CachedDataStorage().getPath();
         String filePath =
             path.join(appDir, AppFolder.courseColor.name, '$fileName.json');
+
+        if (!context.mounted) return;
+
         await context.read<SettingsProvider>().setCourseColorFilePath(filePath);
         isCurrentCourseColorFileExist = true;
       }
@@ -138,30 +154,29 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    ///  当前使用的配色文件路径
     String courseColorFilePath = context.select<SettingsProvider, String>(
-        (settingsModel) => settingsModel.courseColorFilePath); //  当前使用的配色文件路径
+        (settingsModel) => settingsModel.courseColorFilePath);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('配色调整'),
-      ),
+      appBar: AppBar(title: const Text('配色调整')),
       body: ListView(
         children: [
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           ListTile(
             leading: const Align(
-                widthFactor: 1,
-                alignment: Alignment.centerLeft,
-                child: Icon(Icons.palette)),
+              widthFactor: 1,
+              alignment: Alignment.centerLeft,
+              child: Icon(Icons.palette),
+            ),
             title: const Text('当前配色方案'),
             subtitle: Text(
               isCurrentCourseColorFileExist
                   ? path.basename(courseColorFilePath)
                   : '无',
             ),
-            onTap: () {
-              switchCourseColorFile();
+            onTap: () async {
+              await switchCourseColorFile(context);
             },
           ),
           // ...ListTile.divideTiles(
@@ -194,8 +209,9 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
               return ListTile(
                 title: Text(_courseColorData.keys.elementAt(index)),
                 trailing: GestureDetector(
-                  onTap: () {
-                    showChangeColorDialog(
+                  onTap: () async {
+                    await showChangeColorDialog(
+                      context,
                       _courseColorData.keys.elementAt(index),
                     );
                   },
@@ -231,8 +247,8 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
               ),
               iconColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.primary,
-              onTap: () {
-                addNewColor();
+              onTap: () async {
+                await addNewColor(context);
               },
             ),
           ),
@@ -294,9 +310,7 @@ class _CreateNewCourseColorFileDialogState
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: Text('取消'),
         ),
         TextButton(

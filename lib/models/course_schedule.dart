@@ -6,13 +6,14 @@ class CourseSchedule {
   int? length;
   List? weeks;
 
-  CourseSchedule(
-      {this.item,
-      this.title,
-      this.instructor,
-      this.place,
-      this.length,
-      this.weeks});
+  CourseSchedule({
+    this.item,
+    this.title,
+    this.instructor,
+    this.place,
+    this.length,
+    this.weeks,
+  });
 
   CourseSchedule.fromJson(Map<String, dynamic> json) {
     item = json['item'];
@@ -24,13 +25,13 @@ class CourseSchedule {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['item'] = this.item;
-    data['title'] = this.title;
-    data['instructor'] = this.instructor;
-    data['place'] = this.place;
-    data['length'] = this.length;
-    data['weeks'] = this.weeks;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['item'] = item;
+    data['title'] = title;
+    data['instructor'] = instructor;
+    data['place'] = place;
+    data['length'] = length;
+    data['weeks'] = weeks;
     return data;
   }
 }

@@ -35,7 +35,7 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
     super.dispose();
   }
 
-  Future importCachedData() async {
+  Future importCachedData(BuildContext context, ColorScheme colorScheme) async {
     // 使用 FilePicker 选择文件
     FilePickerResult? filePaths = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -44,6 +44,8 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
     );
     String? filePath = filePaths?.files.first.path;
 
+    if (!context.mounted) return;
+
     // 如果选择了一个文件
     if (filePaths?.isSinglePick == true && filePath != null) {
       File file = File(filePath);
@@ -51,41 +53,35 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
       // 显示确认导入文件 Dialog
       String? result = await showDialog(
         context: context,
-        builder: (BuildContext context) => ImportJsonDataDialog(
-          file: file,
-        ),
+        builder: (BuildContext context) => ImportJsonDataDialog(file: file),
       );
       if (result != null) {
         // 写入缓存文件到 ApplicationSupportDirectory
         await CachedDataStorage().writeFileToAppSupportDir(
-            fileName: result != ''
-                ? '$result.json'
-                : "file_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
-            folder: AppFolder.cachedData.name,
-            value: file.readAsStringSync());
+          fileName: result != ''
+              ? '$result.json'
+              : "file_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
+          folder: AppFolder.cachedData.name,
+          value: file.readAsStringSync(),
+        );
 
         // 导入成功 SnackBar
         final snackBar = SnackBar(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
           content: Row(
             children: [
-              Icon(
-                Icons.done_outlined,
-                color: Theme.of(context).colorScheme.onInverseSurface,
-              ),
+              Icon(Icons.done_outlined, color: colorScheme.onInverseSurface),
               const SizedBox(width: 20),
               Text(
                 '导入成功',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onInverseSurface,
-                ),
+                style: TextStyle(color: colorScheme.onInverseSurface),
               ),
             ],
           ),
         );
-        if (!mounted) {
-          return;
-        }
+
+        if (!context.mounted) return;
+
         // 显示导入成功 SnackBar
         _scaffoldMessenger.showSnackBar(snackBar);
         // 刷新文件列表
@@ -115,6 +111,8 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("缓存数据查看"),
@@ -128,19 +126,10 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
               children: [
                 Text(
                   '存在缓存',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  style: TextStyle(fontSize: 16, color: colorScheme.primary),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  Icons.toc,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
+                const SizedBox(width: 4),
+                Icon(Icons.toc, color: colorScheme.primary, size: 20),
               ],
             ),
           ),
@@ -161,7 +150,7 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
                     Navigator.of(context)
                         .push(fadeTransitionPageRoute(ViewCachedDataPage(
                             filePath: filesPathList[index].path)))
-                        .then((_) => {_ ? setState(() {}) : null});
+                        .then((result) => {result ? setState(() {}) : null});
                   },
                   icon: Icon(Icons.edit_note),
                 ),
@@ -178,10 +167,10 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
                 Text('导入数据'),
               ],
             ),
-            iconColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.primary,
+            iconColor: colorScheme.primary,
+            textColor: colorScheme.primary,
             onTap: () async {
-              await importCachedData();
+              await importCachedData(context, colorScheme);
             },
           ),
         ],

@@ -53,6 +53,8 @@ class _ZhengFangJwxtLoginPageViewState
     usernameTextController.text = studentIDText ?? '';
     passwordTextController.text = passwordText ?? '';
 
+    if (!mounted) return;
+
     // 如果存在保存的数据，更改 是否记住 的状态 = true
     if (passwordText != null) {
       context.read<LoginPageProvider>().setIsRememberPassword(true);
@@ -62,9 +64,11 @@ class _ZhengFangJwxtLoginPageViewState
   Future _pressLoginButton(BuildContext context) async {
     if (_loginFormKey.currentState!.validate()) {
       context.read<LoginPageProvider>().setIsLoggingIn(true);
+
       final messenger = ScaffoldMessenger.of(context);
       // 显示正在登录 SnackBar
       messenger.showSnackBar(loggingInSnackBar(context));
+
       ZhengFangLoginService zhengFangLoginService = ZhengFangLoginService();
 
       try {
@@ -90,11 +94,20 @@ class _ZhengFangJwxtLoginPageViewState
           name: name,
           studentID: usernameTextController.text,
         );
+
+        if (!context.mounted) return;
+
         await context.read<ZhengFangUserProvider>().setUser(user);
+
+        if (!context.mounted) return;
+
         // 如果选择记住密码，储存至 secureStorage
         if (context.read<LoginPageProvider>().isRememberPassword == true) {
           await ZhengFangUserProvider.savePassword(passwordTextController.text);
         }
+
+        if (!context.mounted) return;
+
         // 隐藏正在登录 SnackBar
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -102,11 +115,13 @@ class _ZhengFangJwxtLoginPageViewState
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (BuildContext context) =>
-              LoginSuccessfulDialog(userName: name),
+          builder: (context) => LoginSuccessfulDialog(userName: name),
         );
       } catch (e) {
         // *****有异常*****
+
+        if (!context.mounted) return;
+
         // 隐藏正在登录 SnackBar
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -114,6 +129,9 @@ class _ZhengFangJwxtLoginPageViewState
         ScaffoldMessenger.of(context).showSnackBar(errorInfoSnackBar(
             context, e.toString().replaceAll('Exception: ', '')));
         await Future.delayed(const Duration(seconds: 3));
+
+        if (!context.mounted) return;
+
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
       context.read<LoginPageProvider>().setIsLoggingIn(false);
@@ -128,6 +146,9 @@ class _ZhengFangJwxtLoginPageViewState
     if (cookie != null && cookie != '') {
       try {
         final String name = await getNameZF(cookie);
+
+        if (!context.mounted) return;
+
         User user = User(
           cookie: cookie,
           name: name,
@@ -135,6 +156,8 @@ class _ZhengFangJwxtLoginPageViewState
           studentID: '',
         );
         await context.read<ZhengFangUserProvider>().setUser(user);
+
+        if (!context.mounted) return;
 
         // 显示获取登录信息成功的 Dialog
         showDialog(
@@ -145,9 +168,12 @@ class _ZhengFangJwxtLoginPageViewState
           ),
         );
       } catch (e) {
+        if (!context.mounted) return;
+
         if (kDebugMode) {
           print(e);
         }
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -155,9 +181,7 @@ class _ZhengFangJwxtLoginPageViewState
             content: Text(e.toString().replaceAll('Exception: ', '')),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 child: Text('确认'),
               )
             ],
@@ -182,10 +206,11 @@ class _ZhengFangJwxtLoginPageViewState
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('登录'),
-      ),
+      appBar: AppBar(title: const Text('登录')),
       body: Form(
         key: _loginFormKey,
         child: SingleChildScrollView(
@@ -195,7 +220,7 @@ class _ZhengFangJwxtLoginPageViewState
               MaterialBanner(
                 forceActionsBelow: true,
                 content: Text('若您是使用初始密码首次登录，请先在浏览器登录教务系统后设置新密码'),
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                backgroundColor: colorScheme.primaryContainer,
                 actions: [
                   TextButton(
                     style: TextButton.styleFrom(
@@ -209,12 +234,7 @@ class _ZhengFangJwxtLoginPageViewState
                     },
                   ),
                 ],
-                padding: EdgeInsetsDirectional.only(
-                  start: 16.0,
-                  top: 8.0,
-                  end: 16.0,
-                  bottom: 0.0,
-                ),
+                padding: EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 0.0),
               ),
               const SizedBox(height: 24),
               Padding(
@@ -224,20 +244,18 @@ class _ZhengFangJwxtLoginPageViewState
                   child: Icon(
                     Icons.login_outlined,
                     size: 44,
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: colorScheme.secondary,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('登录到新教务系统',
-                    style: Theme.of(context).textTheme.titleLarge),
+                child: Text('登录到新教务系统', style: textTheme.titleLarge),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('(正方教务系统)',
-                    style: Theme.of(context).textTheme.titleSmall),
+                child: Text('(正方教务系统)', style: textTheme.titleSmall),
               ),
               const SizedBox(height: 32),
 
@@ -269,8 +287,9 @@ class _ZhengFangJwxtLoginPageViewState
                         children: [
                           Checkbox(
                             visualDensity: VisualDensity(
-                                horizontal: VisualDensity.minimumDensity,
-                                vertical: VisualDensity.compact.vertical),
+                              horizontal: VisualDensity.minimumDensity,
+                              vertical: VisualDensity.compact.vertical,
+                            ),
                             value: isRememberPassword,
                             onChanged: (value) {
                               if (value != null) {
@@ -318,13 +337,12 @@ class _ZhengFangJwxtLoginPageViewState
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.push(
+                          context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return const ZhengFangManualLoginPage(
-                                initialUrl: newJwxtBaseUrl,
-                              );
-                            },
+                            builder: (context) => ZhengFangManualLoginPage(
+                              initialUrl: newJwxtBaseUrl,
+                            ),
                           ),
                         );
                       },
@@ -342,13 +360,12 @@ class _ZhengFangJwxtLoginPageViewState
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.push(
+                          context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return const ZhengFangManualLoginPage(
-                                initialUrl: xinXiMenHuBaseUrl,
-                              );
-                            },
+                            builder: (context) => ZhengFangManualLoginPage(
+                              initialUrl: xinXiMenHuBaseUrl,
+                            ),
                           ),
                         );
                       },

@@ -44,7 +44,6 @@ class _CultivationPlanOldDataPageState
 
 class _CultivationPlanTable extends StatefulWidget {
   const _CultivationPlanTable({
-    super.key,
     required this.data,
     required this.updateTime,
   });

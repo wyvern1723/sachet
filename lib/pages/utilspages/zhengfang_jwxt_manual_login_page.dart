@@ -52,16 +52,22 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
         ),
       );
     } else {
-      var cookie = await _getCookie(url, controller);
+      final cookie = await _getCookie(url, controller);
       try {
         final String name = await getNameZF(cookie);
+
+        if (!context.mounted) return;
+
         User user = User(
           cookie: cookie,
           name: name,
           // TODO: 获取学号
           studentID: '',
         );
+
         await context.read<ZhengFangUserProvider>().setUser(user);
+
+        if (!context.mounted) return;
 
         // 显示获取登录信息成功的 Dialog
         showDialog(
@@ -72,6 +78,8 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
           ),
         );
       } catch (e) {
+        if (!context.mounted) return;
+
         if (kDebugMode) {
           print(e);
         }
@@ -82,9 +90,7 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
             content: Text(e.toString().replaceAll('Exception: ', '')),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 child: Text('确认'),
               )
             ],
@@ -127,9 +133,7 @@ class _ZhengFangManualLoginPageState extends State<ZhengFangManualLoginPage> {
     /// 是否是信息门户网页
     bool isXinXiMenHu = widget.initialUrl == xinXiMenHuBaseUrl;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('手动登录'),
-      ),
+      appBar: AppBar(title: const Text('手动登录')),
       body: Column(
         children: [
           MaterialBanner(

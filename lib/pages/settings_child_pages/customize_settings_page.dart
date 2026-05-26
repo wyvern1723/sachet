@@ -48,14 +48,14 @@ class CustomizeSettingsPage extends StatelessWidget {
                   subtitle: Text(cardHeight.toString()),
                   onTap: () async {
                     double? result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SetDoubleValueDialog(
-                            title: '设置课程卡片高度',
-                            value: cardHeight,
-                          );
-                        });
-                    if (result != null) {
+                      context: context,
+                      builder: (context) => SetDoubleValueDialog(
+                        title: '设置课程卡片高度',
+                        value: cardHeight,
+                      ),
+                    );
+
+                    if (result != null && context.mounted) {
                       context
                           .read<CourseCardSettingsProvider>()
                           .setCardHeight(result);
@@ -70,21 +70,21 @@ class CustomizeSettingsPage extends StatelessWidget {
               builder: (context, cardBorderRadius, __) {
                 return ListTile(
                   leading: const Align(
-                      widthFactor: 1,
-                      alignment: Alignment.centerLeft,
-                      child: Icon(Icons.rounded_corner_outlined)),
+                    widthFactor: 1,
+                    alignment: Alignment.centerLeft,
+                    child: Icon(Icons.rounded_corner_outlined),
+                  ),
                   title: const Text('卡片圆角'),
                   subtitle: Text(cardBorderRadius.toString()),
                   onTap: () async {
                     double? result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SetDoubleValueDialog(
-                            title: '设置课程卡片圆角大小',
-                            value: cardBorderRadius,
-                          );
-                        });
-                    if (result != null) {
+                      context: context,
+                      builder: (context) => SetDoubleValueDialog(
+                        title: '设置课程卡片圆角大小',
+                        value: cardBorderRadius,
+                      ),
+                    );
+                    if (result != null && context.mounted) {
                       context
                           .read<CourseCardSettingsProvider>()
                           .setCardBorderRadius(result);
@@ -99,21 +99,21 @@ class CustomizeSettingsPage extends StatelessWidget {
               builder: (context, cardMargin, __) {
                 return ListTile(
                   leading: const Align(
-                      widthFactor: 1,
-                      alignment: Alignment.centerLeft,
-                      child: Icon(Icons.margin_outlined)),
+                    widthFactor: 1,
+                    alignment: Alignment.centerLeft,
+                    child: Icon(Icons.margin_outlined),
+                  ),
                   title: const Text('卡片边距'),
                   subtitle: Text(cardMargin.toString()),
                   onTap: () async {
                     double? result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SetDoubleValueDialog(
-                            title: '设置课程卡片边距大小',
-                            value: cardMargin,
-                          );
-                        });
-                    if (result != null) {
+                      context: context,
+                      builder: (context) => SetDoubleValueDialog(
+                        title: '设置课程卡片边距大小',
+                        value: cardMargin,
+                      ),
+                    );
+                    if (result != null && context.mounted) {
                       context
                           .read<CourseCardSettingsProvider>()
                           .setCardMargin(result);

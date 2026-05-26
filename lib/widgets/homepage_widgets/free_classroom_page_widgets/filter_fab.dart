@@ -37,7 +37,7 @@ class FilterFAB extends StatelessWidget {
 }
 
 class _FilterBottomSheet extends StatelessWidget {
-  const _FilterBottomSheet({super.key, required this.sessionFilter});
+  const _FilterBottomSheet({required this.sessionFilter});
   final Map<String, int> sessionFilter;
 
   @override

@@ -41,7 +41,9 @@ class _FreeClassroomFilterScreenZFState
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
-    context.read<FreeClassroomPageZFProvider>().setFilterOptions(result);
+    if (mounted) {
+      context.read<FreeClassroomPageZFProvider>().setFilterOptions(result);
+    }
     return result;
   }
 

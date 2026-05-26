@@ -52,7 +52,7 @@ class GradePageZF extends StatelessWidget {
 
 class _QueryView extends StatefulWidget {
   /// 获取可选学期及让用户选择学期
-  const _QueryView({super.key});
+  const _QueryView();
 
   @override
   State<_QueryView> createState() => _QueryViewState();
@@ -67,6 +67,9 @@ class _QueryViewState extends State<_QueryView> {
       zhengFangUserProvider: zhengFangUserProvider,
     );
     final selectedSemesterYear = result.currentSemesterYear;
+
+    if (!mounted) return;
+
     if (selectedSemesterYear != null) {
       context
           .read<GradePageZFProvider>()
@@ -179,7 +182,7 @@ class _QueryViewState extends State<_QueryView> {
 
 class _FilterButton extends StatefulWidget {
   /// 筛选显示字段的按钮
-  const _FilterButton({super.key});
+  const _FilterButton();
 
   @override
   State<_FilterButton> createState() => __FilterButtonState();
@@ -241,7 +244,7 @@ class __FilterButtonState extends State<_FilterButton> {
 
 class _ResultView extends StatelessWidget {
   /// 显示成绩结果（上面是学期选择，下面是成绩表）
-  const _ResultView({super.key});
+  const _ResultView();
 
   @override
   Widget build(BuildContext context) {

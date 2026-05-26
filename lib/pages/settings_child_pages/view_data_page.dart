@@ -63,6 +63,56 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
         false;
   }
 
+  Future _close(BuildContext context) async {
+    if (changed) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('确定要退出编辑模式?'),
+          content: Text('有编辑过的内容未保存，确定要退出编辑模式?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  editMode = false;
+                  editableTextController.text = datasetValue;
+                  changed = false;
+                  Navigator.pop(context);
+                });
+              },
+              child: Text('退出'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await CachedDataStorage().reWriteDataByFilePath(
+                  editableTextController.text,
+                  widget.filePath,
+                );
+                setState(() {
+                  editMode = false;
+                  datasetValue = editableTextController.text;
+                  changed = false;
+                  modified = true;
+                });
+
+                if (!context.mounted) return;
+
+                Navigator.pop(context);
+              },
+              child: Text('保存'),
+            )
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        editMode = false;
+        editableTextController.text = datasetValue;
+        changed = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -75,7 +125,7 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
         }
         if (changed) {
           _onWillPop().then((value) {
-            if (value) {
+            if (value && context.mounted) {
               Navigator.of(context).pop(modified);
             }
           });
@@ -91,62 +141,14 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
           actions: editMode == false
               ? [
                   IconButton(
-                    onPressed: () {
-                      setState(() {
-                        editMode = true;
-                      });
-                    },
+                    onPressed: () => setState(() => editMode = true),
                     icon: Icon(Icons.edit),
                   )
                 ]
               : [
                   IconButton(
-                    onPressed: () {
-                      if (changed) {
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: Text('确定要退出编辑模式?'),
-                                  content: Text('有编辑过的内容未保存，确定要退出编辑模式?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          editMode = false;
-                                          editableTextController.text =
-                                              datasetValue;
-                                          changed = false;
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                      child: Text('退出'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        await CachedDataStorage()
-                                            .reWriteDataByFilePath(
-                                                editableTextController.text,
-                                                widget.filePath);
-                                        setState(() {
-                                          editMode = false;
-                                          datasetValue =
-                                              editableTextController.text;
-                                          changed = false;
-                                          modified = true;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('保存'),
-                                    )
-                                  ],
-                                ));
-                      } else {
-                        setState(() {
-                          editMode = false;
-                          editableTextController.text = datasetValue;
-                          changed = false;
-                        });
-                      }
+                    onPressed: () async {
+                      await _close(context);
                     },
                     icon: Icon(Icons.close), // 备选：Icons.edit_off
                   ),

@@ -37,7 +37,8 @@ class _ClassScheduleDataListviewPageState
     super.dispose();
   }
 
-  Future importClassSchedule() async {
+  Future importClassSchedule(
+      BuildContext context, ColorScheme colorScheme) async {
     // 使用 FilePicker 选择文件
     FilePickerResult? filePaths = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -46,6 +47,8 @@ class _ClassScheduleDataListviewPageState
     );
     // print(filePaths);
     String? filePath = filePaths?.files.first.path;
+
+    if (!context.mounted) return;
 
     // 如果选择了一个文件
     if (filePaths?.isSinglePick == true && filePath != null) {
@@ -72,23 +75,18 @@ class _ClassScheduleDataListviewPageState
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
           content: Row(
             children: [
-              Icon(
-                Icons.done_outlined,
-                color: Theme.of(context).colorScheme.onInverseSurface,
-              ),
+              Icon(Icons.done_outlined, color: colorScheme.onInverseSurface),
               const SizedBox(width: 20),
               Text(
                 '导入成功',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onInverseSurface,
-                ),
+                style: TextStyle(color: colorScheme.onInverseSurface),
               ),
             ],
           ),
         );
-        if (!mounted) {
-          return;
-        }
+
+        if (!mounted) return;
+
         // 显示导入成功 SnackBar
         _scaffoldMessenger.showSnackBar(snackBar);
         // 刷新文件列表
@@ -116,6 +114,8 @@ class _ClassScheduleDataListviewPageState
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("课表数据查看"),
@@ -129,17 +129,10 @@ class _ClassScheduleDataListviewPageState
               children: [
                 Text(
                   '存在数据',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  style: TextStyle(fontSize: 16, color: colorScheme.primary),
                 ),
                 const SizedBox(width: 4),
-                Icon(
-                  Icons.toc,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
+                Icon(Icons.toc, color: colorScheme.primary, size: 20),
               ],
             ),
           ),
@@ -159,7 +152,7 @@ class _ClassScheduleDataListviewPageState
                     Navigator.of(context)
                         .push(fadeTransitionPageRoute(ViewCachedDataPage(
                             filePath: filesPathList[index].path)))
-                        .then((_) => {_ ? setState(() {}) : null});
+                        .then((result) => {result ? setState(() {}) : null});
                   },
                   icon: Icon(Icons.edit_note),
                 ),
@@ -176,8 +169,8 @@ class _ClassScheduleDataListviewPageState
                 Text('新建课表'),
               ],
             ),
-            iconColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.primary,
+            iconColor: colorScheme.primary,
+            textColor: colorScheme.primary,
             onTap: () {},
           ),
           ListTile(
@@ -190,16 +183,18 @@ class _ClassScheduleDataListviewPageState
                 Text('导入课表'),
               ],
             ),
-            iconColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.primary,
-            onTap: importClassSchedule,
+            iconColor: colorScheme.primary,
+            textColor: colorScheme.primary,
+            onTap: () async {
+              await importClassSchedule(context, colorScheme);
+            },
           ),
           Align(
             alignment: Alignment.center,
             child: TextButton.icon(
               icon: Icon(Icons.file_open),
-              onPressed: () {
-                importClassSchedule();
+              onPressed: () async {
+                await importClassSchedule(context, colorScheme);
               },
               label: Text('导入课表'),
             ),

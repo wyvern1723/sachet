@@ -14,11 +14,11 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['studentID'] = this.studentID;
-    data['password'] = this.password;
-    data['cookie'] = this.cookie;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['studentID'] = studentID;
+    data['password'] = password;
+    data['cookie'] = cookie;
     return data;
   }
 }

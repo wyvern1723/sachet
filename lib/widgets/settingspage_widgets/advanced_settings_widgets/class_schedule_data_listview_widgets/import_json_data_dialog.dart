@@ -32,7 +32,7 @@ class _ImportJsonDataDialogState extends State<ImportJsonDataDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final _key = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
       title: Text('确认导入该文件？'),
@@ -53,7 +53,7 @@ class _ImportJsonDataDialogState extends State<ImportJsonDataDialog> {
               SizedBox(width: 4),
               Flexible(
                 child: Form(
-                  key: _key,
+                  key: formKey,
                   // TODO: 检查文件名称非法字符，检查是否与现有文件名称重复
                   child: TextFormField(
                     controller: textEditingController,
@@ -77,14 +77,12 @@ class _ImportJsonDataDialogState extends State<ImportJsonDataDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () async {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
         TextButton(
-          onPressed: () async {
-            if (_key.currentState!.validate()) {
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
               Navigator.pop(context, textEditingController.text);
             }
           },

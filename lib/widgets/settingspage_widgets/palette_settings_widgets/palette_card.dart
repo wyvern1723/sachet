@@ -19,9 +19,11 @@ class PaletteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Color?> paletteColor = [];
     if (courseColorData.isNotEmpty) {
-      courseColorData.values
-          .forEach((e) => paletteColor.add(e.toString().toColor()));
+      for (final e in courseColorData.values) {
+        paletteColor.add(e.toString().toColor());
+      }
     }
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       elevation: 2.0,
@@ -62,11 +64,12 @@ class PaletteCard extends StatelessWidget {
                 // TextButton(onPressed: () {}, child: const Text('克隆')),
                 TextButton(
                   onPressed: () async {
-                    await Navigator.of(context)
-                        .push(slideTransitionPageRoute(PaletteAdjustPage(
-                      colorFilePath: filePath,
-                      courseColorData: courseColorData,
-                    )));
+                    await Navigator.push(
+                        context,
+                        slideTransitionPageRoute(PaletteAdjustPage(
+                          colorFilePath: filePath,
+                          courseColorData: courseColorData,
+                        )));
                     refresh(true);
                   },
                   child: const Text('修改'),

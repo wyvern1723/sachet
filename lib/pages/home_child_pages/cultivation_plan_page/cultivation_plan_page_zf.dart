@@ -502,7 +502,6 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
 class _CurriculumViewZF extends StatefulWidget {
   /// 课程信息（培养方案） View
   const _CurriculumViewZF({
-    super.key,
     required this.curriculums,
     required this.queryingGrade,
     required this.queryingSchool,

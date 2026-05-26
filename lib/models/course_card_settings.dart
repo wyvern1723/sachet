@@ -15,22 +15,23 @@ class CourseCardSettings {
   String? placeTextColor;
   String? instructorTextColor;
 
-  CourseCardSettings(
-      {this.cardHeight,
-      this.cardBorderRadius,
-      this.cardMargin,
-      this.titleFontSize,
-      this.placeFontSize,
-      this.instructorFontSize,
-      this.titleFontWeight,
-      this.placeFontWeight,
-      this.instructorFontWeight,
-      this.titleMaxLines,
-      this.placeMaxLines,
-      this.instructorMaxLines,
-      this.titleTextColor,
-      this.placeTextColor,
-      this.instructorTextColor});
+  CourseCardSettings({
+    this.cardHeight,
+    this.cardBorderRadius,
+    this.cardMargin,
+    this.titleFontSize,
+    this.placeFontSize,
+    this.instructorFontSize,
+    this.titleFontWeight,
+    this.placeFontWeight,
+    this.instructorFontWeight,
+    this.titleMaxLines,
+    this.placeMaxLines,
+    this.instructorMaxLines,
+    this.titleTextColor,
+    this.placeTextColor,
+    this.instructorTextColor,
+  });
 
   CourseCardSettings.fromJson(Map<String, dynamic> json) {
     cardHeight = json['cardHeight'];
@@ -51,22 +52,22 @@ class CourseCardSettings {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['cardHeight'] = this.cardHeight;
-    data['cardBorderRadius'] = this.cardBorderRadius;
-    data['cardMargin'] = this.cardMargin;
-    data['TitleFontSize'] = this.titleFontSize;
-    data['PlaceFontSize'] = this.placeFontSize;
-    data['InstructorFontSize'] = this.instructorFontSize;
-    data['TitleFontWeight'] = this.titleFontWeight;
-    data['PlaceFontWeight'] = this.placeFontWeight;
-    data['InstructorFontWeight'] = this.instructorFontWeight;
-    data['TitleMaxLines'] = this.titleMaxLines;
-    data['PlaceMaxLines'] = this.placeMaxLines;
-    data['InstructorMaxLines'] = this.instructorMaxLines;
-    data['TitleTextColor'] = this.titleTextColor;
-    data['PlaceTextColor'] = this.placeTextColor;
-    data['InstructorTextColor'] = this.instructorTextColor;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['cardHeight'] = cardHeight;
+    data['cardBorderRadius'] = cardBorderRadius;
+    data['cardMargin'] = cardMargin;
+    data['TitleFontSize'] = titleFontSize;
+    data['PlaceFontSize'] = placeFontSize;
+    data['InstructorFontSize'] = instructorFontSize;
+    data['TitleFontWeight'] = titleFontWeight;
+    data['PlaceFontWeight'] = placeFontWeight;
+    data['InstructorFontWeight'] = instructorFontWeight;
+    data['TitleMaxLines'] = titleMaxLines;
+    data['PlaceMaxLines'] = placeMaxLines;
+    data['InstructorMaxLines'] = instructorMaxLines;
+    data['TitleTextColor'] = titleTextColor;
+    data['PlaceTextColor'] = placeTextColor;
+    data['InstructorTextColor'] = instructorTextColor;
     return data;
   }
 }

@@ -93,7 +93,7 @@ class _OtherMiscDataListviewPageState extends State<OtherMiscDataListviewPage> {
                     Navigator.of(context)
                         .push(fadeTransitionPageRoute(ViewCachedDataPage(
                             filePath: filesPathList[index].path)))
-                        .then((_) => {_ ? setState(() {}) : null});
+                        .then((result) => {result ? setState(() {}) : null});
                   },
                   icon: Icon(Icons.edit_note),
                 ),

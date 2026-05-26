@@ -35,6 +35,9 @@ class _ChooseDateState extends State<ChooseDate> {
       lastDate: lastDate,
       helpText: '选择日期',
     );
+
+    if (!context.mounted) return;
+
     if (date != null) {
       final result = getWeekCountAndWeekdayOfDate(
         semesterStartDate:
@@ -57,6 +60,7 @@ class _ChooseDateState extends State<ChooseDate> {
         context.select<FreeClassroomPageZFProvider, DateTime>(
             (freeClassroomPageZFProvider) =>
                 freeClassroomPageZFProvider.selectedDate);
+
     return RoundedRectangleContainer(
       title: Text(
         '日期',

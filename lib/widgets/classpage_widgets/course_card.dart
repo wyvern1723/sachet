@@ -70,8 +70,13 @@ class CourseCard extends StatelessWidget {
           courseScheduleItems: courseScheduleItems,
         );
         List sectionsShowText = [];
-        lengths.forEach((element) => sectionsShowText.add(
-            '${classCountToSection[classcount]}~${classCountToSection[classcount]! + element - 1}节次'));
+        for (final e in lengths) {
+          sectionsShowText.add(
+            '${classCountToSection[classcount]}~${classCountToSection[classcount]! + e - 1}节次',
+          );
+        }
+        final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
         return SingleChildScrollView(
           child: SelectionArea(
             child: Column(
@@ -117,17 +122,18 @@ class CourseCard extends StatelessWidget {
                               height: 38,
                               width: 38,
                               color: weeks.contains(weekCount)
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.surface,
+                                  ? colorScheme.primary
+                                  : colorScheme.surface,
                               child: Center(
-                                  child: Text(
-                                '$weekCount',
-                                style: TextStyle(
-                                  color: weeks.contains(weekCount)
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.onSurface,
+                                child: Text(
+                                  '$weekCount',
+                                  style: TextStyle(
+                                    color: weeks.contains(weekCount)
+                                        ? colorScheme.onPrimary
+                                        : colorScheme.onSurface,
+                                  ),
                                 ),
-                              )),
+                              ),
                             );
                           }),
                         ],
@@ -227,6 +233,7 @@ class CourseCardNormal extends StatelessWidget {
                 courseCardSettingsProvider.cardBorderRadius);
     double cardMargin = context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardMargin);
+
     return SizedBox(
       width: double.infinity,
       height: _cardHeight * (courseSchedule.length ?? 2),

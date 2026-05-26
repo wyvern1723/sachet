@@ -37,7 +37,10 @@ class _CourseColorDataListviewPageState
     super.dispose();
   }
 
-  Future importCourseColor() async {
+  Future importCourseColor(
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) async {
     // 使用 FilePicker 选择文件
     FilePickerResult? filePaths = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -46,6 +49,8 @@ class _CourseColorDataListviewPageState
     );
     String? filePath = filePaths?.files.first.path;
 
+    if (!context.mounted) return;
+
     // 如果选择了一个文件
     if (filePaths?.isSinglePick == true && filePath != null) {
       File file = File(filePath);
@@ -53,47 +58,44 @@ class _CourseColorDataListviewPageState
       // 显示确认导入文件 Dialog
       String? result = await showDialog(
         context: context,
-        builder: (BuildContext context) => ImportJsonDataDialog(
-          file: file,
-        ),
+        builder: (BuildContext context) => ImportJsonDataDialog(file: file),
       );
       if (result != null) {
         // 写入课程表文件到 ApplicationSupportDirectory
         await CachedDataStorage().writeFileToAppSupportDir(
-            fileName: result != ''
-                ? '$result.json'
-                : "course_color_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
-            folder: AppFolder.courseColor.name,
-            value: file.readAsStringSync());
+          fileName: result != ''
+              ? '$result.json'
+              : "course_color_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
+          folder: AppFolder.courseColor.name,
+          value: file.readAsStringSync(),
+        );
 
         // 导入成功 SnackBar
         final snackBar = SnackBar(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
           content: Row(
             children: [
-              Icon(
-                Icons.done_outlined,
-                color: Theme.of(context).colorScheme.onInverseSurface,
-              ),
+              Icon(Icons.done_outlined, color: colorScheme.onInverseSurface),
               const SizedBox(width: 20),
               Text(
                 '导入成功',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onInverseSurface,
-                ),
+                style: TextStyle(color: colorScheme.onInverseSurface),
               ),
             ],
           ),
         );
-        if (!mounted) {
-          return;
-        }
+
+        if (!context.mounted) return;
+
         // 显示导入成功 SnackBar
         _scaffoldMessenger.showSnackBar(snackBar);
+
         // 刷新文件列表
         await _getCourseColorFileList();
+
         // 显示 导入成功 SnackBar 3秒
         await Future.delayed(const Duration(seconds: 3));
+
         // 隐藏导入成功 SnackBar
         _scaffoldMessenger.hideCurrentSnackBar();
       }
@@ -115,10 +117,10 @@ class _CourseColorDataListviewPageState
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("课程颜色数据查看"),
-      ),
+      appBar: AppBar(title: const Text('课程颜色数据查看')),
       body: ListView(
         children: [
           Padding(
@@ -128,17 +130,10 @@ class _CourseColorDataListviewPageState
               children: [
                 Text(
                   '存在数据',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  style: TextStyle(fontSize: 16, color: colorScheme.primary),
                 ),
                 const SizedBox(width: 4),
-                Icon(
-                  Icons.toc,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
-                ),
+                Icon(Icons.toc, color: colorScheme.primary, size: 20),
               ],
             ),
           ),
@@ -158,7 +153,7 @@ class _CourseColorDataListviewPageState
                     Navigator.of(context)
                         .push(fadeTransitionPageRoute(ViewCachedDataPage(
                             filePath: filesPathList[index].path)))
-                        .then((_) => {_ ? setState(() {}) : null});
+                        .then((result) => {result ? setState(() {}) : null});
                   },
                   icon: Icon(Icons.edit_note),
                 ),
@@ -189,10 +184,10 @@ class _CourseColorDataListviewPageState
                 Text('导入数据'),
               ],
             ),
-            iconColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.primary,
+            iconColor: colorScheme.primary,
+            textColor: colorScheme.primary,
             onTap: () async {
-              await importCourseColor();
+              await importCourseColor(context, colorScheme);
             },
           ),
         ],

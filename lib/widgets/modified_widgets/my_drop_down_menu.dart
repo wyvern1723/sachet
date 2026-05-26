@@ -7,7 +7,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 typedef FilterCallback<T> = List<DropdownMenuEntry<T>> Function(
     List<DropdownMenuEntry<T>> entries, String filter);
@@ -352,7 +351,7 @@ class _MyDropdownMenuState<T> extends State<MyDropdownMenu<T>> {
 
       ButtonStyle effectiveStyle = entry.style ?? defaultStyle;
       final Color focusedBackgroundColor = effectiveStyle.foregroundColor
-              ?.resolve(<MaterialState>{MaterialState.focused}) ??
+              ?.resolve(<WidgetState>{WidgetState.focused}) ??
           Theme.of(context).colorScheme.onSurface;
 
       Widget label = entry.labelWidget ?? Text(entry.label);
@@ -367,7 +366,7 @@ class _MyDropdownMenuState<T> extends State<MyDropdownMenu<T>> {
 
       effectiveStyle = entry.enabled && i == focusedIndex
           ? effectiveStyle.copyWith(
-              backgroundColor: MaterialStatePropertyAll<Color>(
+              backgroundColor: WidgetStatePropertyAll<Color>(
                   focusedBackgroundColor.withOpacity(0.12)))
           : effectiveStyle;
 
@@ -487,16 +486,15 @@ class _MyDropdownMenuState<T> extends State<MyDropdownMenu<T>> {
     final double? anchorWidth = getWidth(_anchorKey);
     if (widget.width != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
-          minimumSize:
-              MaterialStatePropertyAll<Size?>(Size(widget.width!, 0.0)));
+          minimumSize: WidgetStatePropertyAll<Size?>(Size(widget.width!, 0.0)));
     } else if (anchorWidth != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
-          minimumSize: MaterialStatePropertyAll<Size?>(Size(anchorWidth, 0.0)));
+          minimumSize: WidgetStatePropertyAll<Size?>(Size(anchorWidth, 0.0)));
     }
 
     if (widget.menuHeight != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
-          maximumSize: MaterialStatePropertyAll<Size>(
+          maximumSize: WidgetStatePropertyAll<Size>(
               Size(double.infinity, widget.menuHeight!)));
     }
     final InputDecorationTheme effectiveInputDecorationTheme =
@@ -878,8 +876,8 @@ class _DropdownMenuDefaultsM3 extends DropdownMenuThemeData {
   @override
   MenuStyle get menuStyle {
     return const MenuStyle(
-      minimumSize: MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
-      maximumSize: MaterialStatePropertyAll<Size>(Size.infinite),
+      minimumSize: WidgetStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
+      maximumSize: WidgetStatePropertyAll<Size>(Size.infinite),
       visualDensity: VisualDensity.standard,
     );
   }

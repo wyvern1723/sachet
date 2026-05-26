@@ -26,29 +26,30 @@ class SetCourseCardAppearance extends StatefulWidget {
 class _SetCourseCardAppearanceState extends State<SetCourseCardAppearance> {
   @override
   Widget build(BuildContext context) {
-    var courseCardSettings = context.watch<CourseCardSettingsProvider>();
+    final courseCardSettings = context.watch<CourseCardSettingsProvider>();
+
     return ListTile(
-        leading: Align(
-          widthFactor: 1,
-          alignment: Alignment.centerLeft,
-          child: Icon(widget.icon),
-        ),
-        title: Text(widget.dialogTitle),
-        subtitle: Text(widget.category == CourseItemCategory.title
-            ? '字体大小: ${courseCardSettings.titleFontSize} 字重:  ${courseCardSettings.titleFontWeight + 1} 最大行数:  ${courseCardSettings.titleMaxLines}'
-            : widget.category == CourseItemCategory.place
-                ? '字体大小: ${courseCardSettings.placeFontSize} 字重:  ${courseCardSettings.placeFontWeight + 1} 最大行数:  ${courseCardSettings.placeMaxLines}'
-                : '字体大小: ${courseCardSettings.instructorFontSize} 字重:  ${courseCardSettings.instructorFontWeight + 1} 最大行数:  ${courseCardSettings.instructorMaxLines}'),
-        onTap: () async {
-          await showDialog(
-              context: context,
-              builder: (context) {
-                return SetCourseCardAppearanceDialog(
-                  dialogTitle: widget.dialogTitle,
-                  category: widget.category,
-                );
-              });
-        });
+      leading: Align(
+        widthFactor: 1,
+        alignment: Alignment.centerLeft,
+        child: Icon(widget.icon),
+      ),
+      title: Text(widget.dialogTitle),
+      subtitle: Text(widget.category == CourseItemCategory.title
+          ? '字体大小: ${courseCardSettings.titleFontSize} 字重:  ${courseCardSettings.titleFontWeight + 1} 最大行数:  ${courseCardSettings.titleMaxLines}'
+          : widget.category == CourseItemCategory.place
+              ? '字体大小: ${courseCardSettings.placeFontSize} 字重:  ${courseCardSettings.placeFontWeight + 1} 最大行数:  ${courseCardSettings.placeMaxLines}'
+              : '字体大小: ${courseCardSettings.instructorFontSize} 字重:  ${courseCardSettings.instructorFontWeight + 1} 最大行数:  ${courseCardSettings.instructorMaxLines}'),
+      onTap: () async {
+        await showDialog(
+          context: context,
+          builder: (context) => SetCourseCardAppearanceDialog(
+            dialogTitle: widget.dialogTitle,
+            category: widget.category,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -69,21 +70,25 @@ class SetCourseCardAppearanceDialog extends StatefulWidget {
 
 class _SetCourseCardAppearanceDialogState
     extends State<SetCourseCardAppearanceDialog> {
-  late int _MLValue;
-  late double _FWValue;
-  late String _TCValue;
+  late int _titleMaxLines;
+  late double _titleFontWeight;
+  late String _titleTextColor;
+
   late TextEditingController valueController;
+
   @override
   void initState() {
     super.initState();
     switch (widget.category) {
       case CourseItemCategory.title:
-        _MLValue = context.read<CourseCardSettingsProvider>().titleMaxLines;
-        _FWValue = context
+        _titleMaxLines =
+            context.read<CourseCardSettingsProvider>().titleMaxLines;
+        _titleFontWeight = context
             .read<CourseCardSettingsProvider>()
             .titleFontWeight
             .toDouble();
-        _TCValue = context.read<CourseCardSettingsProvider>().titleTextColor;
+        _titleTextColor =
+            context.read<CourseCardSettingsProvider>().titleTextColor;
         valueController = TextEditingController(
             text: context
                 .read<CourseCardSettingsProvider>()
@@ -91,12 +96,14 @@ class _SetCourseCardAppearanceDialogState
                 .toString());
         break;
       case CourseItemCategory.place:
-        _MLValue = context.read<CourseCardSettingsProvider>().placeMaxLines;
-        _FWValue = context
+        _titleMaxLines =
+            context.read<CourseCardSettingsProvider>().placeMaxLines;
+        _titleFontWeight = context
             .read<CourseCardSettingsProvider>()
             .placeFontWeight
             .toDouble();
-        _TCValue = context.read<CourseCardSettingsProvider>().placeTextColor;
+        _titleTextColor =
+            context.read<CourseCardSettingsProvider>().placeTextColor;
         valueController = TextEditingController(
             text: context
                 .read<CourseCardSettingsProvider>()
@@ -104,13 +111,13 @@ class _SetCourseCardAppearanceDialogState
                 .toString());
         break;
       case CourseItemCategory.instructor:
-        _MLValue =
+        _titleMaxLines =
             context.read<CourseCardSettingsProvider>().instructorMaxLines;
-        _FWValue = context
+        _titleFontWeight = context
             .read<CourseCardSettingsProvider>()
             .instructorFontWeight
             .toDouble();
-        _TCValue =
+        _titleTextColor =
             context.read<CourseCardSettingsProvider>().instructorTextColor;
         valueController = TextEditingController(
             text: context
@@ -121,22 +128,22 @@ class _SetCourseCardAppearanceDialogState
     }
   }
 
-  void showChangeColorDialog(Color pickerColor) async {
+  Future showChangeColorDialog(BuildContext context, Color pickerColor) async {
     Color? result = await showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return ChangeColorDialog(
-          pickerColor: pickerColor,
-        );
-      },
+      builder: (context) => ChangeColorDialog(pickerColor: pickerColor),
     );
+
+    if (!context.mounted) return;
+
     if (result != null) {
-      _TCValue = colorToHex(
-        result,
-        includeHashSign: true,
-        toUpperCase: true,
-      );
-      setState(() {});
+      setState(() {
+        _titleTextColor = colorToHex(
+          result,
+          includeHashSign: true,
+          toUpperCase: true,
+        );
+      });
     }
   }
 
@@ -148,6 +155,8 @@ class _SetCourseCardAppearanceDialogState
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return AlertDialog(
       title: Text(widget.dialogTitle),
       content: SingleChildScrollView(
@@ -189,15 +198,13 @@ class _SetCourseCardAppearanceDialogState
             const SizedBox(height: 4),
             Slider(
               key: const Key('FW'),
-              value: _FWValue + 1,
+              value: _titleFontWeight + 1,
               min: 1,
               max: 9,
               divisions: 8,
-              label: (_FWValue + 1).round().toString(),
+              label: (_titleFontWeight + 1).round().toString(),
               onChanged: (value) {
-                setState(() {
-                  _FWValue = value - 1;
-                });
+                setState(() => _titleFontWeight = value - 1);
               },
             ),
 
@@ -209,9 +216,12 @@ class _SetCourseCardAppearanceDialogState
               Icon(Icons.format_color_text_outlined, size: 20)
             ]),
             GestureDetector(
-              onTap: () {
-                showChangeColorDialog(
-                    colorFromHex(_TCValue) ?? Colors.white70.withOpacity(0.95));
+              onTap: () async {
+                await showChangeColorDialog(
+                  context,
+                  colorFromHex(_titleTextColor) ??
+                      Colors.white70.withOpacity(0.95),
+                );
               },
               child: SizedBox(
                 height: 48,
@@ -220,7 +230,7 @@ class _SetCourseCardAppearanceDialogState
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  color: colorFromHex(_TCValue),
+                  color: colorFromHex(_titleTextColor),
                 ),
               ),
             ),
@@ -239,15 +249,13 @@ class _SetCourseCardAppearanceDialogState
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    if (_MLValue > 0) {
-                      setState(() {
-                        _MLValue--;
-                      });
+                    if (_titleMaxLines > 0) {
+                      setState(() => _titleMaxLines--);
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     padding:
                         const EdgeInsets.symmetric(vertical: 1, horizontal: 0),
                   ),
@@ -255,18 +263,16 @@ class _SetCourseCardAppearanceDialogState
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '$_MLValue',
+                  '$_titleMaxLines',
                   // style: Theme.of(context).textTheme.titleLarge,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () => setState(() {
-                    _MLValue++;
-                  }),
+                  onPressed: () => setState(() => _titleMaxLines++),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     padding:
                         const EdgeInsets.symmetric(vertical: 1, horizontal: 0),
                   ),
@@ -279,9 +285,7 @@ class _SetCourseCardAppearanceDialogState
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
         TextButton(
@@ -292,26 +296,26 @@ class _SetCourseCardAppearanceDialogState
                     double.tryParse(valueController.text) ?? 13.0);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setTitleMaxLines(_MLValue);
+                    .setTitleMaxLines(_titleMaxLines);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setTitleTextColor(_TCValue);
+                    .setTitleTextColor(_titleTextColor);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setTitleFontWeight(_FWValue.toInt());
+                    .setTitleFontWeight(_titleFontWeight.toInt());
                 break;
               case CourseItemCategory.place:
                 context.read<CourseCardSettingsProvider>().setPlaceFontSize(
                     double.tryParse(valueController.text) ?? 12.0);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setPlaceMaxLines(_MLValue);
+                    .setPlaceMaxLines(_titleMaxLines);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setPlaceTextColor(_TCValue);
+                    .setPlaceTextColor(_titleTextColor);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setPlaceFontWeight(_FWValue.toInt());
+                    .setPlaceFontWeight(_titleFontWeight.toInt());
                 break;
               case CourseItemCategory.instructor:
                 context
@@ -320,13 +324,13 @@ class _SetCourseCardAppearanceDialogState
                         double.tryParse(valueController.text) ?? 12.0);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setInstructorMaxLines(_MLValue);
+                    .setInstructorMaxLines(_titleMaxLines);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setInstructorTextColor(_TCValue);
+                    .setInstructorTextColor(_titleTextColor);
                 context
                     .read<CourseCardSettingsProvider>()
-                    .setInstructorFontWeight(_FWValue.toInt());
+                    .setInstructorFontWeight(_titleFontWeight.toInt());
                 break;
             }
             Navigator.pop(context);

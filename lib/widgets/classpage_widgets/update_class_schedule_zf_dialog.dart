@@ -90,6 +90,9 @@ class _UpdateClassScheduleZFDialogState
           semesterYear: _selectedSemesterYear!,
           semesterIndex: _selectedSemesterIndex!,
         );
+
+        if (!context.mounted) return;
+
         // 修改当前课程表文件
         context.read<SettingsProvider>().setClassScheduleFilePath(result[0]);
 
@@ -98,6 +101,8 @@ class _UpdateClassScheduleZFDialogState
             .read<SettingsProvider>()
             .setCourseColorFilePath(result[1]);
       } catch (e) {
+        if (!context.mounted) return;
+
         if (kDebugMode) {
           print(e);
         }
@@ -119,6 +124,9 @@ class _UpdateClassScheduleZFDialogState
         // 如果从教务系统获取当前开学日期成功，更改默认开学日期
         final result =
             await getSemesterStartDate(cookie: ZhengFangUserProvider.cookie);
+
+        if (!context.mounted) return;
+
         context.read<SettingsProvider>().setSemesterStartDate(result.$1);
       } catch (e) {
         // 如果从教务系统获取当前开学日期失败，则保持使用预设的默认开学日期(constSemesterStartDate)
@@ -126,6 +134,9 @@ class _UpdateClassScheduleZFDialogState
           print(e);
         }
       }
+
+      if (!context.mounted) return;
+
       // 当前状态切换为用户手动设置(调整,如有必要)开学日期
       setState(() {
         currentState = UpdateClassScheduleState.setSemesterStartDate;
@@ -152,6 +163,9 @@ class _UpdateClassScheduleZFDialogState
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final Brightness brightness = Theme.of(context).brightness;
+
     switch (currentState) {
       case UpdateClassScheduleState.gettingSemester:
         return AlertDialog(
@@ -167,9 +181,7 @@ class _UpdateClassScheduleZFDialogState
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
             ),
           ],
@@ -235,9 +247,7 @@ class _UpdateClassScheduleZFDialogState
           contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 24.0),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
             ),
             TextButton(
@@ -262,9 +272,7 @@ class _UpdateClassScheduleZFDialogState
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
             ),
           ],
@@ -276,43 +284,42 @@ class _UpdateClassScheduleZFDialogState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('成功获取课表数据，', style: Theme.of(context).textTheme.bodyMedium),
-              Text('请选择学期开始日期：', style: Theme.of(context).textTheme.bodyLarge),
+              Text('成功获取课表数据，', style: textTheme.bodyMedium),
+              Text('请选择学期开始日期：', style: textTheme.bodyLarge),
               SizedBox(height: 10),
               Text(
                 '⚠️注意：请选择预备周（第一周）的周一，而不是第一天开始上课的日期（正式开始上课是第二周）',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: textTheme.bodySmall,
               ),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Text(
-                  '参考：',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    openLink(xtuSchoolCalendarUrl);
-                  },
-                  onLongPress: () => copyToClipboard(
-                    context,
-                    xtuSchoolCalendarUrl,
-                    prefix: '链接',
-                  ),
-                  child: Text(
-                    '校历',
-                    style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Color(0xFF0645AD)
-                          : Colors.blue,
-                      decoration: TextDecoration.underline,
-                      decorationColor:
-                          Theme.of(context).brightness == Brightness.light
-                              ? const Color(0xFF0645AD)
-                              : Colors.blue,
-                      fontSize: 12.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('参考：', style: textTheme.bodySmall),
+                  GestureDetector(
+                    onTap: () {
+                      openLink(xtuSchoolCalendarUrl);
+                    },
+                    onLongPress: () => copyToClipboard(
+                      context,
+                      xtuSchoolCalendarUrl,
+                      prefix: '链接',
+                    ),
+                    child: Text(
+                      '校历',
+                      style: TextStyle(
+                        color: brightness == Brightness.light
+                            ? Color(0xFF0645AD)
+                            : Colors.blue,
+                        decoration: TextDecoration.underline,
+                        decorationColor: brightness == Brightness.light
+                            ? const Color(0xFF0645AD)
+                            : Colors.blue,
+                        fontSize: 12.0,
+                      ),
                     ),
                   ),
-                ),
-              ]),
+                ],
+              ),
               SizedBox(height: 10),
               InputDecorator(
                 decoration: InputDecoration(
@@ -331,7 +338,7 @@ class _UpdateClassScheduleZFDialogState
                             DateFormat('yyyy-MM-dd').format(
                                 DateTime.tryParse(semesterStartDate) ??
                                     constSemesterStartDate),
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: textTheme.bodyLarge,
                           );
                         }),
                     IconButton(
@@ -370,9 +377,7 @@ class _UpdateClassScheduleZFDialogState
           ),
           actions: [
             TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('确认'),
             )
           ],
@@ -399,9 +404,7 @@ class _UpdateClassScheduleZFDialogState
               child: const Text('重试'),
             ),
             TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('确认'),
             )
           ],
@@ -433,9 +436,7 @@ class _UpdateClassScheduleZFDialogState
               child: const Text('重试'),
             ),
             TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('确认'),
             )
           ],

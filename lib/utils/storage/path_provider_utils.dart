@@ -43,7 +43,7 @@ class CachedDataStorage {
     // return filesList;
     List<FileSystemEntity> filesList = [];
     await dir.list().forEach((element) {
-      RegExp regExp = new RegExp(".json", caseSensitive: false);
+      RegExp regExp = RegExp(".json", caseSensitive: false);
       if (regExp.hasMatch('$element')) filesList.add(element);
     });
 

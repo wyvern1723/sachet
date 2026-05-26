@@ -113,8 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             alignment: Alignment.centerLeft,
                             child: Icon(Icons.login_outlined),
                           ),
-                          title:
-                              Text('登录账号' + (isLogin == true ? '（重新登录）' : '')),
+                          title: Text('登录账号${isLogin == true ? '（重新登录）' : ''}'),
                           subtitle: Text('登录到新教务系统'),
                           onTap: () {
                             Navigator.of(context).push(

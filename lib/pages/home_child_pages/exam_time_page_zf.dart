@@ -76,7 +76,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
     return result;
   }
 
-  Future _changeSemester() async {
+  Future _changeSemester(BuildContext context) async {
     final result = await showDialog(
       context: context,
       builder: (context) => ChangeSemesterDialogZF(
@@ -85,6 +85,9 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
         selectedSemesterIndex: _selectedSemesterIndex,
       ),
     );
+
+    if (!context.mounted) return;
+
     if (result != null && result is List) {
       _selectedSemesterYear = result[0];
       _selectedSemesterIndex = result[1];
@@ -126,9 +129,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
         savefileName: '考试安排_$semestersYear-$semesterIndex',
       );
 
-      if (!context.mounted) {
-        return;
-      }
+      if (!context.mounted) return;
 
       if (filePath != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -181,7 +182,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
       appBar: AppBar(title: Text("考试时间"), actions: [
         IconButton(
           onPressed: () async {
-            await _changeSemester();
+            await _changeSemester(context);
           },
           icon: Icon(Icons.history_outlined),
           visualDensity: VisualDensity.comfortable,
@@ -289,7 +290,6 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 /// 考试时间结果 View
 class _ExamTimeViewZF extends StatelessWidget {
   const _ExamTimeViewZF({
-    super.key,
     required this.examTimeData,
     required this.queryingSemesterYear,
     required this.queryingSemesterIndex,

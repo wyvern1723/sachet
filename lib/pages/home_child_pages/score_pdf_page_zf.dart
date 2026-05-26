@@ -35,7 +35,7 @@ class ScorePdfPageZF extends StatelessWidget {
 }
 
 class _QueryView extends StatefulWidget {
-  const _QueryView({super.key});
+  const _QueryView();
 
   @override
   State<_QueryView> createState() => _QueryViewState();

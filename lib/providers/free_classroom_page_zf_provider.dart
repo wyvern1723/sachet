@@ -136,7 +136,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
   // ========== Sessions(节次) ==========
   // ===================================
 
-  Set<int> _selectedSessions = {};
+  final Set<int> _selectedSessions = {};
 
   /// 选择的节次（可能有多个）
   Set<int> get selectedSessions => _selectedSessions;

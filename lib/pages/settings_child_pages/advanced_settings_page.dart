@@ -209,7 +209,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     child: Icon(Icons.horizontal_split),
                   ),
                   title: const Text('空闲教室查询节次分段'),
-                  subtitle: Text('${sections.join(',  ')}'),
+                  subtitle: Text(sections.join(',  ')),
                   onTap: () async {
                     await showDialog(
                       context: context,

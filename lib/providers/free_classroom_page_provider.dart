@@ -46,7 +46,7 @@ class FreeClassroomPageProvider extends ChangeNotifier {
   List<List<String>> get filteredDataTomorrow => _filteredDataTomorrow;
 
   /// 完整的(未经筛选的)的其他日期空闲教室数据
-  List<List<List<String>>> _allDataOtherDays = [];
+  final List<List<List<String>>> _allDataOtherDays = [];
 
   /// 经过筛选的其他日期空闲教室数据
   List<List<List<String>>> _filteredDataOtherDays = [];
@@ -94,7 +94,7 @@ class FreeClassroomPageProvider extends ChangeNotifier {
   /// 在正方教务系统中此类教室的二级类别为“语音教室”，
   ///
   /// 一般来说逸夫楼的听力教室不允许自习，所以提供隐藏听力教室的功能
-  Set<String> _listeningClassrooms = {};
+  final Set<String> _listeningClassrooms = {};
 
   /// 设置 _hasData (是否有空闲教室数据) 为 true
   void setHasData() {

@@ -27,7 +27,7 @@ class _RenameAppFileDialogState extends State<RenameAppFileDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
       title: Text('重命名'),
@@ -38,7 +38,7 @@ class _RenameAppFileDialogState extends State<RenameAppFileDialog> {
         children: [
           SizedBox(height: 4),
           Form(
-            key: _formKey,
+            key: formKey,
             // TODO: 检查文件名称非法字符，检查是否与现有文件名称重复
             child: TextFormField(
               controller: textEditingController,
@@ -60,14 +60,12 @@ class _RenameAppFileDialogState extends State<RenameAppFileDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () async {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
         TextButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
               Navigator.pop(context, textEditingController.text);
             }
           },

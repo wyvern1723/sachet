@@ -11,11 +11,10 @@ class ThemeSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeProvider>();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("应用主题"),
-      ),
+      appBar: AppBar(title: const Text("应用主题")),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -117,15 +116,17 @@ class ChooseThemeColor extends StatefulWidget {
 }
 
 class _ChooseThemeColorState extends State<ChooseThemeColor> {
-  Future _showChangeThemeColorDialog(pickerColor) async {
+  Future _showChangeThemeColorDialog(
+    BuildContext context,
+    Color pickerColor,
+  ) async {
     Color? result = await showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return PickThemeColorDialog(
-          pickerColor: pickerColor,
-        );
-      },
+      builder: (context) => PickThemeColorDialog(pickerColor: pickerColor),
     );
+
+    if (!context.mounted) return;
+
     if (result != null) {
       context.read<ThemeProvider>().setThemeColor(result);
     }
@@ -135,6 +136,9 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
   Widget build(BuildContext context) {
     Color themeColor = context.select<ThemeProvider, Color>(
         (themeProvider) => themeProvider.themeColor);
+    final Color inversePrimary = Theme.of(context).colorScheme.inversePrimary;
+    final Color onPrimary = Theme.of(context).colorScheme.onPrimary;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Wrap(
@@ -167,17 +171,12 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
                   elevation: 0,
                   child: Center(
                     child: themeColor.value == e.value
-                        ? Icon(
-                            Icons.check_circle_outlined,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          )
+                        ? Icon(Icons.check_circle_outlined, color: onPrimary)
                         : null,
                   ),
                 ),
               ),
-              onTap: () {
-                context.read<ThemeProvider>().setThemeColor(e);
-              },
+              onTap: () => context.read<ThemeProvider>().setThemeColor(e),
             );
           }),
           // 应用主题色(brand color)
@@ -191,7 +190,7 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
                     ? RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                         side: BorderSide(
-                          color: Theme.of(context).colorScheme.inversePrimary,
+                          color: inversePrimary,
                           width: 4,
                           strokeAlign: BorderSide.strokeAlignOutside,
                         ),
@@ -202,14 +201,8 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
                 elevation: 0,
                 child: Center(
                   child: themeColor.value == Colors.white.value
-                      ? Icon(
-                          Icons.check_circle_outlined,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        )
-                      : Icon(
-                          Icons.android,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                      ? Icon(Icons.check_circle_outlined, color: onPrimary)
+                      : Icon(Icons.android, color: onPrimary),
                 ),
               ),
             ),
@@ -233,8 +226,7 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
                         ? RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             side: BorderSide(
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                              color: onPrimary,
                               width: 4,
                               strokeAlign: BorderSide.strokeAlignOutside,
                             ),
@@ -245,19 +237,13 @@ class _ChooseThemeColorState extends State<ChooseThemeColor> {
                 elevation: 0,
                 child: Center(
                   child: themeColor.value == Colors.white.value
-                      ? Icon(
-                          Icons.check_circle_outlined,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        )
-                      : Icon(
-                          Icons.colorize,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                      ? Icon(Icons.check_circle_outlined, color: onPrimary)
+                      : Icon(Icons.colorize, color: onPrimary),
                 ),
               ),
             ),
             onTap: () async {
-              await _showChangeThemeColorDialog(themeColor);
+              await _showChangeThemeColorDialog(context, themeColor);
             },
           ),
         ],

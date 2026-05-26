@@ -19,6 +19,7 @@ Future selectSemesterStartDate(BuildContext context) async {
     selectableDayPredicate: (DateTime val) => val.weekday == 1 ? true : false,
     helpText: '选择学期开始日期',
   );
+  if (!context.mounted) return;
 
   if (picked != null) {
     context

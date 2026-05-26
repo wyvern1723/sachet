@@ -82,32 +82,32 @@ class AppSettings {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['isMD3'] = this.isMD3;
-    data['themeMode'] = this.themeMode;
-    data['themeColor'] = this.themeColor;
-    data['startupPage'] = this.startupPage;
-    data['isAutoCheckUpdate'] = this.isAutoCheckUpdate;
-    data['isShowAllCheckUpdateResult'] = this.isShowAllCheckUpdateResult;
-    data['isShowPageTurnArrow'] = this.isShowPageTurnArrow;
-    data['classScheduleFilePath'] = this.classScheduleFilePath;
-    data['courseColorFilePath'] = this.courseColorFilePath;
-    data['semesterStartDate'] = this.semesterStartDate;
-    data['curveDuration '] = this.curveDuration;
-    data['curveType'] = this.curveType;
-    data['isEnableDevMode'] = this.isEnableDevMode;
-    data['hasReadDisclaimer'] = this.hasReadDisclaimer;
-    data['navigationType'] = this.navigationType;
-    data['isOpenLinkInExternalBrowser'] = this.isOpenLinkInExternalBrowser;
-    data['isUsingDynamicColors'] = this.isUsingDynamicColors;
-    data['pageTransition'] = this.pageTransition;
-    data['isPredictiveBack'] = this.isPredictiveBack;
-    data['isFreeClassroomUseLegacyStyle'] = this.isFreeClassroomUseLegacyStyle;
-    data['isEnableCourseNotification'] = this.isEnableCourseNotification;
-    data['isSilentNotification'] = this.isSilentNotification;
-    data['freeClassroomSections'] = this.freeClassroomSections;
-    data['isShowExamTimeCountdown'] = this.isShowExamTimeCountdown;
-    data['isDeleteQZJwxtUserInfo'] = this.isDeleteQZJwxtUserInfo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['isMD3'] = isMD3;
+    data['themeMode'] = themeMode;
+    data['themeColor'] = themeColor;
+    data['startupPage'] = startupPage;
+    data['isAutoCheckUpdate'] = isAutoCheckUpdate;
+    data['isShowAllCheckUpdateResult'] = isShowAllCheckUpdateResult;
+    data['isShowPageTurnArrow'] = isShowPageTurnArrow;
+    data['classScheduleFilePath'] = classScheduleFilePath;
+    data['courseColorFilePath'] = courseColorFilePath;
+    data['semesterStartDate'] = semesterStartDate;
+    data['curveDuration '] = curveDuration;
+    data['curveType'] = curveType;
+    data['isEnableDevMode'] = isEnableDevMode;
+    data['hasReadDisclaimer'] = hasReadDisclaimer;
+    data['navigationType'] = navigationType;
+    data['isOpenLinkInExternalBrowser'] = isOpenLinkInExternalBrowser;
+    data['isUsingDynamicColors'] = isUsingDynamicColors;
+    data['pageTransition'] = pageTransition;
+    data['isPredictiveBack'] = isPredictiveBack;
+    data['isFreeClassroomUseLegacyStyle'] = isFreeClassroomUseLegacyStyle;
+    data['isEnableCourseNotification'] = isEnableCourseNotification;
+    data['isSilentNotification'] = isSilentNotification;
+    data['freeClassroomSections'] = freeClassroomSections;
+    data['isShowExamTimeCountdown'] = isShowExamTimeCountdown;
+    data['isDeleteQZJwxtUserInfo'] = isDeleteQZJwxtUserInfo;
     return data;
   }
 }

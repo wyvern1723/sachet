@@ -34,7 +34,7 @@ class GPAPageZF extends StatelessWidget {
 
 class _QueryView extends StatefulWidget {
   /// 获取可选学期及让用户选择学期
-  const _QueryView({super.key});
+  const _QueryView();
 
   @override
   State<_QueryView> createState() => _QueryViewState();
@@ -48,6 +48,9 @@ class _QueryViewState extends State<_QueryView> {
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
+
+    if (!mounted) return;
+
     context
         .read<GPAPageZFProvider>()
         .setStartSemestersYears(result.startSemesters);
@@ -161,7 +164,7 @@ class _QueryViewState extends State<_QueryView> {
 
 class _ResultView extends StatelessWidget {
   /// 显示结果
-  const _ResultView({super.key});
+  const _ResultView();
 
   @override
   Widget build(BuildContext context) {
