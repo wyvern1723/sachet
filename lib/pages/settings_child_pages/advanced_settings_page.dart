@@ -9,6 +9,7 @@ import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/se
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_free_classroom_sections_dialog.dart';
+import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/app_update_channel_dropdownmenu.dart';
 import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class AdvancedSettingsPage extends StatefulWidget {
@@ -249,6 +250,30 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   ),
                 );
               }),
+
+          Selector<SettingsProvider,
+                  ({bool isAutoCheckUpdate, String appUpdateChannel})>(
+              selector: (_, settingsProvider) => (
+                    isAutoCheckUpdate: SettingsProvider.isAutoCheckUpdate,
+                    appUpdateChannel: SettingsProvider.appUpdateChannel,
+                  ),
+              builder: (_, data, __) {
+                return Offstage(
+                  offstage: !data.isAutoCheckUpdate,
+                  child: ListTile(
+                    leading: const Align(
+                      widthFactor: 1,
+                      alignment: Alignment.centerLeft,
+                      child: Icon(Icons.cloud_download_outlined),
+                    ),
+                    title: const Text('首选更新渠道'),
+                    subtitle: const Text('失败时自动使用其余更新渠道'),
+                    subtitleTextStyle: Theme.of(context).textTheme.bodySmall,
+                    trailing: AppUpdateChannelDropdownMenu(),
+                  ),
+                );
+              }),
+
           // AnimatedOpacity(
           //   opacity: _isAutoCheckUpdate ? 1 : 0,
           //   duration: const Duration(milliseconds: 200),
@@ -299,6 +324,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                     title: const Text('显示所有检查更新结果'),
                     // 大多数用户可能链接到 Github 困难，每次打开应用都弹出检查失败的信息不太好，默认为不显示检查失败的信息。
                     subtitle: const Text('显示「已是最新版」和「检查更新失败」，而不是仅会显示「有新版本可用」'),
+                    subtitleTextStyle: Theme.of(context).textTheme.bodySmall,
                     trailing: Switch(
                       value: data.isShowAllCheckUpdateResult,
                       onChanged: (value) {

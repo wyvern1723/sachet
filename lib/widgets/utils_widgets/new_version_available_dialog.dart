@@ -36,53 +36,251 @@ class NewVersionAvailableDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return AlertDialog(
-      title: const Text('有新版本可用'),
+      contentPadding: EdgeInsets.fromLTRB(24, 8, 24, 0),
+      actionsPadding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+      title: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              Icons.system_update_rounded,
+              color: colorScheme.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text('有新版本可用', style: textTheme.headlineSmall),
+        ],
+      ),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            [
-              '当前版本：v$appVersion ($appBuildNumber)',
-              '最新版本：$latestTagName',
-              '更新日期：$publishedDate',
-              if (apkSizeMB != null) '安装包大小：$apkSizeMB MB',
-            ].join('\n'),
-            style: theme.textTheme.bodyMedium,
-          ),
-          SizedBox(height: 4),
-          Divider(),
-          Text(
-            '更新日志：',
-            style: theme.textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 8),
-          Flexible(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MarkdownBody(
-                    data: latestReleaseNote ?? '',
-                    onTapLink: (text, href, title) {
-                      if (href != null) {
-                        openLink(href);
-                      }
-                    },
+          Row(
+            children: [
+              // 当前版本
+              Expanded(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.outline),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      String? url = latestTagUrl;
-                      if (url != null) {
-                        openLink(url);
-                      }
-                    },
-                    child: const Text('查看详细信息', style: TextStyle(fontSize: 14)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '当前版本',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.6,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'v$appVersion',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  color: colorScheme.primary,
+                  size: 20,
+                  applyTextScaling: true,
+                ),
+              ),
+              // 最新版本
+              Expanded(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '最新版本',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        '$latestTagName',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+
+          // 发布日期和安装包大小
+          OverflowBar(
+            alignment: MainAxisAlignment.center,
+            overflowAlignment: OverflowBarAlignment.center,
+            children: [
+              // 发布日期
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 13,
+                    applyTextScaling: true,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$publishedDate',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
+              ),
+
+              // 分隔圆点 (仅在 apkSize 不为空时显示)
+              if (apkSizeMB != null)
+                Container(
+                  width: 3,
+                  height: 3,
+                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colorScheme.outline,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+
+              // 安装包大小 (仅在 apkSize 不为空时显示)
+              if (apkSizeMB != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.install_mobile_outlined,
+                      size: 13,
+                      applyTextScaling: true,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '大小：$apkSizeMB MB',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+
+          SizedBox(height: 8),
+
+          // 更新日志
+          Flexible(
+            child: Container(
+              // constraints: const BoxConstraints(maxHeight: 500),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(children: [
+                      Icon(
+                        Icons.feed_outlined,
+                        size: 16,
+                        applyTextScaling: true,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        '更新日志：',
+                        style: textTheme.titleSmall
+                            ?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                    ]),
+                    SizedBox(height: 4),
+                    MarkdownBody(
+                      data: latestReleaseNote ?? '',
+                      onTapLink: (text, href, title) {
+                        if (href != null) {
+                          openLink(href);
+                        }
+                      },
+                      styleSheet: MarkdownStyleSheet(
+                        p: textTheme.bodyMedium,
+                        listIndent: 16,
+                        blockSpacing: 4,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        String? url = latestTagUrl;
+                        if (url != null) {
+                          openLink(url);
+                        }
+                      },
+                      style: ButtonStyle(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: WidgetStatePropertyAll(
+                            EdgeInsets.fromLTRB(2, 0, 2, 0)),
+                        visualDensity: VisualDensity.compact,
+                        alignment: Alignment.center,
+                      ),
+                      child: Text(
+                        '查看详细信息',
+                        style: textTheme.bodySmall
+                            ?.copyWith(color: colorScheme.primary),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -98,8 +296,8 @@ class NewVersionAvailableDialog extends StatelessWidget {
         (downloadLink == null)
             ? ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -112,8 +310,8 @@ class NewVersionAvailableDialog extends StatelessWidget {
               )
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                 ),
                 onPressed: () {
                   Navigator.pop(context);

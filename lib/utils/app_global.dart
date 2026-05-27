@@ -119,7 +119,9 @@ const defaultAppSettingsConfig = {
     [9, 10, 11],
   ], // 空闲教室查询的节次分段
   "isShowExamTimeCountdown": true, // 是否显示考试时间倒计时
-  "isDeleteQZJwxtUserInfo": false // 是否删除了旧教务系统（强智教务系统）的用户信息（cookie，学号，姓名，密码）
+  "isDeleteQZJwxtUserInfo": false, // 是否删除了旧教务系统（强智教务系统）的用户信息（cookie，学号，姓名，密码）
+  "appUpdateChannel":
+      "update.sachet.wyvernlab.com" // 应用检查更新的渠道，可选 "update.sachet.wyvernlab.com" / "api.github.com"
 };
 
 // 默认课程卡片外观设置

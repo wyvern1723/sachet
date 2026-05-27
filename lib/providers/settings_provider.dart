@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/app_settings.dart';
 import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/models/enums/app_update_channel.dart';
 import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/utils/time_manager.dart';
@@ -17,6 +18,8 @@ class SettingsProvider extends ChangeNotifier {
 
   String get startupPage => _appSettings.startupPage ?? '/class';
   static bool get isAutoCheckUpdate => _appSettings.isAutoCheckUpdate ?? true;
+  static String get appUpdateChannel =>
+      _appSettings.appUpdateChannel ?? AppUpdateChannel.wyvernlab.host;
   static bool get isShowAllCheckUpdateResult =>
       _appSettings.isShowAllCheckUpdateResult ?? false;
   bool get isShowPageTurnArrow => _appSettings.isShowPageTurnArrow ?? true;
@@ -63,6 +66,14 @@ class SettingsProvider extends ChangeNotifier {
   void setIsAutoCheckUpdate(bool value) {
     if (value != isAutoCheckUpdate) {
       _appSettings.isAutoCheckUpdate = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setAppUpdateChannel(String value) {
+    if (value != appUpdateChannel) {
+      _appSettings.appUpdateChannel = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }

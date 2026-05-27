@@ -21,8 +21,11 @@ const String appRepoUrl = "https://github.com/wyvern1723/sachet";
 const String appReleaseUrl = "https://github.com/wyvern1723/sachet/releases";
 
 /// 检查应用更新的 API 地址（内容为 Github 自动生成的）
-const String checkAppUpdateAPI =
+const String appUpdateSourceUrlApiGithubCom =
     'https://api.github.com/repos/wyvern1723/sachet/releases/latest';
+
+const String appUpdateSourceUrlUpdateSachetWyvernlabCom =
+    'https://update.sachet.wyvernlab.com/latest.json';
 
 /// App 包名
 const String appPackageName = "io.github.wyvern1723.sachet";

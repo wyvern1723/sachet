@@ -3,9 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_info_constants.dart';
+import 'package:sachet/models/enums/app_update_channel.dart';
 import 'package:sachet/models/github_latest_release_api_response.dart';
 import 'package:sachet/pages/intro_screen/intro_screen.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/widgets/utils_widgets/disclaimer_dialog.dart';
 import 'package:sachet/widgets/utils_widgets/new_version_available_dialog.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +48,9 @@ class SnackbarGlobal {
     final snackbar = SnackBar(
       content: Row(
         children: [
-          const SizedBox(width: 20),
+          const SizedBox(width: 8),
+          Icon(Icons.done, color: Colors.green.shade400),
+          const SizedBox(width: 8),
           Text(
             '已是最新版',
             style: TextStyle(
@@ -62,7 +66,7 @@ class SnackbarGlobal {
   }
 
   /// 显示更新错误 SnackBar
-  static void showErrorSnackbar() {
+  static void showErrorSnackbar(String text) {
     final context = NavigatorGlobal.navigatorKey.currentContext!;
     final snackbar = SnackBar(
       backgroundColor: Theme.of(context).colorScheme.onErrorContainer,
@@ -73,7 +77,7 @@ class SnackbarGlobal {
           const SizedBox(width: 20),
           Flexible(
             child: Text(
-              '从 Github 服务器获取更新信息失败',
+              text,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onInverseSurface,
                 fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
@@ -178,21 +182,44 @@ class NavigatorGlobal {
 }
 
 /// 获取 Github Release 最新版本的信息
-Future<GithubLatestReleaseApiResponse> getGithubReleaseLatest() async {
-  try {
-    var response = await Dio().get(checkAppUpdateAPI);
+Future<GithubLatestReleaseApiResponse> getAppLatestInfo() async {
+  final preferredChannel = AppUpdateChannel.values.firstWhere(
+    (channel) => channel.host == AppGlobal.appSettings.appUpdateChannel,
+    orElse: () => AppUpdateChannel.wyvernlab,
+  );
 
-    GithubLatestReleaseApiResponse githubLatestReleaseApiResponse =
-        GithubLatestReleaseApiResponse.fromJson(response.data);
+  final List<String> orderedUrls = [
+    preferredChannel.url,
+    ...AppUpdateChannel.values
+        .where((channel) => channel != preferredChannel)
+        .map((channel) => channel.url)
+  ];
 
-    return githubLatestReleaseApiResponse;
-  } on DioException catch (e) {
-    if (kDebugMode) {
-      print("error : ${e.response?.data}");
-      print(e.type);
+  for (final url in orderedUrls) {
+    try {
+      final response = await Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+      )).get(
+        url,
+        options: Options(responseType: ResponseType.json),
+      );
+
+      GithubLatestReleaseApiResponse githubLatestReleaseApiResponse =
+          GithubLatestReleaseApiResponse.fromJson(response.data);
+
+      return githubLatestReleaseApiResponse;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('error : ${e.response?.data}');
+        print(e.type);
+      }
+      continue;
     }
-    throw '';
   }
+
+  throw '检查更新失败: 所有更新渠道均无法获取最新版本信息';
 }
 
 ({String? downloadUrl, int? packageSize}) getDownloadLinkAndSize({
@@ -226,8 +253,8 @@ Future checkUpdate({bool? isShowDetails = false}) async {
   String appBuildNumber = packageInfo.buildNumber;
 
   // 获取更新数据(getGithubReleaseLatest)，然后传出结果(latestDataList)
-  getGithubReleaseLatest().then((GithubLatestReleaseApiResponse response) {
-    var latestTagName = response.tagName;
+  getAppLatestInfo().then((GithubLatestReleaseApiResponse response) {
+    final latestTagName = response.tagName;
     if (latestTagName == 'v$appVersion' ||
         latestTagName == 'V$appVersion' ||
         latestTagName == appVersion) {
@@ -255,7 +282,7 @@ Future checkUpdate({bool? isShowDetails = false}) async {
 
     // 如果设置显示所有检查更新结果(isShowResult)，显示检查更新错误 snackbar
     if (SettingsProvider.isShowAllCheckUpdateResult || isShowDetails == true) {
-      SnackbarGlobal.showErrorSnackbar();
+      SnackbarGlobal.showErrorSnackbar('$error');
     }
     await Future.delayed(const Duration(seconds: 2));
   });
