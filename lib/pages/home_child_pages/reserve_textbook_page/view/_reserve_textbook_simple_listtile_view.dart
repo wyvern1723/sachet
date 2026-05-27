@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/reserve_textbook_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/reserve_textbook/models/reserve_textbook_response_zf.dart';
 
 class ReserveTextbookSimpleListTileView extends StatelessWidget {
   /// 简单的 ListTile 格式

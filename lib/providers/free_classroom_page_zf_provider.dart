@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
-import 'package:sachet/models/free_classroom_filter_options.dart';
-import 'package:sachet/models/zhengfang_jwxt/request/free_classroom_request_data_zf.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_filter_options.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_request_data_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_data_response_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_free_classroom.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/get_free_classroom.dart';
 
 List<int> weekCountOptions = List.generate(20, (i) => (i + 1));
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/curriculum_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/cultivation/models/curriculum_response_zf.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 

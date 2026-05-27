@@ -5,7 +5,7 @@ import 'package:sachet/models/user.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_manual_login_page.dart';
 import 'package:sachet/providers/login_page_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_name.dart';
+import 'package:sachet/services/zhengfang_jwxt/login/get_name.dart';
 import 'package:sachet/services/zhengfang_jwxt/login/zhengfang_login_service.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';

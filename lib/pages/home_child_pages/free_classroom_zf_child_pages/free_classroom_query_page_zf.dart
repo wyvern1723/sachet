@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_data_response_zf.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_result_page_zf.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';

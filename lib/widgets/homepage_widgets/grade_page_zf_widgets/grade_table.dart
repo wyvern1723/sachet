@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/grade_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/grade/models/grade_response_zf.dart';
 import 'package:sachet/providers/grade_page_zf_provider.dart';
 
 class GradeTableZF extends StatelessWidget {

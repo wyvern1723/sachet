@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/free_classroom_data_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_data_response_zf.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 
 class FreeClassroomResultPageZF extends StatefulWidget {

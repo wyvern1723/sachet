@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/models/zhengfang_jwxt/response/curriculum_response_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/cultivation/models/curriculum_response_zf.dart';
 
 class CurriculumCard extends StatefulWidget {
   /// 培养方案课程信息卡片

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_queryable_majors.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_cultivation_school_majors.dart';
+import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_queryable_majors/get_cultivation_queryable_majors.dart';
+import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_school_majors/get_cultivation_school_majors.dart';
 
 class ChangeQueryOptionDialog extends StatefulWidget {
   const ChangeQueryOptionDialog({

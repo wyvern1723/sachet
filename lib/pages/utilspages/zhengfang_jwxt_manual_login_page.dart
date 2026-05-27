@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/user.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/get_data/get_name.dart';
+import 'package:sachet/services/zhengfang_jwxt/login/get_name.dart';
 import 'package:sachet/widgets/utilspages_widgets/manual_login_page_widgets/manual_login_successful_dialog.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
