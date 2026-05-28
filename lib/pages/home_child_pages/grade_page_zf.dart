@@ -21,30 +21,41 @@ class GradePageZF extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => GradePageZFProvider(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('成绩查询'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.info_outline),
-              tooltip: '帮助',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => GradeHelpDialog(),
-                );
-              },
-            )
-          ],
-        ),
         body: Selector<GradePageZFProvider, bool>(
-            selector: (_, provider) => provider.isSelectingSemester,
-            builder: (context, isSelectingSemester, __) {
-              if (isSelectingSemester) {
-                return _QueryView();
-              } else {
-                return _ResultView();
-              }
-            }),
+          selector: (_, provider) => provider.isSelectingSemester,
+          builder: (context, isSelectingSemester, __) {
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  title: const Text('成绩查询'),
+                  floating: false,
+                  pinned: false,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      tooltip: '帮助',
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => GradeHelpDialog(),
+                        );
+                      },
+                    )
+                  ],
+                ),
+                if (isSelectingSemester)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _QueryView(),
+                  )
+                else
+                  SliverToBoxAdapter(
+                    child: _ResultView(),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -251,91 +262,88 @@ class _ResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Selector<GradePageZFProvider,
-                ({String semesterYear, String semesterIndex})>(
-              selector: (_, provider) => (
-                semesterYear: provider.selectedSemesterYear,
-                semesterIndex: provider.selectedSemesterIndex,
-              ),
-              builder: (_, data, ___) {
-                String startSemester = '';
-                String endSemester = '';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Selector<GradePageZFProvider,
+              ({String semesterYear, String semesterIndex})>(
+            selector: (_, provider) => (
+              semesterYear: provider.selectedSemesterYear,
+              semesterIndex: provider.selectedSemesterIndex,
+            ),
+            builder: (_, data, ___) {
+              String startSemester = '';
+              String endSemester = '';
 
-                // 如果选择的学年和学期都为「全部」
-                if (data.semesterIndex == '' && data.semesterYear == '') {
-                  startSemester = '';
-                  endSemester = '';
-                }
-                // 如果选择的学期为「全部」，学年不为「全部」
-                else if (data.semesterIndex == '' && data.semesterYear != '') {
-                  startSemester = "${data.semesterYear}03";
-                  endSemester = "${data.semesterYear}12";
-                }
-                // 如果选择的学年为「全部」，学期不为「全部」
-                else if (data.semesterYear == '' && data.semesterIndex != '') {
-                  return Text(
-                    '不支持的查询方式',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.error),
-                  );
-                }
-                // 选择的学年或学期都不为「全部」
-                else {
-                  String semester =
-                      "${data.semesterYear}${data.semesterIndex.padLeft(2, '0')}";
-                  startSemester = semester;
-                  endSemester = semester;
-                }
-                return GPACardZF(
-                  key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
-                  startSemester: startSemester,
-                  endSemester: endSemester,
-                  courseType: '',
+              // 如果选择的学年和学期都为「全部」
+              if (data.semesterIndex == '' && data.semesterYear == '') {
+                startSemester = '';
+                endSemester = '';
+              }
+              // 如果选择的学期为「全部」，学年不为「全部」
+              else if (data.semesterIndex == '' && data.semesterYear != '') {
+                startSemester = "${data.semesterYear}03";
+                endSemester = "${data.semesterYear}12";
+              }
+              // 如果选择的学年为「全部」，学期不为「全部」
+              else if (data.semesterYear == '' && data.semesterIndex != '') {
+                return Text(
+                  '绩点排名：不支持的查询方式',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 );
-              },
+              }
+              // 选择的学年或学期都不为「全部」
+              else {
+                String semester =
+                    "${data.semesterYear}${data.semesterIndex.padLeft(2, '0')}";
+                startSemester = semester;
+                endSemester = semester;
+              }
+              return GPACardZF(
+                key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
+                startSemester: startSemester,
+                endSemester: endSemester,
+                courseType: '',
+              );
+            },
+          ),
+
+          SizedBox(height: 12),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SemesterYearSelectorZF(),
+              Flexible(child: SemesterIndexSelectorZF()),
+              Flexible(child: _FilterButton()),
+            ],
+          ),
+
+          SizedBox(height: 6),
+
+          // 成绩查询页面的红色提醒文字（如未完成评教的信息等）
+          AlertTextZF(),
+
+          SizedBox(height: 6),
+
+          Selector<GradePageZFProvider,
+              ({String semesterYear, String semesterIndex})>(
+            selector: (_, provider) => (
+              semesterYear: provider.selectedSemesterYear,
+              semesterIndex: provider.selectedSemesterIndex,
             ),
-
-            SizedBox(height: 12),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SemesterYearSelectorZF(),
-                Flexible(child: SemesterIndexSelectorZF()),
-                Flexible(child: _FilterButton()),
-              ],
-            ),
-
-            SizedBox(height: 6),
-
-            // 成绩查询页面的红色提醒文字（如未完成评教的信息等）
-            AlertTextZF(),
-
-            SizedBox(height: 6),
-
-            Selector<GradePageZFProvider,
-                ({String semesterYear, String semesterIndex})>(
-              selector: (_, provider) => (
-                semesterYear: provider.selectedSemesterYear,
-                semesterIndex: provider.selectedSemesterIndex,
-              ),
-              builder: (_, data, ___) {
-                return _GradeView(
-                  key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
-                  semesterYear: data.semesterYear,
-                  semesterIndex: data.semesterIndex,
-                );
-              },
-            ),
-          ],
-        ),
+            builder: (_, data, ___) {
+              return _GradeView(
+                key: ValueKey("${data.semesterYear}_${data.semesterIndex}"),
+                semesterYear: data.semesterYear,
+                semesterIndex: data.semesterIndex,
+              );
+            },
+          ),
+        ],
       ),
     );
   }
