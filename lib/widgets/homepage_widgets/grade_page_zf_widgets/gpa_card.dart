@@ -13,6 +13,7 @@ class GPACardZF extends StatefulWidget {
     required this.startSemester,
     required this.endSemester,
     required this.courseType,
+    required this.isShowCourseTypeSegmentedControl,
   });
 
   /// 起始学年学期，如 "202503", "202512"
@@ -23,6 +24,10 @@ class GPACardZF extends StatefulWidget {
 
   /// 课程属性. 全部: "", 必修: "bx", 选修: "xx"
   final String courseType;
+
+  /// 是否显示课程属性切换
+  final bool isShowCourseTypeSegmentedControl;
+
   @override
   State<GPACardZF> createState() => _GPACardZFState();
 }
@@ -101,7 +106,8 @@ class _GPACardZFState extends State<GPACardZF> {
                     letterSpacing: 1.0,
                   ),
                 ),
-                _buildSegmentedControl(context),
+                if (widget.isShowCourseTypeSegmentedControl)
+                  _buildSegmentedControl(context),
               ],
             ),
             const SizedBox(height: 4),

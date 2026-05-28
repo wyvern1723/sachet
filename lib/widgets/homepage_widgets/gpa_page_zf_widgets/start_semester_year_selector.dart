@@ -4,9 +4,7 @@ import 'package:sachet/providers/gpa_page_zf_provider.dart';
 
 class StartSemesterSelectorZF extends StatelessWidget {
   /// 绩点排名查询页面（正方教务）选择起始学年学期的 DropDownMenu
-  const StartSemesterSelectorZF({super.key, this.width});
-
-  final double? width;
+  const StartSemesterSelectorZF({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +12,9 @@ class StartSemesterSelectorZF extends StatelessWidget {
         (provider) => provider.selectedStartSemester);
     Map startSemesters = context
         .select<GPAPageZFProvider, Map>((provider) => provider.startSemesters);
+
     return DropdownMenu<String>(
-      width: width,
+      expandedInsets: EdgeInsets.zero,
       menuHeight: 600,
       initialSelection: selectedStartSemester,
       requestFocusOnTap: false,

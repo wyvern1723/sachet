@@ -77,88 +77,87 @@ class _QueryViewState extends State<_QueryView> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FutureBuilder(
-              future: getDataFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: Column(
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 8),
-                        Text(
-                          '获取可查询学期中...',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
-                        )
-                      ],
-                    ),
-                  );
-                }
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-                if (snapshot.hasError) {
-                  if (snapshot.error ==
-                      "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: LoginExpiredZF(
-                          onGoBack: (value) => onGoBack(value),
-                        ),
-                      ),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  );
-                }
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 20),
-                    StartSemesterSelectorZF(),
-                    SizedBox(height: 10),
-                    EndSemesterSelectorZF(),
-                    SizedBox(height: 10),
-                    CourseTypeSelectorZF(),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      onPressed: () {
-                        context
-                            .read<GPAPageZFProvider>()
-                            .setIsSelectingSemester(false);
-                      },
-                      child: Text('查询'),
-                    ),
-                    SizedBox(height: 100),
-                  ],
-                );
-              },
+    return FutureBuilder(
+      future: getDataFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 8),
+                  Text(
+                    '获取可查询学期中...',
+                    style: TextStyle(color: colorScheme.primary),
+                  )
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          if (snapshot.error ==
+              "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: LoginExpiredZF(
+                  onGoBack: (value) => onGoBack(value),
+                ),
+              ),
+            );
+          }
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${snapshot.error}',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colorScheme.error),
+              ),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 52),
+                StartSemesterSelectorZF(),
+                SizedBox(height: 32),
+                EndSemesterSelectorZF(),
+                SizedBox(height: 32),
+                CourseTypeSelectorZF(),
+                SizedBox(height: 52),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 28),
+                  ),
+                  onPressed: () {
+                    context
+                        .read<GPAPageZFProvider>()
+                        .setIsSelectingSemester(false);
+                  },
+                  child: Text('查询'),
+                ),
+                SizedBox(height: 100),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -177,33 +176,19 @@ class _ResultView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: StartSemesterSelectorZF(),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: StartSemesterSelectorZF(),
             ),
             SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: 0,
-                runSpacing: 12,
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                runAlignment: WrapAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: EndSemesterSelectorZF(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: CourseTypeSelectorZF(width: 100),
-                  ),
-                ],
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: EndSemesterSelectorZF(),
+            ),
+            SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: CourseTypeSelectorZF(),
             ),
             SizedBox(height: 10),
             Selector<
@@ -225,6 +210,7 @@ class _ResultView extends StatelessWidget {
                   startSemester: data.startSemester,
                   endSemester: data.endSemester,
                   courseType: data.courseType,
+                  isShowCourseTypeSegmentedControl: false,
                 );
               },
             ),

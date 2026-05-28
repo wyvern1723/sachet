@@ -4,9 +4,7 @@ import 'package:sachet/providers/gpa_page_zf_provider.dart';
 
 class EndSemesterSelectorZF extends StatelessWidget {
   /// 绩点排名查询页面（正方教务）选择终止学年学期的 DropDownMenu
-  const EndSemesterSelectorZF({super.key, this.width});
-
-  final double? width;
+  const EndSemesterSelectorZF({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +12,9 @@ class EndSemesterSelectorZF extends StatelessWidget {
         (provider) => provider.selectedEndSemester);
     Map endSemesters = context
         .select<GPAPageZFProvider, Map>((provider) => provider.endSemesters);
+
     return DropdownMenu<String>(
-      width: width,
+      expandedInsets: EdgeInsets.zero,
       menuHeight: 600,
       initialSelection: selectedEndSemester,
       requestFocusOnTap: false,

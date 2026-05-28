@@ -306,6 +306,7 @@ class _ResultView extends StatelessWidget {
                 startSemester: startSemester,
                 endSemester: endSemester,
                 courseType: '',
+                isShowCourseTypeSegmentedControl: true,
               );
             },
           ),
