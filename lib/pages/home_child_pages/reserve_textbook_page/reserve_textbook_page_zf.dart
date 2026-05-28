@@ -182,16 +182,8 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
                 _buildAppBar(context),
                 if (snapshot.error ==
                     "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录")
-                  SliverToBoxAdapter(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: LoginExpiredZF(
-                          onGoBack: (value) => onGoBack(value),
-                        ),
-                      ),
-                    ),
+                  SliverFillRemaining(
+                    child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
                   )
                 else
                   SliverToBoxAdapter(

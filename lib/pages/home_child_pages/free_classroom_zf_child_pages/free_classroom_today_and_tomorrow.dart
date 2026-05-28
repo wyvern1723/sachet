@@ -443,13 +443,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
           if (snapshot.hasError) {
             if (snapshot.error ==
                 '获取可选数据失败: Http status code = 302, 可能需要重新登录') {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: LoginExpiredZF(onGoBack: _onGoBack),
-                ),
-              );
+              return LoginExpiredZF(onGoBack: _onGoBack);
             } else if (snapshot.error == '学期未开始' || snapshot.error == '学期已结束') {
               return Padding(
                 padding: const EdgeInsets.symmetric(

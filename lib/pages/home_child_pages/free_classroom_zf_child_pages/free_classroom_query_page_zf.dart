@@ -80,15 +80,7 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
             if (snapshot.hasError) {
               if (snapshot.error ==
                   '获取空闲教室数据失败: Http status code = 901, 验证身份信息失败') {
-                return Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: LoginExpiredZF(
-                      onGoBack: (value) => onGoBack(value),
-                    ),
-                  ),
-                );
+                return LoginExpiredZF(onGoBack: (value) => onGoBack(value));
               } else {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),

@@ -350,15 +350,8 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
               return CustomScrollView(
                 slivers: [
                   appBar,
-                  SliverToBoxAdapter(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: LoginExpiredZF(
-                            onGoBack: (value) => onGoBack(value)),
-                      ),
-                    ),
+                  SliverFillRemaining(
+                    child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
                   ),
                 ],
               );

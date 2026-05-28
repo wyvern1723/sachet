@@ -367,14 +367,9 @@ class _UpdateClassScheduleZFDialogState
         );
       case UpdateClassScheduleState.loginExpired: // 登录失效（登录过期）
         return AlertDialog(
+          contentPadding: EdgeInsets.fromLTRB(24, 4, 24, 2),
           title: const Text('更新课程表'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 10),
-              LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
-            ],
-          ),
+          content: LoginExpiredZF.compact(onGoBack: (value) => onGoBack(value)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

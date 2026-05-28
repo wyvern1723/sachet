@@ -143,13 +143,8 @@ class _GPACardZFState extends State<GPACardZF> {
                 if (snapshot.hasError) {
                   if (snapshot.error ==
                       '获取绩点排名数据失败: Http status code = 302, 可能需要重新登录') {
-                    return SizedBox(
-                      height: 106,
-                      child: Center(
-                        child: LoginExpiredZF(
-                          onGoBack: (value) => onGoBack(value),
-                        ),
-                      ),
+                    return LoginExpiredZF.compact(
+                      onGoBack: (value) => onGoBack(value),
                     );
                   }
                   return SizedBox(

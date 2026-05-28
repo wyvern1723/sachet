@@ -104,15 +104,7 @@ class _FreeClassroomFilterScreenZFState
         if (snapshot.hasError) {
           if (snapshot.error == "获取可选数据失败: Http status code = 302, 可能需要重新登录") {
             return Scaffold(
-              body: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: LoginExpiredZF(
-                    onGoBack: (value) => onGoBack(value),
-                  ),
-                ),
-              ),
+              body: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
             );
           }
           return Scaffold(

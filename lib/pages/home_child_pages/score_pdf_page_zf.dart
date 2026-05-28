@@ -236,14 +236,8 @@ class _QueryViewState extends State<_QueryView> {
                 if (snapshot.hasError) {
                   if (snapshot.error ==
                       "获取可选成绩单格式失败: Http status code = 901, 验证身份信息失败") {
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: LoginExpiredZF(
-                          onGoBack: (value) => onGoBack(value),
-                        ),
-                      ),
+                    return LoginExpiredZF(
+                      onGoBack: (value) => onGoBack(value),
                     );
                   }
                   return Padding(
