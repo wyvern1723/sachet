@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/providers/grade_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/grade/get_grade.dart';
-import 'package:sachet/services/zhengfang_jwxt/grade/grade_semesters_and_alert_text/get_grade_semesters_and_alert_text.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_help_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/item_filter_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/alert_text.dart';
@@ -62,7 +62,7 @@ class _QueryViewState extends State<_QueryView> {
   late Future getDataFuture;
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getGradeSemestersAndAlertTextZF(
+    final result = await ZhengFangJwxt.grade.getGradeSemestersAndAlertText(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -372,7 +372,7 @@ class _GradeViewState extends State<_GradeView> {
   }
 
   Future _getGradeData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getGradeZF(
+    final result = await ZhengFangJwxt.grade.getGrade(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
       semesterYear: widget.semesterYear,

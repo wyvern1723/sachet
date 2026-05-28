@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/services/zhengfang_jwxt/cultivation/models/curriculum_response_zf.dart';
 import 'package:sachet/pages/home_child_pages/cultivation_plan_child_pages/cultivation_plan_old_data_page.dart';
 import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_card_view_zf.dart';
 import 'package:sachet/pages/home_child_pages/cultivation_plan_page/view/_curriculum_table_view_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_queryable_majors/get_cultivation_queryable_majors.dart';
-import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_query_options/get_cultivation_query_options.dart';
-import 'package:sachet/services/zhengfang_jwxt/cultivation/get_curriculum.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/custom_route.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/change_query_option_dialog.dart';
@@ -79,7 +78,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
   Future _getQueryOptionsData(
     ZhengFangUserProvider? zhengFangUserProvider,
   ) async {
-    final result = await getCultivationQueryOptionsZF(
+    final result = await ZhengFangJwxt.cultivation.getCultivationQueryOptions(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -98,7 +97,8 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
   ) async {
     await _getQueryOptionsData(zhengFangUserProvider);
 
-    final queryableMajors = await getCultivationQueryableMajorsZF(
+    final queryableMajors =
+        await ZhengFangJwxt.cultivation.getCultivationQueryableMajors(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
       gradeId: _selectedGrade,
@@ -128,7 +128,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
 
     _selectedQueryMajor = queryableMajors[0].jxzxjhxxId;
 
-    final result = await getCurriculumZF(
+    final result = await ZhengFangJwxt.cultivation.getCurriculum(
       cookie: ZhengFangUserProvider.cookie,
       queryMajorId: _selectedQueryMajor!,
       zhengFangUserProvider: zhengFangUserProvider,
@@ -176,11 +176,13 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
       setState(() {
         _curriculumData = null;
 
-        _future = getCurriculumZF(
+        _future = ZhengFangJwxt.cultivation
+            .getCurriculum(
           cookie: ZhengFangUserProvider.cookie,
           zhengFangUserProvider: zhengFangUserProvider,
           queryMajorId: _selectedQueryMajor!,
-        ).then((data) {
+        )
+            .then((data) {
           if (mounted) {
             setState(() => _curriculumData = data);
           }
@@ -411,12 +413,14 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
                                   _selectedQueryMajor = value;
                                   final zhengFangUserProvider =
                                       context.read<ZhengFangUserProvider>();
-                                  _future = getCurriculumZF(
+                                  _future = ZhengFangJwxt.cultivation
+                                      .getCurriculum(
                                     cookie: ZhengFangUserProvider.cookie,
                                     zhengFangUserProvider:
                                         zhengFangUserProvider,
                                     queryMajorId: value,
-                                  ).then((data) {
+                                  )
+                                      .then((data) {
                                     if (mounted) {
                                       setState(() => _curriculumData = data);
                                     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_queryable_majors/get_cultivation_queryable_majors.dart';
-import 'package:sachet/services/zhengfang_jwxt/cultivation/cultivation_school_majors/get_cultivation_school_majors.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 
 class ChangeQueryOptionDialog extends StatefulWidget {
   const ChangeQueryOptionDialog({
@@ -46,7 +46,8 @@ class _ChangeQueryOptionDialogState extends State<ChangeQueryOptionDialog> {
   Future _getCurrentSchoolMajors() async {
     try {
       final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      final schoolMajors = await getCultivationSchoolMajorsZF(
+      final schoolMajors =
+          await ZhengFangJwxt.cultivation.getCultivationSchoolMajors(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
         shoolId: widget.selectedSchool,
@@ -93,7 +94,8 @@ class _ChangeQueryOptionDialogState extends State<ChangeQueryOptionDialog> {
 
     try {
       final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      final schoolMajors = await getCultivationSchoolMajorsZF(
+      final schoolMajors =
+          await ZhengFangJwxt.cultivation.getCultivationSchoolMajors(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
         shoolId: schoolId,
@@ -135,7 +137,8 @@ class _ChangeQueryOptionDialogState extends State<ChangeQueryOptionDialog> {
     });
     try {
       final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      final queryableMajors = await getCultivationQueryableMajorsZF(
+      final queryableMajors =
+          await ZhengFangJwxt.cultivation.getCultivationQueryableMajors(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
         gradeId: _selectedGrade,

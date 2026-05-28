@@ -4,20 +4,19 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/pages/utilspages/pdf_view_page.dart';
 import 'package:sachet/providers/score_pdf_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/score_pdf/download_score_pdf.dart';
-import 'package:sachet/services/zhengfang_jwxt/score_pdf/score_pdf_link/get_score_pdf_link.dart';
-import 'package:sachet/services/zhengfang_jwxt/score_pdf/score_pdf_types/get_score_pdf_types.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/downloading_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/score_pdf_types_selector.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/utils_widgets/success_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
-import 'package:path/path.dart' as path;
 
 class ScorePdfPageZF extends StatelessWidget {
   const ScorePdfPageZF({super.key});
@@ -47,7 +46,7 @@ class _QueryViewState extends State<_QueryView> {
   Future _getScorePdfTypesData(
     ZhengFangUserProvider? zhengFangUserProvider,
   ) async {
-    final scorePdfTypes = await getScorePdfTypesZF(
+    final scorePdfTypes = await ZhengFangJwxt.scorePdf.getScorePdfTypes(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -104,7 +103,7 @@ class _QueryViewState extends State<_QueryView> {
 
       final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
 
-      final pdfUrl = await getScorePdfLinkZF(
+      final pdfUrl = await ZhengFangJwxt.scorePdf.getScorePdfLink(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
         type: selectedScorePdfType,
@@ -117,7 +116,7 @@ class _QueryViewState extends State<_QueryView> {
       final String fileName = path.basename(pdfUrl);
       final String tmpfilePath = path.join(tempDir.path, fileName);
 
-      await downloadScorePdfZF(
+      await ZhengFangJwxt.scorePdf.downloadScorePdf(
         cookie: ZhengFangUserProvider.cookie,
         pdfUrl: pdfUrl,
         tmpfilePath: tmpfilePath,

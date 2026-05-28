@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_filter_options.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/free_classroom/free_classroom_filter_options/get_free_classroom_filter_options.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_date.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_week_count.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_weekday.dart';
@@ -37,7 +38,8 @@ class _FreeClassroomFilterScreenZFState
       return filterOptions;
     }
 
-    final result = await getFreeClassroomFilterOptionsZF(
+    final result =
+        await ZhengFangJwxt.freeClassroom.getFreeClassroomFilterOptions(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );

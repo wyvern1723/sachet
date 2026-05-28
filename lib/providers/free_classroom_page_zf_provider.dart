@@ -1,13 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+
 import 'package:sachet/constants/app_constants.dart';
+import 'package:sachet/services/zhengfang_jwxt/free_classroom/free_classroom_service.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_request_data_zf.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_data_response_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/time_manager.dart';
-import 'package:sachet/services/zhengfang_jwxt/free_classroom/get_free_classroom.dart';
 
 List<int> weekCountOptions = List.generate(20, (i) => (i + 1));
 
@@ -345,10 +347,9 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
       nd: nd,
     ).toJson();
 
-    final List<FreeClassroomDataResponseZF> result = await getFreeClassroomZF(
-      cookie: cookie,
-      data: data,
-    );
+    final List<FreeClassroomDataResponseZF> result = await ZhengFangJwxt
+        .freeClassroom
+        .getFreeClassroom(cookie: cookie, data: data);
     return result;
   }
 }

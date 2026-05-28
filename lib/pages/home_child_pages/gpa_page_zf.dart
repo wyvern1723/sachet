@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/providers/gpa_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/gpa/gpa_semesters/get_gpa_semesters.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/gpa_page_zf_widgets/course_type_selector.dart';
 import 'package:sachet/widgets/homepage_widgets/gpa_page_zf_widgets/end_semester_year_selector.dart';
 import 'package:sachet/widgets/homepage_widgets/gpa_page_zf_widgets/start_semester_year_selector.dart';
@@ -44,7 +45,7 @@ class _QueryViewState extends State<_QueryView> {
   late Future getDataFuture;
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getGPASemestersZF(
+    final result = await ZhengFangJwxt.gpa.getGPASemesters(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );

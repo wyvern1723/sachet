@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:sachet/services/zhengfang_jwxt/gpa/models/gpa_response_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/gpa/get_gpa.dart';
-import 'package:provider/provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class GPACardZF extends StatefulWidget {
@@ -40,7 +41,7 @@ class _GPACardZFState extends State<GPACardZF> {
   }
 
   Future _getGPAData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getGPAZF(
+    final result = await ZhengFangJwxt.gpa.getGPA(
       cookie: ZhengFangUserProvider.cookie,
       startSemester: widget.startSemester,
       endSemester: widget.endSemester,

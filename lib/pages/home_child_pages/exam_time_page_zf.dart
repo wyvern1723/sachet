@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sachet/services/zhengfang_jwxt/exam_time/models/exam_time_response_zf.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/exam_time/get_exam_time.dart';
-import 'package:sachet/services/zhengfang_jwxt/exam_time/exam_time_semesters/get_exam_time_semesters.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/export_to_ics.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/exam_time_card.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
@@ -48,7 +48,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   }
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getExamTimeSemestersZF(
+    final result = await ZhengFangJwxt.examTime.getExamTimeSemesters(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -62,7 +62,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
   Future _getExamTimeData(ZhengFangUserProvider? zhengFangUserProvider) async {
     await _getSemestersData(zhengFangUserProvider);
 
-    final result = await getExamTimeZF(
+    final result = await ZhengFangJwxt.examTime.getExamTime(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
       semesterYear: _selectedSemesterYear,
@@ -95,12 +95,14 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
       setState(() {
         _examTimeData = null;
 
-        _future = getExamTimeZF(
+        _future = ZhengFangJwxt.examTime
+            .getExamTime(
           cookie: ZhengFangUserProvider.cookie,
           zhengFangUserProvider: zhengFangUserProvider,
           semesterYear: _selectedSemesterYear,
           semesterIndex: _selectedSemesterIndex,
-        ).then((data) {
+        )
+            .then((data) {
           if (mounted) {
             setState(() => _examTimeData = data);
           }

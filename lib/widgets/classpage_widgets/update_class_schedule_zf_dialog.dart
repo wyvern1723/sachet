@@ -1,17 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/class_schedule/get_class_schedule.dart';
-import 'package:sachet/services/zhengfang_jwxt/class_schedule/class_schedule_semesters/get_class_schedule_semesters.dart';
-import 'package:sachet/services/zhengfang_jwxt/class_schedule/semester_start_date/get_semester_start_date.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class UpdateClassScheduleZFDialog extends StatefulWidget {
   /// 更新课程表数据（从正方教务系统） Dialog
@@ -46,7 +45,8 @@ class _UpdateClassScheduleZFDialogState
   /// 获取可选择学期和当前学期数据
   Future _getSemesters(ZhengFangUserProvider? zhengFangUserProvider) async {
     try {
-      final result = await getClassScheduleSemestersZF(
+      final result =
+          await ZhengFangJwxt.classSchedule.getClassScheduleSemesters(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
       );
@@ -85,7 +85,7 @@ class _UpdateClassScheduleZFDialogState
         currentState = UpdateClassScheduleState.updating;
       });
       try {
-        final result = await getClassScheduleZF(
+        final result = await ZhengFangJwxt.classSchedule.getClassSchedule(
           cookie: ZhengFangUserProvider.cookie,
           semesterYear: _selectedSemesterYear!,
           semesterIndex: _selectedSemesterIndex!,
@@ -122,8 +122,8 @@ class _UpdateClassScheduleZFDialogState
       // 获取开学日期
       try {
         // 如果从教务系统获取当前开学日期成功，更改默认开学日期
-        final result =
-            await getSemesterStartDate(cookie: ZhengFangUserProvider.cookie);
+        final result = await ZhengFangJwxt.classSchedule
+            .getSemesterStartDate(cookie: ZhengFangUserProvider.cookie);
 
         if (!context.mounted) return;
 

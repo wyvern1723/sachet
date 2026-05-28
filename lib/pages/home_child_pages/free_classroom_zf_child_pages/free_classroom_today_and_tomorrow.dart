@@ -3,18 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
-import 'package:sachet/services/zhengfang_jwxt/free_classroom/free_classroom_filter_options/get_free_classroom_filter_options.dart';
-import 'package:sachet/services/zhengfang_jwxt/free_classroom/get_free_classroom_full_day.dart';
-import 'package:sachet/services/zhengfang_jwxt/free_classroom/get_free_classroom_today_and_tomorrow.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
-import 'package:provider/provider.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 
 class FreeClassroomTodayAndTomorrow extends StatelessWidget {
   const FreeClassroomTodayAndTomorrow({super.key});
@@ -303,7 +302,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     final filterOptions =
         context.read<FreeClassroomPageZFProvider>().filterOptions;
     if (filterOptions == null) {
-      final result = await getFreeClassroomFilterOptionsZF(
+      final result =
+          await ZhengFangJwxt.freeClassroom.getFreeClassroomFilterOptions(
         cookie: ZhengFangUserProvider.cookie,
         zhengFangUserProvider: zhengFangUserProvider,
       );
@@ -323,7 +323,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     List sections =
         List.from(context.read<SettingsProvider>().freeClassroomSections);
     if (day != null) {
-      final result = await getFreeClassroomTodayAndTomorrowZF(
+      final result =
+          await ZhengFangJwxt.freeClassroom.getFreeClassroomTodayAndTomorrow(
         cookie: ZhengFangUserProvider.cookie,
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,
@@ -350,7 +351,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
       return freeClassroomData;
     } else if (date != null) {
-      final result = await getFreeClassroomFullDayZF(
+      final result = await ZhengFangJwxt.freeClassroom.getFreeClassroomFullDay(
         cookie: ZhengFangUserProvider.cookie,
         semesterYear: semesterYear,
         semesterIndex: semesterIndex,

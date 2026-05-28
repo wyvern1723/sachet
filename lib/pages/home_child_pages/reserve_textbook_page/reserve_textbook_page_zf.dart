@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:sachet/models/purchase_channel.dart';
 import 'package:sachet/services/zhengfang_jwxt/reserve_textbook/models/reserve_textbook_response_zf.dart';
 import 'package:sachet/pages/home_child_pages/reserve_textbook_page/view/_reserve_textbook_card_list_view.dart';
@@ -9,13 +11,11 @@ import 'package:sachet/pages/home_child_pages/reserve_textbook_page/view/_reserv
 import 'package:sachet/pages/home_child_pages/reserve_textbook_page/view/_reserve_textbook_simple_listtile_view.dart';
 import 'package:sachet/pages/home_child_pages/reserve_textbook_page/view/_reserve_textbook_table_view.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
-import 'package:sachet/services/zhengfang_jwxt/reserve_textbook/reserve_textbook_semesters/get_reserve_textbook_semesters.dart';
-import 'package:sachet/services/zhengfang_jwxt/reserve_textbook/get_reserve_textbook_info.dart';
+import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/capsule_tabbar.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/reserve_textbook_footer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ReserveTextbookPageZF extends StatefulWidget {
   /// 教材预订的书籍信息查询页面（正方教务）
@@ -49,7 +49,8 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
   }
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    final result = await getReserveTextbookSemestersZF(
+    final result =
+        await ZhengFangJwxt.reserveTextbook.getReserveTextbookSemesters(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
     );
@@ -63,7 +64,7 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
   Future _getBookData(ZhengFangUserProvider? zhengFangUserProvider) async {
     await _getSemestersData(zhengFangUserProvider);
 
-    final result = await getReserveTextbookInfoZF(
+    final result = await ZhengFangJwxt.reserveTextbook.getReserveTextbookInfo(
       cookie: ZhengFangUserProvider.cookie,
       zhengFangUserProvider: zhengFangUserProvider,
       semesterYear: _selectedSemesterYear,
@@ -98,12 +99,14 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
       setState(() {
         _bookData = null;
 
-        _future = getReserveTextbookInfoZF(
+        _future = ZhengFangJwxt.reserveTextbook
+            .getReserveTextbookInfo(
           cookie: ZhengFangUserProvider.cookie,
           zhengFangUserProvider: zhengFangUserProvider,
           semesterYear: _selectedSemesterYear,
           semesterIndex: _selectedSemesterIndex,
-        ).then((data) {
+        )
+            .then((data) {
           if (mounted) {
             setState(() => _bookData = data);
           }
