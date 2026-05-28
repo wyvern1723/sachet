@@ -11,11 +11,48 @@ class SemesterIndexSelectorZF extends StatelessWidget {
     final Map semesterIndexes = {"全部": "", "1": "3", "2": "12"};
     String selectedSemesterIndex = context.select<GradePageZFProvider, String>(
         (provider) => provider.selectedSemesterIndex);
+
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return DropdownMenu<String>(
-      width: 100,
+      // width: 100,
+      // expandedInsets: EdgeInsets.zero,
       menuHeight: 400,
       initialSelection: selectedSemesterIndex,
       requestFocusOnTap: false,
+      textStyle: textTheme.labelMedium,
+      inputDecorationTheme: InputDecorationTheme(
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+        filled: false,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+        ),
+        labelStyle: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 14,
+        ),
+        floatingLabelStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      menuStyle: MenuStyle(
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        ),
+      ),
       label: const Text('学期'),
       onSelected: (String? value) {
         if (value != null) {
@@ -23,7 +60,13 @@ class SemesterIndexSelectorZF extends StatelessWidget {
         }
       },
       dropdownMenuEntries: semesterIndexes.entries
-          .map((e) => DropdownMenuEntry<String>(value: e.value, label: e.key))
+          .map((e) => DropdownMenuEntry<String>(
+                value: e.value,
+                label: e.key,
+                style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
+                ),
+              ))
           .toList(),
     );
   }

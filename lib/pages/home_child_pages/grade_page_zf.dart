@@ -25,7 +25,7 @@ class GradePageZF extends StatelessWidget {
           title: const Text('成绩查询'),
           actions: [
             IconButton(
-              icon: Icon(Icons.help_outline),
+              icon: Icon(Icons.info_outline),
               tooltip: '帮助',
               onPressed: () {
                 showDialog(
@@ -146,15 +146,13 @@ class _QueryViewState extends State<_QueryView> {
               return Column(
                 children: [
                   SizedBox(height: 20),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 10,
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    runAlignment: WrapAlignment.center,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SemesterYearSelectorZF(),
-                      SemesterIndexSelectorZF(),
+                      Flexible(child: SemesterYearSelectorZF()),
+                      SizedBox(width: 12),
+                      Flexible(child: SemesterIndexSelectorZF()),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -232,11 +230,16 @@ class __FilterButtonState extends State<_FilterButton> {
       style: TextButton.styleFrom(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+        textStyle: Theme.of(context).textTheme.labelMedium,
       ),
       onPressed: () async {
         await showFilterDialog(context);
       },
-      icon: Icon(Icons.filter_list_outlined),
+      icon: Icon(
+        Icons.filter_list_outlined,
+        size: 16,
+        applyTextScaling: true,
+      ),
       label: Text('筛选'),
     );
   }
@@ -300,16 +303,13 @@ class _ResultView extends StatelessWidget {
 
             SizedBox(height: 12),
 
-            Wrap(
-              spacing: 8,
-              runSpacing: 10,
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              runAlignment: WrapAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SemesterYearSelectorZF(),
-                SemesterIndexSelectorZF(),
-                _FilterButton(),
+                Flexible(child: SemesterIndexSelectorZF()),
+                Flexible(child: _FilterButton()),
               ],
             ),
 

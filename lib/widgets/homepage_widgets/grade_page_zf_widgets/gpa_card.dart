@@ -256,7 +256,7 @@ class _GPACardZFState extends State<GPACardZF> {
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 150),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
               color: isSelected
                   ? colorScheme.onPrimary
@@ -282,7 +282,7 @@ class _GPACardZFState extends State<GPACardZF> {
         Text(
           'GPA: ${gpaResponseZF.pjxfjd}',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: colorScheme.onSecondaryContainer,
           ),
@@ -295,7 +295,7 @@ class _GPACardZFState extends State<GPACardZF> {
             Text(
               '平均成绩: ${gpaResponseZF.pjcj}',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: colorScheme.onSecondaryContainer,
               ),
             ),
@@ -311,14 +311,14 @@ class _GPACardZFState extends State<GPACardZF> {
             Icon(
               Icons.group,
               color: colorScheme.onSecondaryContainer,
-              size: 16,
+              size: 14,
               applyTextScaling: true,
             ),
             SizedBox(width: 8),
             Text(
               '班级排名: ${gpaResponseZF.jdbjpm}',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: colorScheme.onSecondaryContainer,
               ),
             ),
@@ -332,14 +332,14 @@ class _GPACardZFState extends State<GPACardZF> {
             Icon(
               Icons.groups,
               color: colorScheme.onSecondaryContainer,
-              size: 16,
+              size: 14,
               applyTextScaling: true,
             ),
             SizedBox(width: 8),
             Text(
               '专业排名: ${gpaResponseZF.jdnjzypm}',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: colorScheme.onSecondaryContainer,
               ),
             ),

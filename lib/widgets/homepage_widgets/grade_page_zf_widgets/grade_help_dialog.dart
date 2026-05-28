@@ -11,7 +11,7 @@ class GradeHelpDialog extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       title: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [Icon(Icons.help_outline), SizedBox(width: 8), Text('帮助')],
+        children: [Icon(Icons.info_outline), SizedBox(width: 8), Text('帮助')],
       ),
       children: [
         ListTile(

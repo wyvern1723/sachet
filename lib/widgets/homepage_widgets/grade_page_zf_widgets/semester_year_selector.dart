@@ -12,11 +12,47 @@ class SemesterYearSelectorZF extends StatelessWidget {
         (provider) => provider.selectedSemesterYear);
     Map semestersYears = context.select<GradePageZFProvider, Map>(
         (provider) => provider.semestersYears);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return DropdownMenu<String>(
-      width: 150,
-      menuHeight: 600,
+      // width: 150,
+      // expandedInsets: EdgeInsets.zero,
+      menuHeight: 400,
       initialSelection: selectedSemesterYear,
       requestFocusOnTap: false,
+      textStyle: textTheme.labelMedium,
+      inputDecorationTheme: InputDecorationTheme(
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+        filled: false,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+        ),
+        labelStyle: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 14,
+        ),
+        floatingLabelStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      menuStyle: MenuStyle(
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        ),
+      ),
       label: const Text('学年'),
       onSelected: (String? value) {
         if (value != null) {
@@ -24,7 +60,13 @@ class SemesterYearSelectorZF extends StatelessWidget {
         }
       },
       dropdownMenuEntries: semestersYears.entries
-          .map((e) => DropdownMenuEntry<String>(value: e.value, label: e.key))
+          .map((e) => DropdownMenuEntry<String>(
+                value: e.value,
+                label: e.key,
+                style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
+                ),
+              ))
           .toList(),
     );
   }
