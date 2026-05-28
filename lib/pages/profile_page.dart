@@ -44,60 +44,49 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               builder: (_, data, __) {
                 return ListTile(
-                    leading: Align(
-                      widthFactor: 1,
-                      alignment: Alignment.centerLeft,
-                      child: Icon(Icons.account_circle),
-                    ),
-                    title: Text(data.name),
-                    subtitle: Text(data.id),
-                    trailing: IconButton(
-                      onPressed: () async {
-                        await showLogoutDialog(context);
-                      },
-                      tooltip: '退出登录',
-                      icon: Icon(Icons.logout_outlined),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return const ZhengFangJwxtLoginPage();
-                          },
-                        ),
-                      );
-                    });
-              },
-            ),
-            Divider(
-              indent: 16,
-              endIndent: 16,
-            ),
-            ListTile(
-              title: Text('设置'),
-              leading: Icon(Icons.settings),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const SettingsPage();
+                  leading: Align(
+                    widthFactor: 1,
+                    alignment: Alignment.centerLeft,
+                    child: Icon(Icons.account_circle),
+                  ),
+                  title: Text(data.name),
+                  subtitle: Text(data.id),
+                  trailing: IconButton(
+                    onPressed: () async {
+                      await showLogoutDialog(context);
                     },
+                    tooltip: '退出登录',
+                    icon: Icon(Icons.logout_outlined),
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ZhengFangJwxtLoginPage(),
+                    ),
                   ),
                 );
               },
+            ),
+
+            Divider(indent: 16, endIndent: 16),
+
+            ListTile(
+              title: Text('设置'),
+              leading: Icon(Icons.settings_outlined),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const SettingsPage(),
+                ),
+              ),
             ),
             ListTile(
               title: Text('关于'),
-              leading: Icon(Icons.info),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const AboutPage();
-                    },
-                  ),
-                );
-              },
+              leading: Icon(Icons.info_outline),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutPage()),
+              ),
             )
           ],
         ),

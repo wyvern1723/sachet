@@ -4,7 +4,6 @@ import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/logout_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,20 +28,17 @@ Future selectSemesterStartDate(BuildContext context) async {
 }
 
 Future showLogoutDialog(BuildContext context) async {
-  var result = await showDialog(
+  final result = await showDialog(
     context: context,
     builder: (BuildContext context) => LogoutDialog(),
   );
 
   if (!context.mounted) return;
 
-  if (result != null) {
-    context.read<ZhengFangUserProvider>().deleteUser();
+  if (result == null) return;
 
-    // 如果返回 true,同时删除缓存数据
-    if (result == true) {
-      await CachedDataStorage().deleteAllCachedData();
-    }
+  if (result == true) {
+    context.read<ZhengFangUserProvider>().deleteUser();
   }
 }
 
