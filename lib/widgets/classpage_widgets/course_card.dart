@@ -3,6 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/utils/course_info_helper.dart';
+import 'package:sachet/widgets/classpage_widgets/course_details_bottom_sheet.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
 import 'package:provider/provider.dart';
 
@@ -52,103 +53,47 @@ class CourseCard extends StatelessWidget {
   }) {
     showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.hardEdge,
+      isScrollControlled: true,
+      showDragHandle: false,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
+      ),
       builder: (BuildContext context) {
-        List weeks = CourseInfoHelper.getWeeksOfCourse(
+        final List weeks = CourseInfoHelper.getWeeksOfCourse(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List lengths = CourseInfoHelper.getLengths(
+        final List lengths = CourseInfoHelper.getLengths(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List instructors = CourseInfoHelper.getInstructors(
+        final List instructors = CourseInfoHelper.getInstructors(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List places = CourseInfoHelper.getPlaces(
+        final List places = CourseInfoHelper.getPlaces(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        List sectionsShowText = [];
+        final List sectionsShowText = [];
         for (final e in lengths) {
           sectionsShowText.add(
             '${classCountToSection[classcount]}~${classCountToSection[classcount]! + e - 1}节次',
           );
         }
-        final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-        return SingleChildScrollView(
-          child: SelectionArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const SizedBox(height: 6),
-                ListTile(
-                  leading: const Icon(Icons.class_),
-                  title: Text(courseTitle),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.school),
-                  title: Text(instructors.join(' / ')),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.room),
-                  title: Text(places.join(' / ')),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.schedule_outlined),
-                  title: Text('${weekdayToXingQiJi[weekday]} '
-                      '${sectionsShowText.join(' / ')}'),
-                ),
-                const ListTile(
-                  leading: Icon(Icons.date_range),
-                  title: Text('周次：'),
-                ),
-                SelectionContainer.disabled(
-                  child: Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 8.0),
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        // alignment: WrapAlignment.spaceBetween,
-                        spacing: 8,
-                        runSpacing: 8,
-                        direction: Axis.horizontal,
-                        children: [
-                          ...List.generate(20, (index) {
-                            int weekCount = index + 1;
-                            return Ink(
-                              height: 38,
-                              width: 38,
-                              color: weeks.contains(weekCount)
-                                  ? colorScheme.primary
-                                  : colorScheme.surface,
-                              child: Center(
-                                child: Text(
-                                  '$weekCount',
-                                  style: TextStyle(
-                                    color: weeks.contains(weekCount)
-                                        ? colorScheme.onPrimary
-                                        : colorScheme.onSurface,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16)
-              ],
-            ),
-          ),
+        return CourseDetailsBottomSheet(
+          courseTitle: courseTitle,
+          weekday: weekday,
+          weeks: weeks,
+          lengths: lengths,
+          instructors: instructors,
+          places: places,
+          sectionsShowText: sectionsShowText,
         );
       },
-      clipBehavior: Clip.hardEdge,
-      isScrollControlled: true,
     );
   }
 
