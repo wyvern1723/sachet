@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sachet/pages/settings_child_pages/theme_settings_page.dart';
 import 'package:sachet/providers/theme_provider.dart';
 import 'package:sachet/widgets/utils_widgets/section_card.dart';
+import 'package:sachet/widgets/utils_widgets/switch_to_md2_confirm_dialog.dart';
 
 class IntroThemeScreen extends StatefulWidget {
   /// 引导页：选择主题模式
@@ -136,7 +137,13 @@ class _IntroThemeScreenState extends State<IntroThemeScreen> {
                     title: 'Material Design 2',
                     previewTheme: _buildPreviewTheme(useMaterial3: false),
                     isSelected: !themeProvider.isMD3,
-                    onTap: () => context.read<ThemeProvider>().setIsMD3(false),
+                    onTap: () {
+                      if (!Theme.of(context).useMaterial3) return;
+                      showDialog(
+                        context: context,
+                        builder: (context) => SwitchToMD2ConfirmDialog(),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 8),

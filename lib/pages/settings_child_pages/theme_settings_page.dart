@@ -5,6 +5,7 @@ import 'package:sachet/widgets/settingspage_widgets/theme_settings_widgets/choos
 import 'package:sachet/widgets/settingspage_widgets/theme_settings_widgets/pick_theme_color_dialog.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/widgets/utils_widgets/switch_to_md2_confirm_dialog.dart';
 
 class ThemeSettingsPage extends StatelessWidget {
   const ThemeSettingsPage({super.key});
@@ -51,11 +52,18 @@ class ThemeSettingsPage extends StatelessWidget {
                 child: Icon(Icons.fiber_new),
               ),
               title: const Text('启用 Material Design 3'),
-              subtitle: const Text('从 Material Design 2 切换到 Material Design 3'),
               trailing: Switch(
                   value: themeProvider.isMD3,
                   onChanged: (value) {
-                    context.read<ThemeProvider>().setIsMD3(value);
+                    if (value == false) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => SwitchToMD2ConfirmDialog(),
+                      );
+                    } else {
+                      // value == true
+                      context.read<ThemeProvider>().setIsMD3(value);
+                    }
                   }),
             ),
 
