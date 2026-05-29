@@ -11,30 +11,22 @@ class SettingsSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     if (iconData == null) {
       return Text(
         title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontSize: 16,
-        ),
+        style: TextStyle(color: primaryColor, fontSize: 16),
       );
     } else {
       return Row(
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            style: TextStyle(fontSize: 16, color: primaryColor),
           ),
           const SizedBox(width: 4),
-          Icon(
-            iconData,
-            color: Theme.of(context).colorScheme.primary,
-            size: 20,
-          ),
+          Icon(iconData, color: primaryColor, size: 20),
         ],
       );
     }

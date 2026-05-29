@@ -313,16 +313,14 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                 return Offstage(
                   offstage: !data.isAutoCheckUpdate,
                   child: ListTile(
-                    leading: const Align(
+                    leading: Align(
                       widthFactor: 1,
                       alignment: Alignment.centerLeft,
-                      // child: isAutoCheckUpdate
-                      //     ? const Icon(Icons.sms_failed_outlined)
-                      //     : const Icon(Icons.do_not_disturb_outlined),
-                      child: Icon(Icons.disabled_by_default_outlined),
+                      child: data.isShowAllCheckUpdateResult
+                          ? const Icon(Icons.report_outlined)
+                          : const Icon(Icons.report_off_outlined),
                     ),
                     title: const Text('显示所有检查更新结果'),
-                    // 大多数用户可能链接到 Github 困难，每次打开应用都弹出检查失败的信息不太好，默认为不显示检查失败的信息。
                     subtitle: const Text('显示「已是最新版」和「检查更新失败」，而不是仅会显示「有新版本可用」'),
                     subtitleTextStyle: Theme.of(context).textTheme.bodySmall,
                     trailing: Switch(

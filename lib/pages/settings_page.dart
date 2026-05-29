@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/models/enums/nav_type.dart';
+import 'package:sachet/models/user.dart';
 import 'package:sachet/pages/utilspages/zhengfang_jwxt_login_page.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/app_global.dart';
@@ -38,6 +39,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return PopScope(
       canPop: !isNavTypeChanged,
       onPopInvokedWithResult: (bool didPop, Object? result) {
@@ -86,71 +90,19 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
               child: SettingsSectionTitle(title: '账号设置'),
             ),
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              elevation: 2,
-              clipBehavior: Clip.hardEdge,
-              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                    child: Text(
-                      '新教务系统',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Selector<ZhengFangUserProvider, bool>(
-                      selector: (_, zhengfangUserProvider) =>
-                          zhengfangUserProvider.isLogin,
-                      builder: (_, isLogin, __) {
-                        return ListTile(
-                          leading: const Align(
-                            widthFactor: 1,
-                            alignment: Alignment.centerLeft,
-                            child: Icon(Icons.login_outlined),
-                          ),
-                          title: Text('登录账号${isLogin == true ? '（重新登录）' : ''}'),
-                          subtitle: Text('登录到新教务系统'),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return const ZhengFangJwxtLoginPage();
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                  Selector<ZhengFangUserProvider, bool>(
-                      selector: (_, zhengfangUserProvider) =>
-                          zhengfangUserProvider.isLogin,
-                      builder: (_, isLogin, __) {
-                        if (isLogin) {
-                          return ListTile(
-                            leading: const Align(
-                              widthFactor: 1,
-                              alignment: Alignment.centerLeft,
-                              child: Icon(Icons.logout_outlined),
-                            ),
-                            title: const Text('退出登录'),
-                            subtitle: const Text('登出此账号，删除应用中关于此账号的记录'),
-                            onTap: () async {
-                              await showLogoutDialog(context);
-                            },
-                          );
-                        } else {
-                          return SizedBox();
-                        }
-                      }),
-                  SizedBox(height: 8),
-                ],
-              ),
-            ),
+
+            /// 当前登录用户信息/未登录 卡片
+            Selector<ZhengFangUserProvider, bool>(
+                selector: (_, zhengfangUserProvider) =>
+                    zhengfangUserProvider.isLogin,
+                builder: (_, isLogin, __) {
+                  if (isLogin) {
+                    return _buildLoggedInCard(colorScheme, textTheme);
+                  } else {
+                    return _buildLoggedOutCard(colorScheme, textTheme);
+                  }
+                }),
+
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 8.0),
               child: SettingsSectionTitle(title: '软件设置'),
@@ -161,20 +113,17 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: const Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.palette),
+                child: Icon(Icons.palette_outlined),
               ),
               title: const Text('应用主题'),
               subtitle: const Text('改变应用的主题颜色'),
               trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const ThemeSettingsPage();
-                    },
-                  ),
-                );
-              },
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ThemeSettingsPage(),
+                ),
+              ),
             ),
 
             // 外观设置
@@ -188,15 +137,12 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('课表外观'),
               subtitle: const Text('定制课表外观'),
               trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const CustomizeSettingsPage();
-                    },
-                  ),
-                );
-              },
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CustomizeSettingsPage(),
+                ),
+              ),
             ),
 
             // 启动页设置
@@ -204,7 +150,9 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.toggle_on_outlined),
+                // child: Icon(Icons.home_outlined),
+                // child: Icon(Icons.rocket_outlined),
+                child: Icon(Icons.rocket_launch_outlined),
               ),
               title: Text('启动页'),
               subtitle: Text('设置应用启动时的首页'),
@@ -232,20 +180,17 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: const Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.miscellaneous_services_outlined),
+                // child: Icon(Icons.miscellaneous_services_outlined),
+                child: Icon(Icons.settings_suggest_outlined),
               ),
               title: const Text('高级设置'),
-              // subtitle: const Text('更多'),
               trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const AdvancedSettingsPage();
-                    },
-                  ),
-                );
-              },
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdvancedSettingsPage(),
+                ),
+              ),
             ),
 
             // 实验性功能 Experimental features
@@ -253,7 +198,7 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: const Align(
                 widthFactor: 1,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.science),
+                child: Icon(Icons.science_outlined),
               ),
               title: const Text('实验性功能'),
               trailing: Icon(Icons.arrow_forward),
@@ -302,15 +247,171 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text('开发者设置'),
                       subtitle: const Text('For nerds'),
                       trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(fadeTransitionPageRoute(DevSettingsPage()));
-                      },
+                      onTap: () => Navigator.push(
+                        context,
+                        fadeTransitionPageRoute(DevSettingsPage()),
+                      ),
                     );
                   } else {
                     return SizedBox();
                   }
                 }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 已登录卡片
+  Widget _buildLoggedInCard(ColorScheme colorScheme, TextTheme textTheme) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+      ),
+      color: colorScheme.primaryContainer.withOpacity(0.25),
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Selector<ZhengFangUserProvider, User>(
+                selector: (_, provider) => provider.user,
+                builder: (_, user, __) {
+                  return Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 26,
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        child: Icon(Icons.account_box),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '${user.name}',
+                                  style: textTheme.titleMedium,
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${user.studentID}',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ZhengFangJwxtLoginPage(),
+                      ),
+                    ),
+                    icon: const Icon(Icons.login_rounded, size: 16),
+                    label: const Text('重新登录', style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  onPressed: () async {
+                    await showLogoutDialog(context);
+                  },
+                  icon: const Icon(Icons.logout_rounded, size: 16),
+                  label: const Text('退出登录', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 未登录卡片
+  Widget _buildLoggedOutCard(ColorScheme colorScheme, TextTheme textTheme) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+      ),
+      color: colorScheme.surfaceContainerLow,
+      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    Icons.school_outlined,
+                    color: colorScheme.onPrimaryContainer,
+                    size: 22,
+                    applyTextScaling: true,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('未登录', style: textTheme.titleSmall),
+                      const SizedBox(height: 4),
+                      Text(
+                        '登录到教务系统以获取课表等教务信息',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: FilledButton.icon(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ZhengFangJwxtLoginPage(),
+                  ),
+                ),
+                icon: const Icon(Icons.login, size: 18, applyTextScaling: true),
+                label: const Text('登录教务系统账号'),
+              ),
+            ),
           ],
         ),
       ),
