@@ -187,58 +187,59 @@ class _UpdateClassScheduleZFDialogState
       case UpdateClassScheduleState.selectSemester: // 选择学期
         return AlertDialog(
           title: const Text('更新课程表'),
-          content: Wrap(
-            spacing: 8,
-            runSpacing: 10,
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            runAlignment: WrapAlignment.center,
+          content: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              DropdownMenu<String>(
-                width: 160,
-                menuHeight: 400,
-                errorText:
-                    _isShowSemesterYearDropDownMenuError ? "请选择一项" : null,
-                initialSelection: _selectedSemesterYear,
-                requestFocusOnTap: false,
-                label: const Text('学年'),
-                onSelected: (String? semester) {
-                  if (semester != null) {
-                    _selectedSemesterYear = semester;
-                    if (_isShowSemesterYearDropDownMenuError == true) {
-                      setState(() {
-                        _isShowSemesterYearDropDownMenuError = false;
-                      });
+              Flexible(
+                flex: 5,
+                child: DropdownMenu<String>(
+                  menuHeight: 400,
+                  errorText:
+                      _isShowSemesterYearDropDownMenuError ? "请选择一项" : null,
+                  initialSelection: _selectedSemesterYear,
+                  requestFocusOnTap: false,
+                  label: const Text('学年'),
+                  onSelected: (String? semester) {
+                    if (semester != null) {
+                      _selectedSemesterYear = semester;
+                      if (_isShowSemesterYearDropDownMenuError == true) {
+                        setState(() {
+                          _isShowSemesterYearDropDownMenuError = false;
+                        });
+                      }
                     }
-                  }
-                },
-                dropdownMenuEntries: semestersYears.entries
-                    .map((e) =>
-                        DropdownMenuEntry<String>(value: e.value, label: e.key))
-                    .toList(),
+                  },
+                  dropdownMenuEntries: semestersYears.entries
+                      .map((e) => DropdownMenuEntry<String>(
+                          value: e.value, label: e.key))
+                      .toList(),
+                ),
               ),
-              DropdownMenu<String>(
-                width: 78,
-                menuHeight: 400,
-                errorText:
-                    _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
-                initialSelection: _selectedSemesterIndex,
-                requestFocusOnTap: false,
-                label: const Text('学期'),
-                onSelected: (String? semester) {
-                  if (semester != null) {
-                    _selectedSemesterIndex = semester;
-                    if (_isShowSemesterIndexDropDownMenuError == true) {
-                      setState(() {
-                        _isShowSemesterIndexDropDownMenuError = false;
-                      });
+              Flexible(
+                flex: 3,
+                child: DropdownMenu<String>(
+                  menuHeight: 400,
+                  errorText:
+                      _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
+                  initialSelection: _selectedSemesterIndex,
+                  requestFocusOnTap: false,
+                  label: const Text('学期'),
+                  onSelected: (String? semester) {
+                    if (semester != null) {
+                      _selectedSemesterIndex = semester;
+                      if (_isShowSemesterIndexDropDownMenuError == true) {
+                        setState(() {
+                          _isShowSemesterIndexDropDownMenuError = false;
+                        });
+                      }
                     }
-                  }
-                },
-                dropdownMenuEntries: semesterIndexes.entries
-                    .map((e) =>
-                        DropdownMenuEntry<String>(value: e.value, label: e.key))
-                    .toList(),
+                  },
+                  dropdownMenuEntries: semesterIndexes.entries
+                      .map((e) => DropdownMenuEntry<String>(
+                          value: e.value, label: e.key))
+                      .toList(),
+                ),
               ),
             ],
           ),

@@ -31,44 +31,45 @@ class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('切换查询学期'),
-      content: Wrap(
-        spacing: 8,
-        runSpacing: 10,
-        alignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        runAlignment: WrapAlignment.center,
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          DropdownMenu<String>(
-            width: 150,
-            menuHeight: 400,
-            initialSelection: widget.selectedSemesterYear,
-            requestFocusOnTap: false,
-            label: const Text('学年'),
-            onSelected: (String? semester) {
-              if (semester != null) {
-                _selectedSemesterYear = semester;
-              }
-            },
-            dropdownMenuEntries: widget.semestersYears.entries
-                .map((e) =>
-                    DropdownMenuEntry<String>(value: e.value, label: e.key))
-                .toList(),
+          Flexible(
+            flex: 5,
+            child: DropdownMenu<String>(
+              menuHeight: 400,
+              initialSelection: widget.selectedSemesterYear,
+              requestFocusOnTap: false,
+              label: const Text('学年'),
+              onSelected: (String? semester) {
+                if (semester != null) {
+                  _selectedSemesterYear = semester;
+                }
+              },
+              dropdownMenuEntries: widget.semestersYears.entries
+                  .map((e) =>
+                      DropdownMenuEntry<String>(value: e.value, label: e.key))
+                  .toList(),
+            ),
           ),
-          DropdownMenu<String>(
-            width: 100,
-            menuHeight: 400,
-            initialSelection: widget.selectedSemesterIndex,
-            requestFocusOnTap: false,
-            label: const Text('学期'),
-            onSelected: (String? semester) {
-              if (semester != null) {
-                _selectedSemesterIndex = semester;
-              }
-            },
-            dropdownMenuEntries: semesterIndexes.entries
-                .map((e) =>
-                    DropdownMenuEntry<String>(value: e.value, label: e.key))
-                .toList(),
+          Flexible(
+            flex: 3,
+            child: DropdownMenu<String>(
+              menuHeight: 400,
+              initialSelection: widget.selectedSemesterIndex,
+              requestFocusOnTap: false,
+              label: const Text('学期'),
+              onSelected: (String? semester) {
+                if (semester != null) {
+                  _selectedSemesterIndex = semester;
+                }
+              },
+              dropdownMenuEntries: semesterIndexes.entries
+                  .map((e) =>
+                      DropdownMenuEntry<String>(value: e.value, label: e.key))
+                  .toList(),
+            ),
           ),
         ],
       ),
