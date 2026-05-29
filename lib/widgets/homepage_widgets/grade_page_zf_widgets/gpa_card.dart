@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/gpa/models/gpa_response_zf.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class GPACardZF extends StatefulWidget {
@@ -46,14 +47,11 @@ class _GPACardZFState extends State<GPACardZF> {
     _future = _getGPAData(zhengFangUserProvider, _currentCourseType);
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        _future = _getGPAData(zhengFangUserProvider, _currentCourseType);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      _future = _getGPAData(zhengFangUserProvider, _currentCourseType);
+    });
   }
 
   /// 获取 GPA 数据
@@ -144,21 +142,12 @@ class _GPACardZFState extends State<GPACardZF> {
                   if (snapshot.error ==
                       '获取绩点排名数据失败: Http status code = 302, 可能需要重新登录') {
                     return LoginExpiredZF.compact(
-                      onGoBack: (value) => onGoBack(value),
+                      onRetry: _onRetry,
                     );
                   }
-                  return SizedBox(
-                    height: 106,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${snapshot.error}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: colorScheme.error),
-                        ),
-                      ),
-                    ),
+                  return ErrorWithRetryWidget.compact(
+                    text: '${snapshot.error}',
+                    onRetry: _onRetry,
                   );
                 }
 

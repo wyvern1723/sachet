@@ -14,6 +14,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/capsule_tabbar.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/reserve_textbook_footer.dart';
 
@@ -40,12 +41,11 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
   // ignore: unused_field
   List<ReserveTextbookResponseZF>? _bookData;
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() => _future = _getBookData(zhengFangUserProvider));
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      _future = _getBookData(zhengFangUserProvider);
+    });
   }
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
@@ -182,28 +182,16 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
                 _buildAppBar(context),
                 if (snapshot.error ==
                     "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录")
-                  SliverFillRemaining(
-                    child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
-                  )
+                  SliverFillRemaining(child: LoginExpiredZF(onRetry: _onRetry))
                 else
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '${snapshot.error}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: colorScheme.error),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+                  SliverFillRemaining(
+                    child: ErrorWithRetryWidget(
+                      text: '${snapshot.error}',
+                      onRetry: _onRetry,
+                      footer: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 40.0),
                           child: Text(
                             '当前查询学期: $_displaySemesterYear-$_displaySemesterIndex',
                             style:
@@ -212,7 +200,7 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
                                     ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
               ],

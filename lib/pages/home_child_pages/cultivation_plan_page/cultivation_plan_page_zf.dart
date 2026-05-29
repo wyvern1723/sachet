@@ -16,6 +16,7 @@ import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/change_query_option_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/cultivation_page_zf_widgets/cultivation_page_footer.dart';
 import 'package:sachet/widgets/homepage_widgets/reserve_textbook_page_widgets/capsule_tabbar.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class CultivationPlanPageZF extends StatefulWidget {
@@ -65,14 +66,11 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
   /// 旧教务系统（强智教务系统）的培养方案的缓存数据的更新时间
   String? oldJwxtDataUpdateTime;
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        _future = _getCultivationData(zhengFangUserProvider);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      _future = _getCultivationData(zhengFangUserProvider);
+    });
   }
 
   Future _getQueryOptionsData(
@@ -351,7 +349,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
                 slivers: [
                   appBar,
                   SliverFillRemaining(
-                    child: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
+                    child: LoginExpiredZF(onRetry: _onRetry),
                   ),
                 ],
               );
@@ -448,24 +446,14 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
             return CustomScrollView(
               slivers: [
                 appBar,
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '${snapshot.error}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 20.0),
+                SliverFillRemaining(
+                  child: ErrorWithRetryWidget(
+                    text: '${snapshot.error}',
+                    onRetry: _onRetry,
+                    footer: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 40.0),
                         child: CultivationPageFooter(
                           queryingGrade: _displayGrade,
                           queryingSchool: _displaySchool,
@@ -473,7 +461,7 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
                           queryingQueryMajor: _displayQueryMajor,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],

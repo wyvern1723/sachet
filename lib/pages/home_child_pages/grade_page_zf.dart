@@ -11,6 +11,7 @@ import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/gpa_card.d
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/grade_table.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_index_selector.dart';
 import 'package:sachet/widgets/homepage_widgets/grade_page_zf_widgets/semester_year_selector.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class GradePageZF extends StatelessWidget {
@@ -99,14 +100,11 @@ class _QueryViewState extends State<_QueryView> {
     context.read<GradePageZFProvider>().setAlertText(result.alertTexts);
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        getDataFuture = _getSemestersData(zhengFangUserProvider);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      getDataFuture = _getSemestersData(zhengFangUserProvider);
+    });
   }
 
   @override
@@ -132,17 +130,12 @@ class _QueryViewState extends State<_QueryView> {
               if (snapshot.hasError) {
                 if (snapshot.error ==
                     "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
-                  return LoginExpiredZF(onGoBack: (value) => onGoBack(value));
+                  return LoginExpiredZF(onRetry: _onRetry);
                 }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '${snapshot.error}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
+
+                return ErrorWithRetryWidget(
+                  text: '${snapshot.error}',
+                  onRetry: _onRetry,
                 );
               }
 
@@ -362,14 +355,11 @@ class _GradeView extends StatefulWidget {
 class _GradeViewState extends State<_GradeView> {
   late Future _dataFuture;
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        _dataFuture = _getGradeData(zhengFangUserProvider);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      _dataFuture = _getGradeData(zhengFangUserProvider);
+    });
   }
 
   Future _getGradeData(ZhengFangUserProvider? zhengFangUserProvider) async {
@@ -405,17 +395,11 @@ class _GradeViewState extends State<_GradeView> {
 
         if (snapshot.hasError) {
           if (snapshot.error == "获取成绩数据失败: Http status code = 302, 可能需要重新登录") {
-            return LoginExpiredZF(onGoBack: (value) => onGoBack(value));
+            return LoginExpiredZF(onRetry: _onRetry);
           }
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${snapshot.error}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
+          return ErrorWithRetryWidget(
+            text: '${snapshot.error}',
+            onRetry: _onRetry,
           );
         }
 

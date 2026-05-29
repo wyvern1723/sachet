@@ -10,6 +10,7 @@ import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/utils_functions.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class UpdateClassScheduleZFDialog extends StatefulWidget {
@@ -144,14 +145,11 @@ class _UpdateClassScheduleZFDialogState
     }
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      setState(() {
-        currentState = UpdateClassScheduleState.gettingSemester;
-      });
-      _getSemesters(null);
-    }
+  void _onRetry() {
+    setState(() {
+      currentState = UpdateClassScheduleState.gettingSemester;
+    });
+    _getSemesters(null);
   }
 
   @override
@@ -369,7 +367,12 @@ class _UpdateClassScheduleZFDialogState
         return AlertDialog(
           contentPadding: EdgeInsets.fromLTRB(24, 4, 24, 2),
           title: const Text('更新课程表'),
-          content: LoginExpiredZF.compact(onGoBack: (value) => onGoBack(value)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LoginExpiredZF.compact(onRetry: _onRetry),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -379,13 +382,14 @@ class _UpdateClassScheduleZFDialogState
         );
       case UpdateClassScheduleState.getSemestersFailed: // 获取可选学期失败
         return AlertDialog(
+          contentPadding: EdgeInsets.fromLTRB(24, 4, 24, 2),
           title: const Text('更新课程表'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('获取可选学期失败:'),
               SizedBox(height: 4),
-              Text(_getSemestesrFailedErrorMsg),
+              ErrorWithRetryWidget.compact(text: _getSemestesrFailedErrorMsg)
             ],
           ),
           actions: [

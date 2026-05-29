@@ -55,7 +55,7 @@ class ClassPage extends StatelessWidget {
                             print(snapshot.error);
                           }
                           return Center(
-                            child: Text(
+                            child: SelectableText(
                               '${snapshot.error}',
                               textAlign: TextAlign.center,
                               style: TextStyle(

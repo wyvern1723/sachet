@@ -9,6 +9,7 @@ import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/utils/export_to_ics.dart';
 import 'package:sachet/widgets/homepage_widgets/exam_time_page_zf_widgets/exam_time_card.dart';
 import 'package:sachet/widgets/homepage_widgets/utils_widgets/change_semester_dialog.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 
@@ -37,14 +38,11 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
   List<ExamTimeResponseZF>? _examTimeData;
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        _future = _getExamTimeData(zhengFangUserProvider);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      _future = _getExamTimeData(zhengFangUserProvider);
+    });
   }
 
   Future _getSemestersData(ZhengFangUserProvider? zhengFangUserProvider) async {
@@ -241,31 +239,23 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           if (snapshot.hasError) {
             if (snapshot.error ==
                 "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
-              return LoginExpiredZF(onGoBack: (value) => onGoBack(value));
+              return LoginExpiredZF(onRetry: _onRetry);
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 8.0),
+            return ErrorWithRetryWidget(
+              text: '${snapshot.error}',
+              onRetry: _onRetry,
+              footer: Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
                   child: Text(
                     '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ),
-              ],
+              ),
             );
           }
 

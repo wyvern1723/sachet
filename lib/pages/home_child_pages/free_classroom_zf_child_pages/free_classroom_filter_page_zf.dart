@@ -13,6 +13,7 @@ import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/c
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_teaching_building.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_place_type.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_zf_widgets/choose_seat_amount.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class FreeClassroomFilterScreenZF extends StatefulWidget {
@@ -49,13 +50,10 @@ class _FreeClassroomFilterScreenZFState
     return result;
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      setState(() {
-        future = getData(null);
-      });
-    }
+  void _onRetry() {
+    setState(() {
+      future = getData(null);
+    });
   }
 
   @override
@@ -104,19 +102,13 @@ class _FreeClassroomFilterScreenZFState
         if (snapshot.hasError) {
           if (snapshot.error == "获取可选数据失败: Http status code = 302, 可能需要重新登录") {
             return Scaffold(
-              body: LoginExpiredZF(onGoBack: (value) => onGoBack(value)),
+              body: LoginExpiredZF(onRetry: _onRetry),
             );
           }
           return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '${snapshot.error}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
+            body: ErrorWithRetryWidget(
+              text: '${snapshot.error}',
+              onRetry: _onRetry,
             ),
           );
         }

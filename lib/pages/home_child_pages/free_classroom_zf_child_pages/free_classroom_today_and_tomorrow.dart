@@ -12,6 +12,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 
@@ -406,14 +407,10 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     return sections;
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void _onGoBack(dynamic value) {
-    if (value == true) {
-      // 登录成功后，重新获取数据并刷新UI
-      setState(() {
-        _dataFuture = _getRoomData(null);
-      });
-    }
+  void _onRetry() {
+    setState(() {
+      _dataFuture = _getRoomData(null);
+    });
   }
 
   @override
@@ -443,7 +440,7 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
           if (snapshot.hasError) {
             if (snapshot.error ==
                 '获取可选数据失败: Http status code = 302, 可能需要重新登录') {
-              return LoginExpiredZF(onGoBack: _onGoBack);
+              return LoginExpiredZF(onRetry: _onRetry);
             } else if (snapshot.error == '学期未开始' || snapshot.error == '学期已结束') {
               return Padding(
                 padding: const EdgeInsets.symmetric(
@@ -472,15 +469,9 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
                 ),
               );
             } else {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '${snapshot.error}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
+              return ErrorWithRetryWidget(
+                text: '${snapshot.error}',
+                onRetry: _onRetry,
               );
             }
           }

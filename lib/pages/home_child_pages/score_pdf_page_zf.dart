@@ -14,6 +14,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/downloading_dialog.dart';
 import 'package:sachet/widgets/homepage_widgets/score_pdf_page_zf_widgets/score_pdf_types_selector.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/widgets/utils_widgets/success_snackbar.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
@@ -55,14 +56,11 @@ class _QueryViewState extends State<_QueryView> {
     context.read<ScorePdfPageZFProvider>().setScorePdfTypes(scorePdfTypes);
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
-      setState(() {
-        getDataFuture = _getScorePdfTypesData(zhengFangUserProvider);
-      });
-    }
+  void _onRetry() {
+    final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
+    setState(() {
+      getDataFuture = _getScorePdfTypesData(zhengFangUserProvider);
+    });
   }
 
   Future _downloadPDF(BuildContext context) async {
@@ -236,17 +234,12 @@ class _QueryViewState extends State<_QueryView> {
                 if (snapshot.hasError) {
                   if (snapshot.error ==
                       "获取可选成绩单格式失败: Http status code = 901, 验证身份信息失败") {
-                    return LoginExpiredZF(
-                      onGoBack: (value) => onGoBack(value),
-                    );
+                    return LoginExpiredZF(onRetry: _onRetry);
                   }
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: colorScheme.error),
-                    ),
+
+                  return ErrorWithRetryWidget(
+                    text: '${snapshot.error}',
+                    onRetry: _onRetry,
                   );
                 }
 

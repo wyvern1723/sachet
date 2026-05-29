@@ -5,6 +5,7 @@ import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classr
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_result_page_zf.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 
 class FreeClassroomQueryPageZF extends StatefulWidget {
@@ -38,13 +39,10 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
     return result;
   }
 
-  /// 从登录页面回来，如果 value 为 true 说明登录成功，需要刷新
-  void onGoBack(dynamic value) {
-    if (value == true) {
-      setState(() {
-        future = getFreeClassroomData();
-      });
-    }
+  void _onRetry() {
+    setState(() {
+      future = getFreeClassroomData();
+    });
   }
 
   @override
@@ -80,17 +78,11 @@ class _FreeClassroomQueryPageZFState extends State<FreeClassroomQueryPageZF> {
             if (snapshot.hasError) {
               if (snapshot.error ==
                   '获取空闲教室数据失败: Http status code = 901, 验证身份信息失败') {
-                return LoginExpiredZF(onGoBack: (value) => onGoBack(value));
+                return LoginExpiredZF(onRetry: _onRetry);
               } else {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '${snapshot.error}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
+                return ErrorWithRetryWidget(
+                  text: '${snapshot.error}',
+                  onRetry: _onRetry,
                 );
               }
             } else {
