@@ -144,7 +144,7 @@ class CourseDetailsBottomSheet extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Wrap(
-                    spacing: 8,
+                    spacing: 7,
                     runSpacing: 8,
                     children: List.generate(20, (index) {
                       int weekCount = index + 1;
@@ -159,9 +159,8 @@ class CourseDetailsBottomSheet extends StatelessWidget {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(12),
                             onTap: () {},
-                            child: SizedBox(
-                              height: 38,
-                              width: 38,
+                            child: SizedBox.square(
+                              dimension: 38,
                               child: Center(
                                 child: Text(
                                   '$weekCount',

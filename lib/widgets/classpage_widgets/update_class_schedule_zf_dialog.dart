@@ -192,7 +192,7 @@ class _UpdateClassScheduleZFDialogState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Flexible(
-                flex: 5,
+                flex: 20,
                 child: DropdownMenu<String>(
                   menuHeight: 400,
                   errorText:
@@ -217,28 +217,31 @@ class _UpdateClassScheduleZFDialogState
                 ),
               ),
               Flexible(
-                flex: 3,
-                child: DropdownMenu<String>(
-                  menuHeight: 400,
-                  errorText:
-                      _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
-                  initialSelection: _selectedSemesterIndex,
-                  requestFocusOnTap: false,
-                  label: const Text('学期'),
-                  onSelected: (String? semester) {
-                    if (semester != null) {
-                      _selectedSemesterIndex = semester;
-                      if (_isShowSemesterIndexDropDownMenuError == true) {
-                        setState(() {
-                          _isShowSemesterIndexDropDownMenuError = false;
-                        });
+                flex: 13,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: DropdownMenu<String>(
+                    menuHeight: 400,
+                    errorText:
+                        _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
+                    initialSelection: _selectedSemesterIndex,
+                    requestFocusOnTap: false,
+                    label: const Text('学期'),
+                    onSelected: (String? semester) {
+                      if (semester != null) {
+                        _selectedSemesterIndex = semester;
+                        if (_isShowSemesterIndexDropDownMenuError == true) {
+                          setState(() {
+                            _isShowSemesterIndexDropDownMenuError = false;
+                          });
+                        }
                       }
-                    }
-                  },
-                  dropdownMenuEntries: semesterIndexes.entries
-                      .map((e) => DropdownMenuEntry<String>(
-                          value: e.value, label: e.key))
-                      .toList(),
+                    },
+                    dropdownMenuEntries: semesterIndexes.entries
+                        .map((e) => DropdownMenuEntry<String>(
+                            value: e.value, label: e.key))
+                        .toList(),
+                  ),
                 ),
               ),
             ],

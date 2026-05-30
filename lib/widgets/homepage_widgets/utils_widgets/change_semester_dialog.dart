@@ -36,7 +36,7 @@ class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Flexible(
-            flex: 5,
+            flex: 20,
             child: DropdownMenu<String>(
               menuHeight: 400,
               initialSelection: widget.selectedSemesterYear,
@@ -54,26 +54,29 @@ class _ChangeSemesterDialogZFState extends State<ChangeSemesterDialogZF> {
             ),
           ),
           Flexible(
-            flex: 3,
-            child: DropdownMenu<String>(
-              menuHeight: 400,
-              initialSelection: widget.selectedSemesterIndex,
-              requestFocusOnTap: false,
-              label: const Text('学期'),
-              onSelected: (String? semester) {
-                if (semester != null) {
-                  _selectedSemesterIndex = semester;
-                }
-              },
-              dropdownMenuEntries: semesterIndexes.entries
-                  .map((e) =>
-                      DropdownMenuEntry<String>(value: e.value, label: e.key))
-                  .toList(),
+            flex: 13,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: DropdownMenu<String>(
+                menuHeight: 400,
+                initialSelection: widget.selectedSemesterIndex,
+                requestFocusOnTap: false,
+                label: const Text('学期'),
+                onSelected: (String? semester) {
+                  if (semester != null) {
+                    _selectedSemesterIndex = semester;
+                  }
+                },
+                dropdownMenuEntries: semesterIndexes.entries
+                    .map((e) =>
+                        DropdownMenuEntry<String>(value: e.value, label: e.key))
+                    .toList(),
+              ),
             ),
           ),
         ],
       ),
-      contentPadding: EdgeInsets.fromLTRB(8.0, 32.0, 8.0, 24.0),
+      contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 24.0),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
