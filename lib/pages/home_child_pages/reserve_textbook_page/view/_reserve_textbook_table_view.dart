@@ -31,6 +31,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
   ];
 
   List<String> _items = [
+    '序号',
     '学年',
     '学期',
     '课程名称',
@@ -46,6 +47,7 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
   ];
 
   List<String> _selectedItems = [
+    '序号',
     '课程名称',
     '教材名称',
     'ISBN',
@@ -108,66 +110,74 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
+      padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 20.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text('教材信息：', style: Theme.of(context).textTheme.titleMedium),
-              Spacer(),
-              IconButton(
-                tooltip: '复制为 Markdown 表格',
-                onPressed: () {
-                  final buffer = StringBuffer();
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+            child: Row(
+              children: [
+                Text('教材信息：', style: textTheme.titleMedium),
+                Spacer(),
+                IconButton(
+                  tooltip: '复制为 Markdown 表格',
+                  onPressed: () {
+                    final buffer = StringBuffer();
 
-                  String tableHead = '| 序号 | ${_selectedItems.join(' | ')} |';
-                  buffer.write(tableHead);
-                  buffer.write('\n');
+                    String tableHead = '| ${_selectedItems.join(' | ')} |';
+                    buffer.write(tableHead);
+                    buffer.write('\n');
 
-                  List dashList = [];
-                  for (final item in _selectedItems) {
-                    dashList
-                        .add(copyableItems.contains(item) ? ':---' : ':---:');
-                  }
-                  String tableSecondLine = '| --- | ${dashList.join(' | ')} |';
-                  buffer.write(tableSecondLine);
-                  buffer.write('\n');
-
-                  for (final (index, book) in widget.bookData.indexed) {
-                    final singleBookStringBuffer = StringBuffer();
-                    singleBookStringBuffer.write('| ${index + 1} ');
-                    List text = [];
+                    List dashList = [];
                     for (final item in _selectedItems) {
-                      text.add(book.item(item).toString());
+                      dashList
+                          .add(copyableItems.contains(item) ? ':---' : ':---:');
                     }
-                    singleBookStringBuffer.write('| ${text.join(' | ')} |');
-                    singleBookStringBuffer.write('\n');
-                    buffer.write(singleBookStringBuffer);
-                  }
+                    String tableSecondLine = '| ${dashList.join(' | ')} |';
+                    buffer.write(tableSecondLine);
+                    buffer.write('\n');
 
-                  final text = buffer.toString();
+                    for (final (index, book) in widget.bookData.indexed) {
+                      final singleBookStringBuffer = StringBuffer();
 
-                  copyToClipboard(context, text);
-                },
-                icon: Icon(Icons.copy),
-                iconSize: 20,
-                splashRadius: 24,
-                visualDensity: VisualDensity.compact,
-              ),
-              IconButton(
-                onPressed: () async {
-                  await showFilterDialog(context);
-                },
-                icon: Icon(Icons.filter_list_outlined),
-                tooltip: '筛选',
-                splashRadius: 24,
-                visualDensity: VisualDensity.compact,
-              ),
-            ],
+                      List text = [];
+                      for (final item in _selectedItems) {
+                        text.add(
+                          item == '序号'
+                              ? (index + 1).toString()
+                              : book.item(item).toString(),
+                        );
+                      }
+                      singleBookStringBuffer.write('| ${text.join(' | ')} |');
+                      singleBookStringBuffer.write('\n');
+                      buffer.write(singleBookStringBuffer);
+                    }
+
+                    final text = buffer.toString();
+
+                    copyToClipboard(context, text);
+                  },
+                  icon: Icon(Icons.copy),
+                  iconSize: 20,
+                  splashRadius: 24,
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await showFilterDialog(context);
+                  },
+                  icon: Icon(Icons.filter_list_outlined),
+                  tooltip: '筛选',
+                  splashRadius: 24,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
           ),
           MediaQuery.removePadding(
             context: context,
@@ -181,91 +191,102 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
                 controller: _horizontalController,
                 scrollDirection: Axis.horizontal,
                 child: SelectionArea(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: colorScheme.outlineVariant),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: DataTable(
-                        headingRowColor: WidgetStateProperty.all(
-                          colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                        ),
-                        columns: [
-                          // 第一列：序号
-                          DataColumn(
-                            label: Expanded(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '#',
-                                  style: TextStyle(color: colorScheme.outline),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // 其他选择展示信息的列
-                          ..._selectedItems.map(
-                            (e) => DataColumn(
-                              label: Expanded(
-                                child: Align(
-                                  alignment: copyableItems.contains(e)
-                                      ? Alignment.centerLeft
-                                      : Alignment.center,
-                                  child: Text(
-                                    e,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                        rows: <DataRow>[
-                          ...List.generate(widget.bookData.length, (index) {
-                            final e = widget.bookData[index];
-                            return DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Text(
-                                    ' ${(index + 1)} ',
-                                    style:
-                                        TextStyle(color: colorScheme.outline),
-                                  ),
-                                ), // 第一列：序号
-                                for (final item in _selectedItems)
-                                  copyableItems.contains(item)
-                                      ? copyableDataCell(
-                                          e.item(item).toString(), context)
-                                      : DataCell(
-                                          Center(
-                                            child:
-                                                Text(e.item(item).toString()),
-                                          ),
-                                        ),
-                              ],
-                            );
-                          })
-                        ],
-                        horizontalMargin: 4,
-                        columnSpacing: 8,
-                        dataRowMaxHeight: double.infinity,
-                      ),
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 10.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: colorScheme.outlineVariant),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    clipBehavior: Clip.antiAlias,
+                    child: _buildDateTable(colorScheme, textTheme),
                   ),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 12),
-          if (widget.footer != null) widget.footer!,
+          if (widget.footer != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+              child: widget.footer!,
+            ),
         ],
       ),
     );
   }
 
-  DataCell copyableDataCell(String text, BuildContext context,
+  Widget _buildDateTable(ColorScheme colorScheme, TextTheme textTheme) {
+    return DataTable(
+      headingRowColor: WidgetStateProperty.all(
+        colorScheme.surfaceContainerHighest.withOpacity(0.5),
+      ),
+      columns: [
+        ..._selectedItems.map(
+          (e) => e == '序号'
+              ? DataColumn(
+                  label: Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '#',
+                        style: TextStyle(color: colorScheme.outline),
+                      ),
+                    ),
+                  ),
+                )
+              : DataColumn(
+                  label: Expanded(
+                    child: Align(
+                      alignment: copyableItems.contains(e)
+                          ? Alignment.centerLeft
+                          : Alignment.center,
+                      child: Text(e),
+                    ),
+                  ),
+                ),
+        )
+      ],
+      rows: <DataRow>[
+        ...List.generate(widget.bookData.length, (index) {
+          final e = widget.bookData[index];
+          return DataRow(
+            cells: <DataCell>[
+              for (final item in _selectedItems)
+                item == '序号'
+                    ? DataCell(
+                        Center(
+                          child: Text(
+                            ' ${(index + 1)} ',
+                            style: TextStyle(color: colorScheme.outline),
+                          ),
+                        ),
+                      )
+                    : copyableItems.contains(item)
+                        ? _copyableDataCell(e.item(item).toString(), context)
+                        : DataCell(
+                            Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2.0),
+                                child: Text(e.item(item).toString()),
+                              ),
+                            ),
+                          ),
+            ],
+          );
+        })
+      ],
+      horizontalMargin: 8,
+      columnSpacing: 8,
+      dataRowMinHeight: 0,
+      dataRowMaxHeight: double.infinity,
+      headingRowHeight: MediaQuery.textScalerOf(context).scale(30),
+      headingTextStyle: textTheme.labelMedium,
+      dataTextStyle: textTheme.bodySmall,
+    );
+  }
+
+  DataCell _copyableDataCell(String text, BuildContext context,
       {bool tapToCopy = false}) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double maxWidth = screenWidth > 500 ? 200.0 : screenWidth * 0.4;
@@ -276,7 +297,10 @@ class _ReserveTextbookTableViewState extends State<ReserveTextbookTableView> {
         children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Text(text),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: Text(text),
+            ),
           ),
           IconButton(
             onPressed: () => copyToClipboard(context, text),
