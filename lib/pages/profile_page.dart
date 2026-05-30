@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(Icons.account_circle),
                   ),
                   title: Text(data.name),
-                  subtitle: Text(data.id),
+                  subtitle: data.id.isEmpty ? null : Text(data.id),
                   trailing: IconButton(
                     onPressed: () async {
                       await showLogoutDialog(context);

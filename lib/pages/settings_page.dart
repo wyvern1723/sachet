@@ -282,6 +282,9 @@ class _SettingsPageState extends State<SettingsPage> {
             Selector<ZhengFangUserProvider, User>(
                 selector: (_, provider) => provider.user,
                 builder: (_, user, __) {
+                  final studentID = user.studentID;
+                  final name = user.name;
+
                   return Row(
                     children: [
                       CircleAvatar(
@@ -297,20 +300,18 @@ class _SettingsPageState extends State<SettingsPage> {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  '${user.name}',
-                                  style: textTheme.titleMedium,
-                                ),
+                                Text('$name', style: textTheme.titleMedium),
                                 const SizedBox(width: 8),
                               ],
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              '${user.studentID}',
-                              style: textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
+                            if (studentID != null && studentID.isNotEmpty)
+                              Text(
+                                studentID,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
