@@ -1,41 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:sachet/services/zhengfang_jwxt/cultivation/models/curriculum_response_zf.dart';
 
-class CurriculumCard extends StatefulWidget {
+class CurriculumCard extends StatelessWidget {
   /// 培养方案课程信息卡片
   const CurriculumCard({
     super.key,
     required this.curriculum,
     required this.indexInSemester,
   });
+
   final CurriculumResponseZF curriculum;
   final int indexInSemester;
 
   @override
-  State<CurriculumCard> createState() => _CurriculumCardState();
-}
-
-class _CurriculumCardState extends State<CurriculumCard> {
-  late final ScrollController _horizontalController;
-
-  @override
-  void initState() {
-    super.initState();
-    _horizontalController = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    _horizontalController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
-    final curriculum = widget.curriculum;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+    final TextScaler textScaler = MediaQuery.textScalerOf(context);
 
     /// 课程名称
     final title = curriculum.kcmc ?? '';
@@ -48,7 +30,7 @@ class _CurriculumCardState extends State<CurriculumCard> {
 
     /// 总学时
     final totalHours =
-        curriculum.xsdm01 == null ? '' : '${curriculum.xsdm01.toString()} 学时';
+        curriculum.xsdm01 == null ? '' : '${curriculum.xsdm01} 学时';
     final teachingSchool = curriculum.kkbmmc ?? '';
     final assessmentMethod = curriculum.khfsdm ?? '';
 
@@ -63,13 +45,15 @@ class _CurriculumCardState extends State<CurriculumCard> {
 
     final semester = curriculum.yyxdxnxqmc ?? '';
 
-    final TextStyle? titleTextStyle = textTheme.titleMedium?.copyWith();
+    final TextStyle? titleTextStyle = textTheme.titleMedium;
     final TextStyle? englishTitleTextStyle =
         textTheme.labelSmall?.copyWith(color: colorScheme.outline);
     final TextStyle? totalHoursTextStyle = textTheme.bodySmall
         ?.copyWith(color: colorScheme.onSurfaceVariant, fontSize: 10);
     final TextStyle? teachingSchoolTextStyle =
         textTheme.bodySmall?.copyWith(color: colorScheme.outline, fontSize: 10);
+
+    final double scaledLeftIndent = textScaler.scale(24);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -101,18 +85,16 @@ class _CurriculumCardState extends State<CurriculumCard> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            radius: MediaQuery.textScalerOf(context).scale(10),
+                            radius: textScaler.scale(10),
                             backgroundColor:
                                 colorScheme.primaryContainer.withOpacity(0.4),
                             child: Text(
-                              widget.indexInSemester.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
+                              indexInSemester.toString(),
+                              style: textTheme.labelLarge
                                   ?.copyWith(color: colorScheme.primary),
                             ),
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Flexible(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,7 +133,7 @@ class _CurriculumCardState extends State<CurriculumCard> {
                                     color: colorScheme.primary,
                                   ),
                                 ),
-                                TextSpan(text: ' 学分'),
+                                const TextSpan(text: ' 学分'),
                               ],
                             ),
                           ),
@@ -161,31 +143,26 @@ class _CurriculumCardState extends State<CurriculumCard> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Padding(
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.textScalerOf(context).scale(24),
-                  ),
+                  padding: EdgeInsets.only(left: scaledLeftIndent),
                   child: Wrap(
                     spacing: 6.0,
                     runSpacing: 4.0,
                     children: [
-                      // _buildBadge(context, courseType),
-                      _buildBadge(context, courseModule),
-                      // _buildBadge(context, courseCategory),
-                      _buildBadge(context, assessmentMethod),
+                      // _Badge(context, courseType),
+                      _Badge(text: courseModule),
+                      // _Badge(context, courseCategory),
+                      _Badge(text: assessmentMethod),
                     ],
                   ),
                 ),
                 Divider(
-                  indent: MediaQuery.textScalerOf(context).scale(24),
+                  indent: scaledLeftIndent,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.textScalerOf(context).scale(24),
-                  ),
+                  padding: EdgeInsets.only(left: scaledLeftIndent),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
@@ -193,10 +170,10 @@ class _CurriculumCardState extends State<CurriculumCard> {
                           children: [
                             Icon(
                               Icons.business,
-                              size: MediaQuery.textScalerOf(context).scale(12),
+                              size: textScaler.scale(12),
                               color: colorScheme.outline,
                             ),
-                            SizedBox(width: 4.0),
+                            const SizedBox(width: 4.0),
                             Flexible(
                               child: Text(
                                 teachingSchool,
@@ -223,17 +200,24 @@ class _CurriculumCardState extends State<CurriculumCard> {
       ),
     );
   }
+}
 
-  Widget _buildBadge(BuildContext context, String text) {
+class _Badge extends StatelessWidget {
+  const _Badge({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    if (text.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: text == '考试'
-            ? colorScheme.secondaryContainer
-            : text == '考查'
-                ? colorScheme.secondaryContainer
-                : colorScheme.secondaryContainer,
+        color: colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
