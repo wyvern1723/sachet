@@ -8,10 +8,8 @@ class CurriculumDataTable extends StatefulWidget {
   const CurriculumDataTable({
     super.key,
     required this.curriculums,
-    this.footer,
   });
   final List<CurriculumResponseZF> curriculums;
-  final Widget? footer;
 
   @override
   State<CurriculumDataTable> createState() => _CurriculumDataTableState();
@@ -100,9 +98,10 @@ class _CurriculumDataTableState extends State<CurriculumDataTable> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(12.0, 0.0, 4.0, 4.0),
@@ -191,8 +190,6 @@ class _CurriculumDataTableState extends State<CurriculumDataTable> {
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        if (widget.footer != null) widget.footer!,
       ],
     );
   }

@@ -224,50 +224,55 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
           ),
         ]
       ]),
-      body: FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0),
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            if (snapshot.error ==
-                "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
-              return LoginExpiredZF(onRetry: _onRetry);
-            }
-            return ErrorWithRetryWidget(
-              text: '${snapshot.error}',
-              onRetry: _onRetry,
-              footer: Align(
-                alignment: Alignment.topLeft,
+      body: SafeArea(
+        bottom: false,
+        top: false,
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                  child: Text(
-                    '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                  padding: const EdgeInsets.symmetric(vertical: 32.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (snapshot.hasError) {
+              if (snapshot.error ==
+                  "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录") {
+                return LoginExpiredZF(onRetry: _onRetry);
+              }
+              return ErrorWithRetryWidget(
+                text: '${snapshot.error}',
+                onRetry: _onRetry,
+                footer: Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40.0),
+                    child: Text(
+                      '查询学期: $_displaySemesterYear-$_displaySemesterIndex',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
                   ),
                 ),
-              ),
+              );
+            }
+
+            final examTimeData = snapshot.data;
+
+            return _ExamTimeViewZF(
+              examTimeData: examTimeData,
+              queryingSemesterYear: _displaySemesterYear,
+              queryingSemesterIndex: _displaySemesterIndex,
+              isDetailedView: _isDetailedView,
             );
-          }
-
-          final examTimeData = snapshot.data;
-
-          return _ExamTimeViewZF(
-            examTimeData: examTimeData,
-            queryingSemesterYear: _displaySemesterYear,
-            queryingSemesterIndex: _displaySemesterIndex,
-            isDetailedView: _isDetailedView,
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -288,8 +293,10 @@ class _ExamTimeViewZF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeAreaInsets = MediaQuery.of(context).padding;
+
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 4.0),
+      padding: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0 + safeAreaInsets.bottom),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

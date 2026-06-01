@@ -33,7 +33,10 @@ class _CurriculumTableViewZFState extends State<CurriculumTableViewZF>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CurriculumDataTable(curriculums: widget.curriculums),
-                widget.footer,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2.0, 12.0, 2.0, 20.0),
+                  child: widget.footer,
+                ),
               ],
             ),
           ),

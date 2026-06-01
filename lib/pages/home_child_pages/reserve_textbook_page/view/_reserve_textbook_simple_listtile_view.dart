@@ -13,9 +13,12 @@ class ReserveTextbookSimpleListTileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeAreaInsets = MediaQuery.of(context).padding;
+
     return SelectionArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
+        padding:
+            EdgeInsets.fromLTRB(8.0, 4.0, 8.0, safeAreaInsets.bottom + 20.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -43,7 +46,11 @@ class ReserveTextbookSimpleListTileView extends StatelessWidget {
                 );
               }),
               const SizedBox(height: 12),
-              if (footer != null) footer!,
+              if (footer != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 20.0),
+                  child: footer,
+                ),
             ]),
       ),
     );

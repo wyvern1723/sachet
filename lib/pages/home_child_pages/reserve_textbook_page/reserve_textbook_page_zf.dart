@@ -157,65 +157,72 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CustomScrollView(
-              slivers: [
-                _buildAppBar(context),
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: CircularProgressIndicator(),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CustomScrollView(
+                slivers: [
+                  _buildAppBar(context),
+                  const SliverFillRemaining(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32.0),
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
+                ],
+              );
+            }
 
-          if (snapshot.hasError) {
-            return CustomScrollView(
-              slivers: [
-                _buildAppBar(context),
-                if (snapshot.error ==
-                    "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录")
-                  SliverFillRemaining(child: LoginExpiredZF(onRetry: _onRetry))
-                else
-                  SliverFillRemaining(
-                    child: ErrorWithRetryWidget(
-                      text: '${snapshot.error}',
-                      onRetry: _onRetry,
-                      footer: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 40.0),
-                          child: Text(
-                            '当前查询学期: $_displaySemesterYear-$_displaySemesterIndex',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
+            if (snapshot.hasError) {
+              return CustomScrollView(
+                slivers: [
+                  _buildAppBar(context),
+                  if (snapshot.error ==
+                      "获取可查询学期数据失败: Http status code = 302, 可能需要重新登录")
+                    SliverFillRemaining(
+                        child: LoginExpiredZF(onRetry: _onRetry))
+                  else
+                    SliverFillRemaining(
+                      child: ErrorWithRetryWidget(
+                        text: '${snapshot.error}',
+                        onRetry: _onRetry,
+                        footer: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: Text(
+                              '当前查询学期: $_displaySemesterYear-$_displaySemesterIndex',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              );
+            }
+
+            final bookData = snapshot.data;
+
+            return _BookInfoViewZF(
+              bookData: bookData,
+              queryingSemesterYear: _displaySemesterYear,
+              queryingSemesterIndex: _displaySemesterIndex,
+              appBar: _buildAppBar(context),
             );
-          }
-
-          final bookData = snapshot.data;
-
-          return _BookInfoViewZF(
-            bookData: bookData,
-            queryingSemesterYear: _displaySemesterYear,
-            queryingSemesterIndex: _displaySemesterIndex,
-            appBar: _buildAppBar(context),
-          );
-        },
+          },
+        ),
       ),
     );
   }

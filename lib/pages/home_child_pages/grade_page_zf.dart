@@ -22,40 +22,44 @@ class GradePageZF extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => GradePageZFProvider(),
       child: Scaffold(
-        body: Selector<GradePageZFProvider, bool>(
-          selector: (_, provider) => provider.isSelectingSemester,
-          builder: (context, isSelectingSemester, __) {
-            return CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  title: const Text('成绩查询'),
-                  floating: false,
-                  pinned: false,
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.info_outline),
-                      tooltip: '帮助',
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => GradeHelpDialog(),
-                        );
-                      },
-                    )
-                  ],
-                ),
-                if (isSelectingSemester)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _QueryView(),
-                  )
-                else
-                  SliverToBoxAdapter(
-                    child: _ResultView(),
+        body: SafeArea(
+          bottom: false,
+          top: false,
+          child: Selector<GradePageZFProvider, bool>(
+            selector: (_, provider) => provider.isSelectingSemester,
+            builder: (context, isSelectingSemester, __) {
+              return CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    title: const Text('成绩查询'),
+                    floating: false,
+                    pinned: false,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.info_outline),
+                        tooltip: '帮助',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => GradeHelpDialog(),
+                          );
+                        },
+                      )
+                    ],
                   ),
-              ],
-            );
-          },
+                  if (isSelectingSemester)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _QueryView(),
+                    )
+                  else
+                    SliverToBoxAdapter(
+                      child: _ResultView(),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -247,8 +251,10 @@ class _ResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeAreaInsets = MediaQuery.of(context).padding;
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 20.0),
+      padding: EdgeInsets.fromLTRB(12.0, 4.0, 12.0, safeAreaInsets.bottom + 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

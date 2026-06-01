@@ -34,10 +34,12 @@ class _ReserveTextbookSearchFriendlyViewState
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final safeAreaInsets = MediaQuery.of(context).padding;
 
     return SelectionArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
+        padding:
+            EdgeInsets.fromLTRB(8.0, 4.0, 8.0, safeAreaInsets.bottom + 20.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

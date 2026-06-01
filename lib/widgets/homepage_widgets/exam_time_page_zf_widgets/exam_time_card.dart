@@ -27,9 +27,20 @@ class ExamTimeCardZF extends StatelessWidget {
         extractExamDateTime(examTime.time).endDateTime;
     final bool isFinished = endDateTime?.isBefore(DateTime.now()) ?? false;
 
-    return isDetailedView
-        ? _buildDetailedCard(context, isFinished, startDateTime, endDateTime)
-        : _buildSimpleCard(context, isFinished, startDateTime, endDateTime);
+    // return isDetailedView
+    //     ? _buildDetailedCard(context, isFinished, startDateTime, endDateTime)
+    //     : _buildSimpleCard(context, isFinished, startDateTime, endDateTime);
+    return AnimatedCrossFade(
+      duration: const Duration(milliseconds: 300),
+      firstCurve: Curves.easeInOutCubic,
+      secondCurve: Curves.easeInOutCubic,
+      crossFadeState:
+          isDetailedView ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      firstChild:
+          _buildSimpleCard(context, isFinished, startDateTime, endDateTime),
+      secondChild:
+          _buildDetailedCard(context, isFinished, startDateTime, endDateTime),
+    );
   }
 
   Widget _buildDetailedCard(BuildContext context, bool isFinished,
@@ -101,7 +112,8 @@ class ExamTimeCardZF extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.access_time_rounded,
-                    size: 16,
+                    size: 14,
+                    applyTextScaling: true,
                     color: isFinished
                         ? colorScheme.onSurfaceVariant
                         : colorScheme.onSecondaryContainer,
@@ -122,6 +134,7 @@ class ExamTimeCardZF extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 4.0),
               // 地点
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -130,7 +143,8 @@ class ExamTimeCardZF extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.place_outlined,
-                    size: 16,
+                    size: 14,
+                    applyTextScaling: true,
                     color: isFinished
                         ? colorScheme.onSurfaceVariant
                         : colorScheme.onSecondaryContainer,
@@ -253,7 +267,8 @@ class ExamTimeCardZF extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.access_time_rounded,
-                        size: 16,
+                        size: 14,
+                        applyTextScaling: true,
                         color: isFinished
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onSecondaryContainer,
@@ -280,7 +295,8 @@ class ExamTimeCardZF extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.place_outlined,
-                        size: 16,
+                        size: 14,
+                        applyTextScaling: true,
                         color: isFinished
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onSecondaryContainer,

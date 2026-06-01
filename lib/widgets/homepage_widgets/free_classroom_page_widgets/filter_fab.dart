@@ -67,7 +67,7 @@ class _FilterBottomSheet extends StatelessWidget {
         Flexible(
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
-                20.0, 0.0, 20.0, safeAreaInsets.bottom + 4.0),
+                16.0, 0.0, 16.0, safeAreaInsets.bottom + 16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -106,7 +106,6 @@ class _FilterBottomSheet extends StatelessWidget {
                     builder: (context, classRoomFilters, __) {
                       return Wrap(
                         spacing: 4.0,
-                        runSpacing: 4.0,
                         children: classRoomFilter.entries.map((filter) {
                           return FilterChip(
                             label: Text(filter.key),
@@ -176,8 +175,7 @@ class _FilterBottomSheet extends StatelessWidget {
                         provider.selectedSessionFilters,
                     builder: (context, sessionFilters, __) {
                       return Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
+                        spacing: 4.0,
                         children: sessionFilter.entries.map((filter) {
                           return FilterChip(
                             label: Text(filter.key),

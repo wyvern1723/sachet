@@ -28,9 +28,10 @@ class _ReserveTextbookCardListViewState
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final safeAreaInsets = MediaQuery.of(context).padding;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 20.0),
+      padding: EdgeInsets.fromLTRB(8.0, 4.0, 8.0, safeAreaInsets.bottom + 20.0),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -102,7 +103,11 @@ class _ReserveTextbookCardListViewState
               ),
             ],
             const SizedBox(height: 8),
-            if (widget.footer != null) widget.footer!,
+            if (widget.footer != null)
+              Padding(
+                padding: EdgeInsets.fromLTRB(2, 0, 2, 20),
+                child: widget.footer,
+              ),
           ]),
     );
   }
