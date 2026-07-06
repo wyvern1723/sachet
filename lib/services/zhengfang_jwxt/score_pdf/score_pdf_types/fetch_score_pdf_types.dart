@@ -24,13 +24,13 @@ Future fetchScorePdfTypesZF({required String cookie}) async {
 
     Response response = await dio.post(
       'https://jw.xtu.edu.cn/jwglxt/bysxxcx/xscjzbdy_dyXscjzbView.html?dyly=dy&time=$nd&gnmkdm=N558020',
-      data: FormData.fromMap(params),
+      data: params,
       options: Options(headers: {
         'User-Agent':
             'Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0',
         'Accept': 'text/html, */*; q=0.01',
         'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        // 'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         'X-Requested-With': 'XMLHttpRequest',
         // 'Content-Length': '101',
