@@ -62,7 +62,11 @@ class _ReserveTextbookPageZFState extends State<ReserveTextbookPageZF> {
   }
 
   Future _getBookData(ZhengFangUserProvider? zhengFangUserProvider) async {
-    await _getSemestersData(zhengFangUserProvider);
+    if (_selectedSemesterYear == '' &&
+        _selectedSemesterIndex == '' &&
+        semestersYears.isEmpty) {
+      await _getSemestersData(zhengFangUserProvider);
+    }
 
     final result = await ZhengFangJwxt.reserveTextbook.getReserveTextbookInfo(
       cookie: ZhengFangUserProvider.cookie,

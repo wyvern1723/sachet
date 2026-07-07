@@ -90,11 +90,9 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
     _majors = result.majors;
   }
 
-  Future _getCultivationData(
+  Future _getQueryableMajorsData(
     ZhengFangUserProvider? zhengFangUserProvider,
   ) async {
-    await _getQueryOptionsData(zhengFangUserProvider);
-
     final queryableMajors =
         await ZhengFangJwxt.cultivation.getCultivationQueryableMajors(
       cookie: ZhengFangUserProvider.cookie,
@@ -125,6 +123,21 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
     }
 
     _selectedQueryMajor = queryableMajors[0].jxzxjhxxId;
+  }
+
+  Future _getCultivationData(
+    ZhengFangUserProvider? zhengFangUserProvider,
+  ) async {
+    if (_selectedGrade == '' &&
+        _selectedSchool == '' &&
+        _selectedMajor == '' &&
+        _grades.isEmpty &&
+        _schools.isEmpty &&
+        _majors.isEmpty) {
+      await _getQueryOptionsData(zhengFangUserProvider);
+    }
+
+    await _getQueryableMajorsData(zhengFangUserProvider);
 
     final result = await ZhengFangJwxt.cultivation.getCurriculum(
       cookie: ZhengFangUserProvider.cookie,
