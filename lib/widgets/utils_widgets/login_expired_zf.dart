@@ -6,17 +6,20 @@ class LoginExpiredZF extends StatelessWidget {
   const LoginExpiredZF({
     super.key,
     this.onRetry,
+    this.actions,
   }) : isCompact = false;
 
   /// 登录失效/登录过期提示重新登录的 Widget 的 Compact 版本（更紧凑，适合空间有限的区域）
   const LoginExpiredZF.compact({
     super.key,
     this.onRetry,
+    this.actions,
   }) : isCompact = true;
 
   // 如果登录成功，从登录页面返回的回调函数
   final VoidCallback? onRetry;
   final bool isCompact;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -60,33 +63,35 @@ class LoginExpiredZF extends StatelessWidget {
               ),
             ),
             SizedBox(height: isCompact ? 12 : 32),
-            FilledButton.icon(
-              style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 12 : 24,
-                  vertical: isCompact ? 2 : 8,
-                ),
-                visualDensity: isCompact ? VisualDensity.compact : null,
-                textStyle: isCompact ? textTheme.labelSmall : null,
-              ),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const ZhengFangJwxtLoginPage();
-                    },
+            if (onRetry != null)
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCompact ? 12 : 24,
+                    vertical: isCompact ? 2 : 8,
                   ),
-                ).then((value) {
-                  onRetry?.call();
-                });
-              },
-              icon: Icon(
-                Icons.login,
-                size: isCompact ? 14 : 18,
-                applyTextScaling: true,
+                  visualDensity: isCompact ? VisualDensity.compact : null,
+                  textStyle: isCompact ? textTheme.labelSmall : null,
+                ),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return const ZhengFangJwxtLoginPage();
+                      },
+                    ),
+                  ).then((value) {
+                    onRetry?.call();
+                  });
+                },
+                icon: Icon(
+                  Icons.login,
+                  size: isCompact ? 14 : 18,
+                  applyTextScaling: true,
+                ),
+                label: const Text('重新登录'),
               ),
-              label: const Text('重新登录'),
-            ),
+            if (actions != null) ...actions!,
           ],
         ),
       ),

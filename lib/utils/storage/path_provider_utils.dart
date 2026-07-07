@@ -29,22 +29,32 @@ class CachedDataStorage {
     return filesPathList;
   }
 
-  /// 返回 ApplicationSupportDirectory/pathInAppDir 下的所有 .json 文件
-  Future<List<FileSystemEntity>> ls(String pathInAppDir) async {
-    final dirPath = await _localPath;
-    bool isExist = Directory(path.join(dirPath, pathInAppDir)).existsSync();
+  /// 返回 ApplicationSupportDirectory/[folder]/[subFolders] 下的所有 .[extension] 文件
+  Future<List<FileSystemEntity>> ls(
+    String folder, {
+    List<String>? subFolders,
+    String extension = '.json',
+  }) async {
+    final basePath = await _localPath;
+
+    Directory dir = subFolders == null
+        ? Directory(path.joinAll([basePath, folder]))
+        : Directory(path.joinAll([basePath, folder, ...subFolders]));
+
+    bool isExist = dir.existsSync();
     if (!isExist) {
       return [];
     }
-    Directory dir = Directory(path.join(dirPath, pathInAppDir));
+
     // var filesList = dir.listSync().toList()
     //   ..sort((a, b) =>
     //       a.toString().toLowerCase().compareTo(b.toString().toLowerCase()));
     // return filesList;
     List<FileSystemEntity> filesList = [];
-    await dir.list().forEach((element) {
-      RegExp regExp = RegExp(".json", caseSensitive: false);
-      if (regExp.hasMatch('$element')) filesList.add(element);
+    await dir.list().forEach((e) {
+      if (e.path.endsWith(extension)) {
+        filesList.add(e);
+      }
     });
 
     return filesList;
@@ -70,19 +80,27 @@ class CachedDataStorage {
     return filesList;
   }
 
-  /// 按上次修改时间（从新到旧）返回 ApplicationSupportDirectory/folder 下的所有 .json 文件
-  Future<List<FileSystemEntity>> lsByModifiedTime(String folder) async {
-    final dirPath = await _localPath;
-    bool isExist = Directory(path.join(dirPath, folder)).existsSync();
+  /// 按上次修改时间（从新到旧）返回 {ApplicationSupportDirectory}/[folder]/[subFolders] 下的所有 .[extension] 文件
+  Future<List<FileSystemEntity>> lsByModifiedTime(
+    String folder, {
+    List<String>? subFolders,
+    String extension = '.json',
+  }) async {
+    final basePath = await _localPath;
+
+    Directory dir = subFolders == null
+        ? Directory(path.joinAll([basePath, folder]))
+        : Directory(path.joinAll([basePath, folder, ...subFolders]));
+
+    bool isExist = dir.existsSync();
     if (!isExist) {
       return [];
     }
-    Directory dir = Directory(path.join(dirPath, folder));
 
     // 按修改时间排序(正序，从旧到新)
     List<FileSystemEntity> filesList = dir
         .listSync()
-        .where((e) => e.path.endsWith('.json'))
+        .where((e) => e.path.endsWith(extension))
         .toList()
       ..sort((l, r) => l.statSync().modified.compareTo(r.statSync().modified));
 
@@ -179,11 +197,15 @@ class CachedDataStorage {
   Future<File> writeFileToAppSupportDir({
     required String fileName,
     required String folder,
+    List<String>? subFolder,
     required String value,
   }) async {
-    final localPath = await _localPath;
-    final file = await File(path.join(localPath, folder, fileName))
-        .create(recursive: true);
+    final basePath = await _localPath;
+    final file = subFolder == null
+        ? await File(path.joinAll([basePath, folder, fileName]))
+            .create(recursive: true)
+        : await File(path.joinAll([basePath, folder, ...subFolder, fileName]))
+            .create(recursive: true);
     // Write the file
     return file.writeAsString(
       value,
@@ -238,10 +260,20 @@ class CachedDataStorage {
     }
   }
 
-  Future deleteAllCachedData() async {
-    var fileList = await ls(AppFolder.cachedData.name);
-    for (var file in fileList) {
-      file.delete();
+  /// 删除 {ApplicationSupportDirectory}/$folder/$fileName 单个文件
+  Future deleteCachedData(String folder, String fileName) async {
+    final file = await CachedDataStorage().getFile(folder, fileName);
+    await file.delete();
+  }
+
+  /// 删除所有的正方教务系统的考试时间的缓存数据
+  Future deleteCachedExamTimeZF() async {
+    final fileList = await ls(
+      AppFolder.cachedDataZF.name,
+      subFolders: [CachedDataZFSubFolder.examTimeCache.name],
+    );
+    for (final file in fileList) {
+      await file.delete();
     }
   }
 }

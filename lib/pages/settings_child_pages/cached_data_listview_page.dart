@@ -10,6 +10,7 @@ import 'package:sachet/utils/transform.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/class_schedule_data_listview_widgets/import_json_data_dialog.dart';
 import 'package:sachet/pages/settings_child_pages/view_data_page.dart';
+import 'package:sachet/widgets/settingspage_widgets/settings_section_title.dart';
 
 class CachedDataListviewPage extends StatefulWidget {
   const CachedDataListviewPage({super.key});
@@ -19,7 +20,8 @@ class CachedDataListviewPage extends StatefulWidget {
 }
 
 class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
-  List<FileSystemEntity> filesPathList = [];
+  List<FileSystemEntity> filesPathListQZ = [];
+  List<FileSystemEntity> filesPathListExamTimeZF = [];
 
   late ScaffoldMessengerState _scaffoldMessenger;
 
@@ -35,7 +37,12 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
     super.dispose();
   }
 
-  Future importCachedData(BuildContext context, ColorScheme colorScheme) async {
+  Future importCachedData(
+    BuildContext context,
+    ColorScheme colorScheme,
+    String folder, {
+    List<String>? subFolder,
+  }) async {
     // 使用 FilePicker 选择文件
     FilePickerResult? filePaths = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -61,7 +68,8 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
           fileName: result != ''
               ? '$result.json'
               : "file_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
-          folder: AppFolder.cachedData.name,
+          folder: folder,
+          subFolder: subFolder,
           value: file.readAsStringSync(),
         );
 
@@ -96,9 +104,19 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
 
   /// 获取缓存数据文件列表并刷新界面
   Future<void> _getCachedDataFileList() async {
-    await CachedDataStorage().ls(AppFolder.cachedData.name).then((value) {
+    await CachedDataStorage()
+        .lsByModifiedTime(AppFolder.cachedData.name)
+        .then((value) {
       setState(() {
-        filesPathList = value;
+        filesPathListQZ = value;
+      });
+    });
+    await CachedDataStorage().lsByModifiedTime(
+      AppFolder.cachedDataZF.name,
+      subFolders: [CachedDataZFSubFolder.examTimeCache.name],
+    ).then((value) {
+      setState(() {
+        filesPathListExamTimeZF = value;
       });
     });
   }
@@ -119,62 +137,113 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
       ),
       body: ListView(
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Text(
-                  '存在缓存',
-                  style: TextStyle(fontSize: 16, color: colorScheme.primary),
-                ),
-                const SizedBox(width: 4),
-                Icon(Icons.toc, color: colorScheme.primary, size: 20),
-              ],
-            ),
+          /// 强智教务系统的缓存
+          _buildHeader('强智教务系统缓存 (${AppFolder.cachedData.name}/)'),
+          ...filesPathListQZ.map((file) => _buildFileListTile(context, file)),
+          _buildImportButton(context, colorScheme, AppFolder.cachedData.name),
+
+          Divider(),
+
+          /// 正方教务系统的缓存
+          _buildHeader('正方教务系统缓存 (${AppFolder.cachedDataZF.name}/)'),
+          _buildSubHeader(
+            colorScheme,
+            '考试时间 (${AppFolder.cachedDataZF.name}/${CachedDataZFSubFolder.examTimeCache.name}/)',
           ),
-          ...List.generate(
-            filesPathList.length,
-            (index) => ListTile(
-              title: Text(
-                  '${fileNameToMeaning[path.basename(filesPathList[index].path)] ?? path.basename(filesPathList[index].path)}'),
-              subtitle: Text('${filesPathList[index].path}'
-                  '\n'
-                  '更新时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(File(filesPathList[index].path).lastModifiedSync())}'),
-              isThreeLine: true,
-              trailing: Align(
-                widthFactor: 1,
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(fadeTransitionPageRoute(ViewCachedDataPage(
-                            filePath: filesPathList[index].path)))
-                        .then((result) => {result ? setState(() {}) : null});
-                  },
-                  icon: Icon(Icons.edit_note),
-                ),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Icon(Icons.file_open),
-                SizedBox(width: 4.0),
-                Text('导入数据'),
-              ],
-            ),
-            iconColor: colorScheme.primary,
-            textColor: colorScheme.primary,
-            onTap: () async {
-              await importCachedData(context, colorScheme);
-            },
-          ),
+          ...filesPathListExamTimeZF
+              .map((file) => _buildFileListTile(context, file)),
+          _buildImportButton(
+            context,
+            colorScheme,
+            AppFolder.cachedDataZF.name,
+            subFolder: [CachedDataZFSubFolder.examTimeCache.name],
+          )
         ],
       ),
+    );
+  }
+
+  Widget _buildHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 4.0),
+      child: SettingsSectionTitle(title: title),
+    );
+  }
+
+  Widget _buildSubHeader(ColorScheme colorScheme, String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 14, color: colorScheme.primary),
+      ),
+    );
+  }
+
+  Widget _buildFileListTile(BuildContext context, FileSystemEntity file) {
+    final String fileName = path.basename(file.path);
+    final String displayName = fileNameToMeaning[fileName] ?? fileName;
+    final String modifiedTime = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(File(file.path).lastModifiedSync());
+
+    return ListTile(
+      title: Text(displayName, style: TextStyle(fontSize: 15)),
+      subtitle: Text(
+        '${file.path}'
+        '\n'
+        '更新时间: $modifiedTime',
+        style: TextStyle(fontSize: 12),
+      ),
+      isThreeLine: true,
+      trailing: Align(
+        widthFactor: 1,
+        alignment: Alignment.centerRight,
+        child: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              fadeTransitionPageRoute(ViewCachedDataPage(filePath: file.path)),
+            ).then((result) => {result ? setState(() {}) : null});
+          },
+          icon: Icon(Icons.edit_note),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImportButton(
+    BuildContext context,
+    ColorScheme colorScheme,
+    String folder, {
+    List<String>? subFolder,
+  }) {
+    return ListTile(
+      title: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.file_open,
+            size: 15,
+            applyTextScaling: true,
+          ),
+          SizedBox(width: 4.0),
+          Text(
+            '导入数据',
+            style: TextStyle(fontSize: 14),
+          )
+        ],
+      ),
+      iconColor: colorScheme.primary,
+      textColor: colorScheme.primary,
+      onTap: () async {
+        await importCachedData(
+          context,
+          colorScheme,
+          folder,
+          subFolder: subFolder,
+        );
+      },
     );
   }
 }

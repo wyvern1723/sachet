@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sachet/models/enums/page_transitions_type.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/theme_provider.dart';
-import 'package:sachet/utils/storage/path_provider_utils.dart';
+import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/delete_cached_data_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/page_transitions_dropdownmenu.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_duration_dialog.dart';
 import 'package:sachet/widgets/settingspage_widgets/advanced_settings_widgets/set_curve_type_dialog.dart';
@@ -34,26 +34,12 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
     super.dispose();
   }
 
-  Future showDeleteCachedDataDialog() async {
-    var result = await showDialog(
+  Future showDeleteCachedDataDialog(BuildContext context) async {
+    final result = await showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('删除缓存数据'),
-        content: const Text('确定要删除所有缓存数据？'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认'),
-          ),
-        ],
-      ),
+      builder: (BuildContext context) => DeleteCachedDataDialog(),
     );
     if (result == true) {
-      await CachedDataStorage().deleteAllCachedData();
       _scaffoldMessenger.showSnackBar(SnackBar(content: Text('删除成功！')));
     }
   }
@@ -399,9 +385,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
               child: Icon(Icons.delete_forever),
             ),
             title: const Text('删除缓存数据'),
-            subtitle: const Text('删除「培养方案」、「考试时间」的缓存数据（不包括课程表）'),
             onTap: () async {
-              await showDeleteCachedDataDialog();
+              await showDeleteCachedDataDialog(context);
             },
           ),
         ],

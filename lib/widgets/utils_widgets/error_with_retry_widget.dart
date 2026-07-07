@@ -7,6 +7,7 @@ class ErrorWithRetryWidget extends StatelessWidget {
     super.key,
     required this.text,
     this.onRetry,
+    this.actions,
     this.footer,
   }) : isCompact = false;
 
@@ -15,6 +16,7 @@ class ErrorWithRetryWidget extends StatelessWidget {
     super.key,
     required this.text,
     this.onRetry,
+    this.actions,
     this.footer,
   }) : isCompact = true;
 
@@ -24,6 +26,7 @@ class ErrorWithRetryWidget extends StatelessWidget {
   /// 点击「重试」的回调函数（如果为 null 则不显示重试按钮）
   final VoidCallback? onRetry;
   final bool isCompact;
+  final List<Widget>? actions;
   final Widget? footer;
 
   @override
@@ -120,6 +123,7 @@ class ErrorWithRetryWidget extends StatelessWidget {
                 // label: const Text('重新加载'),
                 label: const Text('重试'),
               ),
+            if (actions != null) ...actions!,
             if (footer != null) footer!,
           ],
         ),
