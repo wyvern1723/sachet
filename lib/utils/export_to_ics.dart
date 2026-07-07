@@ -24,13 +24,12 @@ Future<String?> exportClassScheduleToIcs({
 }) async {
   List courseScheduleItemsList = [];
 
-  final rawData = await CachedDataStorage().getDecodedData(
-    path: rawfilePath,
-    type: List,
+  final jsonData = await CachedDataStorage.getDecodedList(
+    rawfilePath,
   );
 
-  if (rawData is List && rawData.isNotEmpty) {
-    courseScheduleItemsList = rawData;
+  if (jsonData.isNotEmpty) {
+    courseScheduleItemsList = jsonData;
     if (courseScheduleItemsList.length != 35) {
       throw '课程表文件格式错误';
     }

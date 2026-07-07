@@ -204,13 +204,13 @@ Future<String> storeRandomizationCourseColorFile({
   String fileName =
       "course_color_${semester}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json";
 
-  await CachedDataStorage().writeFileToAppSupportDir(
+  await CachedDataStorage.writeFileToAppSupportDir(
     fileName: fileName,
     folder: AppFolder.courseColor.name,
     value: formatJsonEncode(courseColorData),
   );
 
-  final localPath = await CachedDataStorage().getPath();
+  final localPath = await CachedDataStorage.getPath();
   final filePath = path.join(localPath, AppFolder.courseColor.name, fileName);
   return filePath;
 }
@@ -223,13 +223,13 @@ Future<String> storeClassScheduleFile(
   String fileName =
       "class_schedule_${semester}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json";
 
-  await CachedDataStorage().writeFileToAppSupportDir(
+  await CachedDataStorage.writeFileToAppSupportDir(
     fileName: fileName,
     folder: AppFolder.classSchedule.name,
     value: formatJsonEncode(allSessionsCoursesData),
   );
 
-  final localPath = await CachedDataStorage().getPath();
+  final localPath = await CachedDataStorage.getPath();
   final filePath = path.join(localPath, AppFolder.classSchedule.name, fileName);
 
   return filePath;

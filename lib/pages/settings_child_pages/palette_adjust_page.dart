@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:provider/provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/settingspage_widgets/color_settings_widgets/add_new_color_dialog.dart';
@@ -22,7 +24,7 @@ class PaletteAdjustPage extends StatefulWidget {
 class _PaletteAdjustPageState extends State<PaletteAdjustPage> {
   Map _courseColorData = {};
 
-  Future showChangeColorDialog(String courseTitle) async {
+  Future showChangeColorDialog(BuildContext context, String courseTitle) async {
     Color? result = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -33,6 +35,9 @@ class _PaletteAdjustPageState extends State<PaletteAdjustPage> {
         );
       },
     );
+
+    if (!context.mounted) return;
+
     if (result != null) {
       _courseColorData[courseTitle] = colorToHex(
         result,
@@ -41,32 +46,42 @@ class _PaletteAdjustPageState extends State<PaletteAdjustPage> {
       );
 
       // 储存
-      await CachedDataStorage().reWriteDataByFilePath(
+      await CachedDataStorage.reWriteDataByFilePath(
         formatJsonEncode(_courseColorData),
         widget.colorFilePath,
       );
 
+      if (!context.mounted) return;
+
       // 刷新
+      context.read<SettingsProvider>().refreshCourseColorData();
       setState(() {});
     }
   }
 
-  Future addNewColor() async {
+  Future addNewColor(BuildContext context) async {
     Map<String, String>? courseAndColor = await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AddNewColorDialog();
         });
+
+    if (!context.mounted) return;
+
     if (courseAndColor != null) {
       // 添加一项
       _courseColorData.addAll(courseAndColor);
       // 再储存回去
-      await CachedDataStorage().reWriteDataByFilePath(
+      await CachedDataStorage.reWriteDataByFilePath(
         formatJsonEncode(_courseColorData),
         widget.colorFilePath,
       );
     }
+
+    if (!context.mounted) return;
+
     // 刷新
+    context.read<SettingsProvider>().refreshCourseColorData();
     setState(() {});
   }
 
@@ -95,6 +110,7 @@ class _PaletteAdjustPageState extends State<PaletteAdjustPage> {
                 trailing: GestureDetector(
                   onTap: () async {
                     await showChangeColorDialog(
+                      context,
                       _courseColorData.keys.elementAt(index),
                     );
                   },
@@ -130,7 +146,7 @@ class _PaletteAdjustPageState extends State<PaletteAdjustPage> {
               iconColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.primary,
               onTap: () async {
-                await addNewColor();
+                await addNewColor(context);
               },
             ),
           ),

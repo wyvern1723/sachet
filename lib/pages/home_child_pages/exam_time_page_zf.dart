@@ -148,7 +148,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
       jsonData.add(e.toJson());
     }
     String prettyJsonData = formatJsonEncode(jsonData);
-    await CachedDataStorage().writeFileToAppSupportDir(
+    await CachedDataStorage.writeFileToAppSupportDir(
       fileName: 'exam_time_$semester.json',
       folder: AppFolder.cachedDataZF.name,
       subFolder: [CachedDataZFSubFolder.examTimeCache.name],
@@ -163,8 +163,8 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
 
     /// 如果未指定读取的缓存数据路径，则从缓存数据的文件夹下寻找最新修改的文件作为要读取的文件
     if (filePath == null) {
-      final List<FileSystemEntity> files = await CachedDataStorage()
-          .lsByModifiedTime(AppFolder.cachedDataZF.name,
+      final List<FileSystemEntity> files =
+          await CachedDataStorage.lsByModifiedTime(AppFolder.cachedDataZF.name,
               subFolders: [CachedDataZFSubFolder.examTimeCache.name]);
       if (files.isEmpty) {
         return null;
@@ -176,7 +176,7 @@ class _ExamTimePageZFState extends State<ExamTimePageZF> {
     }
 
     final String rawData =
-        await CachedDataStorage().readDataViaFilePath(cachedDataFilePath);
+        await CachedDataStorage.readDataViaFilePath(cachedDataFilePath);
 
     if (rawData == '') {
       return null;

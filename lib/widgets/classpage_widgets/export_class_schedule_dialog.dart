@@ -43,8 +43,8 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
       _selectedFilePath = null;
     }
 
-    final List<FileSystemEntity> files = await CachedDataStorage()
-        .lsByModifiedTime(AppFolder.classSchedule.name);
+    final List<FileSystemEntity> files =
+        await CachedDataStorage.lsByModifiedTime(AppFolder.classSchedule.name);
 
     setState(() {
       _filesPathList = files;

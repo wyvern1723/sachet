@@ -24,7 +24,7 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
   @override
   void initState() {
     super.initState();
-    CachedDataStorage().readDataViaFilePath(widget.filePath).then((value) {
+    CachedDataStorage.readDataViaFilePath(widget.filePath).then((value) {
       setState(() {
         datasetValue = value;
         editableTextController = TextEditingController(text: value);
@@ -84,7 +84,7 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
             ),
             TextButton(
               onPressed: () async {
-                await CachedDataStorage().reWriteDataByFilePath(
+                await CachedDataStorage.reWriteDataByFilePath(
                   editableTextController.text,
                   widget.filePath,
                 );
@@ -155,7 +155,7 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
                   IconButton(
                     onPressed: changed
                         ? () async {
-                            await CachedDataStorage().reWriteDataByFilePath(
+                            await CachedDataStorage.reWriteDataByFilePath(
                                 editableTextController.text, widget.filePath);
                             setState(() {
                               datasetValue = editableTextController.text;

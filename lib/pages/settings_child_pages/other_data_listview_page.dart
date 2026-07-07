@@ -34,7 +34,7 @@ class _OtherMiscDataListviewPageState extends State<OtherMiscDataListviewPage> {
 
   /// 获取数据文件列表并刷新界面
   Future<void> _getFileList() async {
-    await CachedDataStorage().lsPrefDirectory().then((value) {
+    await CachedDataStorage.lsPrefDirectory().then((value) {
       setState(() {
         filesPathList = value;
       });

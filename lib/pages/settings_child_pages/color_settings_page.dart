@@ -25,9 +25,8 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
   /// 获取当前课程颜色数据
   void _getCurrentCourseColorData() async {
     if (isCurrentCourseColorFileExist) {
-      Map courseColorData = await CachedDataStorage().getDecodedData(
-        path: context.read<SettingsProvider>().courseColorFilePath,
-        type: Map,
+      Map courseColorData = await CachedDataStorage.getDecodedMap(
+        context.read<SettingsProvider>().courseColorFilePath,
       );
       setState(() => _courseColorData = Map.of(courseColorData));
     }
@@ -79,7 +78,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
       );
 
       // 储存
-      await CachedDataStorage().reWriteDataByFilePath(
+      await CachedDataStorage.reWriteDataByFilePath(
         formatJsonEncode(_courseColorData),
         context.read<SettingsProvider>().courseColorFilePath,
       );
@@ -105,7 +104,7 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
         // 添加一项
         _courseColorData.addAll(courseAndColor);
         // 再储存回去
-        await CachedDataStorage().reWriteDataByFilePath(
+        await CachedDataStorage.reWriteDataByFilePath(
           formatJsonEncode(_courseColorData),
           context.read<SettingsProvider>().courseColorFilePath,
         );
@@ -124,14 +123,14 @@ class _ColorSettingsPageState extends State<ColorSettingsPage> {
 
       if (fileName != null) {
         // 写入配色文件到 ApplicationSupportDirectory
-        await CachedDataStorage().writeFileToAppSupportDir(
+        await CachedDataStorage.writeFileToAppSupportDir(
           fileName: fileName != ''
               ? '$fileName.json'
               : "course_color_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
           folder: AppFolder.courseColor.name,
           value: '',
         );
-        String appDir = await CachedDataStorage().getPath();
+        String appDir = await CachedDataStorage.getPath();
         String filePath =
             path.join(appDir, AppFolder.courseColor.name, '$fileName.json');
 

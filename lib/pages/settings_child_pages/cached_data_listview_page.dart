@@ -64,7 +64,7 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
       );
       if (result != null) {
         // 写入缓存文件到 ApplicationSupportDirectory
-        await CachedDataStorage().writeFileToAppSupportDir(
+        await CachedDataStorage.writeFileToAppSupportDir(
           fileName: result != ''
               ? '$result.json'
               : "file_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
@@ -104,14 +104,13 @@ class _CachedDataListviewPageState extends State<CachedDataListviewPage> {
 
   /// 获取缓存数据文件列表并刷新界面
   Future<void> _getCachedDataFileList() async {
-    await CachedDataStorage()
-        .lsByModifiedTime(AppFolder.cachedData.name)
+    await CachedDataStorage.lsByModifiedTime(AppFolder.cachedData.name)
         .then((value) {
       setState(() {
         filesPathListQZ = value;
       });
     });
-    await CachedDataStorage().lsByModifiedTime(
+    await CachedDataStorage.lsByModifiedTime(
       AppFolder.cachedDataZF.name,
       subFolders: [CachedDataZFSubFolder.examTimeCache.name],
     ).then((value) {

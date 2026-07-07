@@ -215,9 +215,8 @@ class SettingsProvider extends ChangeNotifier {
   Map? courseColorData;
 
   Future refreshCourseColorData() async {
-    courseColorData = await CachedDataStorage().getDecodedData(
-      path: courseColorFilePath,
-      type: Map,
+    courseColorData = await CachedDataStorage.getDecodedMap(
+      courseColorFilePath,
     );
     notifyListeners();
   }
@@ -246,14 +245,13 @@ class SettingsProvider extends ChangeNotifier {
         List classSessionWinterDataList
       })> loadCourseScheduleData() async {
     List<List<CourseSchedule>>? courseScheduleItemsList;
-    final rawData = await CachedDataStorage().getDecodedData(
-      path: classScheduleFilePath,
-      type: List,
+    final jsonData = await CachedDataStorage.getDecodedList(
+      classScheduleFilePath,
     );
 
-    if (rawData is List && rawData.isNotEmpty) {
-      if (rawData.length == 35) {
-        courseScheduleItemsList = rawData.map((e) {
+    if (jsonData.isNotEmpty) {
+      if (jsonData.length == 35) {
+        courseScheduleItemsList = jsonData.map((e) {
           if (e is List) {
             return e.map((item) {
               if (item is Map<String, dynamic>) {
@@ -269,9 +267,8 @@ class SettingsProvider extends ChangeNotifier {
       }
     }
 
-    courseColorData ??= await CachedDataStorage().getDecodedData(
-      path: courseColorFilePath,
-      type: Map,
+    courseColorData ??= await CachedDataStorage.getDecodedMap(
+      courseColorFilePath,
     );
     List classSessionSummerDataList = await loadClassSessionSummerAsset();
     List classSessionWinterDataList = await loadClassSessionWinterAsset();
@@ -287,12 +284,11 @@ class SettingsProvider extends ChangeNotifier {
   /// 生成课程通知的信息 (CourseReminders)
   Future<List<CourseReminder>> generateCourseScheduleReminders() async {
     List courseScheduleItemsList = [];
-    final rawData = await CachedDataStorage().getDecodedData(
-      path: classScheduleFilePath,
-      type: List,
+    final jsonData = await CachedDataStorage.getDecodedList(
+      classScheduleFilePath,
     );
-    if (rawData is List && rawData.isNotEmpty) {
-      courseScheduleItemsList = rawData;
+    if (jsonData.isNotEmpty) {
+      courseScheduleItemsList = jsonData;
       if (courseScheduleItemsList.length != 35) {
         throw '无有效课程表文件';
       }
@@ -300,8 +296,8 @@ class SettingsProvider extends ChangeNotifier {
       throw '课程信息为空/无有效课程表文件';
     }
     List<CourseReminder> reminders = [];
-    for (var courseScheduleItems in courseScheduleItemsList) {
-      for (var courseScheduleItem in courseScheduleItems) {
+    for (final courseScheduleItems in courseScheduleItemsList) {
+      for (final courseScheduleItem in courseScheduleItems) {
         CourseSchedule courseSchedule =
             CourseSchedule.fromJson(courseScheduleItem);
 
@@ -317,7 +313,7 @@ class SettingsProvider extends ChangeNotifier {
             courseWeeks != null &&
             courseWeeks.isNotEmpty &&
             courseItem != null) {
-          for (var courseWeek in courseWeeks) {
+          for (final courseWeek in courseWeeks) {
             final result = getWeekdayAndSessionFromItem(courseItem);
             final int courseWeekday = result.weekday;
 

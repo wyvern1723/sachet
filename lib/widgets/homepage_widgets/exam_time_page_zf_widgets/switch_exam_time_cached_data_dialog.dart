@@ -27,7 +27,7 @@ class _SwitchExamTimeCachedDataDialogState
 
   /// 获取缓存数据文件列表并刷新界面
   Future<void> _getFilesList() async {
-    await CachedDataStorage().lsByModifiedTime(
+    await CachedDataStorage.lsByModifiedTime(
       AppFolder.cachedDataZF.name,
       subFolders: [CachedDataZFSubFolder.examTimeCache.name],
     ).then((value) {

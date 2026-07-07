@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/enums/app_folder.dart';
@@ -10,6 +8,13 @@ import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/settingspage_widgets/palette_settings_widgets/palette_card.dart';
 import 'package:sachet/widgets/settingspage_widgets/palette_settings_widgets/showcase_palette_card.dart';
 
+class _PaletteData {
+  final String path;
+  final Map<String, dynamic> data;
+
+  _PaletteData({required this.path, required this.data});
+}
+
 class PaletteSettingsPage extends StatefulWidget {
   const PaletteSettingsPage({super.key});
 
@@ -18,15 +23,33 @@ class PaletteSettingsPage extends StatefulWidget {
 }
 
 class _PaletteSettingsPageState extends State<PaletteSettingsPage> {
-  List<FileSystemEntity> filesPathList = [];
+  List<_PaletteData> _palettes = [];
 
-  /// 获取课程颜色数据文件列表并刷新界面
-  Future<void> _getCourseColorFileList() async {
-    await CachedDataStorage()
-        .lsByModifiedTime(AppFolder.courseColor.name)
-        .then((value) => setState(() => filesPathList = value));
+  Future<void> _loadPalettesData() async {
+    try {
+      final files =
+          await CachedDataStorage.lsByModifiedTime(AppFolder.courseColor.name);
+
+      List<_PaletteData> loadedPalettes = [];
+
+      for (final file in files) {
+        final decodedData = await CachedDataStorage.getDecodedMap(file.path);
+
+        loadedPalettes.add(
+          _PaletteData(path: file.path, data: decodedData),
+        );
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _palettes = loadedPalettes;
+      });
+    } catch (e) {
+      debugPrint('加载配色数据失败: $e');
+      if (!mounted) return;
+    }
   }
-
   // /// 切换课程配色方案
   // Future switchCourseColorFile() async {
   //   var result = await showDialog(
@@ -44,10 +67,14 @@ class _PaletteSettingsPageState extends State<PaletteSettingsPage> {
   //   }
   // }
 
+  void refresh(bool value) {
+    _loadPalettesData();
+  }
+
   @override
   void initState() {
     super.initState();
-    _getCourseColorFileList();
+    _loadPalettesData();
   }
 
   @override
@@ -93,18 +120,12 @@ class _PaletteSettingsPageState extends State<PaletteSettingsPage> {
             paletteTitle: 'Material Design 2 shade400',
             paletteColor: materialColorsShade400,
           ),
-          if (filesPathList.isNotEmpty)
-            ...List.generate(filesPathList.length, (index) {
-              Map courseColorData = CachedDataStorage().getDecodedDataSync(
-                path: filesPathList[index].path,
-                type: Map,
-              );
-              return PaletteCard(
-                filePath: filesPathList[index].path,
-                courseColorData: courseColorData,
-                refresh: (value) => refresh(value),
-              );
-            }),
+          if (_palettes.isNotEmpty)
+            ..._palettes.map((palette) => PaletteCard(
+                  filePath: palette.path,
+                  courseColorData: palette.data,
+                  refresh: (value) => refresh(value),
+                )),
           // TODO: 添加新配色方案
           // Padding(
           //   padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -126,9 +147,5 @@ class _PaletteSettingsPageState extends State<PaletteSettingsPage> {
         ],
       ),
     );
-  }
-
-  refresh(bool value) {
-    setState(() {});
   }
 }

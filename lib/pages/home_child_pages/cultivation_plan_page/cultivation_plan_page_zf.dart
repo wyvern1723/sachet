@@ -210,9 +210,9 @@ class _CultivationPlanPageZFState extends State<CultivationPlanPageZF> {
 
   /// 获取培养方案数据
   Future<({List data, String updateTime})?> _getCacheCultivatePlanData() async {
-    final file = await CachedDataStorage()
-        .getFile(AppFolder.cachedData.name, 'cultivate_plan.json');
-    String checkData = await CachedDataStorage().readDataViaFile(file);
+    final file = await CachedDataStorage.getFile(
+        AppFolder.cachedData.name, 'cultivate_plan.json');
+    String checkData = await CachedDataStorage.readDataViaFile(file);
 
     if (checkData != '') {
       List returnData = await jsonDecode(checkData);

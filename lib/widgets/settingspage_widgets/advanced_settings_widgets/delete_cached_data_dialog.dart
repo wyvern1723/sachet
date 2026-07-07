@@ -61,7 +61,7 @@ class _DeleteCachedDataDialogState extends State<DeleteCachedDataDialog> {
 
   /// 获取单个缓存数据文件的信息，如果存在，返回此文件大小, 如果不存在，返回 null
   Future<int?> _getCachedFile(String folder, String fileName) async {
-    final file = await CachedDataStorage().getFile(folder, fileName);
+    final file = await CachedDataStorage.getFile(folder, fileName);
     final isExist = await file.exists();
 
     if (isExist) {
@@ -75,7 +75,7 @@ class _DeleteCachedDataDialogState extends State<DeleteCachedDataDialog> {
   Future<({int amount, int totalSize})> _getCachedFiles(String folder,
       {List<String>? subFolders}) async {
     final List<FileSystemEntity> files =
-        await CachedDataStorage().ls(folder, subFolders: subFolders);
+        await CachedDataStorage.ls(folder, subFolders: subFolders);
 
     if (files.isEmpty) {
       return (amount: 0, totalSize: 0);
@@ -163,17 +163,17 @@ class _DeleteCachedDataDialogState extends State<DeleteCachedDataDialog> {
         TextButton(
           onPressed: () async {
             if (_isDeleteCultivationQZ) {
-              await CachedDataStorage().deleteCachedData(
+              await CachedDataStorage.deleteCachedData(
                   AppFolder.cachedData.name, 'cultivate_plan.json');
             }
 
             if (_isDeleteExamTimeQZ) {
-              await CachedDataStorage().deleteCachedData(
+              await CachedDataStorage.deleteCachedData(
                   AppFolder.cachedData.name, 'exam_time.json');
             }
 
             if (_isDeleteExamTimeZF) {
-              await CachedDataStorage().deleteCachedExamTimeZF();
+              await CachedDataStorage.deleteCachedExamTimeZF();
             }
 
             if (!context.mounted) return;

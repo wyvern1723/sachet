@@ -63,7 +63,7 @@ class _ClassScheduleDataListviewPageState
       );
       if (result != null) {
         // 写入课程表文件到 ApplicationSupportDirectory
-        await CachedDataStorage().writeFileToAppSupportDir(
+        await CachedDataStorage.writeFileToAppSupportDir(
             fileName: result != ''
                 ? '$result.json'
                 : "class_schedule_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
@@ -101,8 +101,7 @@ class _ClassScheduleDataListviewPageState
 
   /// 获取课程表数据文件列表并刷新界面
   Future<void> _getClassScheduleFileList() async {
-    await CachedDataStorage()
-        .lsByModifiedTime(AppFolder.classSchedule.name)
+    await CachedDataStorage.lsByModifiedTime(AppFolder.classSchedule.name)
         .then((value) => setState(() => filesPathList = value));
   }
 

@@ -33,8 +33,7 @@ class _SwitchActivedAppFileDialogState
 
   /// 获取课程表数据文件列表并刷新界面
   Future<void> _getFilesList() async {
-    await CachedDataStorage()
-        .lsByModifiedTime(widget.fileDirectory)
+    await CachedDataStorage.lsByModifiedTime(widget.fileDirectory)
         .then((value) {
       setState(() {
         filesPathList = value;

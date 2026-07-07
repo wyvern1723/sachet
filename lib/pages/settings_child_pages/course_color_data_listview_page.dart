@@ -62,7 +62,7 @@ class _CourseColorDataListviewPageState
       );
       if (result != null) {
         // 写入课程表文件到 ApplicationSupportDirectory
-        await CachedDataStorage().writeFileToAppSupportDir(
+        await CachedDataStorage.writeFileToAppSupportDir(
           fileName: result != ''
               ? '$result.json'
               : "course_color_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.json",
@@ -104,8 +104,7 @@ class _CourseColorDataListviewPageState
 
   /// 获取数据文件列表并刷新界面
   Future<void> _getCourseColorFileList() async {
-    await CachedDataStorage()
-        .lsByModifiedTime(AppFolder.courseColor.name)
+    await CachedDataStorage.lsByModifiedTime(AppFolder.courseColor.name)
         .then((value) => setState(() => filesPathList = value));
   }
 
