@@ -106,9 +106,8 @@ bool isToday(DateTime thatDay) {
 
   /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
   final DateTime courseDate = getDateFromWeekCountAndWeekday(
-    semesterStartDate: semesterStartDate ??
-        DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-        constSemesterStartDate,
+    semesterStartDate:
+        semesterStartDate ?? SettingsProvider.semesterStartDateDateTime,
     weekCount: week,
     weekday: courseWeekday,
   );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/pages/class_child_pages/single_month_page.dart';
 import 'package:sachet/providers/class_page_provider.dart';
@@ -40,9 +39,7 @@ class _MonthViewState extends State<MonthView> {
           context.read<ClassPageProvider>().currentWeekCount;
 
       final currentMonth = getDateFromWeekCountAndWeekday(
-        semesterStartDate:
-            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-                constSemesterStartDate,
+        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
         weekCount: currentWeekCount,
         weekday: DateTime.now().weekday,
       ).month;

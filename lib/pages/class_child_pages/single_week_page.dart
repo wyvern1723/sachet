@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -47,8 +46,7 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
             builder: (_, semesterStartDate, __) {
               return DayOfTheWeekTopBar(
                 weekCount: widget.weekCount,
-                semesterStartDate: DateTime.tryParse(semesterStartDate) ??
-                    constSemesterStartDate,
+                semesterStartDate: SettingsProvider.semesterStartDateDateTime,
               );
             }),
         // 下方是课程表主体
@@ -69,8 +67,7 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                           SettingsProvider.semesterStartDate,
                       builder: (_, semesterStartDate, __) {
                         int thisMonth = getTheMondayDateOfTheWeek(
-                                DateTime.tryParse(semesterStartDate) ??
-                                    constSemesterStartDate,
+                                SettingsProvider.semesterStartDateDateTime,
                                 widget.weekCount)
                             .month;
                         bool isSummerRountine = thisMonth > 4 && thisMonth < 10;

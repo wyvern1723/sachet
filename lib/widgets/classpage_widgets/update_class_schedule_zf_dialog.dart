@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -338,8 +337,7 @@ class _UpdateClassScheduleZFDialogState
                         builder: (_, semesterStartDate, __) {
                           return Text(
                             DateFormat('yyyy-MM-dd').format(
-                                DateTime.tryParse(semesterStartDate) ??
-                                    constSemesterStartDate),
+                                SettingsProvider.semesterStartDateDateTime),
                             style: textTheme.bodyLarge,
                           );
                         }),

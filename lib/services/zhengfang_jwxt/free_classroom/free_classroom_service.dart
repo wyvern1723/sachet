@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/providers/free_classroom_page_provider.dart';
@@ -127,16 +126,12 @@ class FreeClassroomService {
     required ZhengFangUserProvider? zhengFangUserProvider,
   }) async {
     final firstDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate:
-          DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-              constSemesterStartDate,
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 1,
       weekday: 1,
     );
     final lastDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate:
-          DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-              constSemesterStartDate,
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 20,
       weekday: 7,
     );
@@ -153,9 +148,7 @@ class FreeClassroomService {
 
     // 获取今天/明天的周次和星期几
     final weekCountAndWeekday = getWeekCountAndWeekdayOfDate(
-      semesterStartDate:
-          DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-              constSemesterStartDate,
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       date: DateTime.now().add(Duration(days: day == Day.today ? 0 : 1)),
     );
 
@@ -282,9 +275,7 @@ class FreeClassroomService {
   }) async {
     // 获取那一天的周次和星期几
     final weekCountAndWeekday = getWeekCountAndWeekdayOfDate(
-      semesterStartDate:
-          DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-              constSemesterStartDate,
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       date: date,
     );
 

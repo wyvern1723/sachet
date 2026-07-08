@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/free_classroom_service.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_filter_options.dart';
 import 'package:sachet/services/zhengfang_jwxt/free_classroom/models/free_classroom_request_data_zf.dart';
@@ -55,8 +54,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
   // =====================================
 
   Set<int> _selectedWeekCounts = {
-    weekCountOfToday(DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-            constSemesterStartDate)
+    weekCountOfToday(SettingsProvider.semesterStartDateDateTime)
         .clamp(1, 20) // 限制最小为 1, 最大为 20 周
   };
 
@@ -90,8 +88,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
   /// 例如: 如果今天的周次是第二周，则重置为 [2]
   void resetSelectedWeekCounts() {
     _selectedWeekCounts = {
-      weekCountOfToday(DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-              constSemesterStartDate)
+      weekCountOfToday(SettingsProvider.semesterStartDateDateTime)
           .clamp(1, 20) // 限制最小为 1, 最大为 20 周
     };
   }
@@ -171,9 +168,7 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
 
   /// 选择的日期(仅在选择单日生效)
   DateTime get selectedDate => getDateFromWeekCountAndWeekday(
-        semesterStartDate:
-            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-                constSemesterStartDate,
+        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
         weekCount: selectedWeekCounts.elementAt(0),
         weekday: selectedWeekdays.elementAt(0),
       );

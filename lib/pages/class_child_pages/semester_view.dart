@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
@@ -192,8 +191,7 @@ class _HeatmapCell extends StatelessWidget {
     }
 
     final DateTime date = getDateFromWeekCountAndWeekday(
-      semesterStartDate:
-          DateTime.tryParse(semesterStartDate) ?? constSemesterStartDate,
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: weekCount,
       weekday: weekday,
     );

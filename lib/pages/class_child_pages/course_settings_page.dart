@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/pages/settings_child_pages/palette_settings_page.dart';
 import 'package:sachet/utils/utils_functions.dart';
@@ -35,9 +34,8 @@ class CourseSettingsPage extends StatelessWidget {
                     SettingsProvider.semesterStartDate,
                 builder: (_, semesterStartDate, __) {
                   return Text(
-                    DateFormat('yyyy-MM-dd').format(
-                        DateTime.tryParse(semesterStartDate) ??
-                            constSemesterStartDate),
+                    DateFormat('yyyy-MM-dd')
+                        .format(SettingsProvider.semesterStartDateDateTime),
                   );
                 }),
             onTap: () => selectSemesterStartDate(context),

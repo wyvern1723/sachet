@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -175,9 +174,7 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
     if (widget.courseScheduleItemsList != null) {
       // 计算该日期对应的周次
       weekCount = getWeekCountAndWeekdayOfDate(
-        semesterStartDate:
-            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-                constSemesterStartDate,
+        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
         date: date,
       ).weekCount;
     }

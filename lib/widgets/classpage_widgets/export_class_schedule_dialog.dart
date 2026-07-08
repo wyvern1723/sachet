@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/export_to_ics.dart';
@@ -31,8 +30,7 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
   String _currentFilePath = '';
 
   DateTime _currentSemesterStartDate =
-      DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-          constSemesterStartDate;
+      SettingsProvider.semesterStartDateDateTime;
 
   Future<void> _getClassScheduleFileList() async {
     String classScheduleFilePath =

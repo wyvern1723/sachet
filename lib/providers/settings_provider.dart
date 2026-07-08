@@ -28,6 +28,8 @@ class SettingsProvider extends ChangeNotifier {
   static String get semesterStartDate =>
       _appSettings.semesterStartDate ??
       constSemesterStartDate.toIso8601String();
+  static DateTime get semesterStartDateDateTime =>
+      DateTime.tryParse(semesterStartDate) ?? constSemesterStartDate;
   int get curveDuration => _appSettings.curveDuration ?? 1500;
   String get curveType => _appSettings.curveType ?? 'Easing.standard';
   bool get isEnableDevMode => _appSettings.isEnableDevMode ?? false;
@@ -322,8 +324,7 @@ class SettingsProvider extends ChangeNotifier {
 
             /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
             final DateTime courseDate = getDateFromWeekCountAndWeekday(
-              semesterStartDate: DateTime.tryParse(semesterStartDate) ??
-                  constSemesterStartDate,
+              semesterStartDate: semesterStartDateDateTime,
               weekCount: courseWeek,
               weekday: courseWeekday,
             );

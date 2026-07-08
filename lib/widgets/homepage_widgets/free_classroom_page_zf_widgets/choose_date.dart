@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
@@ -18,12 +17,12 @@ class ChooseDate extends StatefulWidget {
 class _ChooseDateState extends State<ChooseDate> {
   Future _selectDate(BuildContext context, DateTime selectedDate) async {
     final firstDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 1,
       weekday: 1,
     );
     final lastDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 20,
       weekday: 7,
     );
@@ -40,9 +39,7 @@ class _ChooseDateState extends State<ChooseDate> {
 
     if (date != null) {
       final result = getWeekCountAndWeekdayOfDate(
-        semesterStartDate:
-            DateTime.tryParse(SettingsProvider.semesterStartDate) ??
-                constSemesterStartDate,
+        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
         date: date,
       );
       context

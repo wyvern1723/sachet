@@ -59,12 +59,12 @@ class _FreeClassroomTodayAndTomorrowViewState
   /// 选择日期并跳转到选择的日期的一页
   Future _selectAndAddDate() async {
     final firstDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 1,
       weekday: 1,
     );
     final lastDate = getDateFromWeekCountAndWeekday(
-      semesterStartDate: DateTime.parse(SettingsProvider.semesterStartDate),
+      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
       weekCount: 20,
       weekday: 7,
     );

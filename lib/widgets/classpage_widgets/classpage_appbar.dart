@@ -64,9 +64,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
 
     if (result == true) {
       context.read<ClassPageProvider>().pageController.jumpToPage(
-            weekCountOfToday(
-                    DateTime.parse(SettingsProvider.semesterStartDate)) -
-                1,
+            weekCountOfToday(SettingsProvider.semesterStartDateDateTime) - 1,
           );
       await showDialog(
         context: context,
@@ -184,8 +182,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final settingsProvider = context.read<SettingsProvider>();
     // context.read<ClassPageModel>().resetCurrentWeekCount();
     context.read<ClassPageProvider>().pageController.animateToPage(
-        weekCountOfToday(DateTime.parse(SettingsProvider.semesterStartDate)) -
-            1,
+        weekCountOfToday(SettingsProvider.semesterStartDateDateTime) - 1,
         duration: Duration(milliseconds: settingsProvider.curveDuration),
         curve: curveTypes[settingsProvider.curveType] ?? Easing.standard);
   }
