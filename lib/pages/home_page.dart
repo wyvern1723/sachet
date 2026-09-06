@@ -249,22 +249,6 @@ class HomePage extends StatelessWidget {
                     Row(children: [
                       Expanded(
                         child: CardLinkWidget(
-                          title: '大物实验',
-                          icon: Icons.science,
-                          link: collegePhysicsExperimentUrl,
-                        ),
-                      ),
-                      Expanded(
-                          child: CardLinkWidget(
-                        title: '湘大邮箱',
-                        icon: Icons.email,
-                        // icon: Icons.email_outlined,
-                        link: xtuMailUrl,
-                      ))
-                    ]),
-                    Row(children: [
-                      Expanded(
-                        child: CardLinkWidget(
                           title: '馆藏检索',
                           icon: Icons.local_library,
                           link: libraryLookUpUrl,
@@ -272,10 +256,9 @@ class HomePage extends StatelessWidget {
                       ),
                       Expanded(
                         child: CardLinkWidget(
-                          title: '体测网站',
-                          // icon: Icons.directions_run_outlined,
-                          icon: Icons.fitness_center_outlined,
-                          link: ticeyunUrl,
+                          title: '大物实验',
+                          icon: Icons.science,
+                          link: collegePhysicsExperimentUrl,
                         ),
                       ),
                     ]),
@@ -295,6 +278,14 @@ class HomePage extends StatelessWidget {
                             link: xtuNewsUrl,
                           ),
                         ),
+                        Expanded(
+                          child: CardLinkWidget(
+                            title: '湘大邮箱',
+                            // icon: Icons.email_outlined,
+                            icon: Icons.email,
+                            link: xtuMailUrl,
+                          ),
+                        )
                       ],
                     ),
                     SizedBox(height: 6),

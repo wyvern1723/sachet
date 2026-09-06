@@ -35,6 +35,7 @@ class CardWidget extends StatelessWidget {
               Icon(
                 icon,
                 size: 30,
+                applyTextScaling: true,
                 color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 3),
@@ -45,6 +46,7 @@ class CardWidget extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),

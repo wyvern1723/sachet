@@ -4,7 +4,8 @@ import 'dart:io';
 const String jwxtBaseUrlHttps = 'https://jwxt.xtu.edu.cn/jsxsd/';
 
 /*
-最早是 2025年6月 选课出现，当时只用于选课，其他功能还不可用，不知道以后会不会迁移到这个新教务系统。
+最早是 2025年6月 选课出现，当时只用于选课，其他功能还不可用
+2025年9月开始使用此新教务系统
 */
 /// 新教务系统网址
 const String newJwxtBaseUrl = 'https://jw.xtu.edu.cn/jwglxt/';
@@ -31,9 +32,6 @@ String libraryLookUpUrl =
     Platform.isWindows || Platform.isLinux || Platform.isMacOS
         ? 'https://findxtu.libsp.cn/#/home'
         : 'https://mfindxtu.libsp.cn/#/home';
-
-/// 体测云网址（体测预约、选体育课）
-const String ticeyunUrl = 'http://xtu.ticeyun.com:90/weixin';
 
 /* 
 2025年6月12日，学校将校园邮箱从腾讯企业邮箱迁移至网易企业邮箱。

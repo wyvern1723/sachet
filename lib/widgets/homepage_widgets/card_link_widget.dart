@@ -20,21 +20,21 @@ class CardLinkWidget extends StatelessWidget {
         onTap: () => openLink(link),
         onLongPress: () => copyToClipboard(context, link, prefix: '链接'),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 6.0),
           child: Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 16,
+            spacing: 4,
             children: [
               Icon(
                 icon,
                 color: Theme.of(context).colorScheme.primary,
+                applyTextScaling: true,
               ),
               Text(
                 title,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
