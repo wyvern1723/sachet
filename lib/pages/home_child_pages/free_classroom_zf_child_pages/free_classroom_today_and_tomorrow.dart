@@ -12,6 +12,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
+import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/head_session_section.dart';
 import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
@@ -387,8 +388,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
   /// e.g. ['12', '34', '56', '78', '91011'];
   ///
   /// e.g. ['12', '34', '56', '78', '910', '11'];
-  List _sessionList() {
-    List sessionList = [];
+  List<String> _sessionList() {
+    List<String> sessionList = [];
 
     List sections =
         List.from(context.read<SettingsProvider>().freeClassroomSections);
@@ -478,7 +479,15 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
           return Column(
             children: [
-              _Head(sessionList: _sessionList(), sections: sections()),
+              _Head(
+                sessionSecionStrList: _sessionList(),
+                sessionSections: sections(),
+                date: widget.day != null
+                    ? (widget.day == Day.today
+                        ? DateTime.now()
+                        : DateTime.now().add(Duration(days: 1)))
+                    : widget.date!,
+              ),
               Expanded(
                 child: widget.day != null
                     ? _BodyOfTodayOrTomorrow(
@@ -501,12 +510,26 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
 /// 表头，显示 「"节次","12","34","56","78","091011"」
 class _Head extends StatelessWidget {
-  final List sessionList;
-  final List sections;
-  const _Head({required this.sessionList, required this.sections});
+  const _Head({
+    required this.sessionSecionStrList,
+    required this.sessionSections,
+    required this.date,
+  });
+
+  /// 显示顶部节次的字符串的 List，例如 ["12","34","56","78","091011"]
+  final List<String> sessionSecionStrList;
+
+  /// 显示顶部节次的 List，例如 [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10, 11]]
+  final List<List<int>> sessionSections;
+
+  /// 这天的日期
+  final DateTime date;
 
   @override
   Widget build(BuildContext context) {
+    /// 这天是否使用夏令时
+    final bool isSummerRountine = date.month > 4 && date.month < 10;
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -521,19 +544,13 @@ class _Head extends StatelessWidget {
             ),
           ),
           ...List.generate(
-            sessionList.length,
+            sessionSecionStrList.length,
             (index) => Flexible(
-              flex: sections[index].length,
-              child: Container(
-                alignment: Alignment.center,
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                margin: const EdgeInsets.all(2.0),
-                child: FittedBox(
-                  child: Text(
-                    "${sessionList[index]}",
-                    style: TextStyle(fontSize: 10.0),
-                  ),
-                ),
+              flex: sessionSections[index].length,
+              child: HeadSessionSection(
+                text: sessionSecionStrList[index],
+                section: sessionSections[index],
+                isSummerRountine: isSummerRountine,
               ),
             ),
           )
