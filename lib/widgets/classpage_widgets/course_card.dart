@@ -147,8 +147,8 @@ class CourseCard extends StatelessWidget {
 
       /// 这节课是否延迟10分钟上课（逸夫楼或信息科技大楼的课）
       /// 通知说「自 2026年10月1日（周四）起，试行错峰上课」
-      /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 5 周
-      /// 本学期的第1周-第4周，上课时间是没有错峰的，所以不标记第5周前错峰上课的课程。
+      /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 6 周
+      /// 本学期的第1周-第5周，上课时间是没有错峰的，所以不标记第6周前错峰上课的课程。
       /// [关于试行错峰上课的通知-政务信息港](https://zwxxg.xtu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1066&wbnewsid=10705)
 
       /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
@@ -157,7 +157,7 @@ class CourseCard extends StatelessWidget {
 
       /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
       final bool isBeforeStaggeredStartDate =
-          (semester == '2026-2027-1' && weekCount < 5);
+          (semester == '2026-2027-1' && weekCount < 6);
 
       /// 这节课是否错峰上课（延迟上课时间）
       final bool isStaggered = isStaggeredPlace && !isBeforeStaggeredStartDate;
