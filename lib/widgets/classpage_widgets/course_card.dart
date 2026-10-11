@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -53,6 +54,8 @@ class CourseCard extends StatelessWidget {
     required String courseTitle,
     required int weekday,
     required int classcount,
+    bool isStaggered = false, // 用户点击的课程的此节是否错峰上课
+    required int currentCourseLength, // 用户点击的课程的此节的持续节数
   }) {
     showModalBottomSheet(
       context: context,
@@ -68,7 +71,7 @@ class CourseCard extends StatelessWidget {
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
-        final List lengths = CourseInfoHelper.getLengths(
+        final List<int> lengths = CourseInfoHelper.getLengths(
           title: courseTitle,
           courseScheduleItems: courseScheduleItems,
         );
@@ -81,10 +84,27 @@ class CourseCard extends StatelessWidget {
           courseScheduleItems: courseScheduleItems,
         );
         final List sectionsShowText = [];
-        for (final e in lengths) {
-          sectionsShowText.add(
-            '${classCountToSection[classcount]}~${classCountToSection[classcount]! + e - 1}节次',
-          );
+
+        String? staggeredTime;
+
+        for (final length in lengths) {
+          final int startSession = classCountToSection[classcount]!;
+          final int endSession = classCountToSection[classcount]! + length - 1;
+          sectionsShowText.add('$startSession~$endSession节次');
+
+          if (length == currentCourseLength && isStaggered) {
+            List<String> times = [];
+
+            for (int i = startSession; i <= endSession; i++) {
+              final String startTime =
+                  classSessionWinterRoutineStaggeredStartTime[i - 1];
+              final String endTime =
+                  classSessionWinterRoutineStaggeredEndTime[i - 1];
+              times.add('第$i节: $startTime-$endTime');
+            }
+
+            staggeredTime = times.join('\n');
+          }
         }
 
         return CourseDetailsBottomSheet(
@@ -95,6 +115,7 @@ class CourseCard extends StatelessWidget {
           instructors: instructors,
           places: places,
           sectionsShowText: sectionsShowText,
+          staggeredTime: staggeredTime,
         );
       },
     );
@@ -118,6 +139,29 @@ class CourseCard extends StatelessWidget {
         return SizedBox();
       }
 
+      String classScheduleFilePath = context.select<SettingsProvider, String>(
+          (provider) => provider.classScheduleFilePath);
+      final String semester = extractSemester(classScheduleFilePath);
+
+      final String coursePlace = courseSchedule.place ?? '';
+
+      /// 这节课是否延迟10分钟上课（逸夫楼或信息科技大楼的课）
+      /// 通知说「自 2026年10月1日（周四）起，试行错峰上课」
+      /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 5 周
+      /// 本学期的第1周-第4周，上课时间是没有错峰的，所以不标记第5周前错峰上课的课程。
+      /// [关于试行错峰上课的通知-政务信息港](https://zwxxg.xtu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1066&wbnewsid=10705)
+
+      /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
+      final bool isStaggeredPlace =
+          (coursePlace.contains('逸夫楼') || coursePlace.contains('信息科技大楼'));
+
+      /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
+      final bool isBeforeStaggeredStartDate =
+          (semester == '2026-2027-1' && weekCount < 5);
+
+      /// 这节课是否错峰上课（延迟上课时间）
+      final bool isStaggered = isStaggeredPlace && !isBeforeStaggeredStartDate;
+
       switch (variant) {
         case CourseCardVariant.normal:
           return CourseCardNormal(
@@ -126,12 +170,15 @@ class CourseCard extends StatelessWidget {
               courseSchedule: courseSchedule,
               cardHeight: cardHeight,
               cardBorderRadius: cardBorderRadius,
+              isStaggered: isStaggered,
               onTap: (_) {
                 _showCourseDetails(
                   context: context,
                   courseTitle: courseSchedule.title ?? '',
                   weekday: weekday,
                   classcount: classCount,
+                  isStaggered: isStaggered,
+                  currentCourseLength: courseSchedule.length ?? 2,
                 );
               });
         case CourseCardVariant.compact:
@@ -146,6 +193,8 @@ class CourseCard extends StatelessWidget {
                   courseTitle: courseSchedule.title ?? '',
                   weekday: weekday,
                   classcount: classCount,
+                  isStaggered: isStaggered,
+                  currentCourseLength: courseSchedule.length ?? 2,
                 );
               });
       }
@@ -161,6 +210,7 @@ class CourseCardNormal extends StatelessWidget {
     required this.courseColorData,
     this.cardHeight,
     this.cardBorderRadius,
+    this.isStaggered = false,
     this.onTap,
   });
   final int weekCount;
@@ -168,6 +218,7 @@ class CourseCardNormal extends StatelessWidget {
   final Map? courseColorData;
   final double? cardHeight;
   final double? cardBorderRadius;
+  final bool isStaggered;
   final Function? onTap;
 
   @override
@@ -184,29 +235,6 @@ class CourseCardNormal extends StatelessWidget {
                 courseCardSettingsProvider.cardBorderRadius);
     double cardMargin = context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardMargin);
-
-    String classScheduleFilePath = context.select<SettingsProvider, String>(
-        (provider) => provider.classScheduleFilePath);
-    final String semester = extractSemester(classScheduleFilePath);
-
-    final String coursePlace = courseSchedule.place ?? '';
-
-    /// 这节课是否延迟10分钟上课（逸夫楼或信息科技大楼的课）
-    /// 通知说「自 2026年10月1日（周四）起，试行错峰上课」
-    /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 5 周
-    /// 本学期的第1周-第4周，上课时间是没有错峰的，所以不标记第5周前错峰上课的课程。
-    /// [关于试行错峰上课的通知-政务信息港](https://zwxxg.xtu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1066&wbnewsid=10705)
-
-    /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
-    final bool isStaggeredPlace =
-        (coursePlace.contains('逸夫楼') || coursePlace.contains('信息科技大楼'));
-
-    /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
-    final bool isBeforeStaggeredStartDate =
-        (semester == '2026-2027-1' && weekCount < 5);
-
-    /// 这节课是否错峰上课（延迟上课时间）
-    final bool isStaggered = isStaggeredPlace && !isBeforeStaggeredStartDate;
 
     return Stack(
       children: [
@@ -270,7 +298,7 @@ class CourseCardNormal extends StatelessWidget {
 
                         // 上课地点
                         CourseCardItem(
-                          text: coursePlace,
+                          text: courseSchedule.place ?? '',
                           coursecardcategory: CourseItemCategory.place,
                         ),
 

@@ -11,6 +11,7 @@ class CourseDetailsBottomSheet extends StatelessWidget {
     required this.instructors,
     required this.places,
     required this.sectionsShowText,
+    this.staggeredTime,
   });
   final String courseTitle;
   final int weekday;
@@ -19,6 +20,9 @@ class CourseDetailsBottomSheet extends StatelessWidget {
   final List instructors;
   final List places;
   final List sectionsShowText;
+
+  /// 如果这节课是错峰上课，需要提供上课开始、结束时间
+  final String? staggeredTime;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +113,26 @@ class CourseDetailsBottomSheet extends StatelessWidget {
                         ),
                         visualDensity: VisualDensity.compact,
                       ),
+                      if (staggeredTime != null)
+                        ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 24.0),
+                          leading: Icon(
+                            Icons.timer_outlined,
+                            // Icons.timelapse_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 20,
+                            applyTextScaling: true,
+                          ),
+                          title: Text('错峰上课',
+                              style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant)),
+                          subtitle: Text(
+                            '$staggeredTime',
+                            style: textTheme.bodyLarge,
+                          ),
+                          visualDensity: VisualDensity.compact,
+                        ),
                     ],
                   ),
                 ),
