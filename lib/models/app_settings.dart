@@ -25,6 +25,7 @@ class AppSettings {
   bool? isShowExamTimeCountdown;
   bool? isDeleteQZJwxtUserInfo;
   String? appUpdateChannel;
+  double? appTextScale;
 
   AppSettings({
     this.isMD3,
@@ -53,6 +54,7 @@ class AppSettings {
     this.isShowExamTimeCountdown,
     this.isDeleteQZJwxtUserInfo,
     this.appUpdateChannel,
+    this.appTextScale,
   });
 
   AppSettings.fromJson(Map<String, dynamic> json) {
@@ -82,6 +84,7 @@ class AppSettings {
     isShowExamTimeCountdown = json['isShowExamTimeCountdown'];
     isDeleteQZJwxtUserInfo = json['isDeleteQZJwxtUserInfo'];
     appUpdateChannel = json['appUpdateChannel'];
+    appTextScale = json['appTextScale'];
   }
 
   Map<String, dynamic> toJson() {
@@ -112,6 +115,7 @@ class AppSettings {
     data['isShowExamTimeCountdown'] = isShowExamTimeCountdown;
     data['isDeleteQZJwxtUserInfo'] = isDeleteQZJwxtUserInfo;
     data['appUpdateChannel'] = appUpdateChannel;
+    data['appTextScale'] = appTextScale;
     return data;
   }
 }

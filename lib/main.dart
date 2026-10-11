@@ -124,6 +124,16 @@ class MyApp extends StatelessWidget {
     required ThemeProvider themeProvider,
   }) {
     return MaterialApp(
+      builder: (context, child) {
+        final systemTextScaler = MediaQuery.of(context).textScaler;
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(
+                systemTextScaler.scale(1.0) * themeProvider.appTextScale),
+          ),
+          child: child!,
+        );
+      },
       title: 'Sachet',
       scaffoldMessengerKey: SnackbarGlobal.key,
       navigatorKey: NavigatorGlobal.navigatorKey,

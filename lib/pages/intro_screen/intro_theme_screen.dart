@@ -127,6 +127,38 @@ class _IntroThemeScreenState extends State<IntroThemeScreen> {
           ),
           SizedBox(height: 8),
           SectionCard(
+            title: '应用字体大小',
+            childPadding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('小', style: Theme.of(context).textTheme.titleSmall),
+                Flexible(
+                  child: Selector<ThemeProvider, double>(
+                    selector: (_, themeProvider) => themeProvider.appTextScale,
+                    builder: (_, appTextScale, __) {
+                      final appTextScaleInt = (appTextScale * 100).round();
+                      return Slider(
+                        value: appTextScaleInt.toDouble(),
+                        min: 50,
+                        max: 150,
+                        divisions: 100,
+                        label: appTextScale.toStringAsFixed(2),
+                        onChanged: (value) {
+                          context
+                              .read<ThemeProvider>()
+                              .setAppTextScale(value.round() / 100);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Text('大', style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
+          ),
+          SizedBox(height: 8),
+          SectionCard(
             title: 'Material Design',
             childPadding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(

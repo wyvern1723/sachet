@@ -33,6 +33,8 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+  double get appTextScale => _appSettings.appTextScale ?? 1.00;
+
   void setIsMD3(bool ismd3) {
     if (ismd3 != isMD3) {
       _appSettings.isMD3 = ismd3;
@@ -76,6 +78,14 @@ class ThemeProvider extends ChangeNotifier {
   void setPredictiveBack(bool value) {
     if (isPredictiveBack != value) {
       _appSettings.isPredictiveBack = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
+  void setAppTextScale(double value) {
+    if (appTextScale != value) {
+      _appSettings.appTextScale = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }
