@@ -1,10 +1,10 @@
 // 管理时间
 
-// 从周数推这一周第一天时间
-// 第 n 周的第一天（周一） = 学期第一周的第一天 + (n-1) * 7
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/providers/settings_provider.dart';
 
+// 从周数推这一周第一天时间
+// 第 n 周的第一天（周一） = 学期第一周的第一天 + (n-1) * 7
 DateTime getTheMondayDateOfTheWeek(DateTime semesterStartDate, int weekCount) {
   final weekMonday = semesterStartDate.add(Duration(
       days:
@@ -96,7 +96,11 @@ bool isToday(DateTime thatDay) {
   required int item,
   required int week,
   required int courseLength,
+  required bool isStaggered,
   DateTime? semesterStartDate,
+
+  /// 此学期是否启用错峰上课的新时间表
+  required bool isUseStaggeredSchedule,
 }) {
   final result = getWeekdayAndSessionFromItem(item);
   final int courseWeekday = result.weekday;
@@ -123,10 +127,24 @@ bool isToday(DateTime thatDay) {
     courseEndTimeStr = classSessionSummerRoutineEndTime[
         courseStartSession - 1 + courseLength - 1];
   } else {
-    courseStartTimeStr =
-        classSessionWinterRoutineStartTime[courseStartSession - 1];
-    courseEndTimeStr = classSessionWinterRoutineEndTime[
-        courseStartSession - 1 + courseLength - 1];
+    if (!isUseStaggeredSchedule) {
+      courseStartTimeStr =
+          classSessionWinterRoutineOldStartTime[courseStartSession - 1];
+      courseEndTimeStr = classSessionWinterRoutineOldEndTime[
+          courseStartSession - 1 + courseLength - 1];
+    } else {
+      if (isStaggered) {
+        courseStartTimeStr =
+            classSessionWinterRoutineStaggeredStartTime[courseStartSession - 1];
+        courseEndTimeStr = classSessionWinterRoutineStaggeredEndTime[
+            courseStartSession - 1 + courseLength - 1];
+      } else {
+        courseStartTimeStr =
+            classSessionWinterRoutineRegularStartTime[courseStartSession - 1];
+        courseEndTimeStr = classSessionWinterRoutineRegularEndTime[
+            courseStartSession - 1 + courseLength - 1];
+      }
+    }
   }
 
   /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）

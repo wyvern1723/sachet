@@ -341,10 +341,27 @@ class SettingsProvider extends ChangeNotifier {
               courseEndTimeStr = classSessionSummerRoutineEndTime[
                   courseStartSession - 1 + courseLength - 1];
             } else {
-              courseStartTimeStr =
-                  classSessionWinterRoutineStartTime[courseStartSession - 1];
-              courseEndTimeStr = classSessionWinterRoutineEndTime[
-                  courseStartSession - 1 + courseLength - 1];
+              /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
+              final bool isStaggeredPlace = (coursePlace.contains('逸夫楼') ||
+                  coursePlace.contains('信息科技大楼'));
+
+              /// 这节课是否错峰上课（延迟上课时间）
+              /// 因为不会发送课程开始时间在用户开启课程通知（当前）之前的通知，而新版本发布时，所有未实行错峰课程的课程都已经上过
+              /// 所以无需判断此时是否实行错峰上课
+              final bool isStaggered = isStaggeredPlace;
+
+              if (isStaggered) {
+                courseStartTimeStr =
+                    classSessionWinterRoutineStaggeredStartTime[
+                        courseStartSession - 1];
+                courseEndTimeStr = classSessionWinterRoutineStaggeredEndTime[
+                    courseStartSession - 1 + courseLength - 1];
+              } else {
+                courseStartTimeStr =
+                    classSessionWinterRoutineRegularStartTime[courseStartSession - 1];
+                courseEndTimeStr = classSessionWinterRoutineRegularEndTime[
+                    courseStartSession - 1 + courseLength - 1];
+              }
             }
 
             /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）

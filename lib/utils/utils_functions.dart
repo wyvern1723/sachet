@@ -57,3 +57,22 @@ void copyToClipboard(BuildContext context, String text, {String prefix = ''}) {
     ),
   );
 }
+
+/// 从获取课表默认保存的文件名提取当前学期
+///
+/// e.g.
+///
+/// "class_schedule_2025-2026-2_20260404155500" => "2025-2026-2"
+///
+/// "class_schedule_2025-2026-1_20250825111641" => "2025-2026-1"
+String extractSemester(String filename) {
+  final regex = RegExp(r'class_schedule_(\d{4}-\d{4}-\d+)');
+  final match = regex.firstMatch(filename);
+
+  if (match != null && match.groupCount >= 1) {
+    return match.group(1)!;
+  }
+
+  // throw FormatException('无法从文件名 "$filename" 中提取学期信息');
+  return filename;
+}

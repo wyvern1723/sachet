@@ -37,9 +37,16 @@ Future<String?> exportClassScheduleToIcs({
     throw '课程信息为空/课程表文件格式错误';
   }
 
+  /// 此学期是否使用了新的错峰上课时间表
+  /// 最早的使用错峰上课的学期是 2026-2027学年第1学期，开学日期为 2026年9月7日
+  /// 所以开学日期在 DateTime(2026, 9, 6) 之后的学期都可以判断为使用错峰上课时间表的学期
+  final bool isUseStaggeredSchedule =
+      (semesterStartDate.isAfter(DateTime(2026, 9, 6)));
+
   final String ics = generateIcsFromSchedule(
     courseScheduleItemsList: courseScheduleItemsList,
     semesterStartDate: semesterStartDate,
+    isUseStaggeredSchedule: isUseStaggeredSchedule,
   );
 
   final String? filePath = await FilePicker.platform.saveFile(
@@ -65,7 +72,10 @@ String generateIcsFromSchedule({
   required List courseScheduleItemsList,
   required DateTime semesterStartDate,
   String prodId = '-//wyvern1723//Sachet//ZH',
-  String domain = 'wyvernlab.com',
+  String domain = 'sachet.wyvernlab.com',
+
+  /// 此学期是否启用错峰上课的新时间表
+  required bool isUseStaggeredSchedule,
 }) {
   final events = <String>[];
   final uuid = const Uuid();
@@ -91,11 +101,28 @@ String generateIcsFromSchedule({
       }
 
       for (final week in courseWeeks) {
+        /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
+        final bool isStaggeredPlace =
+            (coursePlace.contains('逸夫楼') || coursePlace.contains('信息科技大楼'));
+
+        /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
+        final bool isBeforeStaggeredStartDate =
+            (semesterStartDate.year == 2026 &&
+                semesterStartDate.month == 9 &&
+                semesterStartDate.day == 7 &&
+                week < 5);
+
+        /// 这节课是否错峰上课（延迟上课时间）
+        final bool isStaggered =
+            isStaggeredPlace && !isBeforeStaggeredStartDate;
+
         final time = getStartAndEndTime(
           item: courseItem,
           week: week,
           courseLength: courseLength,
+          isStaggered: isStaggered,
           semesterStartDate: semesterStartDate,
+          isUseStaggeredSchedule: isUseStaggeredSchedule,
         );
 
         final String uid = '${uuid.v4()}@$domain';

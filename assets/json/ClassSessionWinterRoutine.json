@@ -11,13 +11,13 @@
     },
     {
         "session": "3",
-        "startTime": "10:10",
-        "endTime": "10:55"
+        "startTime": "10:20",
+        "endTime": "11:05"
     },
     {
         "session": "4",
-        "startTime": "11:05",
-        "endTime": "11:50"
+        "startTime": "11:15",
+        "endTime": "12:00"
     },
     {
         "session": "5",
@@ -31,27 +31,27 @@
     },
     {
         "session": "7",
-        "startTime": "16:10",
-        "endTime": "16:55"
+        "startTime": "16:20",
+        "endTime": "17:05"
     },
     {
         "session": "8",
-        "startTime": "17:05",
-        "endTime": "17:50"
+        "startTime": "17:15",
+        "endTime": "18:00"
     },
     {
         "session": "9",
-        "startTime": "19:00",
-        "endTime": "19:45"
+        "startTime": "19:15",
+        "endTime": "20:00"
     },
     {
         "session": "10",
-        "startTime": "19:55",
-        "endTime": "20:40"
+        "startTime": "20:10",
+        "endTime": "20:55"
     },
     {
         "session": "11",
-        "startTime": "20:50",
-        "endTime": "21:35"
+        "startTime": "21:05",
+        "endTime": "21:50"
     }
 ]

@@ -8,24 +8,27 @@ class ClassSessionRoutineColumn extends StatelessWidget {
     super.key,
     required this.weekCount,
     required this.routinedata,
-    this.cardHeight,
+    required this.cardHeight,
   });
   final int weekCount;
   final List? routinedata;
-  final double? cardHeight;
+  final double cardHeight;
 
   List<Widget> _getListings() {
-    List<Widget> listings = [];
+    List<Widget> sessions = [];
     int i = 0;
     for (i = 0; i < 11; i++) {
-      listings.add(ClassSession(
+      sessions.add(ClassSession(
         session: routinedata?[i]["session"],
         startTime: routinedata?[i]["startTime"],
         endTime: routinedata?[i]["endTime"],
         cardHeight: cardHeight,
       ));
+      if ([1, 3, 5, 7].contains(i)) {
+        sessions.add(_break());
+      }
     }
-    return listings;
+    return sessions;
   }
 
   @override
@@ -35,5 +38,11 @@ class ClassSessionRoutineColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: _getListings(),
     );
+  }
+
+  /// 休息时间段（占位空白）
+  Widget _break() {
+    double height = 0.05 * cardHeight;
+    return SizedBox(height: height);
   }
 }

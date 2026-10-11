@@ -89,8 +89,8 @@ const List classSessionSummerRoutineEndTime = [
   "22:05",
 ];
 
-/// 冬令时每节课的开始时间
-const List classSessionWinterRoutineStartTime = [
+/// 冬令时每节课的开始时间（在 2026年10月1日 试行错峰上课之前使用，不清楚最早是什么时候使用这个时间表，应该很多年了）
+const List classSessionWinterRoutineOldStartTime = [
   "08:00",
   "08:55",
   "10:10",
@@ -104,8 +104,8 @@ const List classSessionWinterRoutineStartTime = [
   "20:50",
 ];
 
-/// 冬令时每节课的结束时间
-const List classSessionWinterRoutineEndTime = [
+/// 冬令时每节课的结束时间（在 2026年10月1日 试行错峰上课之前使用，不清楚最早是什么时候使用这个时间表，应该很多年了）
+const List classSessionWinterRoutineOldEndTime = [
   "08:45",
   "09:40",
   "10:55",
@@ -117,4 +117,64 @@ const List classSessionWinterRoutineEndTime = [
   "19:45",
   "20:40",
   "21:35",
+];
+
+/// 冬令时正常教学楼的每节课的开始时间
+const List classSessionWinterRoutineRegularStartTime = [
+  "08:00",
+  "08:55",
+  "10:20",
+  "11:15",
+  "14:00",
+  "14:55",
+  "16:20",
+  "17:15",
+  "19:15",
+  "20:10",
+  "21:05",
+];
+
+/// 冬令时正常教学楼的每节课的结束时间
+const List classSessionWinterRoutineRegularEndTime = [
+  "08:45",
+  "09:40",
+  "10:55",
+  "11:50",
+  "14:45",
+  "15:40",
+  "17:05",
+  "18:00",
+  "20:00",
+  "20:55",
+  "21:50",
+];
+
+/// 冬令时错峰教学楼的每节课的开始时间
+const List classSessionWinterRoutineStaggeredStartTime = [
+  "08:10",
+  "09:05",
+  "10:30",
+  "11:25",
+  "14:10",
+  "15:05",
+  "16:30",
+  "17:25",
+  "19:15",
+  "20:10",
+  "21:05",
+];
+
+/// 冬令时错峰教学楼的每节课的结束时间
+const List classSessionWinterRoutineStaggeredEndTime = [
+  "08:55",
+  "09:50",
+  "11:15",
+  "12:10",
+  "14:55",
+  "15:50",
+  "17:15",
+  "18:10",
+  "20:00",
+  "20:55",
+  "21:50",
 ];

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/course_card_settings_provider.dart';
+import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/course_info_helper.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/classpage_widgets/course_details_bottom_sheet.dart';
+import 'package:sachet/widgets/classpage_widgets/stripe_band_banner.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
 import 'package:provider/provider.dart';
 
@@ -118,6 +121,7 @@ class CourseCard extends StatelessWidget {
       switch (variant) {
         case CourseCardVariant.normal:
           return CourseCardNormal(
+              weekCount: weekCount,
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
               cardHeight: cardHeight,
@@ -152,12 +156,14 @@ class CourseCard extends StatelessWidget {
 class CourseCardNormal extends StatelessWidget {
   const CourseCardNormal({
     super.key,
+    required this.weekCount,
     required this.courseSchedule,
     required this.courseColorData,
     this.cardHeight,
     this.cardBorderRadius,
     this.onTap,
   });
+  final int weekCount;
   final CourseSchedule courseSchedule;
   final Map? courseColorData;
   final double? cardHeight;
@@ -179,55 +185,109 @@ class CourseCardNormal extends StatelessWidget {
     double cardMargin = context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardMargin);
 
-    return SizedBox(
-      width: double.infinity,
-      height: _cardHeight * (courseSchedule.length ?? 2),
-      child: Card(
-        clipBehavior: Clip.hardEdge,
-        // Card 在 Container 里的边距（在整体上表现为各个卡片间的间隙、间距）
-        margin: EdgeInsets.all(cardMargin),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_cardBorderRadius),
-        ),
-        color: (courseColorData?[courseSchedule.title]).toString().toColor() ??
-            Colors.green.shade400,
-        child: InkWell(
-          onTap: () {
-            var onTapFunc = onTap;
-            if (onTapFunc != null) {
-              onTapFunc(true);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-            child: SingleChildScrollView(
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // 课程名称
-                  CourseCardItem(
-                    text: courseSchedule.title ?? '',
-                    coursecardcategory: CourseItemCategory.title,
-                  ),
+    String classScheduleFilePath = context.select<SettingsProvider, String>(
+        (provider) => provider.classScheduleFilePath);
+    final String semester = extractSemester(classScheduleFilePath);
 
-                  // 上课地点
-                  CourseCardItem(
-                    text: courseSchedule.place ?? '',
-                    coursecardcategory: CourseItemCategory.place,
-                  ),
+    final String coursePlace = courseSchedule.place ?? '';
 
-                  // 授课教师
-                  CourseCardItem(
-                    text: courseSchedule.instructor ?? '',
-                    coursecardcategory: CourseItemCategory.instructor,
+    /// 这节课是否延迟10分钟上课（逸夫楼或信息科技大楼的课）
+    /// 通知说「自 2026年10月1日（周四）起，试行错峰上课」
+    /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 5 周
+    /// 本学期的第1周-第4周，上课时间是没有错峰的，所以不标记第5周前错峰上课的课程。
+    /// [关于试行错峰上课的通知-政务信息港](https://zwxxg.xtu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1066&wbnewsid=10705)
+
+    /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
+    final bool isStaggeredPlace =
+        (coursePlace.contains('逸夫楼') || coursePlace.contains('信息科技大楼'));
+
+    /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
+    final bool isBeforeStaggeredStartDate =
+        (semester == '2026-2027-1' && weekCount < 5);
+
+    /// 这节课是否错峰上课（延迟上课时间）
+    final bool isStaggered = isStaggeredPlace && !isBeforeStaggeredStartDate;
+
+    return Stack(
+      children: [
+        if (isStaggered)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: StripeBandBanner(
+              label: '错峰 +10\u2006min',
+              padding: EdgeInsets.fromLTRB(6, 0, 2, 0),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(_cardBorderRadius)),
+              margin: EdgeInsets.all(cardMargin),
+              textHeight: 0.1 * _cardHeight,
+            ),
+          ),
+        Transform.translate(
+          offset: Offset(
+            0,
+            isStaggered ? 0.1 * _cardHeight : 0,
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            height: isStaggered
+                ? _cardHeight * (courseSchedule.length ?? 2) -
+                    _cardHeight * 0.05
+                : _cardHeight * (courseSchedule.length ?? 2),
+            child: Card(
+              clipBehavior: Clip.hardEdge,
+              // Card 在 SizedBox 里的边距（在整体上表现为各个卡片间的间隙/间距）
+              margin: EdgeInsets.all(cardMargin),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(_cardBorderRadius),
+              ),
+              color: (courseColorData?[courseSchedule.title])
+                      .toString()
+                      .toColor() ??
+                  Colors.green.shade400,
+              child: InkWell(
+                onTap: () {
+                  var onTapFunc = onTap;
+                  if (onTapFunc != null) {
+                    onTapFunc(true);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 2.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // 课程名称
+                        CourseCardItem(
+                          text: courseSchedule.title ?? '',
+                          coursecardcategory: CourseItemCategory.title,
+                        ),
+
+                        // 上课地点
+                        CourseCardItem(
+                          text: coursePlace,
+                          coursecardcategory: CourseItemCategory.place,
+                        ),
+
+                        // 授课教师
+                        CourseCardItem(
+                          text: courseSchedule.instructor ?? '',
+                          coursecardcategory: CourseItemCategory.instructor,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

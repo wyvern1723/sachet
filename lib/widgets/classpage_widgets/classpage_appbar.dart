@@ -7,6 +7,7 @@ import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
@@ -212,25 +213,6 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     context.read<ClassPageProvider>().animateToTodayMonth(
         duration: Duration(milliseconds: settingsProvider.curveDuration),
         curve: curveTypes[settingsProvider.curveType]);
-  }
-
-  /// 从获取课表默认保存的文件名提取当前学期
-  ///
-  /// e.g.
-  ///
-  /// "class_schedule_2025-2026-2_20260404155500" => "2025-2026-2"
-  ///
-  /// "class_schedule_2025-2026-1_20250825111641" => "2025-2026-1"
-  String extractSemester(String filename) {
-    final regex = RegExp(r'class_schedule_(\d{4}-\d{4}-\d+)');
-    final match = regex.firstMatch(filename);
-
-    if (match != null && match.groupCount >= 1) {
-      return match.group(1)!;
-    }
-
-    // throw FormatException('无法从文件名 "$filename" 中提取学期信息');
-    return filename;
   }
 
   @override

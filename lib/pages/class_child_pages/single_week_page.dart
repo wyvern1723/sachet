@@ -98,19 +98,24 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                                   int item = (weekday - 1) * 5 + classCount;
                                   List<CourseSchedule> courseScheduleItems =
                                       widget.courseScheduleItemsList![item];
-                                  return SizedBox(
-                                    height: (widget.cardHeight) * 2,
-                                    child: OverflowBox(
-                                      alignment: Alignment.topCenter,
-                                      maxHeight: (widget.cardHeight) * 11,
-                                      child: CourseCard(
-                                        cardHeight: widget.cardHeight,
-                                        weekCount: widget.weekCount,
-                                        weekday: weekday,
-                                        classCount: classCount,
-                                        courseScheduleItems:
-                                            courseScheduleItems,
-                                        courseColorData: widget.courseColorData,
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: 0.05 * widget.cardHeight),
+                                    child: SizedBox(
+                                      height: (widget.cardHeight) * 2,
+                                      child: OverflowBox(
+                                        alignment: Alignment.topCenter,
+                                        maxHeight: (widget.cardHeight) * 11,
+                                        child: CourseCard(
+                                          cardHeight: widget.cardHeight,
+                                          weekCount: widget.weekCount,
+                                          weekday: weekday,
+                                          classCount: classCount,
+                                          courseScheduleItems:
+                                              courseScheduleItems,
+                                          courseColorData:
+                                              widget.courseColorData,
+                                        ),
                                       ),
                                     ),
                                   );
