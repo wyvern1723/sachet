@@ -292,8 +292,9 @@ class _SetCourseCardAppearanceDialogState
           onPressed: () async {
             switch (widget.category) {
               case CourseItemCategory.title:
-                context.read<CourseCardSettingsProvider>().setTitleFontSize(
-                    double.tryParse(valueController.text) ?? 13.0);
+                context
+                    .read<CourseCardSettingsProvider>()
+                    .setTitleFontSize(double.tryParse(valueController.text));
                 context
                     .read<CourseCardSettingsProvider>()
                     .setTitleMaxLines(_titleMaxLines);
@@ -305,8 +306,9 @@ class _SetCourseCardAppearanceDialogState
                     .setTitleFontWeight(_titleFontWeight.toInt());
                 break;
               case CourseItemCategory.place:
-                context.read<CourseCardSettingsProvider>().setPlaceFontSize(
-                    double.tryParse(valueController.text) ?? 12.0);
+                context
+                    .read<CourseCardSettingsProvider>()
+                    .setPlaceFontSize(double.tryParse(valueController.text));
                 context
                     .read<CourseCardSettingsProvider>()
                     .setPlaceMaxLines(_titleMaxLines);
@@ -321,7 +323,7 @@ class _SetCourseCardAppearanceDialogState
                 context
                     .read<CourseCardSettingsProvider>()
                     .setInstructorFontSize(
-                        double.tryParse(valueController.text) ?? 12.0);
+                        double.tryParse(valueController.text));
                 context
                     .read<CourseCardSettingsProvider>()
                     .setInstructorMaxLines(_titleMaxLines);

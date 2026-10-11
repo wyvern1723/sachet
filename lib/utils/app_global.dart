@@ -86,7 +86,7 @@ const defaultAppSettingsConfig = {
   "isShowPageTurnArrow": true, // 是否显示课程表上一周下一周的翻页箭头
   "classScheduleFilePath": "", // 当前使用的课程表文件路径
   "courseColorFilePath": "", // 当前使用的课程配色文件路径
-  "semesterStartDate": "2026-03-02", // 学期开始日期
+  "semesterStartDate": "2026-09-07", // 学期开始日期
   "curveDuration ": 1500, // 课表翻页动画时长
   "curveType": "Easing.standard", // 课表翻页动画类型（动画曲线）
   "isEnableDevMode": false, // 是否启用开发者模式
@@ -129,9 +129,9 @@ const defaultCourseCardSettingsConfig = {
   "cardHeight": 65.0, // 卡片高度（每一小节， 1 / 11 ）
   "cardBorderRadius": 6.0, // 卡片圆角大小
   "cardMargin": 2.0, // 卡片间距
-  "titleFontSize": 13.0, // 课程名称字体大小
-  "placeFontSize": 12.0, // 上课地点字体大小
-  "instructorFontSize": 12.0, // 授课教师字体大小
+  "titleFontSize": 12.0, // 课程名称字体大小
+  "placeFontSize": 11.0, // 上课地点字体大小
+  "instructorFontSize": 11.0, // 授课教师字体大小
   "titleFontWeight": 7, // 课程名称字重
   "placeFontWeight": 4, // 上课地点字重
   "instructorFontWeight": 4, // 授课教师字重
