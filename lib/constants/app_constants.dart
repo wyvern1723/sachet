@@ -119,7 +119,7 @@ const List classSessionWinterRoutineOldEndTime = [
   "21:35",
 ];
 
-/// 冬令时正常教学楼的每节课的开始时间
+/// 冬令时正常教学楼的每节课的开始时间（在 2026年10月1日 试行错峰上课之后使用）
 const List classSessionWinterRoutineRegularStartTime = [
   "08:00",
   "08:55",
@@ -134,12 +134,12 @@ const List classSessionWinterRoutineRegularStartTime = [
   "21:05",
 ];
 
-/// 冬令时正常教学楼的每节课的结束时间
+/// 冬令时正常教学楼的每节课的结束时间（在 2026年10月1日 试行错峰上课之后使用）
 const List classSessionWinterRoutineRegularEndTime = [
   "08:45",
   "09:40",
-  "10:55",
-  "11:50",
+  "11:05",
+  "12:00",
   "14:45",
   "15:40",
   "17:05",
@@ -149,7 +149,7 @@ const List classSessionWinterRoutineRegularEndTime = [
   "21:50",
 ];
 
-/// 冬令时错峰教学楼的每节课的开始时间
+/// 冬令时错峰教学楼的每节课的开始时间（在 2026年10月1日 试行错峰上课之后使用）
 const List classSessionWinterRoutineStaggeredStartTime = [
   "08:10",
   "09:05",
@@ -164,7 +164,7 @@ const List classSessionWinterRoutineStaggeredStartTime = [
   "21:05",
 ];
 
-/// 冬令时错峰教学楼的每节课的结束时间
+/// 冬令时错峰教学楼的每节课的结束时间（在 2026年10月1日 试行错峰上课之后使用）
 const List classSessionWinterRoutineStaggeredEndTime = [
   "08:55",
   "09:50",
