@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 
+import 'package:sachet/models/session_routine.dart';
+
 import 'class_session.dart';
 
 /// 最左列显示课程节次、开始时间、结束时间的 Column
 class ClassSessionRoutineColumn extends StatelessWidget {
   const ClassSessionRoutineColumn({
     super.key,
-    required this.weekCount,
-    required this.routinedata,
+    required this.routineData,
     required this.cardHeight,
   });
-  final int weekCount;
-  final List? routinedata;
+  final List<SessionPeriod> routineData;
   final double cardHeight;
 
   List<Widget> _getListings() {
     List<Widget> sessions = [];
     int i = 0;
     for (i = 0; i < 11; i++) {
+      final period = routineData[i];
       sessions.add(ClassSession(
-        session: routinedata?[i]["session"],
-        startTime: routinedata?[i]["startTime"],
-        endTime: routinedata?[i]["endTime"],
+        session: '${period.session}',
+        startTime: period.startTime,
+        endTime: period.endTime,
         cardHeight: cardHeight,
       ));
       if ([1, 3, 5, 7].contains(i)) {

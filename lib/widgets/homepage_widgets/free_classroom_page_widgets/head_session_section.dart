@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sachet/constants/app_constants.dart';
+
+import 'package:sachet/models/session_routine.dart';
 
 class HeadSessionSection extends StatefulWidget {
   const HeadSessionSection({
@@ -90,8 +91,10 @@ class SectionSessionsTime extends StatelessWidget {
     String sessionsTime = '';
     List<String> time = [];
     for (final session in section) {
-      final String startTime = classSessionSummerRoutineStartTime[session - 1];
-      final String endTime = classSessionSummerRoutineEndTime[session - 1];
+      final period = SessionRoutine.summer.periods[session - 1];
+      final String startTime = period.startTime;
+      final String endTime = period.endTime;
+
       time.add('第$session节: $startTime-$endTime');
     }
     sessionsTime = time.join('\n');
@@ -118,10 +121,10 @@ class SectionSessionsTime extends StatelessWidget {
     String sessionsTimeRegular = '';
     List<String> timeRegular = [];
     for (final session in section) {
-      final String startTime =
-          classSessionWinterRoutineRegularStartTime[session - 1];
-      final String endTime =
-          classSessionWinterRoutineRegularEndTime[session - 1];
+      final period = SessionRoutine.winterRegular.periods[session - 1];
+      final String startTime = period.startTime;
+      final String endTime = period.endTime;
+
       timeRegular.add('第$session节: $startTime-$endTime');
     }
     sessionsTimeRegular = timeRegular.join('\n');
@@ -129,10 +132,10 @@ class SectionSessionsTime extends StatelessWidget {
     String sessionsTimeStaggered = '';
     List<String> timeStaggered = [];
     for (final session in section) {
-      final String startTime =
-          classSessionWinterRoutineStaggeredStartTime[session - 1];
-      final String endTime =
-          classSessionWinterRoutineStaggeredEndTime[session - 1];
+      final period = SessionRoutine.winterStaggered.periods[session - 1];
+      final String startTime = period.startTime;
+      final String endTime = period.endTime;
+
       timeStaggered.add('第$session节: $startTime-$endTime');
     }
     sessionsTimeStaggered = timeStaggered.join('\n');

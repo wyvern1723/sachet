@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/course_info_helper.dart';
-import 'package:sachet/utils/utils_functions.dart';
+import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/widgets/classpage_widgets/course_details_bottom_sheet.dart';
 import 'package:sachet/widgets/classpage_widgets/stripe_band_banner.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
@@ -17,40 +17,41 @@ import 'course_card_item.dart';
 enum CourseCardVariant { normal, compact }
 
 class CourseCard extends StatelessWidget {
-  final double cardHeight;
-  final double? cardBorderRadius;
   final int weekCount;
   final int weekday;
   final int classCount; // classCount 节次（ 1~5 ）
   final List<CourseSchedule> courseScheduleItems;
   final Map? courseColorData;
+  final double cardHeight;
+  final double? cardBorderRadius;
   final CourseCardVariant variant;
 
   const CourseCard({
     super.key,
-    required this.cardHeight,
     required this.weekCount,
     required this.weekday,
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
+    required this.cardHeight,
     this.cardBorderRadius,
     this.variant = CourseCardVariant.normal,
   });
 
   const CourseCard.compact({
     super.key,
-    required this.cardHeight,
     required this.weekCount,
     required this.weekday,
     required this.classCount,
     required this.courseScheduleItems,
     required this.courseColorData,
+    required this.cardHeight,
     this.cardBorderRadius,
   }) : variant = CourseCardVariant.compact;
 
   void _showCourseDetails({
     required BuildContext context,
+    required DateTime date,
     required String courseTitle,
     required int weekday,
     required int classcount,
@@ -85,25 +86,29 @@ class CourseCard extends StatelessWidget {
         );
         final List sectionsShowText = [];
 
-        String? staggeredTime;
+        /// 显示的此课内每小节的开始和结束时间
+        /// 如果此节课的持续时间在不同周不同(例如在第2-8周，上课时间是 9-11 节，但在第9周，上课时间变成了 9-10 节)，
+        /// 则只显示当前点击的这节课在所属周下每小节的开始和结束时间
+        String? timeShowText;
 
         for (final length in lengths) {
           final int startSession = classCountToSection[classcount]!;
           final int endSession = classCountToSection[classcount]! + length - 1;
           sectionsShowText.add('$startSession~$endSession节次');
 
-          if (length == currentCourseLength && isStaggered) {
+          if (length == currentCourseLength) {
             List<String> times = [];
 
             for (int i = startSession; i <= endSession; i++) {
-              final String startTime =
-                  classSessionWinterRoutineStaggeredStartTime[i - 1];
-              final String endTime =
-                  classSessionWinterRoutineStaggeredEndTime[i - 1];
+              final period =
+                  SessionRoutine(date: date, isStaggered: isStaggered)
+                      .periods[i - 1];
+              final String startTime = period.startTime;
+              final String endTime = period.endTime;
               times.add('第$i节: $startTime-$endTime');
             }
 
-            staggeredTime = times.join('\n');
+            timeShowText = times.join('\n');
           }
         }
 
@@ -115,7 +120,8 @@ class CourseCard extends StatelessWidget {
           instructors: instructors,
           places: places,
           sectionsShowText: sectionsShowText,
-          staggeredTime: staggeredTime,
+          time: timeShowText,
+          isStaggered: isStaggered,
         );
       },
     );
@@ -139,28 +145,29 @@ class CourseCard extends StatelessWidget {
         return SizedBox();
       }
 
-      String classScheduleFilePath = context.select<SettingsProvider, String>(
-          (provider) => provider.classScheduleFilePath);
-      final String semester = extractSemester(classScheduleFilePath);
-
       final String coursePlace = courseSchedule.place ?? '';
-
-      /// 这节课是否延迟10分钟上课（逸夫楼或信息科技大楼的课）
-      /// 通知说「自 2026年10月1日（周四）起，试行错峰上课」
-      /// 但国庆放假不上课，所以实际从 2026年10月8日（周四），才有课程实行错峰上课，此时为 2026-2027 学年 第 1 学期的第 6 周
-      /// 本学期的第1周-第5周，上课时间是没有错峰的，所以不标记第6周前错峰上课的课程。
-      /// [关于试行错峰上课的通知-政务信息港](https://zwxxg.xtu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1066&wbnewsid=10705)
 
       /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
       final bool isStaggeredPlace =
-          (coursePlace.contains('逸夫楼') || coursePlace.contains('信息科技大楼'));
+          SessionRoutine.isStaggeredPlace(coursePlace);
+
+      /// 这节课所属天的日期
+      final DateTime date = getDateFromWeekCountAndWeekday(
+        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+        weekCount: weekCount,
+        weekday: weekday,
+      );
 
       /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
       final bool isBeforeStaggeredStartDate =
-          (semester == '2026-2027-1' && weekCount < 6);
+          SessionRoutine.isBeforeStaggeredStartDate(date);
 
+      final bool isSummer = SessionRoutine.isSummer(date);
+
+      // TODO: 目前不确定下一学期(2026-2027学年 第2学期)是否会采用错峰上课同时也不确定夏季作息的错峰上课时间表。在夏季作息的错峰上课时间表公布前，当前逻辑是只在当前及之后学期的冬季作息才将需要错峰的课程标注为错峰上课
       /// 这节课是否错峰上课（延迟上课时间）
-      final bool isStaggered = isStaggeredPlace && !isBeforeStaggeredStartDate;
+      final bool isStaggered =
+          isStaggeredPlace && !isBeforeStaggeredStartDate && !isSummer;
 
       switch (variant) {
         case CourseCardVariant.normal:
@@ -174,6 +181,7 @@ class CourseCard extends StatelessWidget {
               onTap: (_) {
                 _showCourseDetails(
                   context: context,
+                  date: date,
                   courseTitle: courseSchedule.title ?? '',
                   weekday: weekday,
                   classcount: classCount,
@@ -190,6 +198,7 @@ class CourseCard extends StatelessWidget {
               onTap: (_) {
                 _showCourseDetails(
                   context: context,
+                  date: date,
                   courseTitle: courseSchedule.title ?? '',
                   weekday: weekday,
                   classcount: classCount,

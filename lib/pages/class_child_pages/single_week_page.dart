@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/course_schedule.dart';
+import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/class_session_routine_column.dart';
@@ -13,8 +14,6 @@ class SingleWeekPage extends StatefulWidget {
     super.key,
     required this.weekCount,
     required this.courseScheduleItemsList,
-    required this.classSessionSummerDataList,
-    required this.classSessionWinterDataList,
     required this.courseColorData,
     required this.cardHeight,
     required this.pointerCount,
@@ -22,8 +21,6 @@ class SingleWeekPage extends StatefulWidget {
   final int weekCount;
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
-  final List? classSessionSummerDataList;
-  final List? classSessionWinterDataList;
   final double cardHeight;
   final int pointerCount;
   @override
@@ -66,16 +63,17 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                       selector: (_, settingsProvider) =>
                           SettingsProvider.semesterStartDate,
                       builder: (_, semesterStartDate, __) {
-                        int thisMonth = getTheMondayDateOfTheWeek(
+                        /// 这周的周一的日期
+                        final DateTime thisWeekMondayDate =
+                            getTheMondayDateOfTheWeek(
                                 SettingsProvider.semesterStartDateDateTime,
-                                widget.weekCount)
-                            .month;
-                        bool isSummerRountine = thisMonth > 4 && thisMonth < 10;
+                                widget.weekCount);
+
                         return ClassSessionRoutineColumn(
-                          weekCount: widget.weekCount,
-                          routinedata: isSummerRountine
-                              ? widget.classSessionSummerDataList
-                              : widget.classSessionWinterDataList,
+                          routineData: SessionRoutine(
+                            date: thisWeekMondayDate,
+                            isStaggered: false,
+                          ).periods,
                           cardHeight: widget.cardHeight,
                         );
                       }),

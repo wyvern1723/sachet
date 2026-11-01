@@ -8,15 +8,11 @@ import 'package:sachet/providers/course_card_settings_provider.dart';
 class WeekView extends StatefulWidget {
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
-  final List? classSessionSummerDataList;
-  final List? classSessionWinterDataList;
 
   const WeekView({
     super.key,
     this.courseScheduleItemsList,
     this.courseColorData,
-    this.classSessionSummerDataList,
-    this.classSessionWinterDataList,
   });
 
   @override
@@ -94,8 +90,6 @@ class _WeekViewState extends State<WeekView> {
                   weekCount: i,
                   courseScheduleItemsList: widget.courseScheduleItemsList,
                   courseColorData: widget.courseColorData,
-                  classSessionSummerDataList: widget.classSessionSummerDataList,
-                  classSessionWinterDataList: widget.classSessionWinterDataList,
                   cardHeight: _cardHeight,
                   pointerCount: _pointerCount,
                 ),

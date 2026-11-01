@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/providers/free_classroom_page_provider.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
@@ -528,7 +529,7 @@ class _Head extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// 这天是否使用夏令时
-    final bool isSummerRountine = date.month > 4 && date.month < 10;
+    final bool isSummerRountine = SessionRoutine.isSummer(date);
 
     return IntrinsicHeight(
       child: Row(

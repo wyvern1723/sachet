@@ -101,6 +101,3 @@ flutter:
   assets:
     - assets/
     - assets/icon/
-    - assets/json/
-    - assets/json/ClassSessionSummerRoutine.json  # 夏令时上课时间
-    - assets/json/ClassSessionWinterRoutine.json  # 冬令时上课时间

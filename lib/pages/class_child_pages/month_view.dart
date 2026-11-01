@@ -9,15 +9,11 @@ import 'package:sachet/utils/time_manager.dart';
 class MonthView extends StatefulWidget {
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
-  final List? classSessionSummerDataList;
-  final List? classSessionWinterDataList;
 
   const MonthView({
     super.key,
     this.courseScheduleItemsList,
     this.courseColorData,
-    this.classSessionSummerDataList,
-    this.classSessionWinterDataList,
   });
 
   @override
@@ -85,8 +81,6 @@ class _MonthViewState extends State<MonthView> {
                 monthDate: monthData.monthDate,
                 courseScheduleItemsList: widget.courseScheduleItemsList,
                 courseColorData: widget.courseColorData,
-                classSessionSummerDataList: widget.classSessionSummerDataList,
-                classSessionWinterDataList: widget.classSessionWinterDataList,
                 cardHeight: _cardHeight,
                 pointerCount: _pointerCount,
               ),

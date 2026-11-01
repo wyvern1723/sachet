@@ -70,10 +70,6 @@ class ClassPage extends StatelessWidget {
                             courseScheduleItemsList:
                                 data?.courseScheduleItemsList,
                             courseColorData: data?.courseColorData,
-                            classSessionSummerDataList:
-                                data?.classSessionSummerDataList,
-                            classSessionWinterDataList:
-                                data?.classSessionWinterDataList,
                           );
                         }
                       } else {
@@ -90,15 +86,11 @@ class ClassPage extends StatelessWidget {
 class ClassPageView extends StatelessWidget {
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
-  final List? classSessionSummerDataList;
-  final List? classSessionWinterDataList;
 
   const ClassPageView({
     super.key,
     required this.courseScheduleItemsList,
     required this.courseColorData,
-    required this.classSessionSummerDataList,
-    required this.classSessionWinterDataList,
   });
 
   @override
@@ -111,15 +103,11 @@ class ClassPageView extends StatelessWidget {
               return WeekView(
                 courseScheduleItemsList: courseScheduleItemsList,
                 courseColorData: courseColorData,
-                classSessionSummerDataList: classSessionSummerDataList,
-                classSessionWinterDataList: classSessionWinterDataList,
               );
             case ClassScheduleViewMode.month:
               return MonthView(
                 courseScheduleItemsList: courseScheduleItemsList,
                 courseColorData: courseColorData,
-                classSessionSummerDataList: classSessionSummerDataList,
-                classSessionWinterDataList: classSessionWinterDataList,
               );
             case ClassScheduleViewMode.semester:
               return SemesterView(

@@ -1,14 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/app_settings.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/enums/app_update_channel.dart';
 import 'package:sachet/models/enums/nav_type.dart';
 import 'package:sachet/models/course_reminder.dart';
+import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
@@ -223,28 +221,10 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 加载夏季作息的课程时间数据
-  static Future<List> loadClassSessionSummerAsset() async {
-    String data = await rootBundle
-        .loadString('assets/json/ClassSessionSummerRoutine.json');
-    List listData = jsonDecode(data);
-    return listData;
-  }
-
-  /// 加载冬季作息的课程时间加载课表数据
-  static Future<List> loadClassSessionWinterAsset() async {
-    String data = await rootBundle
-        .loadString('assets/json/ClassSessionWinterRoutine.json');
-    List listData = jsonDecode(data);
-    return listData;
-  }
-
   Future<
       ({
         List<List<CourseSchedule>>? courseScheduleItemsList,
-        Map courseColorData,
-        List classSessionSummerDataList,
-        List classSessionWinterDataList
+        Map courseColorData
       })> loadCourseScheduleData() async {
     List<List<CourseSchedule>>? courseScheduleItemsList;
     final jsonData = await CachedDataStorage.getDecodedList(
@@ -272,14 +252,10 @@ class SettingsProvider extends ChangeNotifier {
     courseColorData ??= await CachedDataStorage.getDecodedMap(
       courseColorFilePath,
     );
-    List classSessionSummerDataList = await loadClassSessionSummerAsset();
-    List classSessionWinterDataList = await loadClassSessionWinterAsset();
 
     return (
       courseScheduleItemsList: courseScheduleItemsList,
       courseColorData: courseColorData ?? {},
-      classSessionSummerDataList: classSessionSummerDataList,
-      classSessionWinterDataList: classSessionWinterDataList,
     );
   }
 
@@ -329,40 +305,14 @@ class SettingsProvider extends ChangeNotifier {
               weekday: courseWeekday,
             );
 
-            String courseStartTimeStr = '';
-            String courseEndTimeStr = '';
-
-            /// 是否是夏令时
-            final bool isSummerRountine =
-                courseDate.month > 4 && courseDate.month < 10;
-            if (isSummerRountine) {
-              courseStartTimeStr =
-                  classSessionSummerRoutineStartTime[courseStartSession - 1];
-              courseEndTimeStr = classSessionSummerRoutineEndTime[
-                  courseStartSession - 1 + courseLength - 1];
-            } else {
-              /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
-              final bool isStaggeredPlace = (coursePlace.contains('逸夫楼') ||
-                  coursePlace.contains('信息科技大楼'));
-
-              /// 这节课是否错峰上课（延迟上课时间）
-              /// 因为不会发送课程开始时间在用户开启课程通知（当前）之前的通知，而新版本发布时，所有未实行错峰课程的课程都已经上过
-              /// 所以无需判断此时是否实行错峰上课
-              final bool isStaggered = isStaggeredPlace;
-
-              if (isStaggered) {
-                courseStartTimeStr =
-                    classSessionWinterRoutineStaggeredStartTime[
-                        courseStartSession - 1];
-                courseEndTimeStr = classSessionWinterRoutineStaggeredEndTime[
-                    courseStartSession - 1 + courseLength - 1];
-              } else {
-                courseStartTimeStr =
-                    classSessionWinterRoutineRegularStartTime[courseStartSession - 1];
-                courseEndTimeStr = classSessionWinterRoutineRegularEndTime[
-                    courseStartSession - 1 + courseLength - 1];
-              }
-            }
+            final bool isStaggered =
+                SessionRoutine.isStaggeredPlace(coursePlace);
+            final String courseStartTimeStr =
+                SessionRoutine(date: courseDate, isStaggered: isStaggered)
+                    .startTimes[courseStartSession - 1];
+            final String courseEndTimeStr =
+                SessionRoutine(date: courseDate, isStaggered: isStaggered)
+                    .endTimes[courseStartSession - 1 + courseLength - 1];
 
             /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）
             final DateTime courseStartDateTime = courseDate.add(

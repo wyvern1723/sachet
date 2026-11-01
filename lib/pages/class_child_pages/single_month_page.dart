@@ -12,8 +12,6 @@ class SingleMonthPage extends StatefulWidget {
     required this.month,
     required this.monthDate,
     required this.courseScheduleItemsList,
-    required this.classSessionSummerDataList,
-    required this.classSessionWinterDataList,
     required this.courseColorData,
     required this.cardHeight,
     required this.pointerCount,
@@ -22,8 +20,6 @@ class SingleMonthPage extends StatefulWidget {
   final DateTime monthDate;
   final List<List<CourseSchedule>>? courseScheduleItemsList;
   final Map? courseColorData;
-  final List? classSessionSummerDataList;
-  final List? classSessionWinterDataList;
   final double cardHeight;
   final int pointerCount;
   @override

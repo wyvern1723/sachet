@@ -1,6 +1,6 @@
 // 管理时间
 
-import 'package:sachet/constants/app_constants.dart';
+import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/providers/settings_provider.dart';
 
 // 从周数推这一周第一天时间
@@ -98,9 +98,6 @@ bool isToday(DateTime thatDay) {
   required int courseLength,
   required bool isStaggered,
   DateTime? semesterStartDate,
-
-  /// 此学期是否启用错峰上课的新时间表
-  required bool isUseStaggeredSchedule,
 }) {
   final result = getWeekdayAndSessionFromItem(item);
   final int courseWeekday = result.weekday;
@@ -116,36 +113,12 @@ bool isToday(DateTime thatDay) {
     weekday: courseWeekday,
   );
 
-  String courseStartTimeStr = '';
-  String courseEndTimeStr = '';
-
-  /// 是否是夏令时
-  final bool isSummerRountine = courseDate.month > 4 && courseDate.month < 10;
-  if (isSummerRountine) {
-    courseStartTimeStr =
-        classSessionSummerRoutineStartTime[courseStartSession - 1];
-    courseEndTimeStr = classSessionSummerRoutineEndTime[
-        courseStartSession - 1 + courseLength - 1];
-  } else {
-    if (!isUseStaggeredSchedule) {
-      courseStartTimeStr =
-          classSessionWinterRoutineOldStartTime[courseStartSession - 1];
-      courseEndTimeStr = classSessionWinterRoutineOldEndTime[
-          courseStartSession - 1 + courseLength - 1];
-    } else {
-      if (isStaggered) {
-        courseStartTimeStr =
-            classSessionWinterRoutineStaggeredStartTime[courseStartSession - 1];
-        courseEndTimeStr = classSessionWinterRoutineStaggeredEndTime[
-            courseStartSession - 1 + courseLength - 1];
-      } else {
-        courseStartTimeStr =
-            classSessionWinterRoutineRegularStartTime[courseStartSession - 1];
-        courseEndTimeStr = classSessionWinterRoutineRegularEndTime[
-            courseStartSession - 1 + courseLength - 1];
-      }
-    }
-  }
+  String courseStartTimeStr =
+      SessionRoutine(date: courseDate, isStaggered: isStaggered)
+          .startTimes[courseStartSession - 1];
+  String courseEndTimeStr =
+      SessionRoutine(date: courseDate, isStaggered: isStaggered)
+          .endTimes[courseStartSession - 1 + courseLength - 1];
 
   /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）
   final DateTime courseStartDateTime = courseDate.add(
