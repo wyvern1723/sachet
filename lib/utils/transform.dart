@@ -15,6 +15,19 @@ Map<int, String> weekdayToXingQiJi = {
   7: '星期日',
 };
 
+/// 【星期一、星期二、星期三……】=>【1,2,3...】
+Map<String, int> xingQiJiToWeekday = {
+  '星期一': 1,
+  '星期二': 2,
+  '星期三': 3,
+  '星期四': 4,
+  '星期五': 5,
+  '星期六': 6,
+  '星期日': 7,
+  '星期七': 7,
+  '星期天': 7,
+};
+
 /// 【1,2,3...】 => 【周一、周二、周三……】
 Map<int, String> weekdayToZhouJi = {
   1: '周一',

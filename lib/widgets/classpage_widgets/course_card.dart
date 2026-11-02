@@ -57,6 +57,9 @@ class CourseCard extends StatelessWidget {
     required int classcount,
     bool isStaggered = false, // 用户点击的课程的此节是否错峰上课
     required int currentCourseLength, // 用户点击的课程的此节的持续节数
+    bool? isExperimentCourse,
+    String? experimentName,
+    String? experimentGroupName,
   }) {
     showModalBottomSheet(
       context: context,
@@ -70,18 +73,22 @@ class CourseCard extends StatelessWidget {
       builder: (BuildContext context) {
         final List weeks = CourseInfoHelper.getWeeksOfCourse(
           title: courseTitle,
+          isExperimentCourse: isExperimentCourse,
           courseScheduleItems: courseScheduleItems,
         );
         final List<int> lengths = CourseInfoHelper.getLengths(
           title: courseTitle,
+          isExperimentCourse: isExperimentCourse,
           courseScheduleItems: courseScheduleItems,
         );
         final List instructors = CourseInfoHelper.getInstructors(
           title: courseTitle,
+          isExperimentCourse: isExperimentCourse,
           courseScheduleItems: courseScheduleItems,
         );
         final List places = CourseInfoHelper.getPlaces(
           title: courseTitle,
+          isExperimentCourse: isExperimentCourse,
           courseScheduleItems: courseScheduleItems,
         );
         final List sectionsShowText = [];
@@ -122,6 +129,9 @@ class CourseCard extends StatelessWidget {
           sectionsShowText: sectionsShowText,
           time: timeShowText,
           isStaggered: isStaggered,
+          isExperimentCourse: isExperimentCourse,
+          experimentName: experimentName,
+          experimentGroupName: experimentGroupName,
         );
       },
     );
@@ -187,6 +197,9 @@ class CourseCard extends StatelessWidget {
                   classcount: classCount,
                   isStaggered: isStaggered,
                   currentCourseLength: courseSchedule.length ?? 2,
+                  isExperimentCourse: courseSchedule.isExperimentCourse,
+                  experimentName: courseSchedule.experimentName,
+                  experimentGroupName: courseSchedule.experimentGroupName,
                 );
               });
         case CourseCardVariant.compact:
@@ -204,6 +217,9 @@ class CourseCard extends StatelessWidget {
                   classcount: classCount,
                   isStaggered: isStaggered,
                   currentCourseLength: courseSchedule.length ?? 2,
+                  isExperimentCourse: courseSchedule.isExperimentCourse,
+                  experimentName: courseSchedule.experimentName,
+                  experimentGroupName: courseSchedule.experimentGroupName,
                 );
               });
       }

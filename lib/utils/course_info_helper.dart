@@ -5,10 +5,21 @@ import 'package:sachet/models/course_schedule.dart';
 class CourseInfoHelper {
   static List getWeeksOfCourse({
     required String title,
+    bool? isExperimentCourse,
     required List<CourseSchedule> courseScheduleItems,
   }) {
-    List<CourseSchedule> elementList =
-        courseScheduleItems.where((element) => element.title == title).toList();
+    List<CourseSchedule> elementList = courseScheduleItems
+        .where(
+          (element) =>
+              element.title == title &&
+              // 等价写法
+              // ((isExperimentCourse == null || isExperimentCourse == false)
+              //     ? element.isExperimentCourse != true
+              //     : element.isExperimentCourse == true),
+              (element.isExperimentCourse ?? false) ==
+                  (isExperimentCourse ?? false),
+        )
+        .toList();
     if (elementList.isEmpty) {
       return [];
     } else {
@@ -25,10 +36,15 @@ class CourseInfoHelper {
 
   static List<int> getLengths({
     required String title,
+    bool? isExperimentCourse,
     required List<CourseSchedule> courseScheduleItems,
   }) {
-    List<CourseSchedule> elementList =
-        courseScheduleItems.where((element) => element.title == title).toList();
+    List<CourseSchedule> elementList = courseScheduleItems
+        .where((element) =>
+            element.title == title &&
+            (element.isExperimentCourse ?? false) ==
+                (isExperimentCourse ?? false))
+        .toList();
     if (elementList.isEmpty) {
       return [];
     } else {
@@ -48,10 +64,15 @@ class CourseInfoHelper {
 
   static List getPlaces({
     required String title,
+    bool? isExperimentCourse,
     required List<CourseSchedule> courseScheduleItems,
   }) {
-    List<CourseSchedule> elementList =
-        courseScheduleItems.where((element) => element.title == title).toList();
+    List<CourseSchedule> elementList = courseScheduleItems
+        .where((element) =>
+            element.title == title &&
+            (element.isExperimentCourse ?? false) ==
+                (isExperimentCourse ?? false))
+        .toList();
     if (elementList.isEmpty) {
       return [];
     } else {
@@ -67,10 +88,15 @@ class CourseInfoHelper {
 
   static List getInstructors({
     required String title,
+    bool? isExperimentCourse,
     required List<CourseSchedule> courseScheduleItems,
   }) {
-    List<CourseSchedule> elementList =
-        courseScheduleItems.where((element) => element.title == title).toList();
+    List<CourseSchedule> elementList = courseScheduleItems
+        .where((element) =>
+            element.title == title &&
+            (element.isExperimentCourse ?? false) ==
+                (isExperimentCourse ?? false))
+        .toList();
     if (elementList.isEmpty) {
       return [];
     } else {

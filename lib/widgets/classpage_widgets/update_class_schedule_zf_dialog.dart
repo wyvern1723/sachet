@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sachet/constants/url_constants.dart';
+import 'package:sachet/models/enums/experiment_course_import_result.dart';
 import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
@@ -29,6 +30,15 @@ class _UpdateClassScheduleZFDialogState
   String? _selectedSemesterYear;
   Map semesterIndexes = {"1": "3", "2": "12"};
   String? _selectedSemesterIndex;
+
+  /// 是否同时导入实验课表
+  bool _isImportExperimentCourse = true;
+
+  /// 实验课表导入的提示信息（没有实验课表或导入失败时显示）
+  String? _experimentCourseImportMsg;
+
+  /// 实验课表导入的提示信息是否是错误提示
+  bool _isExperimentCourseImportFailed = false;
 
   /// 是否在 学年 DropDownMenu 显示 ErrorTexy
   bool _isShowSemesterYearDropDownMenuError = false;
@@ -82,6 +92,8 @@ class _UpdateClassScheduleZFDialogState
       });
     } else {
       setState(() {
+        _experimentCourseImportMsg = null;
+        _isExperimentCourseImportFailed = false;
         currentState = UpdateClassScheduleState.updating;
       });
       try {
@@ -89,24 +101,41 @@ class _UpdateClassScheduleZFDialogState
           cookie: ZhengFangUserProvider.cookie,
           semesterYear: _selectedSemesterYear!,
           semesterIndex: _selectedSemesterIndex!,
+          isImportExperimentCourse: _isImportExperimentCourse,
         );
 
         if (!context.mounted) return;
 
+        if (result.experimentCourseImportResult ==
+            ExperimentCourseImportResult.empty) {
+          _experimentCourseImportMsg = '未查询到实验课表，仅导入理论课表。';
+          _isExperimentCourseImportFailed = false;
+        } else if (result.experimentCourseImportResult ==
+            ExperimentCourseImportResult.failed) {
+          final String? errorMsg = result.experimentCourseImportErrorMsg;
+          _experimentCourseImportMsg = '导入实验课表时遇到错误，仅导入理论课表。\nerror: $errorMsg';
+          _isExperimentCourseImportFailed = true;
+        } else {
+          _experimentCourseImportMsg = null;
+          _isExperimentCourseImportFailed = false;
+        }
+
         // 修改当前课程表文件
-        context.read<SettingsProvider>().setClassScheduleFilePath(result[0]);
+        context
+            .read<SettingsProvider>()
+            .setClassScheduleFilePath(result.classScheduleFilePath);
 
         // 修改当前课程对应的配色文件
         await context
             .read<SettingsProvider>()
-            .setCourseColorFilePath(result[1]);
+            .setCourseColorFilePath(result.courseColorPath);
       } catch (e) {
         if (!context.mounted) return;
 
         if (kDebugMode) {
           print(e);
         }
-        if (e == '获取课表数据失败: Http status code = 901, 验证身份信息失败') {
+        if (e.toString().contains('Http status code = 901, 验证身份信息失败')) {
           setState(() {
             currentState = UpdateClassScheduleState.loginExpired;
           });
@@ -160,6 +189,7 @@ class _UpdateClassScheduleZFDialogState
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
     final Brightness brightness = Theme.of(context).brightness;
 
@@ -186,60 +216,89 @@ class _UpdateClassScheduleZFDialogState
       case UpdateClassScheduleState.selectSemester: // 选择学期
         return AlertDialog(
           title: const Text('更新课程表'),
-          content: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Flexible(
-                flex: 20,
-                child: DropdownMenu<String>(
-                  menuHeight: 400,
-                  errorText:
-                      _isShowSemesterYearDropDownMenuError ? "请选择一项" : null,
-                  initialSelection: _selectedSemesterYear,
-                  requestFocusOnTap: false,
-                  label: const Text('学年'),
-                  onSelected: (String? semester) {
-                    if (semester != null) {
-                      _selectedSemesterYear = semester;
-                      if (_isShowSemesterYearDropDownMenuError == true) {
-                        setState(() {
-                          _isShowSemesterYearDropDownMenuError = false;
-                        });
-                      }
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Flexible(
+                    flex: 20,
+                    child: DropdownMenu<String>(
+                      menuHeight: 400,
+                      errorText:
+                          _isShowSemesterYearDropDownMenuError ? "请选择一项" : null,
+                      initialSelection: _selectedSemesterYear,
+                      requestFocusOnTap: false,
+                      label: const Text('学年'),
+                      onSelected: (String? semester) {
+                        if (semester != null) {
+                          _selectedSemesterYear = semester;
+                          if (_isShowSemesterYearDropDownMenuError == true) {
+                            setState(() {
+                              _isShowSemesterYearDropDownMenuError = false;
+                            });
+                          }
+                        }
+                      },
+                      dropdownMenuEntries: semestersYears.entries
+                          .map((e) => DropdownMenuEntry<String>(
+                              value: e.value, label: e.key))
+                          .toList(),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 13,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: DropdownMenu<String>(
+                        menuHeight: 400,
+                        errorText: _isShowSemesterIndexDropDownMenuError
+                            ? "请选择一项"
+                            : null,
+                        initialSelection: _selectedSemesterIndex,
+                        requestFocusOnTap: false,
+                        label: const Text('学期'),
+                        onSelected: (String? semester) {
+                          if (semester != null) {
+                            _selectedSemesterIndex = semester;
+                            if (_isShowSemesterIndexDropDownMenuError == true) {
+                              setState(() {
+                                _isShowSemesterIndexDropDownMenuError = false;
+                              });
+                            }
+                          }
+                        },
+                        dropdownMenuEntries: semesterIndexes.entries
+                            .map((e) => DropdownMenuEntry<String>(
+                                value: e.value, label: e.key))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                child: CheckboxListTile(
+                  value: _isImportExperimentCourse,
+                  title: Text('同时导入实验课表'),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _isImportExperimentCourse = value;
+                      });
                     }
                   },
-                  dropdownMenuEntries: semestersYears.entries
-                      .map((e) => DropdownMenuEntry<String>(
-                          value: e.value, label: e.key))
-                      .toList(),
-                ),
-              ),
-              Flexible(
-                flex: 13,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: DropdownMenu<String>(
-                    menuHeight: 400,
-                    errorText:
-                        _isShowSemesterIndexDropDownMenuError ? "请选择一项" : null,
-                    initialSelection: _selectedSemesterIndex,
-                    requestFocusOnTap: false,
-                    label: const Text('学期'),
-                    onSelected: (String? semester) {
-                      if (semester != null) {
-                        _selectedSemesterIndex = semester;
-                        if (_isShowSemesterIndexDropDownMenuError == true) {
-                          setState(() {
-                            _isShowSemesterIndexDropDownMenuError = false;
-                          });
-                        }
-                      }
-                    },
-                    dropdownMenuEntries: semesterIndexes.entries
-                        .map((e) => DropdownMenuEntry<String>(
-                            value: e.value, label: e.key))
-                        .toList(),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity(
+                    horizontal: VisualDensity.minimumDensity,
+                    vertical: VisualDensity.minimumDensity,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
@@ -281,80 +340,111 @@ class _UpdateClassScheduleZFDialogState
       case UpdateClassScheduleState.setSemesterStartDate: // 设置学期开始日期
         return AlertDialog(
           title: const Text('更新课程表'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('成功获取课表数据，', style: textTheme.bodyMedium),
-              Text('请选择学期开始日期：', style: textTheme.bodyLarge),
-              SizedBox(height: 10),
-              Text(
-                '⚠️注意：请选择预备周（第一周）的周一，而不是第一天开始上课的日期（正式开始上课是第二周）',
-                style: textTheme.bodySmall,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('参考：', style: textTheme.bodySmall),
-                  GestureDetector(
-                    onTap: () {
-                      openLink(xtuSchoolCalendarUrl);
-                    },
-                    onLongPress: () => copyToClipboard(
-                      context,
-                      xtuSchoolCalendarUrl,
-                      prefix: '链接',
-                    ),
-                    child: Text(
-                      '校历',
-                      style: TextStyle(
-                        color: brightness == Brightness.light
-                            ? Color(0xFF0645AD)
-                            : Colors.blue,
-                        decoration: TextDecoration.underline,
-                        decorationColor: brightness == Brightness.light
-                            ? const Color(0xFF0645AD)
-                            : Colors.blue,
-                        fontSize: 12.0,
-                      ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('成功获取课表数据，', style: textTheme.bodyMedium),
+                if (_experimentCourseImportMsg != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 6, 0, 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          _isExperimentCourseImportFailed
+                              ? Icons.error_outline
+                              : Icons.info_outline,
+                          size: 16,
+                          color: _isExperimentCourseImportFailed
+                              ? colorScheme.error
+                              : colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            _experimentCourseImportMsg!,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: _isExperimentCourseImportFailed
+                                  ? colorScheme.error
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              InputDecorator(
-                decoration: InputDecoration(
-                  isDense: true,
-                  labelText: '开学日期',
-                  border: OutlineInputBorder(),
+                Text('请选择学期开始日期：', style: textTheme.bodyLarge),
+                SizedBox(height: 10),
+                Text(
+                  '⚠️注意：请选择预备周（第一周）的周一，而不是第一天开始上课的日期（正式开始上课是第二周）',
+                  style: textTheme.bodySmall,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Selector<SettingsProvider, String>(
-                        selector: (_, settingsProvider) =>
-                            SettingsProvider.semesterStartDate,
-                        builder: (_, semesterStartDate, __) {
-                          return Text(
-                            DateFormat('yyyy-MM-dd').format(
-                                SettingsProvider.semesterStartDateDateTime),
-                            style: textTheme.bodyLarge,
-                          );
-                        }),
-                    IconButton(
-                      onPressed: () async {
-                        await selectSemesterStartDate(context);
+                    Text('参考：', style: textTheme.bodySmall),
+                    GestureDetector(
+                      onTap: () {
+                        openLink(xtuSchoolCalendarUrl);
                       },
-                      icon: Icon(
-                        Icons.edit_calendar_outlined,
-                        // color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        color: Theme.of(context).colorScheme.onSurface,
+                      onLongPress: () => copyToClipboard(
+                        context,
+                        xtuSchoolCalendarUrl,
+                        prefix: '链接',
                       ),
-                    )
+                      child: Text(
+                        '校历',
+                        style: TextStyle(
+                          color: brightness == Brightness.light
+                              ? Color(0xFF0645AD)
+                              : Colors.blue,
+                          decoration: TextDecoration.underline,
+                          decorationColor: brightness == Brightness.light
+                              ? const Color(0xFF0645AD)
+                              : Colors.blue,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: 10),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelText: '开学日期',
+                    border: OutlineInputBorder(),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Selector<SettingsProvider, String>(
+                          selector: (_, settingsProvider) =>
+                              SettingsProvider.semesterStartDate,
+                          builder: (_, semesterStartDate, __) {
+                            return Text(
+                              DateFormat('yyyy-MM-dd').format(
+                                  SettingsProvider.semesterStartDateDateTime),
+                              style: textTheme.bodyLarge,
+                            );
+                          }),
+                      IconButton(
+                        onPressed: () async {
+                          await selectSemesterStartDate(context);
+                        },
+                        icon: Icon(
+                          Icons.edit_calendar_outlined,
+                          // color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(

@@ -1,12 +1,16 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/enums/app_folder.dart';
+import 'package:sachet/models/enums/experiment_course_import_result.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
+import 'package:sachet/services/zhengfang_jwxt/experiment_course/fetch_experiment_course.dart';
+import 'package:sachet/services/zhengfang_jwxt/experiment_course/parse_experiment_course.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/utils/transform.dart';
 
@@ -97,23 +101,27 @@ class ClassScheduleService {
 
   /// 获取指定学年的课表。
   ///
-  /// [semesterYear] 是学年，格式为 "YYYY"，例如 "2025" 指 2025-2026 学年。
+  /// [semesterYear] 代表学年，格式为 "YYYY"，例如 "2025" 指 2025-2026 学年
   ///
-  /// [semesterIndex] 是学期编号，如 1 表示第一学期，2 表示第二学期。正方教务最多有3个学期，但湘大只有2个学期。
+  /// [semesterIndex] 代表学期，如 "3" 表示第一学期，"12" 表示第二学期
   ///
-  /// 返回 [存储的课程表文件路径,存储的课程配色文件路径]，失败时抛出异常。
+  /// [isImportExperimentCourse] 为 true 时会同时获取实验课表并合并进课程表
   ///
-  /// 示例：
-  /// ```dart
-  /// final result = await getClassScheduleZF(
-  ///   semesterYear: '2025',
-  ///   semesterIndex: '1',
-  /// );
-  /// ```
-  Future getClassSchedule({
+  /// 返回 [存储的课程表文件路径、存储的课程配色文件路径和实验课表导入结果]，失败时抛出异常。
+  ///
+  /// 实验课表的获取或解析失败不会影响理论课表的导入，其结果通过 [ExperimentCourseImportResult] 返回，
+  /// 失败原因通过 experimentCourseImportErrorMsg 返回。
+  Future<
+      ({
+        String classScheduleFilePath,
+        String courseColorPath,
+        ExperimentCourseImportResult experimentCourseImportResult,
+        String? experimentCourseImportErrorMsg,
+      })> getClassSchedule({
     required String cookie,
-    required String semesterYear, // 学年，如 '2025'=> 指 2025-2026 学年
-    required String semesterIndex, // 学期编号，1=> 第1学期，2=>第二学期，3=>第三学期
+    required String semesterYear, // 学年，如 "2025" =>  2025-2026 学年
+    required String semesterIndex, // 学期，"3" => 第1学期，"12" => 第二学期
+    bool isImportExperimentCourse = false,
   }) async {
     final jsonData = await fetchClassScheduleZF(
       cookie: cookie,
@@ -123,17 +131,58 @@ class ClassScheduleService {
     final scheduleList = await parseClassScheduleZF(jsonData);
     final semester = ClassScheduleDataParserZF.parseSemester(jsonData);
 
+    List<String> experimentCourseTitleList = [];
+    ExperimentCourseImportResult experimentCourseImportResult =
+        ExperimentCourseImportResult.notRequested;
+    String? experimentCourseImportErrorMsg;
+
+    if (isImportExperimentCourse) {
+      try {
+        final experimentCourseJsonData = await fetchExperimentCourseZF(
+          cookie: cookie,
+          semesterYear: semesterYear,
+          semesterIndex: semesterIndex,
+        );
+
+        final int experimentCourseCount =
+            await parseExperimentCourseMergeExistList(
+                experimentCourseJsonData, scheduleList);
+
+        // 获取课程名称 List
+        experimentCourseTitleList =
+            ExperimentCourseParserZF.parseExperimentCourseTitleList(
+                experimentCourseJsonData);
+
+        experimentCourseImportResult = experimentCourseCount == 0
+            ? ExperimentCourseImportResult.empty
+            : ExperimentCourseImportResult.imported;
+      } catch (e) {
+        // 实验课表导入失败时保留已获取的理论课表，继续后续流程
+        if (kDebugMode) {
+          print(e);
+        }
+        experimentCourseImportErrorMsg = e.toString();
+        experimentCourseImportResult = ExperimentCourseImportResult.failed;
+      }
+    }
+
     // 把课程表文件储存到 AppSupportDir
     String outputClassScheduleFilePath =
         await storeClassScheduleFile(scheduleList, semester);
 
     // 获取课程名称 List
-    List courseTitleList =
+    List<String> courseTitleList =
         ClassScheduleDataParserZF.parseCourseTitleList(jsonData);
+
+    /// 理论课和实验课的课程名称并集 List
+    List<String> totalCourseTitleList = courseTitleList
+        .toSet()
+        .union(experimentCourseTitleList.toSet())
+        .toList();
 
     // 把课程名称 List 交给 randomAllocateColorToCourse()，让它随机分配预设的几种颜色
     Map courseColorData =
-        randomAllocateColorToCourse(courseTitleList: courseTitleList);
+        randomAllocateColorToCourse(courseTitleList: totalCourseTitleList);
 
     // 把随机分配后得到的 {课程1:颜色1,课程2:颜色2,.......} 文件储存到 AppSupportDir
     String outputCourseColorpath = await storeRandomizationCourseColorFile(
@@ -141,7 +190,12 @@ class ClassScheduleService {
       semester: semester,
     );
 
-    return [outputClassScheduleFilePath, outputCourseColorpath];
+    return (
+      classScheduleFilePath: outputClassScheduleFilePath,
+      courseColorPath: outputCourseColorpath,
+      experimentCourseImportResult: experimentCourseImportResult,
+      experimentCourseImportErrorMsg: experimentCourseImportErrorMsg,
+    );
   }
 }
 

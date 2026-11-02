@@ -5,20 +5,14 @@ import 'package:sachet/utils/transform.dart';
 Future<Map> fetchClassScheduleZF({
   required String cookie,
 
-  /// xnm 学年名，如 '2025'=> 指 2025-2026 学年
+  /// xnm 学年名，如 "2025" => 2025-2026 学年
   required String semesterYear,
 
-  /// xqm 学期名，"3"=> 第1学期，"12"=>第二学期，"16"=>第三学期
+  /// xqm 学期名，"3" => 第1学期，"12" => 第二学期
   required String semesterIndex,
 }) async {
-  // Map<String, String> indexToXnm = {
-  //   '1': '3',
-  //   '2': '12',
-  //   '3': '16',
-  // };
-  final dio = Dio(BaseOptions(
-    validateStatus: (_) => true,
-  ));
+  final dio = Dio(BaseOptions(validateStatus: (_) => true));
+
   try {
     Response response = await dio.post(
       'https://jw.xtu.edu.cn/jwglxt/kbcx/xskbcx_cxXsgrkb.html?gnmkdm=N2151',

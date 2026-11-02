@@ -13,6 +13,9 @@ class CourseDetailsBottomSheet extends StatelessWidget {
     required this.sectionsShowText,
     this.time,
     this.isStaggered = false,
+    this.isExperimentCourse,
+    this.experimentName,
+    this.experimentGroupName,
   });
   final String courseTitle;
   final int weekday;
@@ -27,6 +30,10 @@ class CourseDetailsBottomSheet extends StatelessWidget {
 
   /// 这节课是否是错峰上课
   final bool isStaggered;
+
+  final bool? isExperimentCourse;
+  final String? experimentName;
+  final String? experimentGroupName;
 
   @override
   Widget build(BuildContext context) {
@@ -67,15 +74,89 @@ class CourseDetailsBottomSheet extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24.0, vertical: 8.0),
-                        child: Text(
-                          courseTitle,
-                          style: textTheme.titleLarge?.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                courseTitle,
+                                style: textTheme.titleLarge?.copyWith(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            if (isExperimentCourse != null &&
+                                isExperimentCourse == true)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: colorScheme.primaryContainer,
+                                  child: InkWell(
+                                    onTap: () {},
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+                                      child: SelectionContainer.disabled(
+                                        child: Text(
+                                          '实验课',
+                                          style: textTheme.labelMedium
+                                              ?.copyWith(
+                                                  color: colorScheme
+                                                      .onPrimaryContainer),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 8),
+                      if (experimentName != null)
+                        ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 24.0),
+                          leading: Icon(
+                            Icons.science_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 20,
+                            applyTextScaling: true,
+                          ),
+                          title: Text(
+                            '实验名称',
+                            style: textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                          subtitle: Text(
+                            experimentName!,
+                            style: textTheme.bodyLarge,
+                          ),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      if (experimentGroupName != null)
+                        ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 24.0),
+                          leading: Icon(
+                            Icons.group_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 20,
+                            applyTextScaling: true,
+                          ),
+                          title: Text(
+                            '实验分组',
+                            style: textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                          subtitle: Text(
+                            experimentGroupName!,
+                            style: textTheme.bodyLarge,
+                          ),
+                          visualDensity: VisualDensity.compact,
+                        ),
                       ListTile(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 24.0),
