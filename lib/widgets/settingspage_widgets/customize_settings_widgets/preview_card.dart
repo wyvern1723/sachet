@@ -23,6 +23,7 @@ class _PreviewCardState extends State<PreviewCard> {
         width: MediaQuery.of(context).size.width * 5 / 39,
         child: CourseCardNormal(
           weekCount: 1,
+          classCount: 0,
           courseColorData: {"龙吼之道": colorToHex(Colors.cyan)},
           courseSchedule: courseSchedule,
           onTap: null,

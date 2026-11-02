@@ -183,6 +183,7 @@ class CourseCard extends StatelessWidget {
         case CourseCardVariant.normal:
           return CourseCardNormal(
               weekCount: weekCount,
+              classCount: classCount,
               courseColorData: courseColorData,
               courseSchedule: courseSchedule,
               cardHeight: cardHeight,
@@ -231,6 +232,7 @@ class CourseCardNormal extends StatelessWidget {
   const CourseCardNormal({
     super.key,
     required this.weekCount,
+    required this.classCount,
     required this.courseSchedule,
     required this.courseColorData,
     this.cardHeight,
@@ -239,6 +241,7 @@ class CourseCardNormal extends StatelessWidget {
     this.onTap,
   });
   final int weekCount;
+  final int classCount;
   final CourseSchedule courseSchedule;
   final Map? courseColorData;
   final double? cardHeight;
@@ -261,6 +264,31 @@ class CourseCardNormal extends StatelessWidget {
     double cardMargin = context.select<CourseCardSettingsProvider, double>(
         (courseCardSettingsProvider) => courseCardSettingsProvider.cardMargin);
 
+    final int courseLength = courseSchedule.length ?? 2;
+
+    /// 这节课的开始节次
+    final int startSession = classCount + 1;
+
+    /// 这节课的结束节次
+    final int endSession = startSession + courseLength - 1;
+
+    /// 这节课穿过了几次大的课间休息段（大课间(第2节课和第3节课中间,第6节课和第7节课中间)及午间休息(第4节课和第5节课中间)及晚间休息(第8节课和第9节课中间)）
+    final int n = const [2, 4, 6, 8]
+        .where((b) => startSession < b && b < endSession)
+        .length;
+
+    /// 课程原始高度
+    final double originHeight = _cardHeight * courseLength;
+
+    /// 课程中穿过大的课间休息段的高度
+    final double breakHeight = _cardHeight * n * 0.05;
+
+    /// 此课程卡片总高度
+    final double height = originHeight + breakHeight;
+
+    /// 错峰上课（延迟上课）的课程卡片顶部从上到下位移的高度
+    final double staggeredOffset = 0.1 * _cardHeight;
+
     return Stack(
       children: [
         if (isStaggered)
@@ -281,14 +309,23 @@ class CourseCardNormal extends StatelessWidget {
         Transform.translate(
           offset: Offset(
             0,
-            isStaggered ? 0.1 * _cardHeight : 0,
+            isStaggered ? staggeredOffset : 0,
           ),
           child: SizedBox(
             width: double.infinity,
             height: isStaggered
-                ? _cardHeight * (courseSchedule.length ?? 2) -
-                    _cardHeight * 0.05
-                : _cardHeight * (courseSchedule.length ?? 2),
+                // 如果是错峰上课的课，在顶部会向下移 1 个 staggeredOffset 的位移
+                // 如果课程卡片高度与时间成比例，底部也要下移同样的长度，因为课程时长不变，所以高度也应不变。
+                // 但如果这样处理，不改变卡片高度，只是将课程卡片整体向下移动，
+                // 延迟上课的上节课的底部可能会和正常上课的下节课的顶部有重叠（即使我们已在各课程间留了一定的空位(0.05 倍的 _cardHeight, 即 0.5 倍的 staggeredOffset)）
+                // 如果再增加空白的高度可以解决这个问题，但是增加空白过多会导致课程整体 UI 太分散，当前留白应为较合适的高度
+                // 所以只是为了在视觉上使错峰上课的课比正常上课的课结束更晚，只要适当地延长卡片底部，就看起来比其他课结束晚了。
+                // 过度追求课程卡片高度和时间的对应关系只会让眼睛如同游标卡尺的用户更舒服，反正绝大部分用户看不出来这微小的差距
+                // 我们将课程卡片高度减去 0.5 * staggeredOffset（即顶部产生的向下的位移的一半），
+                // 因为顶部向下位移 1 * staggeredOffset，而卡片高度减去 0.5 * staggeredOffset，所以底部看起来向下位移 0.5 * staggeredOffset
+                // 达到了上课更晚，下课更晚的视觉效果，而底部向下高度正好是课程间留白的高度（不包括 cardMargin, cardMargin 默认为 2，除非用户手动设为 0, 不然课程卡片是不会挤在一起的），又不会导致重叠的问题
+                ? height - staggeredOffset * 0.5
+                : height,
             child: Card(
               clipBehavior: Clip.hardEdge,
               // Card 在 SizedBox 里的边距（在整体上表现为各个卡片间的间隙/间距）
