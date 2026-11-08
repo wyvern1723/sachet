@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/constants/url_constants.dart';
 import 'package:sachet/models/enums/experiment_course_import_result.dart';
 import 'package:sachet/models/enums/update_class_schedule_state.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/services/zhengfang_jwxt/zhengfang_jwxt.dart';
+import 'package:sachet/utils/semester_utils.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
@@ -48,6 +50,12 @@ class _UpdateClassScheduleZFDialogState
 
   /// 更新课表失败原因
   String _updateClassScheduleFailedErrorMsg = '';
+
+  /// 本次更新的课表对应的学期
+  String? _updatedSemester;
+
+  /// 本次更新的学期将要使用的开始日期
+  DateTime? _updatedSemesterStartDate;
 
   /// 获取学期失败原因
   String _getSemestesrFailedErrorMsg = '';
@@ -125,6 +133,8 @@ class _UpdateClassScheduleZFDialogState
             .read<SettingsProvider>()
             .setClassScheduleFilePath(result.classScheduleFilePath);
 
+        _updatedSemester = semesterFromFileName(result.classScheduleFilePath);
+
         // 修改当前课程对应的配色文件
         await context
             .read<SettingsProvider>()
@@ -148,17 +158,19 @@ class _UpdateClassScheduleZFDialogState
         return;
       }
 
-      // 获取开学日期
+      // 从教务系统获取当前学期开始日期
+      DateTime? fetchedSemesterStartDate;
       try {
-        // 如果从教务系统获取当前开学日期成功，更改默认开学日期
+        // 如果从教务系统获取当前学期开始日期成功，更改正在进行的学期开始日期（用于空闲教室使用的学期开始日期）
         final result = await ZhengFangJwxt.classSchedule
             .getSemesterStartDate(cookie: ZhengFangUserProvider.cookie);
 
         if (!context.mounted) return;
 
         context.read<SettingsProvider>().setSemesterStartDate(result.$1);
+        fetchedSemesterStartDate = result.$2;
       } catch (e) {
-        // 如果从教务系统获取当前开学日期失败，则保持使用预设的默认开学日期(constSemesterStartDate)
+        // 如果从教务系统获取当前学期开始日期失败，则保持使用预设的默认学期开始日期(constSemesterStartDate)
         if (kDebugMode) {
           print(e);
         }
@@ -166,10 +178,24 @@ class _UpdateClassScheduleZFDialogState
 
       if (!context.mounted) return;
 
-      // 当前状态切换为用户手动设置(调整,如有必要)开学日期
-      setState(() {
-        currentState = UpdateClassScheduleState.setSemesterStartDate;
-      });
+      final DateTime? knownSemesterStartDate = _updatedSemester == null
+          ? null
+          : SettingsProvider.semesterStartDateOf(_updatedSemester!);
+
+      if (knownSemesterStartDate != null) {
+        // 应用内已有该学期的开始日期，直接使用，无需用户手动选择
+        _updatedSemesterStartDate = knownSemesterStartDate;
+        setState(() {
+          currentState = UpdateClassScheduleState.updatedClassSchedule;
+        });
+      } else {
+        // 当前状态切换为用户手动设置(调整)学期开始日期
+        _updatedSemesterStartDate =
+            fetchedSemesterStartDate ?? constSemesterStartDate;
+        setState(() {
+          currentState = UpdateClassScheduleState.setSemesterStartDate;
+        });
+      }
     }
   }
 
@@ -414,25 +440,35 @@ class _UpdateClassScheduleZFDialogState
                 InputDecorator(
                   decoration: InputDecoration(
                     isDense: true,
-                    labelText: '开学日期',
+                    labelText: '学期开始日期',
                     border: OutlineInputBorder(),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Selector<SettingsProvider, String>(
-                          selector: (_, settingsProvider) =>
-                              SettingsProvider.semesterStartDate,
-                          builder: (_, semesterStartDate, __) {
-                            return Text(
-                              DateFormat('yyyy-MM-dd').format(
-                                  SettingsProvider.semesterStartDateDateTime),
-                              style: textTheme.bodyLarge,
-                            );
-                          }),
+                      Text(
+                        DateFormat('yyyy-MM-dd').format(
+                            _updatedSemesterStartDate ??
+                                constSemesterStartDate),
+                        style: textTheme.bodyLarge,
+                      ),
                       IconButton(
                         onPressed: () async {
-                          await selectSemesterStartDate(context);
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            locale: const Locale('zh', 'CN'),
+                            initialDate: _updatedSemesterStartDate ??
+                                constSemesterStartDate,
+                            firstDate: DateTime(1958, 6),
+                            lastDate: DateTime(2077, 12),
+                            selectableDayPredicate: (DateTime val) =>
+                                val.weekday == 1,
+                            helpText: '选择学期开始日期',
+                          );
+                          if (picked == null || !mounted) return;
+                          setState(() {
+                            _updatedSemesterStartDate = picked;
+                          });
                         },
                         icon: Icon(
                           Icons.edit_calendar_outlined,
@@ -448,9 +484,68 @@ class _UpdateClassScheduleZFDialogState
           ),
           actions: [
             TextButton(
-              onPressed: () async {
+              onPressed: () {
+                if (_updatedSemester != null) {
+                  context.read<SettingsProvider>().setSemesterStartDateOf(
+                        _updatedSemester!,
+                        _updatedSemesterStartDate ?? constSemesterStartDate,
+                      );
+                }
                 Navigator.pop(context, true);
               },
+              child: const Text('确认'),
+            )
+          ],
+        );
+      case UpdateClassScheduleState.updatedClassSchedule: // 更新完成，无需用户设置学期开始日期
+        return AlertDialog(
+          title: const Text('更新课程表'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('成功获取课表数据', style: textTheme.bodyMedium),
+              if (_experimentCourseImportMsg != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        _isExperimentCourseImportFailed
+                            ? Icons.error_outline
+                            : Icons.info_outline,
+                        size: 16,
+                        color: _isExperimentCourseImportFailed
+                            ? colorScheme.error
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          _experimentCourseImportMsg!,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: _isExperimentCourseImportFailed
+                                ? colorScheme.error
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 12),
+              //   child: Text(
+              //     '学期开始日期：${DateFormat('yyyy-MM-dd').format(_updatedSemesterStartDate ?? constSemesterStartDate)}',
+              //     style: textTheme.bodyMedium,
+              //   ),
+              // ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
               child: const Text('确认'),
             )
           ],

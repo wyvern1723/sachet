@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/enums/app_folder.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/export_to_ics.dart';
+import 'package:sachet/utils/semester_utils.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:sachet/widgets/utilspages_widgets/login_page_widgets/error_info_snackbar.dart';
 
@@ -26,27 +28,44 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
   /// 选中的课程表文件路径
   String? _selectedFilePath;
 
+  /// 所选课程表文件对应的学期（无法从文件名识别时为 null）
+  String? _selectedSemester;
+
+  /// 已储存的所选学期开始日期（为 null 时让用户手动选择）
+  DateTime? _savedSemesterStartDate;
+
   /// 当前 App 使用的课程表文件路径
   String _currentFilePath = '';
 
-  DateTime _currentSemesterStartDate =
-      SettingsProvider.semesterStartDateDateTime;
+  DateTime _currentSemesterStartDate = constSemesterStartDate;
+
+  void _applySelectedFile(String filePath) {
+    final String? semester = semesterFromFileName(filePath);
+    final DateTime? startDate = semester == null
+        ? null
+        : SettingsProvider.semesterStartDateOf(semester);
+
+    _selectedFilePath = filePath;
+    _selectedSemester = semester;
+    _savedSemesterStartDate = startDate;
+    _currentSemesterStartDate = startDate ?? constSemesterStartDate;
+  }
 
   Future<void> _getClassScheduleFileList() async {
     String classScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
     _currentFilePath = classScheduleFilePath;
 
-    if (classScheduleFilePath.isEmpty) {
-      _selectedFilePath = null;
-    }
-
     final List<FileSystemEntity> files =
         await CachedDataStorage.lsByModifiedTime(AppFolder.classSchedule.name);
 
     setState(() {
       _filesPathList = files;
-      _selectedFilePath = classScheduleFilePath;
+      if (classScheduleFilePath.isNotEmpty) {
+        _applySelectedFile(classScheduleFilePath);
+      } else {
+        _selectedFilePath = null;
+      }
     });
   }
 
@@ -132,7 +151,7 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
             label: const Text('课程表数据文件'),
             onSelected: (String? filePath) {
               if (filePath != null) {
-                setState(() => _selectedFilePath = filePath);
+                setState(() => _applySelectedFile(filePath));
               }
             },
             dropdownMenuEntries: _filesPathList
@@ -156,19 +175,30 @@ class _ExportClassScheduleDialogState extends State<ExportClassScheduleDialog> {
                   DateFormat('yyyy-MM-dd').format(_currentSemesterStartDate),
                   style: textTheme.bodyLarge,
                 ),
-                IconButton(
-                  onPressed: () async {
-                    await _updateSemesterStartDate(context);
-                  },
-                  icon: Icon(
-                    Icons.edit_calendar_outlined,
-                    // color: colorScheme.onSurfaceVariant,
-                    color: colorScheme.onSurface,
-                  ),
-                )
+                if (_savedSemesterStartDate == null)
+                  IconButton(
+                    onPressed: () async {
+                      await _updateSemesterStartDate(context);
+                    },
+                    icon: Icon(
+                      Icons.edit_calendar_outlined,
+                      // color: colorScheme.onSurfaceVariant,
+                      color: colorScheme.onSurface,
+                    ),
+                  )
               ],
             ),
           ),
+          if (_savedSemesterStartDate == null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                _selectedSemester == null
+                    ? '无法从课表文件名识别学期，请手动选择学期开始日期。'
+                    : '未找到该学期的开始日期，请手动选择学期开始日期。',
+                style: textTheme.bodySmall,
+              ),
+            ),
         ],
       ),
       contentPadding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 24.0),

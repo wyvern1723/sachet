@@ -9,6 +9,7 @@ class AppSettings {
   String? classScheduleFilePath;
   String? courseColorFilePath;
   String? semesterStartDate;
+  Map<String, dynamic>? semesterStartDates;
   int? curveDuration;
   String? curveType;
   bool? isEnableDevMode;
@@ -38,6 +39,7 @@ class AppSettings {
     this.classScheduleFilePath,
     this.courseColorFilePath,
     this.semesterStartDate,
+    this.semesterStartDates,
     this.curveDuration,
     this.curveType,
     this.isEnableDevMode,
@@ -68,6 +70,7 @@ class AppSettings {
     classScheduleFilePath = json['classScheduleFilePath'];
     courseColorFilePath = json['courseColorFilePath'];
     semesterStartDate = json['semesterStartDate'];
+    semesterStartDates = json['semesterStartDates'];
     curveDuration = json['curveDuration '];
     curveType = json['curveType'];
     isEnableDevMode = json['isEnableDevMode'];
@@ -99,6 +102,7 @@ class AppSettings {
     data['classScheduleFilePath'] = classScheduleFilePath;
     data['courseColorFilePath'] = courseColorFilePath;
     data['semesterStartDate'] = semesterStartDate;
+    data['semesterStartDates'] = semesterStartDates;
     data['curveDuration '] = curveDuration;
     data['curveType'] = curveType;
     data['isEnableDevMode'] = isEnableDevMode;

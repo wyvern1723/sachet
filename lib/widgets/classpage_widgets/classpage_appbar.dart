@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'package:sachet/models/enums/app_folder.dart';
+import 'package:sachet/utils/semester_utils.dart';
 import 'package:sachet/utils/time_manager.dart';
-import 'package:sachet/pages/class_child_pages/course_settings_page.dart';
 import 'package:sachet/utils/app_global.dart';
 import 'package:sachet/providers/class_page_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/utils/utils_functions.dart';
+import 'package:sachet/widgets/classpage_widgets/class_schedule_actions_bottom_sheet.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_enable_prompt_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/course_notification_reset_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/export_class_schedule_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/month_count_dropdown_menu.dart';
-import 'package:sachet/widgets/classpage_widgets/switch_actived_app_file_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/update_class_schedule_zf_dialog.dart';
 import 'package:sachet/widgets/classpage_widgets/week_count_dropdown_menu.dart';
 import 'package:path/path.dart' as path;
@@ -29,44 +27,25 @@ class ClassPageAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _ClassPageAppBarState extends State<ClassPageAppBar> {
-  Future switchClassSchedules(BuildContext context) async {
-    final String classScheduleFilePath =
-        context.read<SettingsProvider>().classScheduleFilePath;
-    final result = await showDialog(
-      context: context,
-      builder: (BuildContext context) => SwitchActivedAppFileDialog(
-        dialogTitle: '选择课表',
-        fileDirectory: AppFolder.classSchedule.name,
-        settingsFilePath: classScheduleFilePath,
-      ),
-    );
-
-    if (!context.mounted) return;
-
-    if (result is String) {
-      context.read<SettingsProvider>().setClassScheduleFilePath(result);
-    } else if (result == true) {
-      // setState 只是为了「切换课表时编辑了当前课表文件的内容，且没有切换到其他课表」。
-      // 这种情况下，使用的文件路径没有更新，不会触发 Provider 更新，所以需要刷新一下，重新读取修改后的文件。
-      // TODO: 目前只是判断了是否编辑，没有判断是否编辑的文件和使用的课表文件是同一个文件。
-      setState(() {});
-    }
-  }
-
-  Future showUpdateClassScheduleDialog(BuildContext context) async {
+  /// 更新课表，并在更新成功后处理页面跳转和课程通知
+  Future showUpdateClassScheduleDialog() async {
+    final SettingsProvider settingsProvider = context.read<SettingsProvider>();
     final String oldClassScheduleFilePath =
-        context.read<SettingsProvider>().classScheduleFilePath;
+        settingsProvider.classScheduleFilePath;
 
-    final bool? result = await showDialog(
+    final bool? result = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => const UpdateClassScheduleZFDialog(),
     );
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     if (result == true) {
-      context.read<ClassPageProvider>().pageController.jumpToPage(
-            weekCountOfToday(SettingsProvider.semesterStartDateDateTime) - 1,
-          );
+      final ClassPageProvider classPageProvider =
+          context.read<ClassPageProvider>();
+      classPageProvider.updateMonthList();
+      classPageProvider.pageController.jumpToPage(
+        weekCountOfToday(SettingsProvider.classScheduleSemesterStartDate) - 1,
+      );
       await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -107,9 +86,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
       );
     }
 
-    if (!context.mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     final String newClassScheduleFilePath =
         context.read<SettingsProvider>().classScheduleFilePath;
@@ -121,7 +98,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     }
 
     // 以下为课表更新成功后的处理逻辑
-    final isEnableCourseNotification =
+    final bool isEnableCourseNotification =
         context.read<SettingsProvider>().isEnableCourseNotification;
     if (isEnableCourseNotification) {
       // ===== 用户之前启用了课程通知 =====
@@ -130,7 +107,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
           FlutterLocalNotificationsPlugin();
       await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
 
-      if (!context.mounted) return;
+      if (!mounted) return;
 
       // 将「启用课程通知」状态设为关闭
       context.read<SettingsProvider>().setIsEnableCourseNotification(false);
@@ -183,7 +160,7 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
     final settingsProvider = context.read<SettingsProvider>();
     // context.read<ClassPageModel>().resetCurrentWeekCount();
     context.read<ClassPageProvider>().pageController.animateToPage(
-        weekCountOfToday(SettingsProvider.semesterStartDateDateTime) - 1,
+        weekCountOfToday(SettingsProvider.classScheduleSemesterStartDate) - 1,
         duration: Duration(milliseconds: settingsProvider.curveDuration),
         curve: curveTypes[settingsProvider.curveType] ?? Easing.standard);
   }
@@ -217,8 +194,6 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return AppBar(
       titleSpacing: 12.0,
       title: Selector<ClassPageProvider, ClassScheduleViewMode>(
@@ -233,9 +208,9 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
                 return Selector<SettingsProvider, String>(
                     selector: (_, provider) => provider.classScheduleFilePath,
                     builder: (_, classScheduleFilePath, __) {
-                      final String currentSemester = extractSemester(
-                        path.basenameWithoutExtension(classScheduleFilePath),
-                      );
+                      final String currentSemester = semesterFromFileName(
+                              classScheduleFilePath) ??
+                          path.basenameWithoutExtension(classScheduleFilePath);
                       return Text(
                         currentSemester,
                         style: TextStyle(
@@ -334,75 +309,41 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               }
             }),
 
-        PopupMenuButton(
-          tooltip: '更多操作',
-          itemBuilder: (context) => [
-            // 更新课表
-            PopupMenuItem(
-              onTap: () async {
-                await showUpdateClassScheduleDialog(context);
-              },
-              child: Row(children: [
-                Icon(Icons.refresh, color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                const Text('更新课表')
-              ]),
-            ),
-            // 切换课表
-            PopupMenuItem(
-              onTap: () async {
-                await switchClassSchedules(context);
-              },
-              child: Row(children: [
-                Icon(Icons.swap_horiz_outlined,
-                    color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                const Text('切换课表'),
-              ]),
-            ),
-            // 导出课表
-            PopupMenuItem(
-              onTap: () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      ExportClassScheduleDialog(),
-                );
-              },
-              child: Row(children: [
-                Icon(Icons.share_outlined, color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                const Text('导出课表')
-              ]),
-            ),
-            // 课表设置
-            PopupMenuItem(
-              onTap: () async {
-                final semesterStartDate = SettingsProvider.semesterStartDate;
-                await Navigator.of(context).push(MaterialPageRoute(
-                  maintainState: false,
-                  builder: (BuildContext context) {
-                    return const CourseSettingsPage();
-                  },
-                ));
-                final newSmesterStartDate = SettingsProvider.semesterStartDate;
-                if (semesterStartDate != newSmesterStartDate) {
-                  if (!context.mounted) {
-                    return;
-                  }
-                  context.read<ClassPageProvider>().updateMonthList();
-                  context
-                      .read<ClassPageProvider>()
-                      .updateCurrentMonth(DateTime.now().month);
-                }
-              },
-              child: Row(children: [
-                Icon(Icons.tune_outlined, color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                const Text('课表设置')
-              ]),
-            ),
-          ],
+        IconButton(
+          icon: Icon(Icons.more_vert),
+          tooltip: '课表操作',
+          onPressed: () async {
+            final ClassPageProvider classPageProvider =
+                context.read<ClassPageProvider>();
+            final ClassScheduleAction? action =
+                await showModalBottomSheet<ClassScheduleAction>(
+              context: context,
+              clipBehavior: Clip.hardEdge,
+              isScrollControlled: true,
+              showDragHandle: false,
+              useSafeArea: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
+              ),
+              builder: (context) => ClassScheduleActionsBottomSheet(
+                classPageProvider: classPageProvider,
+              ),
+            );
+
+            if (!mounted || action == null) return;
+
+            if (action == ClassScheduleAction.updateClassSchedule) {
+              await showUpdateClassScheduleDialog();
+            } else if (action ==
+                ClassScheduleAction.exportClassSchedule) {
+              if (!context.mounted) return;
+
+              await showDialog(
+                context: context,
+                builder: (context) => const ExportClassScheduleDialog(),
+              );
+            }
+          },
         ),
       ],
     );

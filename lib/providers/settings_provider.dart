@@ -9,6 +9,7 @@ import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/app_global.dart';
+import 'package:sachet/utils/semester_utils.dart';
 import 'package:sachet/utils/storage/path_provider_utils.dart';
 
 class SettingsProvider extends ChangeNotifier {
@@ -23,11 +24,38 @@ class SettingsProvider extends ChangeNotifier {
   bool get isShowPageTurnArrow => _appSettings.isShowPageTurnArrow ?? true;
   String get classScheduleFilePath => _appSettings.classScheduleFilePath ?? '';
   String get courseColorFilePath => _appSettings.courseColorFilePath ?? '';
+
+  /// 空闲教室页面使用的学期开始日期（与课程表无关）
+  ///
+  /// 课程表使用 [classScheduleSemesterStartDate]
   static String get semesterStartDate =>
       _appSettings.semesterStartDate ??
       constSemesterStartDate.toIso8601String();
   static DateTime get semesterStartDateDateTime =>
       DateTime.tryParse(semesterStartDate) ?? constSemesterStartDate;
+
+  /// 用户在导入课表时添加的新学期或调整应用内有的学期的开学日期，各个学期的开始日期
+  static Map<String, dynamic> get _semesterStartDates =>
+      _appSettings.semesterStartDates ?? {};
+
+  /// 获取指定学期的开始日期。优先使用已储存的日期，其次使用应用内置的日期
+  static DateTime? semesterStartDateOf(String semester) {
+    final String? stored = _semesterStartDates[semester]?.toString();
+    return (stored == null ? null : DateTime.tryParse(stored)) ??
+        semesterToStartDate[semester];
+  }
+
+  /// 当前课程表文件对应的学期（无法从文件名识别时为空字符串）
+  static String get classScheduleSemester {
+    final String filePath = _appSettings.classScheduleFilePath ?? '';
+    if (filePath.isEmpty) return '';
+    return semesterFromFileName(filePath) ?? '';
+  }
+
+  /// 当前课程表所在学期的开始日期
+  static DateTime get classScheduleSemesterStartDate =>
+      semesterStartDateOf(classScheduleSemester) ?? semesterStartDateDateTime;
+
   int get curveDuration => _appSettings.curveDuration ?? 1500;
   String get curveType => _appSettings.curveType ?? 'Easing.standard';
   bool get isEnableDevMode => _appSettings.isEnableDevMode ?? false;
@@ -111,12 +139,22 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  /// 设置当前进行的学期的学期开始日期
   void setSemesterStartDate(String value) {
     if (value != semesterStartDate) {
       _appSettings.semesterStartDate = value;
       AppGlobal.saveAppSettings();
       notifyListeners();
     }
+  }
+
+  /// 设置指定学期的学期开始日期（用于课程表）
+  void setSemesterStartDateOf(String semester, DateTime date) {
+    final Map<String, dynamic> map = Map.of(_semesterStartDates);
+    map[semester] = date.toIso8601String();
+    _appSettings.semesterStartDates = map;
+    AppGlobal.saveAppSettings();
+    notifyListeners();
   }
 
   void setCurveDuration(int value) {
@@ -300,7 +338,7 @@ class SettingsProvider extends ChangeNotifier {
 
             /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
             final DateTime courseDate = getDateFromWeekCountAndWeekday(
-              semesterStartDate: semesterStartDateDateTime,
+              semesterStartDate: classScheduleSemesterStartDate,
               weekCount: courseWeek,
               weekday: courseWeekday,
             );

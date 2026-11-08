@@ -9,8 +9,11 @@ enum UpdateClassScheduleState {
   /// 开始更新
   updating,
 
-  /// 设置学期开始日期
+  /// 设置学期开始日期（应用内没有所选学期的开始日期，需要用户手动设置）
   setSemesterStartDate,
+
+  /// 更新完成（应用内已有所选学期的开始日期，无需用户设置）
+  updatedClassSchedule,
 
   /// 登录过期（登录失效）
   loginExpired,

@@ -232,6 +232,17 @@ class _FreeClassroomTodayAndTomorrowViewState
           tabs: _tabs,
         ),
         actions: <Widget>[
+          IconButton(
+            tooltip: '设置学期开始日期',
+            onPressed: () {
+              selectSemesterStartDate(context);
+            },
+            icon: Icon(Icons.event_outlined),
+            color: Theme.of(context).useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : null,
+            splashRadius: 24,
+          ),
           TextButton.icon(
             style: Theme.of(context).useMaterial3
                 ? null

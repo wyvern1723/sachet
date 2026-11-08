@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/pages/settings_child_pages/palette_settings_page.dart';
-import 'package:sachet/utils/utils_functions.dart';
-import 'package:intl/intl.dart';
 import '../settings_child_pages/customize_settings_page.dart';
 import '../settings_child_pages/color_settings_page.dart';
 
@@ -16,30 +12,6 @@ class CourseSettingsPage extends StatelessWidget {
       appBar: AppBar(title: Text('课表设置')),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              '日期设置',
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            ),
-          ),
-          ListTile(
-            leading: const Align(
-                widthFactor: 1,
-                alignment: Alignment.centerLeft,
-                child: Icon(Icons.edit_calendar_outlined)),
-            title: const Text('学期开始日期'),
-            subtitle: Selector<SettingsProvider, String>(
-                selector: (_, settingsProvider) =>
-                    SettingsProvider.semesterStartDate,
-                builder: (_, semesterStartDate, __) {
-                  return Text(
-                    DateFormat('yyyy-MM-dd')
-                        .format(SettingsProvider.semesterStartDateDateTime),
-                  );
-                }),
-            onTap: () => selectSemesterStartDate(context),
-          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(

@@ -14,7 +14,7 @@ Future selectSemesterStartDate(BuildContext context) async {
     firstDate: DateTime(1958, 6),
     lastDate: DateTime(2077, 12),
     selectableDayPredicate: (DateTime val) => val.weekday == 1 ? true : false,
-    helpText: '选择学期开始日期',
+    helpText: '选择当前正在进行的学期开始日期',
   );
   if (!context.mounted) return;
 
@@ -56,23 +56,4 @@ void copyToClipboard(BuildContext context, String text, {String prefix = ''}) {
       behavior: SnackBarBehavior.floating,
     ),
   );
-}
-
-/// 从获取课表默认保存的文件名提取当前学期
-///
-/// e.g.
-///
-/// "class_schedule_2025-2026-2_20260404155500" => "2025-2026-2"
-///
-/// "class_schedule_2025-2026-1_20250825111641" => "2025-2026-1"
-String extractSemester(String filename) {
-  final regex = RegExp(r'class_schedule_(\d{4}-\d{4}-\d+)');
-  final match = regex.firstMatch(filename);
-
-  if (match != null && match.groupCount >= 1) {
-    return match.group(1)!;
-  }
-
-  // throw FormatException('无法从文件名 "$filename" 中提取学期信息');
-  return filename;
 }

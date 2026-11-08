@@ -7,6 +7,7 @@ import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/utils/utils_functions.dart';
 
 const routeFilterScreen = 'filter';
 const routeResultScreen = 'result';
@@ -56,6 +57,17 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
           elevation: !Theme.of(context).useMaterial3 ? 0 : null,
           title: const Text('空闲教室'),
           actions: [
+            IconButton(
+              tooltip: '设置学期开始日期',
+              onPressed: () {
+                selectSemesterStartDate(context);
+              },
+              icon: Icon(Icons.event_outlined),
+              color: Theme.of(context).useMaterial3
+                  ? Theme.of(context).colorScheme.secondary
+                  : null,
+              splashRadius: 24,
+            ),
             TextButton.icon(
               style: Theme.of(context).useMaterial3
                   ? null

@@ -3,8 +3,15 @@ import 'package:sachet/utils/storage/path_provider_utils.dart';
 import 'package:path/path.dart' as path;
 
 class ViewCachedDataPage extends StatefulWidget {
-  const ViewCachedDataPage({super.key, required this.filePath});
+  const ViewCachedDataPage({
+    super.key,
+    required this.filePath,
+    this.isReadOnly = false,
+  });
   final String filePath;
+
+  /// 是否只读模式，不允许编辑文件（从开发者设置页面进入可以编辑文件内容，从其他页面进入只能查看文件内容）
+  final bool isReadOnly;
 
   @override
   State<ViewCachedDataPage> createState() => _ViewCachedDataPageState();
@@ -138,35 +145,38 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
           title: Text(changed
               ? '* ${path.basename(widget.filePath)}'
               : path.basename(widget.filePath)),
-          actions: editMode == false
-              ? [
-                  IconButton(
-                    onPressed: () => setState(() => editMode = true),
-                    icon: Icon(Icons.edit),
-                  )
-                ]
-              : [
-                  IconButton(
-                    onPressed: () async {
-                      await _close(context);
-                    },
-                    icon: Icon(Icons.close), // 备选：Icons.edit_off
-                  ),
-                  IconButton(
-                    onPressed: changed
-                        ? () async {
-                            await CachedDataStorage.reWriteDataByFilePath(
-                                editableTextController.text, widget.filePath);
-                            setState(() {
-                              datasetValue = editableTextController.text;
-                              changed = false;
-                              modified = true;
-                            });
-                          }
-                        : null,
-                    icon: Icon(Icons.save),
-                  ),
-                ],
+          actions: widget.isReadOnly
+              ? null
+              : editMode == false
+                  ? [
+                      IconButton(
+                        onPressed: () => setState(() => editMode = true),
+                        icon: Icon(Icons.edit),
+                      )
+                    ]
+                  : [
+                      IconButton(
+                        onPressed: () async {
+                          await _close(context);
+                        },
+                        icon: Icon(Icons.close), // 备选：Icons.edit_off
+                      ),
+                      IconButton(
+                        onPressed: changed
+                            ? () async {
+                                await CachedDataStorage.reWriteDataByFilePath(
+                                    editableTextController.text,
+                                    widget.filePath);
+                                setState(() {
+                                  datasetValue = editableTextController.text;
+                                  changed = false;
+                                  modified = true;
+                                });
+                              }
+                            : null,
+                        icon: Icon(Icons.save),
+                      ),
+                    ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -229,7 +239,8 @@ class _ViewCachedDataPageState extends State<ViewCachedDataPage> {
                       child: ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 2000),
                         child: TextField(
-                          enabled: editMode,
+                          enabled: widget.isReadOnly ? null : editMode,
+                          readOnly: widget.isReadOnly,
                           // decoration: InputDecoration(border: InputBorder.none),
                           decoration: InputDecoration(
                             isDense: true,

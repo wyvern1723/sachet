@@ -120,9 +120,10 @@ class _SemesterViewState extends State<SemesterView> {
                               flex: 5,
                               child: AspectRatio(
                                 aspectRatio: _aspectRatio,
-                                child: Selector<SettingsProvider, String>(
+                                child: Selector<SettingsProvider, DateTime>(
                                     selector: (_, settingsProvider) =>
-                                        SettingsProvider.semesterStartDate,
+                                        SettingsProvider
+                                            .classScheduleSemesterStartDate,
                                     builder: (_, semesterStartDate, __) {
                                       return _HeatmapCell(
                                         weekCount: weekCount,
@@ -154,7 +155,7 @@ class _HeatmapCell extends StatelessWidget {
   final int weekCount;
   final int weekday;
   final List<List<CourseSchedule>> courseScheduleItemsList;
-  final String semesterStartDate;
+  final DateTime semesterStartDate;
   final double aspectRatio;
   final Map? courseColorData;
 
@@ -191,7 +192,7 @@ class _HeatmapCell extends StatelessWidget {
     }
 
     final DateTime date = getDateFromWeekCountAndWeekday(
-      semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+      semesterStartDate: semesterStartDate,
       weekCount: weekCount,
       weekday: weekday,
     );

@@ -37,13 +37,13 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // 顶部显示课程表的日期和星期
-        Selector<SettingsProvider, String>(
+        Selector<SettingsProvider, DateTime>(
             selector: (_, settingsProvider) =>
-                SettingsProvider.semesterStartDate,
+                SettingsProvider.classScheduleSemesterStartDate,
             builder: (_, semesterStartDate, __) {
               return DayOfTheWeekTopBar(
                 weekCount: widget.weekCount,
-                semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+                semesterStartDate: semesterStartDate,
               );
             }),
         // 下方是课程表主体
@@ -59,15 +59,14 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                 // 左侧显示课程的节次和时间
                 Expanded(
                   flex: 4,
-                  child: Selector<SettingsProvider, String>(
+                  child: Selector<SettingsProvider, DateTime>(
                       selector: (_, settingsProvider) =>
-                          SettingsProvider.semesterStartDate,
+                          SettingsProvider.classScheduleSemesterStartDate,
                       builder: (_, semesterStartDate, __) {
                         /// 这周的周一的日期
                         final DateTime thisWeekMondayDate =
                             getTheMondayDateOfTheWeek(
-                                SettingsProvider.semesterStartDateDateTime,
-                                widget.weekCount);
+                                semesterStartDate, widget.weekCount);
 
                         return ClassSessionRoutineColumn(
                           routineData: SessionRoutine(

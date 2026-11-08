@@ -163,7 +163,7 @@ class CourseCard extends StatelessWidget {
 
       /// 这节课所属天的日期
       final DateTime date = getDateFromWeekCountAndWeekday(
-        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+        semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
         weekCount: weekCount,
         weekday: weekday,
       );

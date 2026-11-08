@@ -35,7 +35,7 @@ class _MonthViewState extends State<MonthView> {
           context.read<ClassPageProvider>().currentWeekCount;
 
       final currentMonth = getDateFromWeekCountAndWeekday(
-        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+        semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
         weekCount: currentWeekCount,
         weekday: DateTime.now().weekday,
       ).month;

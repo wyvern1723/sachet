@@ -27,7 +27,7 @@ class ClassPageProvider extends ChangeNotifier {
 
   // 当前页面周次（显示的周次，会随着页面的变化变化）
   int _currentWeekCount = min(
-      weekCountOfToday(SettingsProvider.semesterStartDateDateTime),
+      weekCountOfToday(SettingsProvider.classScheduleSemesterStartDate),
       20); // 如果当前周次超过最大周次，使用最大周次(防止超出 List length,虽然实际上完全不会报错)
   int get currentWeekCount => _currentWeekCount;
 
@@ -36,7 +36,7 @@ class ClassPageProvider extends ChangeNotifier {
 
   PageController _pageController = PageController(
       initialPage: min(
-              weekCountOfToday(SettingsProvider.semesterStartDateDateTime),
+              weekCountOfToday(SettingsProvider.classScheduleSemesterStartDate),
               20) -
           1);
   PageController get pageController => _pageController;
@@ -45,9 +45,9 @@ class ClassPageProvider extends ChangeNotifier {
   ClassScheduleViewMode get currentViewMode => _currentViewMode;
 
   List<MonthData> _monthList = getMonthList(
-      SettingsProvider.semesterStartDateDateTime,
+      SettingsProvider.classScheduleSemesterStartDate,
       getDateFromWeekCountAndWeekday(
-        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+        semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
         weekCount: 20,
         weekday: 7,
       ));
@@ -91,7 +91,7 @@ class ClassPageProvider extends ChangeNotifier {
   // 更新当前周次
   void resetCurrentWeekCount() {
     _currentWeekCount =
-        weekCountOfToday(SettingsProvider.semesterStartDateDateTime);
+        weekCountOfToday(SettingsProvider.classScheduleSemesterStartDate);
     notifyListeners();
   }
 
@@ -202,9 +202,9 @@ class ClassPageProvider extends ChangeNotifier {
 
   void updateMonthList() {
     _monthList = getMonthList(
-        SettingsProvider.semesterStartDateDateTime,
+        SettingsProvider.classScheduleSemesterStartDate,
         getDateFromWeekCountAndWeekday(
-          semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+          semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
           weekCount: 20,
           weekday: 7,
         ));

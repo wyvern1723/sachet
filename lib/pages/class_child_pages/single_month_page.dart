@@ -170,7 +170,7 @@ class _SingleMonthPageState extends State<SingleMonthPage> {
     if (widget.courseScheduleItemsList != null) {
       // 计算该日期对应的周次
       weekCount = getWeekCountAndWeekdayOfDate(
-        semesterStartDate: SettingsProvider.semesterStartDateDateTime,
+        semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
         date: date,
       ).weekCount;
     }

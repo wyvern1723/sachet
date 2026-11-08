@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 
 final DateTime constSemesterStartDate = DateTime(2026, 8, 31);
 
+final Map<String, DateTime> semesterToStartDate = {
+  '2022-2023-1': DateTime(2022, 8, 22),
+  '2022-2023-2': DateTime(2023, 2, 13),
+  '2023-2024-1': DateTime(2023, 9, 4),
+  '2023-2024-2': DateTime(2024, 2, 26),
+  '2024-2025-1': DateTime(2024, 8, 26),
+  '2024-2025-2': DateTime(2025, 2, 17),
+  '2025-2026-1': DateTime(2025, 9, 1),
+  '2025-2026-2': DateTime(2026, 3, 2),
+  '2026-2027-1': DateTime(2026, 8, 31),
+};
+
 /// 应用预设主题色（MaterialColor）
 const List defaultThemeColors = <MaterialColor>[
   Colors.indigo,
