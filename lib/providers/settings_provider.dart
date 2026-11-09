@@ -69,6 +69,12 @@ class SettingsProvider extends ChangeNotifier {
   bool get isEnableCourseNotification =>
       _appSettings.isEnableCourseNotification ?? false;
   bool get isSilentNotification => _appSettings.isSilentNotification ?? false;
+
+  /// 课程通知提前的时间（分钟），连着的课不受此设置影响
+  int get courseNotificationAdvanceMinutes =>
+      _appSettings.courseNotificationAdvanceMinutes ??
+      defaultCourseNotificationAdvanceMinutes;
+
   List<List<int>> get freeClassroomSections =>
       _appSettings.freeClassroomSections
           ?.map((innerList) => List<int>.from(innerList))
@@ -235,6 +241,14 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  void setCourseNotificationAdvanceMinutes(int value) {
+    if (value != courseNotificationAdvanceMinutes) {
+      _appSettings.courseNotificationAdvanceMinutes = value;
+      AppGlobal.saveAppSettings();
+      notifyListeners();
+    }
+  }
+
   void setFreeClassroomSections(List value) {
     if (value != freeClassroomSections) {
       _appSettings.freeClassroomSections = value;
@@ -311,10 +325,15 @@ class SettingsProvider extends ChangeNotifier {
     } else {
       throw '课程信息为空/无有效课程表文件';
     }
-    List<CourseReminder> reminders = [];
+
+    final Duration advanceDuration =
+        Duration(minutes: courseNotificationAdvanceMinutes);
+
+    // 收集所有课程（每个周次、每个星期几的一节课）
+    final List<_CourseInstance> courseInstances = [];
     for (final courseScheduleItems in courseScheduleItemsList) {
       for (final courseScheduleItem in courseScheduleItems) {
-        CourseSchedule courseSchedule =
+        final CourseSchedule courseSchedule =
             CourseSchedule.fromJson(courseScheduleItem);
 
         final int? courseItem = courseSchedule.item;
@@ -324,72 +343,147 @@ class SettingsProvider extends ChangeNotifier {
         final List? courseWeeks = courseSchedule.weeks;
         final int courseLength = courseSchedule.length ?? 2;
 
-        if (courseTitle != null &&
-            courseTitle.isNotEmpty &&
-            courseWeeks != null &&
-            courseWeeks.isNotEmpty &&
-            courseItem != null) {
-          for (final courseWeek in courseWeeks) {
-            final result = getWeekdayAndSessionFromItem(courseItem);
-            final int courseWeekday = result.weekday;
+        if (courseTitle == null ||
+            courseTitle.isEmpty ||
+            courseWeeks == null ||
+            courseWeeks.isEmpty ||
+            courseItem == null) {
+          continue;
+        }
 
-            // 课程开始节次，有 1/3/5/7/9
-            final int courseStartSession = result.session;
+        final weekdayAndSession = getWeekdayAndSessionFromItem(courseItem);
+        final int courseWeekday = weekdayAndSession.weekday;
 
-            /// 这节课的日期（如 2025-09-08 00:00:00，日期精确，时间为0点）
-            final DateTime courseDate = getDateFromWeekCountAndWeekday(
-              semesterStartDate: classScheduleSemesterStartDate,
-              weekCount: courseWeek,
-              weekday: courseWeekday,
-            );
+        // 课程开始节次
+        final int courseStartSession = weekdayAndSession.session;
 
-            final bool isStaggered =
-                SessionRoutine.isStaggeredPlace(coursePlace);
-            final String courseStartTimeStr =
-                SessionRoutine(date: courseDate, isStaggered: isStaggered)
-                    .startTimes[courseStartSession - 1];
-            final String courseEndTimeStr =
-                SessionRoutine(date: courseDate, isStaggered: isStaggered)
-                    .endTimes[courseStartSession - 1 + courseLength - 1];
+        // 课程结束节次
+        final int courseEndSession = courseStartSession + courseLength - 1;
 
-            /// 这节课的开始日期和时间（如 2025-09-08 08:00:00，日期精确，时间精确）
-            final DateTime courseStartDateTime = courseDate.add(
-              Duration(
-                hours: int.parse(courseStartTimeStr.split(':')[0]),
-                minutes: int.parse(courseStartTimeStr.split(':')[1]),
-              ),
-            );
-            if (courseStartDateTime.isBefore(DateTime.now())) {
-              // 如果这节课的开始时间在「现在」之前，则跳过（用户不一定是在学期开始即开启通知/使用本软件）
-              continue;
-            }
+        final bool isStaggered = SessionRoutine.isStaggeredPlace(coursePlace);
 
-            final DateTime courseEndDateTime = courseDate.add(
-              Duration(
-                hours: int.parse(courseEndTimeStr.split(':')[0]),
-                minutes: int.parse(courseEndTimeStr.split(':')[1]),
-              ),
-            );
+        for (final courseWeek in courseWeeks) {
+          final DateTime courseDate = getDateFromWeekCountAndWeekday(
+            semesterStartDate: classScheduleSemesterStartDate,
+            weekCount: courseWeek,
+            weekday: courseWeekday,
+          );
+          final SessionRoutine routine =
+              SessionRoutine(date: courseDate, isStaggered: isStaggered);
 
-            // 这节课上多久（用于通知经过多长时间后自动消失）
-            final int courseDurationInMilliseconds = courseEndDateTime
-                .difference(courseStartDateTime)
-                .inMilliseconds;
+          final String courseStartTimeStr =
+              routine.startTimes[courseStartSession - 1];
+          final String courseEndTimeStr =
+              routine.endTimes[courseEndSession - 1];
 
-            // 添加这个时段的课的一个周次的通知信息
-            reminders.add(CourseReminder(
-              courseStartDateTime: courseStartDateTime,
-              courseDurationInMilliseconds: courseDurationInMilliseconds,
-              courseTitle: courseTitle,
-              coursePlace: coursePlace,
-              courseInstructor: courseInstructor,
-              courseStartTimeStr: courseStartTimeStr,
-              courseEndTimeStr: courseEndTimeStr,
-            ));
-          }
+          courseInstances.add(_CourseInstance(
+            weekCount: courseWeek,
+            weekday: courseWeekday,
+            startSession: courseStartSession,
+            endSession: courseEndSession,
+            startDateTime: _combineDateAndTime(courseDate, courseStartTimeStr),
+            endDateTime: _combineDateAndTime(courseDate, courseEndTimeStr),
+            title: courseTitle,
+            place: coursePlace,
+            instructor: courseInstructor,
+            startTimeStr: courseStartTimeStr,
+            endTimeStr: courseEndTimeStr,
+          ));
         }
       }
     }
+
+    // 按「周次 -> 星期几 -> 开始节次」排序，顺序遍历即可判断相邻课程是否连着
+    courseInstances.sort((a, b) {
+      if (a.weekCount != b.weekCount) {
+        return a.weekCount.compareTo(b.weekCount);
+      }
+      if (a.weekday != b.weekday) return a.weekday.compareTo(b.weekday);
+      return a.startSession.compareTo(b.startSession);
+    });
+
+    final DateTime now = DateTime.now();
+    final List<CourseReminder> reminders = [];
+    _CourseInstance? previousCourse;
+
+    for (final courseInstance in courseInstances) {
+      // 默认提前 [advanceDuration] 提醒
+      DateTime notificationDateTime =
+          courseInstance.startDateTime.subtract(advanceDuration);
+
+      if (previousCourse != null &&
+          previousCourse.weekCount == courseInstance.weekCount &&
+          previousCourse.weekday == courseInstance.weekday &&
+          // 上一节课的下一节就是下一节课的开始
+          previousCourse.endSession + 1 == courseInstance.startSession &&
+          // 午休（第 4 节 -> 第 5 节）和晚休（第 8 节 -> 第 9 节）不算连着的课
+          previousCourse.endSession != 4 &&
+          previousCourse.endSession != 8) {
+        // 连着的课在上一节课结束时提醒
+        notificationDateTime = previousCourse.endDateTime;
+      }
+
+      // 提醒时间已经过去（例如在上一节课结束后才开启通知）时立即提醒
+      if (notificationDateTime.isBefore(now)) {
+        notificationDateTime = now;
+      }
+
+      // 跳过已经开始过的课程（用户不一定是在学期开始即开启通知/使用本软件）
+      final bool hasCourseStarted = courseInstance.startDateTime.isBefore(now);
+      previousCourse = courseInstance;
+      if (hasCourseStarted) continue;
+
+      reminders.add(CourseReminder(
+        courseStartDateTime: courseInstance.startDateTime,
+        notificationDateTime: notificationDateTime,
+        courseDurationInMilliseconds: courseInstance.endDateTime
+            .difference(courseInstance.startDateTime)
+            .inMilliseconds,
+        courseTitle: courseInstance.title,
+        coursePlace: courseInstance.place,
+        courseInstructor: courseInstance.instructor,
+        courseStartTimeStr: courseInstance.startTimeStr,
+        courseEndTimeStr: courseInstance.endTimeStr,
+      ));
+    }
     return reminders;
   }
+
+  /// 将日期和时间字符串（如 "08:00"）组合为 DateTime
+  static DateTime _combineDateAndTime(DateTime date, String timeStr) {
+    final List<String> parts = timeStr.split(':');
+    return date.add(Duration(
+      hours: int.parse(parts[0]),
+      minutes: int.parse(parts[1]),
+    ));
+  }
+}
+
+/// 某周、某天的具体一节课（含节次与起止时间）
+class _CourseInstance {
+  const _CourseInstance({
+    required this.weekCount,
+    required this.weekday,
+    required this.startSession,
+    required this.endSession,
+    required this.startDateTime,
+    required this.endDateTime,
+    required this.title,
+    required this.place,
+    required this.instructor,
+    required this.startTimeStr,
+    required this.endTimeStr,
+  });
+
+  final int weekCount;
+  final int weekday;
+  final int startSession;
+  final int endSession;
+  final DateTime startDateTime;
+  final DateTime endDateTime;
+  final String title;
+  final String place;
+  final String instructor;
+  final String startTimeStr;
+  final String endTimeStr;
 }

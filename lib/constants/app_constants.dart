@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 final DateTime constSemesterStartDate = DateTime(2026, 8, 31);
 
+/// 课程通知默认提前的时间（在上课多少分钟前通知）
+const int defaultCourseNotificationAdvanceMinutes = 30;
+
 final Map<String, DateTime> semesterToStartDate = {
   '2022-2023-1': DateTime(2022, 8, 22),
   '2022-2023-2': DateTime(2023, 2, 13),

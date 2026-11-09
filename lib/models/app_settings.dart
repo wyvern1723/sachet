@@ -22,6 +22,7 @@ class AppSettings {
   bool? isFreeClassroomUseLegacyStyle;
   bool? isEnableCourseNotification;
   bool? isSilentNotification;
+  int? courseNotificationAdvanceMinutes;
   List? freeClassroomSections;
   bool? isShowExamTimeCountdown;
   bool? isDeleteQZJwxtUserInfo;
@@ -52,6 +53,7 @@ class AppSettings {
     this.isFreeClassroomUseLegacyStyle,
     this.isEnableCourseNotification,
     this.isSilentNotification,
+    this.courseNotificationAdvanceMinutes,
     this.freeClassroomSections,
     this.isShowExamTimeCountdown,
     this.isDeleteQZJwxtUserInfo,
@@ -83,6 +85,7 @@ class AppSettings {
     isFreeClassroomUseLegacyStyle = json['isFreeClassroomUseLegacyStyle'];
     isEnableCourseNotification = json['isEnableCourseNotification'];
     isSilentNotification = json['isSilentNotification'];
+    courseNotificationAdvanceMinutes = json['courseNotificationAdvanceMinutes'];
     freeClassroomSections = json['freeClassroomSections'];
     isShowExamTimeCountdown = json['isShowExamTimeCountdown'];
     isDeleteQZJwxtUserInfo = json['isDeleteQZJwxtUserInfo'];
@@ -115,6 +118,7 @@ class AppSettings {
     data['isFreeClassroomUseLegacyStyle'] = isFreeClassroomUseLegacyStyle;
     data['isEnableCourseNotification'] = isEnableCourseNotification;
     data['isSilentNotification'] = isSilentNotification;
+    data['courseNotificationAdvanceMinutes'] = courseNotificationAdvanceMinutes;
     data['freeClassroomSections'] = freeClassroomSections;
     data['isShowExamTimeCountdown'] = isShowExamTimeCountdown;
     data['isDeleteQZJwxtUserInfo'] = isDeleteQZJwxtUserInfo;

@@ -112,6 +112,7 @@ const defaultAppSettingsConfig = {
   "isFreeClassroomUseLegacyStyle": true, // 空闲教室页面是否使用旧的「今日/明日」的样式
   "isEnableCourseNotification": false, // 是否启用课程通知
   "isSilentNotification": false, // 课程通知是否是静默通知
+  "courseNotificationAdvanceMinutes": 30, // 课程通知提前多少分钟（连着的课除外）
   "freeClassroomSections": [
     [1, 2],
     [3, 4],

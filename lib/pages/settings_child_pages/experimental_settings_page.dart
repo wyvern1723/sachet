@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sachet/models/course_reminder.dart';
 import 'package:sachet/models/permission_check_item.dart';
@@ -36,8 +37,20 @@ const NotificationDetails notificationDetailsTestChannel = NotificationDetails(
   ),
 );
 
-/// 提前通知的时间（在上课多久前通知）
-const Duration advanceDuration = Duration(minutes: 30);
+/// 可选的提前通知时间（在上课多久前通知）
+const List<int> courseNotificationAdvanceMinuteOptions = [
+  0,
+  5,
+  10,
+  15,
+  20,
+  30,
+  40,
+  60,
+];
+
+/// 下拉框中「自定义」选项的值
+const int _customAdvanceMinutesValue = -1;
 
 class ExperimentalSettingsPage extends StatefulWidget {
   const ExperimentalSettingsPage({super.key});
@@ -870,6 +883,7 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
       await _addOneCourseNotification(
         id: i + 1,
         courseStartTime: reminders[i].courseStartDateTime,
+        notificationDateTime: reminders[i].notificationDateTime,
         courseTitle: reminders[i].courseTitle,
         coursePlace: reminders[i].coursePlace,
         courseInstructor: reminders[i].courseInstructor,
@@ -886,6 +900,7 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
   Future<void> _addOneCourseNotification({
     required int id,
     required DateTime courseStartTime,
+    required DateTime notificationDateTime,
     required String courseTitle,
     required String coursePlace,
     required String courseInstructor,
@@ -897,11 +912,17 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
         isExactNotification, // true => 使用 alarmClock,false => 使用 exactAllowWhileIdle
   }) async {
     String startAndEndTime = '$courseStartTimeStr - $courseEndTimeStr';
+    final DateTime courseEndTime = courseStartTime.add(
+      Duration(milliseconds: courseDurationInMilliseconds),
+    );
+    // 通知显示多久后自动消失
+    final int timeoutAfter =
+        courseEndTime.difference(notificationDateTime).inMilliseconds;
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       '$courseTitle | $coursePlace',
       startAndEndTime,
-      tz.TZDateTime.from(courseStartTime.subtract(advanceDuration), tz.local),
+      tz.TZDateTime.from(notificationDateTime, tz.local),
       NotificationDetails(
         android: AndroidNotificationDetails(
           'course_reminder',
@@ -910,8 +931,7 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
           icon: "ic_notification",
           importance: Importance.max,
           priority: Priority.high,
-          timeoutAfter:
-              courseDurationInMilliseconds + advanceDuration.inMilliseconds,
+          timeoutAfter: timeoutAfter <= 0 ? 1 : timeoutAfter,
           usesChronometer: true,
           chronometerCountDown: true,
           when: courseStartTime.millisecondsSinceEpoch,
@@ -979,6 +999,84 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
 
     if (!context.mounted) return;
     context.read<SettingsProvider>().setIsSilentNotification(false);
+  }
+
+  /// 修改课程通知提前的时间（分钟）
+  Future _setAdvanceMinutes(BuildContext context, int minutes) async {
+    final SettingsProvider settingsProvider = context.read<SettingsProvider>();
+
+    // 先更新设置，重新生成通知时会使用新的提前时间
+    settingsProvider.setCourseNotificationAdvanceMinutes(minutes);
+
+    // 未开启课程通知时无需重新安排通知
+    if (!settingsProvider.isEnableCourseNotification) return;
+
+    // 先取消所有已安排、待发送的通知
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+    if (!context.mounted) return;
+
+    // 使用新的提前时间重新安排通知
+    try {
+      await _addCourseScheduleNotifications(
+        context,
+        isSilent: settingsProvider.isSilentNotification,
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      await _showAddNotificationsFailedDialog(context, '$e');
+
+      // 如果添加课程失败，取消所有待发送的通知并将「开始课程通知」开关关闭
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      if (!context.mounted) return;
+      context.read<SettingsProvider>().setIsEnableCourseNotification(false);
+    }
+  }
+
+  /// 自定义课程通知提前的时间（分钟）
+  Future _setCustomAdvanceMinutes(
+      BuildContext context, int currentMinutes) async {
+    String inputText = '$currentMinutes';
+
+    final int? minutes = await showDialog<int>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text('自定义提前时间'),
+        content: TextFormField(
+          initialValue: inputText,
+          autofocus: true,
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          decoration: const InputDecoration(
+            labelText: '提前的分钟数',
+            suffixText: '分钟',
+          ),
+          onChanged: (text) => inputText = text,
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              final int? value = int.tryParse(inputText.trim());
+              if (value == null || value < 0) return;
+              Navigator.pop(dialogContext, value);
+            },
+            child: const Text('确定'),
+          ),
+        ],
+      ),
+    );
+
+    if (minutes == null) return;
+    if (!context.mounted) return;
+
+    await _setAdvanceMinutes(context, minutes);
   }
 
   Future<void> _checkPendingNotificationRequests(BuildContext context) async {
@@ -1162,6 +1260,64 @@ class _ExperimentalSettingsPageState extends State<ExperimentalSettingsPage> {
                     ),
                   );
                 }),
+
+            // 提前通知时间设置
+            Selector<SettingsProvider, int>(
+              selector: (_, settingsProvider) =>
+                  settingsProvider.courseNotificationAdvanceMinutes,
+              builder: (_, advanceMinutes, __) {
+                final List<int> options = <int>{
+                  ...courseNotificationAdvanceMinuteOptions,
+                  advanceMinutes,
+                }.toList()
+                  ..sort();
+                return Column(
+                  children: [
+                    ListTile(
+                      enabled: isEnableCourseNotification,
+                      leading: const Align(
+                        widthFactor: 1,
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.av_timer),
+                      ),
+                      title: const Text('提前通知时间'),
+                      subtitle: Text('在上课前 $advanceMinutes 分钟提醒（连着的课除外）'),
+                      trailing: DropdownButton<int>(
+                        value: advanceMinutes,
+                        underline: const SizedBox.shrink(),
+                        items: <DropdownMenuItem<int>>[
+                          for (final minutes in options)
+                            DropdownMenuItem<int>(
+                              value: minutes,
+                              child: Text('$minutes 分钟'),
+                            ),
+                          const DropdownMenuItem<int>(
+                            value: _customAdvanceMinutesValue,
+                            child: Text('自定义'),
+                          ),
+                        ],
+                        onChanged: (selectedMinutes) {
+                          if (selectedMinutes == null) return;
+                          if (selectedMinutes == _customAdvanceMinutesValue) {
+                            _setCustomAdvanceMinutes(context, advanceMinutes);
+                          } else if (selectedMinutes != advanceMinutes) {
+                            _setAdvanceMinutes(context, selectedMinutes);
+                          }
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(56.0, 0, 16.0, 12.0),
+                      child: Text(
+                        '连着的课（上一节课结束后紧接着就是下一节课，午休和晚休除外）'
+                        '会在上一节课结束时提醒，不受此设置影响。',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
 
             // 故障排除
             Padding(
