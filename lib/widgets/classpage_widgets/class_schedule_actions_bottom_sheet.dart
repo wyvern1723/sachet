@@ -458,13 +458,11 @@ class _ClassScheduleActionsBottomSheetState
       // color: colorScheme.surfaceContainerHighest.withAlpha(150),
       // color: colorScheme.secondaryContainer.withAlpha(150),
       color: colorScheme.secondaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: onTap ?? () {},
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.fromLTRB(8, 10, 8, 10),
           child: Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,

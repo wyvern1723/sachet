@@ -310,6 +310,7 @@ class _UpdateClassScheduleZFDialogState
                 child: CheckboxListTile(
                   value: _isImportExperimentCourse,
                   title: Text('同时导入实验课表'),
+                  subtitle: Text('(不含大物实验)'),
                   onChanged: (value) {
                     if (value != null) {
                       setState(() {
