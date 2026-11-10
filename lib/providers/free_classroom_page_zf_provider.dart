@@ -93,6 +93,14 @@ class FreeClassroomPageZFProvider extends ChangeNotifier {
     };
   }
 
+  /// 重置周次并通知监听者
+  ///
+  /// 学期开始日期变化后，周次需要重新计算，且界面需要刷新
+  void resetSelectedWeekCountsAndNotify() {
+    resetSelectedWeekCounts();
+    notifyListeners();
+  }
+
   // =====================================
   // ========== Weekdays(星期几) ==========
   // =====================================

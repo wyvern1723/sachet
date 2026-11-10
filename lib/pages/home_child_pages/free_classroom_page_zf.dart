@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_filter_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_query_page_zf.dart';
 import 'package:sachet/pages/home_child_pages/free_classroom_zf_child_pages/free_classroom_today_and_tomorrow.dart';
 import 'package:sachet/providers/free_classroom_page_zf_provider.dart';
-
-import 'package:provider/provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
-import 'package:sachet/utils/utils_functions.dart';
+import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/free_classroom_actions_bottom_sheet.dart';
 
 const routeFilterScreen = 'filter';
 const routeResultScreen = 'result';
@@ -36,11 +36,16 @@ class FreeClassroomPageZFView extends StatefulWidget {
 class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  /// 当前是否处于查询结果页（用于隐藏“更多操作”按钮）
+  bool _isResultRouteShowing = false;
+
   void _onFiltering() {
+    setState(() => _isResultRouteShowing = false);
     _navigatorKey.currentState!.pop();
   }
 
   void _onShowResult() {
+    setState(() => _isResultRouteShowing = true);
     _navigatorKey.currentState!.pushNamed(routeResultScreen);
   }
 
@@ -57,17 +62,6 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
           elevation: !Theme.of(context).useMaterial3 ? 0 : null,
           title: const Text('空闲教室'),
           actions: [
-            IconButton(
-              tooltip: '设置学期开始日期',
-              onPressed: () {
-                selectSemesterStartDate(context);
-              },
-              icon: Icon(Icons.event_outlined),
-              color: Theme.of(context).useMaterial3
-                  ? Theme.of(context).colorScheme.secondary
-                  : null,
-              splashRadius: 24,
-            ),
             TextButton.icon(
               style: Theme.of(context).useMaterial3
                   ? null
@@ -80,6 +74,17 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
               },
               label: Text('旧版样式'),
             ),
+            if (!_isResultRouteShowing)
+              IconButton(
+                icon: Icon(Icons.more_vert),
+                tooltip: '更多操作',
+                color: Theme.of(context).useMaterial3
+                    ? Theme.of(context).colorScheme.secondary
+                    : null,
+                onPressed: () async {
+                  await FreeClassroomActionsBottomSheet.show(context);
+                },
+              ),
           ],
         ),
         body: NavigatorPopHandler(
@@ -87,7 +92,10 @@ class _FreeClassroomPageZFViewState extends State<FreeClassroomPageZFView> {
             // 当返回事件发生时，尝试在嵌套的 Navigator 中 pop
             // 如果嵌套的 Navigator 已经没有可以 pop 的页面，它将什么也不做
             // 这种情况下，外部的 Navigator 将会处理返回事件
-            _navigatorKey.currentState?.pop();
+            if (_navigatorKey.currentState?.canPop() ?? false) {
+              setState(() => _isResultRouteShowing = false);
+              _navigatorKey.currentState!.pop();
+            }
           },
           child: Navigator(
             key: _navigatorKey,

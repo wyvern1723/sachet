@@ -330,18 +330,18 @@ class _ClassPageAppBarState extends State<ClassPageAppBar> {
               ),
             );
 
-            if (!mounted || action == null) return;
+            if (!context.mounted || action == null) return;
 
-            if (action == ClassScheduleAction.updateClassSchedule) {
-              await showUpdateClassScheduleDialog();
-            } else if (action ==
-                ClassScheduleAction.exportClassSchedule) {
-              if (!context.mounted) return;
-
-              await showDialog(
-                context: context,
-                builder: (context) => const ExportClassScheduleDialog(),
-              );
+            switch (action) {
+              case ClassScheduleAction.updateClassSchedule:
+                await showUpdateClassScheduleDialog();
+                return;
+              case ClassScheduleAction.exportClassSchedule:
+                await showDialog(
+                  context: context,
+                  builder: (context) => const ExportClassScheduleDialog(),
+                );
+                return;
             }
           },
         ),

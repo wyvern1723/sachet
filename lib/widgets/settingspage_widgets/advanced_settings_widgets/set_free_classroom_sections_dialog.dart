@@ -153,7 +153,8 @@ class _SetFreeClassroomSectionsDialogState
       child: Center(
         child: Text(
           '$index',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary, fontSize: 16),
         ),
       ),
     );

@@ -13,6 +13,7 @@ import 'package:sachet/providers/zhengfang_user_provider.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/utils/utils_functions.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/filter_fab.dart';
+import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/free_classroom_actions_bottom_sheet.dart';
 import 'package:sachet/widgets/homepage_widgets/free_classroom_page_widgets/head_session_section.dart';
 import 'package:sachet/widgets/utils_widgets/error_with_retry_widget.dart';
 import 'package:sachet/widgets/utils_widgets/login_expired_zf.dart';
@@ -232,17 +233,6 @@ class _FreeClassroomTodayAndTomorrowViewState
           tabs: _tabs,
         ),
         actions: <Widget>[
-          IconButton(
-            tooltip: '设置学期开始日期',
-            onPressed: () {
-              selectSemesterStartDate(context);
-            },
-            icon: Icon(Icons.event_outlined),
-            color: Theme.of(context).useMaterial3
-                ? Theme.of(context).colorScheme.secondary
-                : null,
-            splashRadius: 24,
-          ),
           TextButton.icon(
             style: Theme.of(context).useMaterial3
                 ? null
@@ -255,6 +245,16 @@ class _FreeClassroomTodayAndTomorrowViewState
             },
             label: Text('新版样式'),
           ),
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            tooltip: '更多操作',
+            color: Theme.of(context).useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : null,
+            onPressed: () async {
+              await FreeClassroomActionsBottomSheet.show(context);
+            },
+          ),
         ],
       ),
       body: TabBarView(
@@ -266,7 +266,11 @@ class _FreeClassroomTodayAndTomorrowViewState
         offset: _showFab ? Offset(0, 0) : Offset(0, 3),
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        child: FilterFAB(sessionFilter: _sessionFilter()),
+        child: Selector<SettingsProvider, String>(
+          selector: (_, settingsProvider) =>
+              settingsProvider.freeClassroomSections.toString(),
+          builder: (_, __, ___) => FilterFAB(sessionFilter: _sessionFilter()),
+        ),
       ),
     );
   }
@@ -305,6 +309,18 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
     with AutomaticKeepAliveClientMixin {
   late final ScrollController _scrollController;
   late Future<List> _dataFuture;
+
+  /// 最近一次查询使用的节次分段，用于检测设置变化
+  late String _sectionsKey;
+
+  /// 当前已获取的数据使用的节次分段。
+  ///
+  /// 节次分段设置变化后、重新查询完成前，数据仍是旧分段查询的结果，
+  /// 行的列数会和新的分段不一致，此时不能渲染表格。
+  late String _dataSectionsKey;
+
+  /// 最近一次查询使用的学期开始日期，用于检测设置变化
+  late String _semesterStartDate;
 
   @override
   bool get wantKeepAlive => true; // 启用状态保持
@@ -422,6 +438,8 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
 
   void _onRetry() {
     setState(() {
+      _dataSectionsKey =
+          context.read<SettingsProvider>().freeClassroomSections.toString();
       _dataFuture = _getRoomData(null);
     });
   }
@@ -429,6 +447,10 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
   @override
   void initState() {
     super.initState();
+    _sectionsKey =
+        context.read<SettingsProvider>().freeClassroomSections.toString();
+    _dataSectionsKey = _sectionsKey;
+    _semesterStartDate = SettingsProvider.semesterStartDate;
     final zhengFangUserProvider = context.read<ZhengFangUserProvider>();
     _dataFuture = _getRoomData(zhengFangUserProvider);
 
@@ -445,6 +467,21 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    // 设置变化后重新查询
+    final (semesterStartDate, sectionsKey) = context
+        .select<SettingsProvider, (String, String)>((settingsProvider) => (
+              SettingsProvider.semesterStartDate,
+              settingsProvider.freeClassroomSections.toString(),
+            ));
+    if (semesterStartDate != _semesterStartDate ||
+        sectionsKey != _sectionsKey) {
+      _semesterStartDate = semesterStartDate;
+      _sectionsKey = sectionsKey;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _onRetry();
+      });
+    }
 
     return FutureBuilder<List>(
       future: _dataFuture,
@@ -487,6 +524,12 @@ class _ClassroomDataViewState extends State<_ClassroomDataView>
                 onRetry: _onRetry,
               );
             }
+          }
+
+          // 节次分段设置变化后、重新查询完成前，数据行的列数和当前分段不一致，
+          // 此时渲染表格会导致 RangeError，先显示加载状态
+          if (sectionsKey != _dataSectionsKey) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Column(
