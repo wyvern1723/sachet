@@ -3,6 +3,9 @@
 import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/providers/settings_provider.dart';
 
+/// 一天的时间段数量（每天最多 5 节大课）
+const int classCountsPerDay = 5;
+
 // 从周数推这一周第一天时间
 // 第 n 周的第一天（周一） = 学期第一周的第一天 + (n-1) * 7
 DateTime getTheMondayDateOfTheWeek(DateTime semesterStartDate, int weekCount) {
@@ -87,8 +90,34 @@ bool isToday(DateTime thatDay) {
 /// 91011   4   9  14  19  24  29  34
 /// ```
 ({int weekday, int session}) getWeekdayAndSessionFromItem(int item) {
-  final int session = [1, 3, 5, 7, 9][item % 5];
-  return (weekday: (item ~/ 5) + 1, session: session);
+  final int session = [1, 3, 5, 7, 9][item % classCountsPerDay];
+  return (weekday: (item ~/ classCountsPerDay) + 1, session: session);
+}
+
+/// 从 weekday 和 classCount 得到 item
+///
+/// 如:
+///
+/// weekday: 1, classCount: 0 => item: 0
+///
+/// weekday: 1, classCount: 1 => item: 1
+///
+/// weekday: 1, classCount: 3 => item: 3
+///
+/// weekday: 3, classCount: 2 => item: 12
+///
+/// ```
+/// item:
+///              weekday:      1   2   3   4   5   6   7
+/// classCount:  session:    Mon Tue Wed Thu Fri Sat Sun
+///          0        1,2      0   5  10  15  20  25  30
+///          1        3,4      1   6  11  16  21  26  31
+///          2        5,6      2   7  12  17  22  27  32
+///          3        7,8      3   8  13  18  23  28  33
+///          4    9,10,11      4   9  14  19  24  29  34
+/// ```
+int getItemFromWeekdayAndClassCount(int weekday, int classCount) {
+  return (weekday - 1) * classCountsPerDay + classCount;
 }
 
 /// 获取课程的开始和结束时间

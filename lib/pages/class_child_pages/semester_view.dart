@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/providers/settings_provider.dart';
+import 'package:sachet/utils/course_layout_helper.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/widgets/classpage_widgets/course_card.dart';
+import 'package:sachet/widgets/classpage_widgets/day_course_cards.dart';
 
 class SemesterView extends StatefulWidget {
   final List<List<CourseSchedule>>? courseScheduleItemsList;
@@ -171,8 +173,8 @@ class _HeatmapCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int count = 0;
-    for (int sessionIndex = 0; sessionIndex < 5; sessionIndex++) {
-      int item = (weekday - 1) * 5 + sessionIndex;
+    for (int classCount = 0; classCount < classCountsPerDay; classCount++) {
+      final int item = getItemFromWeekdayAndClassCount(weekday, classCount);
       if (item < courseScheduleItemsList.length) {
         for (final course in courseScheduleItemsList[item]) {
           if (course.weeks?.contains(weekCount) ?? false) {
@@ -198,6 +200,15 @@ class _HeatmapCell extends StatelessWidget {
     );
     final bool today = isToday(date);
     final bool showCourse = aspectRatio < 0.7;
+
+    const double cardHeight = 10.0;
+    final List<CourseCardLayout> courseLayouts = showCourse
+        ? getDayCourseLayouts(
+            courseScheduleItemsList: courseScheduleItemsList,
+            weekday: weekday,
+            weekCount: weekCount,
+          )
+        : const [];
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -234,38 +245,16 @@ class _HeatmapCell extends StatelessWidget {
           if (showCourse)
             Expanded(
               child: ClipRect(
-                child: OverflowBox(
-                  alignment: Alignment.topCenter,
-                  minHeight: 0,
-                  maxHeight: double.infinity,
-                  child: Column(
-                    children: [
-                      for (int classCount = 0; classCount < 5; classCount++)
-                        Builder(builder: (context) {
-                          int item = (weekday - 1) * 5 + classCount;
-                          List<CourseSchedule> courseScheduleItems =
-                              courseScheduleItemsList[item];
-                          final cardHeight = 10.0;
-
-                          return SizedBox(
-                            height: (cardHeight) * 2,
-                            child: OverflowBox(
-                              alignment: Alignment.topCenter,
-                              maxHeight: (cardHeight) * 11,
-                              child: CourseCard.compact(
-                                cardHeight: cardHeight,
-                                cardBorderRadius: 4.0,
-                                weekCount: weekCount,
-                                weekday: weekday,
-                                classCount: classCount,
-                                courseScheduleItems: courseScheduleItems,
-                                courseColorData: courseColorData,
-                              ),
-                            ),
-                          );
-                        }),
-                    ],
-                  ),
+                child: DayCourseCards(
+                  courseLayouts: courseLayouts,
+                  courseScheduleItemsList: courseScheduleItemsList,
+                  weekday: weekday,
+                  weekCount: weekCount,
+                  cardHeight: cardHeight,
+                  slotHeight: cardHeight * 2,
+                  variant: CourseCardVariant.compact,
+                  cardBorderRadius: 4.0,
+                  courseColorData: courseColorData,
                 ),
               ),
             ),

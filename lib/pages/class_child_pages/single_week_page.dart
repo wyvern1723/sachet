@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/session_routine.dart';
+import 'package:sachet/utils/course_layout_helper.dart';
 import 'package:sachet/utils/time_manager.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/widgets/classpage_widgets/class_session_routine_column.dart';
-import 'package:sachet/widgets/classpage_widgets/course_card.dart';
+import 'package:sachet/widgets/classpage_widgets/day_course_cards.dart';
 import 'package:sachet/widgets/classpage_widgets/day_of_the_week_topbar.dart';
 
 class SingleWeekPage extends StatefulWidget {
@@ -86,46 +88,38 @@ class _SingleWeekPageState extends State<SingleWeekPage> {
                     flex: 5,
                     // 这里是一星期的每一天
                     child: widget.courseScheduleItemsList != null
-                        ? Column(
-                            children: [
-                              for (int classCount = 0;
-                                  classCount < 5;
-                                  classCount++)
-                                Builder(builder: (context) {
-                                  int item = (weekday - 1) * 5 + classCount;
-                                  List<CourseSchedule> courseScheduleItems =
-                                      widget.courseScheduleItemsList![item];
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: 0.05 * widget.cardHeight),
-                                    child: SizedBox(
-                                      height: (widget.cardHeight) * 2,
-                                      child: OverflowBox(
-                                        alignment: Alignment.topCenter,
-                                        maxHeight: (widget.cardHeight) * 11,
-                                        child: CourseCard(
-                                          cardHeight: widget.cardHeight,
-                                          weekCount: widget.weekCount,
-                                          weekday: weekday,
-                                          classCount: classCount,
-                                          courseScheduleItems:
-                                              courseScheduleItems,
-                                          courseColorData:
-                                              widget.courseColorData,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                            ],
-                          )
-                        : SizedBox(),
+                        ? _buildDayColumn(weekday: weekday)
+                        : const SizedBox(),
                   ),
               ],
             ),
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildDayColumn({required int weekday}) {
+    final List<CourseCardLayout> courseLayouts = getDayCourseLayouts(
+      courseScheduleItemsList: widget.courseScheduleItemsList!,
+      weekday: weekday,
+      weekCount: widget.weekCount,
+    );
+
+    /// 每个时间段占用的垂直高度：2 个节次 + 一个大课间
+    final double slotHeight =
+        widget.cardHeight * 2 + widget.cardHeight * breakHeightRatio;
+
+    return DayCourseCards(
+      courseLayouts: courseLayouts,
+      courseScheduleItemsList: widget.courseScheduleItemsList!,
+      weekday: weekday,
+      weekCount: widget.weekCount,
+      cardHeight: widget.cardHeight,
+      slotHeight: slotHeight,
+      // 11 个节次 + 2 个大课间 + 午间休息 + 晚间休息的高度，与最左侧节次和时间的列一致
+      height: widget.cardHeight * 11 + widget.cardHeight * breakHeightRatio * 4,
+      courseColorData: widget.courseColorData,
     );
   }
 }

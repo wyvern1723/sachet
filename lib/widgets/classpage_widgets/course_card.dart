@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:provider/provider.dart';
+
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/course_schedule.dart';
 import 'package:sachet/models/session_routine.dart';
 import 'package:sachet/providers/course_card_settings_provider.dart';
 import 'package:sachet/providers/settings_provider.dart';
 import 'package:sachet/utils/course_info_helper.dart';
 import 'package:sachet/utils/time_manager.dart';
+import 'package:sachet/utils/transform.dart';
 import 'package:sachet/widgets/classpage_widgets/course_details_bottom_sheet.dart';
 import 'package:sachet/widgets/classpage_widgets/stripe_band_banner.dart';
 import 'package:sachet/widgets/settingspage_widgets/customize_settings_widgets/set_course_card_appearance.dart';
-import 'package:provider/provider.dart';
 
-import '../../utils/transform.dart';
 import 'course_card_item.dart';
 
 enum CourseCardVariant { normal, compact }
@@ -19,12 +21,15 @@ enum CourseCardVariant { normal, compact }
 class CourseCard extends StatelessWidget {
   final int weekCount;
   final int weekday;
-  final int classCount; // classCount 节次（ 1~5 ）
+  final int classCount; // classCount 节次（ 0~4 ）
   final List<CourseSchedule> courseScheduleItems;
   final Map? courseColorData;
   final double cardHeight;
   final double? cardBorderRadius;
   final CourseCardVariant variant;
+
+  /// 指定显示的课程。为 null 时显示 [courseScheduleItems] 中本周的第一门课
+  final CourseSchedule? displayCourseSchedule;
 
   const CourseCard({
     super.key,
@@ -36,6 +41,7 @@ class CourseCard extends StatelessWidget {
     required this.cardHeight,
     this.cardBorderRadius,
     this.variant = CourseCardVariant.normal,
+    this.displayCourseSchedule,
   });
 
   const CourseCard.compact({
@@ -47,6 +53,7 @@ class CourseCard extends StatelessWidget {
     required this.courseColorData,
     required this.cardHeight,
     this.cardBorderRadius,
+    this.displayCourseSchedule,
   }) : variant = CourseCardVariant.compact;
 
   void _showCourseDetails({
@@ -137,93 +144,78 @@ class CourseCard extends StatelessWidget {
     );
   }
 
+  CourseSchedule? _firstCourseForWeek() {
+    final index = courseScheduleItems
+        .indexWhere((course) => course.weeks!.contains(weekCount));
+    return index == -1 ? null : courseScheduleItems[index];
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (courseScheduleItems.isEmpty) {
+    final CourseSchedule? courseSchedule =
+        displayCourseSchedule ?? _firstCourseForWeek();
+    if (courseSchedule == null) return const SizedBox();
+
+    if (courseSchedule.title == null || courseSchedule.title == '') {
       return SizedBox();
     }
 
-    int index = courseScheduleItems
-        .indexWhere((element) => element.weeks!.contains(weekCount) == true);
+    final String coursePlace = courseSchedule.place ?? '';
 
-    if (index == -1) {
-      return SizedBox();
-    } else {
-      CourseSchedule courseSchedule = courseScheduleItems[index];
+    /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
+    final bool isStaggeredPlace = SessionRoutine.isStaggeredPlace(coursePlace);
 
-      if (courseSchedule.title == null || courseSchedule.title == '') {
-        return SizedBox();
-      }
+    /// 这节课所属天的日期
+    final DateTime date = getDateFromWeekCountAndWeekday(
+      semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
+      weekCount: weekCount,
+      weekday: weekday,
+    );
 
-      final String coursePlace = courseSchedule.place ?? '';
+    /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
+    final bool isBeforeStaggeredStartDate =
+        SessionRoutine.isBeforeStaggeredStartDate(date);
 
-      /// 这节课的上课地点是否属于需要错峰上课（延迟上课时间）的教学楼
-      final bool isStaggeredPlace =
-          SessionRoutine.isStaggeredPlace(coursePlace);
+    final bool isSummer = SessionRoutine.isSummer(date);
 
-      /// 这节课所属天的日期
-      final DateTime date = getDateFromWeekCountAndWeekday(
-        semesterStartDate: SettingsProvider.classScheduleSemesterStartDate,
-        weekCount: weekCount,
+    // TODO: 目前不确定下一学期(2026-2027学年 第2学期)是否会采用错峰上课同时也不确定夏季作息的错峰上课时间表。在夏季作息的错峰上课时间表公布前，当前逻辑是只在当前及之后学期的冬季作息才将需要错峰的课程标注为错峰上课
+    /// 这节课是否错峰上课（延迟上课时间）
+    final bool isStaggered =
+        isStaggeredPlace && !isBeforeStaggeredStartDate && !isSummer;
+
+    void showDetails(dynamic _) {
+      _showCourseDetails(
+        context: context,
+        date: date,
+        courseTitle: courseSchedule.title ?? '',
         weekday: weekday,
+        classcount: classCount,
+        isStaggered: isStaggered,
+        currentCourseLength: courseSchedule.length ?? 2,
+        isExperimentCourse: courseSchedule.isExperimentCourse,
+        experimentName: courseSchedule.experimentName,
+        experimentGroupName: courseSchedule.experimentGroupName,
       );
+    }
 
-      /// 这节课的日期是否还在试行错峰上课方案的开始日期之前
-      final bool isBeforeStaggeredStartDate =
-          SessionRoutine.isBeforeStaggeredStartDate(date);
-
-      final bool isSummer = SessionRoutine.isSummer(date);
-
-      // TODO: 目前不确定下一学期(2026-2027学年 第2学期)是否会采用错峰上课同时也不确定夏季作息的错峰上课时间表。在夏季作息的错峰上课时间表公布前，当前逻辑是只在当前及之后学期的冬季作息才将需要错峰的课程标注为错峰上课
-      /// 这节课是否错峰上课（延迟上课时间）
-      final bool isStaggered =
-          isStaggeredPlace && !isBeforeStaggeredStartDate && !isSummer;
-
-      switch (variant) {
-        case CourseCardVariant.normal:
-          return CourseCardNormal(
-              weekCount: weekCount,
-              classCount: classCount,
-              courseColorData: courseColorData,
-              courseSchedule: courseSchedule,
-              cardHeight: cardHeight,
-              cardBorderRadius: cardBorderRadius,
-              isStaggered: isStaggered,
-              onTap: (_) {
-                _showCourseDetails(
-                  context: context,
-                  date: date,
-                  courseTitle: courseSchedule.title ?? '',
-                  weekday: weekday,
-                  classcount: classCount,
-                  isStaggered: isStaggered,
-                  currentCourseLength: courseSchedule.length ?? 2,
-                  isExperimentCourse: courseSchedule.isExperimentCourse,
-                  experimentName: courseSchedule.experimentName,
-                  experimentGroupName: courseSchedule.experimentGroupName,
-                );
-              });
-        case CourseCardVariant.compact:
-          return CourseCardCompact(
-              courseColorData: courseColorData,
-              courseSchedule: courseSchedule,
-              cardHeight: cardHeight,
-              cardBorderRadius: cardBorderRadius,
-              onTap: (_) {
-                _showCourseDetails(
-                  context: context,
-                  date: date,
-                  courseTitle: courseSchedule.title ?? '',
-                  weekday: weekday,
-                  classcount: classCount,
-                  isStaggered: isStaggered,
-                  currentCourseLength: courseSchedule.length ?? 2,
-                  isExperimentCourse: courseSchedule.isExperimentCourse,
-                  experimentName: courseSchedule.experimentName,
-                  experimentGroupName: courseSchedule.experimentGroupName,
-                );
-              });
-      }
+    switch (variant) {
+      case CourseCardVariant.normal:
+        return CourseCardNormal(
+            weekCount: weekCount,
+            classCount: classCount,
+            courseColorData: courseColorData,
+            courseSchedule: courseSchedule,
+            cardHeight: cardHeight,
+            cardBorderRadius: cardBorderRadius,
+            isStaggered: isStaggered,
+            onTap: showDetails);
+      case CourseCardVariant.compact:
+        return CourseCardCompact(
+            courseColorData: courseColorData,
+            courseSchedule: courseSchedule,
+            cardHeight: cardHeight,
+            cardBorderRadius: cardBorderRadius,
+            onTap: showDetails);
     }
   }
 }
@@ -267,13 +259,13 @@ class CourseCardNormal extends StatelessWidget {
     final int courseLength = courseSchedule.length ?? 2;
 
     /// 这节课的开始节次
-    final int startSession = classCount + 1;
+    final int startSession = classCountToSection[classCount]!;
 
     /// 这节课的结束节次
     final int endSession = startSession + courseLength - 1;
 
-    /// 这节课穿过了几次大的课间休息段（大课间(第2节课和第3节课中间,第6节课和第7节课中间)及午间休息(第4节课和第5节课中间)及晚间休息(第8节课和第9节课中间)）
-    final int n = const [2, 4, 6, 8]
+    // 课程跨过的大课间、午休和晚休次数。
+    final int breakCount = const [2, 4, 6, 8]
         .where((b) => startSession < b && b < endSession)
         .length;
 
@@ -281,7 +273,7 @@ class CourseCardNormal extends StatelessWidget {
     final double originHeight = _cardHeight * courseLength;
 
     /// 课程中穿过大的课间休息段的高度
-    final double breakHeight = _cardHeight * n * 0.05;
+    final double breakHeight = _cardHeight * breakCount * breakHeightRatio;
 
     /// 此课程卡片总高度
     final double height = originHeight + breakHeight;
@@ -317,7 +309,7 @@ class CourseCardNormal extends StatelessWidget {
                 // 如果是错峰上课的课，在顶部会向下移 1 个 staggeredOffset 的位移
                 // 如果课程卡片高度与时间成比例，底部也要下移同样的长度，因为课程时长不变，所以高度也应不变。
                 // 但如果这样处理，不改变卡片高度，只是将课程卡片整体向下移动，
-                // 延迟上课的上节课的底部可能会和正常上课的下节课的顶部有重叠（即使我们已在各课程间留了一定的空位(0.05 倍的 _cardHeight, 即 0.5 倍的 staggeredOffset)）
+                // 延迟上课的上节课的底部可能会和正常上课的下节课的顶部有重叠（即使我们已在各课程间留了一定的空位(breakHeightRatio(=0.05) 倍的 _cardHeight, 即 0.5 倍的 staggeredOffset)）
                 // 如果再增加空白的高度可以解决这个问题，但是增加空白过多会导致课程整体 UI 太分散，当前留白应为较合适的高度
                 // 所以只是为了在视觉上使错峰上课的课比正常上课的课结束更晚，只要适当地延长卡片底部，就看起来比其他课结束晚了。
                 // 过度追求课程卡片高度和时间的对应关系只会让眼睛如同游标卡尺的用户更舒服，反正绝大部分用户看不出来这微小的差距

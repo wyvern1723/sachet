@@ -17,6 +17,9 @@ final Map<String, DateTime> semesterToStartDate = {
   '2026-2027-1': DateTime(2026, 8, 31),
 };
 
+/// 大课间（第 2-3 节、第 6-7 节之间）、午间休息（第4-5节之间）和晚间休息（第 8-9 节之间）的留白高度与单个节次卡片高度的比例
+const double breakHeightRatio = 0.05;
+
 /// 应用预设主题色（MaterialColor）
 const List defaultThemeColors = <MaterialColor>[
   Colors.indigo,

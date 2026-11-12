@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:sachet/constants/app_constants.dart';
 import 'package:sachet/models/session_routine.dart';
 
 import 'class_session.dart';
@@ -43,7 +43,6 @@ class ClassSessionRoutineColumn extends StatelessWidget {
 
   /// 休息时间段（占位空白）
   Widget _break() {
-    double height = 0.05 * cardHeight;
-    return SizedBox(height: height);
+    return SizedBox(height: breakHeightRatio * cardHeight);
   }
 }
