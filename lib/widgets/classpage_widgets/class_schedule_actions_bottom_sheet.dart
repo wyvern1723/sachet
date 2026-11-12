@@ -334,33 +334,36 @@ class _ClassScheduleActionsBottomSheetState
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _card(
-                      colorScheme,
-                      textTheme,
-                      title: '获取/更新 课程表',
-                      iconData: Icons.refresh,
-                      onTap: () {
-                        Navigator.pop(
-                            context, ClassScheduleAction.updateClassSchedule);
-                      },
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _card(
+                        colorScheme,
+                        textTheme,
+                        title: '获取/更新 课程表',
+                        iconData: Icons.refresh,
+                        onTap: () {
+                          Navigator.pop(
+                              context, ClassScheduleAction.updateClassSchedule);
+                        },
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: _card(
-                      colorScheme,
-                      textTheme,
-                      title: '导出课表',
-                      iconData: Icons.share_outlined,
-                      onTap: () {
-                        Navigator.pop(
-                            context, ClassScheduleAction.exportClassSchedule);
-                      },
+                    Expanded(
+                      child: _card(
+                        colorScheme,
+                        textTheme,
+                        title: '导出课表',
+                        iconData: Icons.share_outlined,
+                        onTap: () {
+                          Navigator.pop(
+                              context, ClassScheduleAction.exportClassSchedule);
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -405,42 +408,39 @@ class _ClassScheduleActionsBottomSheetState
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: GestureDetector(
+      child: ListTile(
+        onTap: () {
+          setState(() {
+            _openedSemester = semester;
+            _isOpenSemester = true;
+          });
+        },
         onLongPress: () => _editSemesterStartDate(semester),
-        child: ListTile(
-          onTap: () {
-            setState(() {
-              _openedSemester = semester;
-              _isOpenSemester = true;
-            });
-          },
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          leading: isActive
-              ? Icon(Icons.done, color: Colors.green)
-              : Icon(
-                  semester == _unknownSemester
-                      ? Icons.folder_outlined
-                      : Icons.school_outlined,
-                  color: colorScheme.onSurfaceVariant,
-                  size: 20,
-                  applyTextScaling: true,
-                ),
-          title: Text(semester, style: textTheme.bodyLarge),
-          subtitle: Text(
-            semester == _unknownSemester
-                ? '$fileCount 个文件'
-                : '学期开始日期: ${semesterStartDate == null ? '?' : DateFormat('yyyy-MM-dd').format(semesterStartDate)} · $fileCount 个文件',
-          ),
-          trailing: Icon(
-            // Icons.arrow_forward,
-            Icons.chevron_right,
-            // color: colorScheme.onSurfaceVariant,
-            color: colorScheme.outline,
-          ),
-          visualDensity: VisualDensity.compact,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        leading: isActive
+            ? Icon(Icons.done, color: Colors.green)
+            : Icon(
+                semester == _unknownSemester
+                    ? Icons.folder_outlined
+                    : Icons.school_outlined,
+                color: colorScheme.onSurfaceVariant,
+                size: 20,
+                applyTextScaling: true,
+              ),
+        title: Text(semester, style: textTheme.bodyLarge),
+        subtitle: Text(
+          semester == _unknownSemester
+              ? '$fileCount 个文件'
+              : '学期开始日期: ${semesterStartDate == null ? '?' : DateFormat('yyyy-MM-dd').format(semesterStartDate)} · $fileCount 个文件',
         ),
+        trailing: Icon(
+          // Icons.arrow_forward,
+          Icons.chevron_right,
+          // color: colorScheme.onSurfaceVariant,
+          color: colorScheme.outline,
+        ),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }
@@ -466,6 +466,7 @@ class _ClassScheduleActionsBottomSheetState
           child: Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
             spacing: 4,
             children: [
               Icon(
@@ -555,7 +556,7 @@ class _ClassScheduleActionsBottomSheetState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         visualDensity: VisualDensity.compact,
         onTap: () {
@@ -571,6 +572,7 @@ class _ClassScheduleActionsBottomSheetState
           '\n'
           '文件大小: ${(File(filePath).lengthSync() / 1024).toStringAsFixed(2)}KB',
         ),
+        subtitleTextStyle: textTheme.bodySmall,
         trailing: isActive == true
             // 因为 Icon 和 PopupMenuButton 在水平方向没对齐，所以使用一个不能点击 IconButton 代替 Icon 以实现对齐
             // ? Icon(Icons.done, color: Colors.green)
